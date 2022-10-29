@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+
+
+@layer components {
+
+
+
+    .my-custom-style {
+
+        @apply hover:dark:bg-slate-500 flex items-center hover:bg-slate-200 rounded-[4.8px] p-3 border-gray-800 dark:border-gray-100 ltr:hover:border-r-4 rtl:hover:border-l-4 transition duration-100 ease-in-out;
+
+    }
+
+    .color-white {
+
+        color: white
+    }
+
+
+
+    .active {
+
+        @apply left-0
+    }
+
+    .nactive {
+
+        @apply left-[-240px]
+    }
+
+    .rtlactive {
+
+        @apply right-0
+    }
+
+    .rtlnactive {
+
+        @apply right-[-240px]
+    }
+}
+
+
+
+th {
+    @apply bg-gray-300 dark:bg-gray-800;
+
+}
+
+
+th:first-child:dir(ltr) {
+    @apply rounded-tl-2xl;
+
+}
+
+th:last-child:dir(ltr) {
+    @apply rounded-tr-2xl;
+
+}
+
+th:first-child:dir(rtl) {
+    @apply rounded-tr-2xl;
+
+}
+
+th:last-child:dir(rtl) {
+    @apply rounded-tl-2xl;
+
+}
+
+
+ tr:nth-child(even) {
+    @apply bg-gray-200 dark:bg-gray-700 rounded-tr-xl;
+
+
+}
+
+
+ body {
+
+    overflow-x: hidden;
+    font-family: 'Abyssinica SIL', serif;
+
+
+}
+
+@import "~react-image-gallery/styles/css/image-gallery.css";
+
+@import 'react-toastify/dist/ReactToastify.css';
+
+
+
+.image-gallery-left-nav .image-gallery-svg,
+.image-gallery-right-nav .image-gallery-svg {
+    height: 10vh;
+    width: 25px;
+    margin: auto;
+    padding: auto;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.01);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+
+
+
+
+
+:root {
+    /* Your default theme */
+    --background: white;
+    --foreground: rgb(155, 155, 155);
+    @apply bg-slate-50
+}
+  [data-theme='dark'] {
+    --background: dark;
+    --foreground: rgb(75, 240, 4);
+    background-color: #181A1B;
+  }
+
+
+/* 
+  html,body{
+    @apply bg-gray-300 dark:bg-gray-300 ;
+
+  } */
+ 
+
+
+
+  @import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap');
