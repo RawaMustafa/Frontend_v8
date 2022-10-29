@@ -18,21 +18,14 @@ import { useSession } from "next-auth/react";
 
 
 
-
-
-
-
-
-
-
 const Header = () => {
 
 
     const patapa = useSession()
     const router = useRouter();
-    if (patapa?.status === "unauthenticated") {
-        router?.push("/Login")
-    }
+    // if (patapa?.status === "unauthenticated") {
+    //     router?.push("/Login")
+    // }
 
 
     const l = useLanguage();

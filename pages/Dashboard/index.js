@@ -23,29 +23,29 @@ import { useSession, getSession } from "next-auth/react";
 
 
 
-export const getServerSideProps = async ({ req }) => {
+// export const getServerSideProps = async ({ req }) => {
 
-    const session = await getSession({ req })
+//     const session = await getSession({ req })
 
-    console.log(session)
+//     console.log(session)
 
-    if (!session || !session?.userRole === "Admin") {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            }
+//     if (!session || !session?.userRole === "Admin") {
+//         return {
+//             redirect: {
+//                 destination: '/',
+//                 permanent: false,
+//             }
 
-        }
-    }
+//         }
+//     }
 
 
 
-    return {
-        props: {}
+//     return {
+//         props: {}
 
-    }
-}
+//     }
+// }
 
 
 
@@ -173,9 +173,9 @@ const Dashboard = (props) => {
     }
 
 
-    if (status == "unauthenticated") {
-        return router.push('/');
-    }
+    // if (status == "unauthenticated") {
+    //     return router.push('/');
+    // }
 
 
     return (
