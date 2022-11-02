@@ -20,7 +20,7 @@ export const getServerSideProps = async (context) => {
     const session = await getSession({ req: context.req })
 
 
-    if (!session || !session?.userRole == "Admin") {
+    if (!session || session?.userRole !== "Admin") {
         return {
             redirect: {
                 destination: '/',

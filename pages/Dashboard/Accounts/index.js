@@ -20,7 +20,7 @@ export async function getServerSideProps({ req, query }) {
 
 
 
-    if (!session || !session?.userRole == "Admin") {
+    if (!session || session?.userRole !== "Admin") {
         return {
             redirect: {
                 destination: '/',

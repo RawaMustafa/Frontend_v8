@@ -23,29 +23,29 @@ import { useSession, getSession } from "next-auth/react";
 
 
 
-// export const getServerSideProps = async ({ req }) => {
+export const getServerSideProps = async ({ req }) => {
 
-//     const session = await getSession({ req })
-
-//     console.log(session)
-
-//     if (!session || !session?.userRole === "Admin") {
-//         return {
-//             redirect: {
-//                 destination: '/',
-//                 permanent: false,
-//             }
-
-//         }
-//     }
+    const session = await getSession({ req })
 
 
 
-//     return {
-//         props: {}
+    if (!session || session?.userRole !== "Admin") {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            }
 
-//     }
-// }
+        }
+    }
+
+
+
+    return {
+        props: {}
+
+    }
+}
 
 
 
@@ -74,6 +74,8 @@ const Dashboard = (props) => {
                 return res
             }).catch((err) => {
                 // err.response.status == 404 || err.response.status == 500 || err.response.status == 400 || err.response.status == 401 || err.response.status == 403 && null
+
+
             });
 
             const requestOne = await Axios.get(one).then((res) => {
@@ -123,7 +125,7 @@ const Dashboard = (props) => {
         datasets: [
             {
                 label: '# of Votes',
-                data: [Data?.totalTransportationCost, 9, 7, 12, , 13, Data?.totalpricePaidbid, Data?.totalCoCCost, Data?.totalFeesAndRepaidCostDubai, Data?.totalFeesRaqamAndRepairCostinKurdistan, Data?.totalFeesinAmerica, Data?.totalTransportationCost],
+                data: [Data?.totalTransportationCost, Data?.totalpricePaidbid, Data?.totalCoCCost, Data?.totalFeesAndRepaidCostDubai, Data?.totalFeesRaqamAndRepairCostinKurdistan, Data?.totalFeesinAmerica, Data?.totalTransportationCost],
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
@@ -173,9 +175,9 @@ const Dashboard = (props) => {
     }
 
 
-    // if (status == "unauthenticated") {
-    //     return router.push('/');
-    // }
+    if (status == "unauthenticated") {
+        return router.push('/');
+    }
 
 
     return (
@@ -188,8 +190,7 @@ const Dashboard = (props) => {
             </Head>
 
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4  gap-5 lg:gap-5 mx-4      ">
-
+            <div className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-4  gap-5 lg:gap-5 mx-4      ">
 
 
                 <Link href="/Dashboard/ListofCars/AllCars"><a><div className="p-5  border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
@@ -197,7 +198,7 @@ const Dashboard = (props) => {
 
                         <div>
                             <div className="">{l.allcars}</div>
-                            <div className="text-2xl font-bold ">{Data?.carNumber}</div>
+                            <div className="text-2xl font-bold  first-letter:">{Data?.carNumber}</div>
                         </div>
                         <div>
                             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500">

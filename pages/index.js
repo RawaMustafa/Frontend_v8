@@ -6,7 +6,7 @@ export async function getServerSideProps({ req, res }) {
 
   const session = await getSession({ req })
 
-  console.log(session?.userRole)
+
 
   if (session && session?.userRole == "Reseller") {
     return {

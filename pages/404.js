@@ -7,11 +7,11 @@ const Error = () => {
     const router = useRouter()
     const l = useLanguage();
 
-    // setTimeout(() => {
+    setTimeout(() => {
 
-    //     router.back()
+        router.back()
 
-    // })
+    }, 2000)
 
 
     return (

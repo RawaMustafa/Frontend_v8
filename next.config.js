@@ -15,8 +15,6 @@ module.exports = {
 
     domains: ['localhost'],
 
-
-
   },
 
 }

@@ -1,5 +1,5 @@
 
-import { useMemo, useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef } from "react"
 import axios from "axios"
 import Axios, { baseURL } from '../../../api/Axios';
 
@@ -46,7 +46,7 @@ export const getServerSideProps = async (context) => {
 
 
 
-    if (!session || !session?.userRole == "Admin") {
+    if (!session || session?.userRole !== "Admin") {
         return {
             redirect: {
                 destination: '/',
@@ -304,11 +304,11 @@ const Detail = ({ cars }) => {
     const Doc_2_pdf = () => {
 
         const doc = new jsPDF("p", "mm", "a4");
-
-        cars?.carDetail?.carDamage ?
-            doc.addImage(`${baseURL}${cars?.carDetail?.carDamage?.[0]?.filename}`, 'PNG', -12, -89, 226, 149 + 12, null, null, 270)
+        console.log(cars?.carDetail?.carDamage)
+        cars?.carDetail?.carDamage.length > 0 ?
+            doc.addImage(`${baseURL}/${cars?.carDetail?.carDamage?.[0]?.filename}`, 'PNG', -12, -89, 226, 149 + 12, null, null, 270)
             :
-            doc.addImage('/Sedan.PNG', 'PNG', -12, -89, 226, 149 + 12, null, null, 270)
+            doc.addImage('/Sedan.png', 'PNG', -12, -89, 226, 149 + 12, null, null, 270)
 
         doc.addImage('/Detaile_Car_Damage.png', 'PNG', 1, 1, 210, 70)
 

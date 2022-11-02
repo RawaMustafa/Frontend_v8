@@ -31,6 +31,7 @@ const nextAuthOptions = (req, res) => {
 
 
                         if (user) {
+                            
                             return { status: 'success', data: user.data }
 
                         }
@@ -38,6 +39,7 @@ const nextAuthOptions = (req, res) => {
 
                     } catch (e) {
                         const errorMessage = e
+
                         // Redirecting to the login page with error message          in the URL
                         throw new Error(errorMessage + '     &email=    ' + credentials.email + '     &password=    ' + credentials.password)
                     }

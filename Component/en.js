@@ -117,6 +117,7 @@ export const en = {
 
     error: "This page does not exist",
     error404: "404",
+    error500: "500",
 
 
     rash: "black",

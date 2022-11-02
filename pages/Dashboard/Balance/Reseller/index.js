@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Head from 'next/head'
 import Link from 'next/link';
 import axios from 'axios';
-import Axios from '../../../api/Axios';
+import Axios,{baseURL} from '../../../api/Axios';
 import Image from 'next/image';
 import { InView } from 'react-intersection-observer';
 
@@ -18,7 +18,7 @@ export const getServerSideProps = async ({ req }) => {
 
 
 
-    if (!session || !session?.userRole == "Admin") {
+    if (!session || session?.userRole !== "Admin") {
         return {
             redirect: {
                 destination: '/',
@@ -112,7 +112,7 @@ const Reseller = () => {
                         <Link key={key} as={`/Dashboard/Balance/Reseller/${item._id}`} href={`/Dashboard/Balance/Reseller/[_id]`}><a>
                             <div className=" rounded-2xl light:bg-red-600  bg-slate-600 dark:bg-gray-900 bg- text-neutral-content h-56 max:w-96">
                                 <div className=" pt-6 text-center  space-y-2">
-                                    <Image width={50} height={50} className="inline-block h-12 w-12 rounded-full ring-2 ring-white" src="/Logo.png" alt="users" />
+                                    <Image width={50} height={50} className="inline-block h-12 w-12 rounded-full ring-2 ring-white" src="/logo.png" alt="users" />
 
                                     <h2 className=" first-line:">{item.userName}</h2>
                                     <h2 className=" first-line:">{item.email}</h2>

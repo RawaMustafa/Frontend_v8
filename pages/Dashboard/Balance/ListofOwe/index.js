@@ -21,7 +21,7 @@ import { getSession } from "next-auth/react";
 export const getServerSideProps = async ({ req }) => {
     const session = await getSession({ req })
 
-    if (!session || !session?.userRole == "Admin") {
+    if (!session || session?.userRole !== "Admin") {
         return {
             redirect: {
                 destination: '/',
@@ -117,7 +117,7 @@ const QarzList = () => {
                                 <Link key={key} as={`/Dashboard/Balance/ListofOwe/${item._id}`} href={`/Dashboard/Balance/ListofOwe/[_id]`}><a>
                                     <div className=" rounded-2xl  bg-neutral text-neutral-content h-56 max:w-96">
                                         <div className=" pt-6 text-center  space-y-2">
-                                            <Image alt="LogoQarz" width={48} height={48} className="inline-block h-12 w-12 rounded-full ring-2 ring-white" src="/logo.PNG" />
+                                            <Image alt="LogoQarz" width={48} height={48} className="inline-block h-12 w-12 rounded-full ring-2 ring-white" src="/logo.png" />
 
                                             <h2 className=" first-line:">{item.userName}</h2>
                                             <h2 className=" first-line:">{item.email}</h2>

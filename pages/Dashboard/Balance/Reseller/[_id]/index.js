@@ -25,7 +25,7 @@ export async function getServerSideProps({ req, query }) {
 
     const session = await getSession({ req })
 
-    if (!session || !session?.userRole == "Admin") {
+    if (!session || session?.userRole !== "Admin") {
         return {
             redirect: {
                 destination: "/",
@@ -147,7 +147,7 @@ const Details = ({ initQuery }) => {
 
                                     e.pictureandvideorepair?.map((img, index) => {
                                         img.mimetype != "video/mp4" && dataa.push({
-                                            "original": `http://localhost:4000/uploads/${img.filename}`,
+                                            "original": `${baseURL}/${img.filename}`,
                                             "thumbnail": `/uploads/${img.filename}`,
                                             "renderItem": renderVideo
 
@@ -156,13 +156,13 @@ const Details = ({ initQuery }) => {
                                     })
                                     e.pictureandvideodamage?.map((img, index) => {
                                         img.mimetype != "video/mp4" && dataa.push({
-                                            "original": `http://localhost:4000/uploads/${img.filename}`, "thumbnail": `/uploads/${img.filename}`,
+                                            "original": `${baseURL}/${img.filename}`, "thumbnail": `/uploads/${img.filename}`,
                                             "renderItem": renderVideo,
                                         })
                                     })
                                     e.carDamage?.map((img, index) => {
                                         img.mimetype != "video/mp4" && dataa.push({
-                                            "original": `http://localhost:4000/uploads/${img.filename}`, "thumbnail": `/uploads/${img.filename}`,
+                                            "original": `${baseURL}/${img.filename}`, "thumbnail": `/uploads/${img.filename}`,
                                             "renderItem": renderVideo,
                                         })
                                     })

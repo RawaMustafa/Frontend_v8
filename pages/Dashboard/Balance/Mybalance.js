@@ -40,7 +40,7 @@ import { getSession } from "next-auth/react";
 export const getServerSideProps = async ({ req }) => {
     const session = await getSession({ req })
 
-    if (!session || !session?.userRole == "Admin") {
+    if (!session || session?.userRole !== "Admin") {
         return {
             redirect: {
                 destination: '/',

@@ -31,7 +31,7 @@ export const getServerSideProps = async (context) => {
 
     const _id = context.params?._id;
 
-    const response = await Axios.get('http://localhost:4000/reseller/details/' + _id)
+    const response = await Axios.get('/reseller/details/' + _id)
     const data = await response.data
     return {
         props: { cars: data },
@@ -71,7 +71,7 @@ const Detail = ({ cars }) => {
 
 
                         <video width="1900" height="1000" controls className="h-auto max-w-full flex text-center items-center justify-center">
-                            <source src={`http://localhost:4000/uploads/${item.taramash}`} type="video/mp4" />
+                            <source src={`${baseURL}/${item.taramash}`} type="video/mp4" />
                         </video>
 
 
@@ -96,8 +96,8 @@ const Detail = ({ cars }) => {
 
     cars.carDetail?.pictureandvideorepair?.map((img, index) => {
         dataa.push({
-            "original": `http://localhost:4000/uploads/${img.filename}`,
-            "thumbnail": `http://localhost:4000/uploads/${img.filename}`,
+            "original": `${baseURL}/${img.filename}`,
+            "thumbnail": `${baseURL}/${img.filename}`,
             "taramash": `${img.mimetype == "video/mp4" && img.filename}`,
             "renderItem": renderVideo
 
@@ -106,8 +106,8 @@ const Detail = ({ cars }) => {
     })
     cars.carDetail?.pictureandvideodamage?.map((img, index) => {
         dataa.push({
-            "original": `http://localhost:4000/uploads/${img.filename}`,
-            "thumbnail": `http://localhost:4000/uploads/${img.filename}`,
+            "original": `${baseURL}/${img.filename}`,
+            "thumbnail": `${baseURL}/${img.filename}`,
             "taramash": `${img.mimetype == "video/mp4" && img.filename}`,
             "renderItem": renderVideo
 
@@ -115,8 +115,8 @@ const Detail = ({ cars }) => {
     })
     cars.carDetail?.carDamage?.map((img, index) => {
         dataa.push({
-            "original": `http://localhost:4000/uploads/${img.filename}`,
-            "thumbnail": `http://localhost:4000/uploads/${img.filename}`,
+            "original": `${baseURL}/${img.filename}`,
+            "thumbnail": `${baseURL}/${img.filename}`,
             "taramash": `${img.mimetype == "video/mp4" && img.filename}`,
             "renderItem": renderVideo
 

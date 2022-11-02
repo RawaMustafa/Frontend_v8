@@ -24,10 +24,10 @@ import { getSession } from 'next-auth/react';
 
 export async function getStaticProps({ req, res }) {
 
-    console.log("-----------getServerSideProps", req)
+
     const session = await getSession({ req })
 
-    console.log("user_Role = ", session?.userRole)
+
     if (!session || session.userRole != "Reseller") {
         return {
             redirect: {

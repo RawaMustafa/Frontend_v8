@@ -42,7 +42,7 @@ export const getServerSideProps = async ({ req }) => {
     }
     return {
         props: {
-
+            SessionID: session.id,
 
         }
     }
@@ -62,7 +62,7 @@ var canData = [],
 
 
 
-const NewCars = () => {
+const NewCars = ({ SessionID }) => {
 
 
     const [page, setPage] = useState(1)
@@ -100,9 +100,9 @@ const NewCars = () => {
 
         "CoCCost": 0,
 
-        "TransportationCostFromAmericaLocationtoDubaiGCostLocation": "",
-        "TransportationCostFromAmericaLocationtoDubaiGCostTranscost": 0,
-        "TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost": 0,
+        "TDNEpUTHQoQUJMHLrErGJyHg89uy71MyuHiontoDubaiGCostLocation": "",
+        "TDNEpUTHQoQUJMHLrErGJyHg89uy71MyuHiontoDubaiGCostTranscost": 0,
+        "TDNEpUTHQoQUJMHLrErGJyHg89uy71MyuHiontoDubaiGCostgumrgCost": 0,
 
         "DubaiToIraqGCostTranscost": 0,
         "DubaiToIraqGCostgumrgCost": 0,
@@ -132,7 +132,7 @@ const NewCars = () => {
 
 
     const canvasRef = useRef()
-    const contextRef = useRef(null)
+    const contextRef = useRef()
     const range = useRef(5)
     const [rangee, setRangee] = useState("5")
     const image = useRef()
@@ -151,14 +151,13 @@ const NewCars = () => {
         canvass.width = window.innerWidth >= 1023 && window.innerWidth <= 2100 ? window.innerWidth - 375 : window.innerWidth >= 2100 ? 2100 - 375 : window.innerWidth - 40;
         canvass.height = canvass.width / 1.6;
 
-        const imagee = new Image()
-        imagee.src = `/${Data.Tocar}.PNG`;
-        console.log("clearing", imagee)
+        const image = new Image()
+        image.src = `/${Data.Tocar}.PNG`;
 
-        contextt.drawImage(imagee, 0, 0, canvasRef.current.width, canvasRef.current.height);
+        contextt.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
 
 
-    }, [page])
+    }, [Data.Tocar, page])
 
 
 
@@ -470,14 +469,13 @@ const NewCars = () => {
 
     var restore = (function () {
 
-        const imagee = new Image()
-        imagee.src = `/${Data.Tocar}.PNG`;
-        console.log("clearing", imagee)
+        const image = new Image()
+        image.src = `/${Data.Tocar}.PNG`;
 
-        contextRef.current.drawImage(imagee, 0, 0, canvasRef.current.width, canvasRef.current.height);
+
+        contextRef.current.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
 
         if (canData.length > 0) {
-            // // consol.log("restoring", canData.length)
 
             for (var i = 0; i < canData.length; i++) {
                 contextRef.current.beginPath();
@@ -512,12 +510,12 @@ const NewCars = () => {
 
     var undo = (function () {
 
-        const imagee = new Image()
-        imagee.src = `/${Data.Tocar}.PNG`;
-        console.log("clearing", imagee)
+        const image = new Image()
+        image.src = `/${Data.Tocar}.PNG`;
+
 
         if (canData.length > 0) {
-            contextRef.current.drawImage(imagee, 0, 0, canvasRef.current.width, canvasRef.current.height);
+            contextRef.current.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
             canData = canData.slice(0, -1);
             undoData = undoData.slice(0, -1);
             canDataCount--;
@@ -587,17 +585,17 @@ const NewCars = () => {
 
         }
 
-        const imagee = new Image()
-        imagee.src = `/${Data.Tocar}.PNG`;
-        console.log("clearing", imagee)
+        const image = new Image()
+        image.src = `/${Data.Tocar}.PNG`;
 
-        contextRef.current.drawImage(imagee, 0, 0, canvasRef.current.width, canvasRef.current.height);
+
+        contextRef.current.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
 
         canDataCount = 0;
         canData = [];
         undoData = canData;
         oldData = canData;
-        contextRef.current.drawImage(imagee, 0, 0, canvasRef.current.width, canvasRef.current.height);
+        contextRef.current.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
         canDataCount = 0;
         canData = [];
         undoData = canData;
@@ -677,9 +675,9 @@ const NewCars = () => {
 
         "CoCCost": Data.CoCCost,
 
-        "TransportationCostFromAmericaLocationtoDubaiGCostLocation": Data.TransportationCostFromAmericaLocationtoDubaiGCostLocation,
-        "TransportationCostFromAmericaLocationtoDubaiGCostTranscost": Data.TransportationCostFromAmericaLocationtoDubaiGCostTranscost,
-        "TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost": Data.TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost,
+        "TDNEpUTHQoQUJMHLrErGJyHg89uy71MyuHiontoDubaiGCostLocation": Data.TDNEpUTHQoQUJMHLrErGJyHg89uy71MyuHiontoDubaiGCostLocation,
+        "TDNEpUTHQoQUJMHLrErGJyHg89uy71MyuHiontoDubaiGCostTranscost": Data.TDNEpUTHQoQUJMHLrErGJyHg89uy71MyuHiontoDubaiGCostTranscost,
+        "TDNEpUTHQoQUJMHLrErGJyHg89uy71MyuHiontoDubaiGCostgumrgCost": Data.TDNEpUTHQoQUJMHLrErGJyHg89uy71MyuHiontoDubaiGCostgumrgCost,
 
         "DubaiToIraqGCostTranscost": Data.DubaiToIraqGCostTranscost,
         "DubaiToIraqGCostgumrgCost": Data.DubaiToIraqGCostgumrgCost,
@@ -694,69 +692,110 @@ const NewCars = () => {
     }
 
 
-    // //
+
+
 
     const postCarsId = async () => {
 
-        if (typeof document != "undefined") {
-            var canvas = document.getElementById("canvas");
-            let imageBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/PNG'));
-            setCarDamage(imageBlob)
-            // 
-        }
+        console.log("PatatayKwlaw", SessionID)
+        let data
+        try {
+            const UDetails = await Axios.get('/users/detail/r.m.b1122344321@gmail.com')
 
 
-        let Datarepair = new FormData();
+            console.log(UDetails.data.userDetail.TotalBals)
 
-        // Datarepair.append("Tocar", "SUV");
+            data = UDetails.data.userDetail.TotalBals
 
-        for (let key in DataUpload) {
-            Datarepair.append(key, DataUpload[key]);
-        }
-
-        for (let i = 0; i < pictureandvideorepair.length; i++) {
-
-            Datarepair.append("Pictureandvideorepair", pictureandvideorepair[i], `image${i}.JPEG`);
-
-        }
-
-
-        for (let i = 0; i < pictureandvideodamage.length; i++) {
-
-            Datarepair.append("Pictureandvideodamage", pictureandvideodamage[i], "image.JPEG");
-
-        }
+            console.log("userBalance", UDetails.data.userDetail.TotalBals)
 
 
 
-        CarDamage != '' && Datarepair.append("CarDamage", CarDamage, "image.png");
+            if (Data.Price <= data) {
+                if (typeof document != "undefined") {
+                    var canvas = document.getElementById("canvas");
+                    let imageBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/PNG'));
+                    setCarDamage(imageBlob)
+                }
+
+                let Datarepair = new FormData();
 
 
-        setTimeout(async () => {
-            await Axios.post('/cars/', Datarepair, {
 
-                header: {
+                for (let key in DataUpload) {
+                    Datarepair.append(key, DataUpload[key]);
+                }
 
-                    'Content-Type': 'multipart/form-data',
+                for (let i = 0; i < pictureandvideorepair.length; i++) {
+
+                    Datarepair.append("Pictureandvideorepair", pictureandvideorepair[i], `image${i}.JPEG`);
 
                 }
 
+
+                for (let i = 0; i < pictureandvideodamage.length; i++) {
+
+                    Datarepair.append("Pictureandvideodamage", pictureandvideodamage[i], "image.JPEG");
+
+                }
+
+
+
+                CarDamage != '' && Datarepair.append("CarDamage", CarDamage, "image.png");
+
+
+                setTimeout(async () => {
+                    await Axios.post('/cars/', Datarepair, {
+
+                        header: {
+
+                            'Content-Type': 'multipart/form-data',
+
+                        }
+
+                    }
+
+                    ).then(async (response) => {
+
+                        console.log("Car Added")
+                        try {
+
+                            await Axios.patch('/users/' + SessionID, { "TotalBals": data - Data.Price })
+
+                            toast.success("Your Balance= " + (data - Data.Price) + " $");
+
+                        } catch {
+                        }
+                        toast.success(l.adddata);
+
+                    }).catch(error => {
+
+                        toast.error("errorr")
+
+
+                    })
+                }, 100);
+
+
+
+
+
+
+
+
             }
 
-            ).then(response => {
-                //
 
-                toast.success(l.adddata);
+            else {
+                toast.warn("You don't have enough balance");
 
-                // //
-            }).catch(error => {
-
-                toast.error("error")
-                //
+            }
 
 
-            })
-        }, 100);
+        } catch (e) {
+
+            console.log(e)
+        }
 
 
     }
@@ -778,7 +817,6 @@ const NewCars = () => {
 
 
 
-
     return (
 
 
@@ -790,12 +828,15 @@ const NewCars = () => {
             </Head>
 
             < >
-                {/* <form > */}
+
                 {/* <div className=" px-6 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl  "> onSubmit={handleSubmit(postCarsId)}*/}
-                {/* <form onSubmit={() => { postInfo(e) }}> */}
                 <ToastContainer
-                    // rtl={localStorage.getItem("language") === "ku" ? true : false}
-                    draggablePercent={60}
+                    rtl={l.yes === "Yes" ? false : true}
+                    draggablePercent={40}
+                    limit={2}
+                    autoClose={2000}
+                    className="w-64 text-sm m-auto mt-20  ltr:mr-0 md:w-64 "
+                    position={toast.POSITION.TOP_RIGHT}
                 />
 
                 <div className={`${page != 1 ? "hidden" : ""} `} >
@@ -1052,17 +1093,17 @@ const NewCars = () => {
 
                         <h1 className="mt-5 text-center">{l.fromamericatodubai}</h1>
                         <div className="flex  justify-center">
-                            <input name='TransportationCostFromAmericaLocationtoDubaiGCostTranscost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromamericatodubai} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input name='TDNEpUTHQoQUJMHLrErGJyHg89uy71MyuHiontoDubaiGCostTranscost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromamericatodubai} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
                         <h1 className="mt-5 text-center">{l.uslocation}</h1>
                         <div className="flex  justify-center">
-                            <input name='TransportationCostFromAmericaLocationtoDubaiGCostLocation' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.uslocation} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input name='TDNEpUTHQoQUJMHLrErGJyHg89uy71MyuHiontoDubaiGCostLocation' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.uslocation} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
                         <h1 className="mt-5 text-center">{l.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost} </h1>
                         <div className="flex  justify-center">
-                            <input name='TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input name='TDNEpUTHQoQUJMHLrErGJyHg89uy71MyuHiontoDubaiGCostgumrgCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
@@ -1424,9 +1465,9 @@ const NewCars = () => {
                                         }}><FontAwesomeIcon className="text-2xl" icon={faCheck} /> </button>
 
                                     </div >
-                                    {/* {console.log(image?.current?.children[0].children[0].children[0])} */}
-                                    <div ref={image}>
-                                        {/* <Image width={1920} height={1080} className="hidden" id='ImageDrowing' name="ImageDrowing" src={`/${Data.Tocar}.PNG`} alt="Tocar" /> */}
+
+                                    <div>
+                                        <img ref={image} width={1920} height={1080} className="hidden" id='ImageDrowing' name="ImageDrowing" src={`/${Data.Tocar}.PNG`} alt="Tocar" />
 
                                     </div>
 

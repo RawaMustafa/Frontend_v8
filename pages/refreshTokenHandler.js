@@ -11,7 +11,7 @@ const RefreshTokenHandler = (props) => {
         if (!!session) {
             // We did set the token to be ready to refresh after 23 hours, here we set interval of 23 hours 30 minutes.
             const timeRemaining = Math.round((((session.accessTokenExpiry * 1000) - Date.now()) / 1000));
-            console.log("===============1======2====3===4========", timeRemaining);
+
             if (timeRemaining <= 0) {
                 const logOut = async () => {
                     await Axios.post("/users/logOut");

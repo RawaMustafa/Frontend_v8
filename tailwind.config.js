@@ -1,14 +1,15 @@
-/** @type {import('tailwindcss').Config} */
+// @type { import('tailwindcss').Config }
 module.exports = {
 
   darkMode: 'class',
 
 
   content: [
+
+    "./Component/**/*.{js,ts,jsx,tsx}",
     "./node_modules/flowbite-react/**/*.js",
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
-    "./component/**/*.{js,ts,jsx,tsx}",
     "./Layouts/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
@@ -16,7 +17,7 @@ module.exports = {
     extend: {
       colors: {
         'blue': '#1fb6ff',
-        'purple': '#7e5bef',
+        'purple': '#76fbef',
         'pink': '#ff49db',
         'orange': '#ff7849',
         'green': '#13ce66',

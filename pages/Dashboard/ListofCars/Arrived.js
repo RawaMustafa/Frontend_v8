@@ -1,229 +1,4 @@
 
-// import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-// import { faSearch, } from '@fortawesome/free-solid-svg-icons';
-// import useLanguage from '../../../Component/language';
-// import { useEffect, useCallback, useMemo, useState } from 'react';
-// import Head from 'next/head'
-// import Link from 'next/link';
-// import Image from 'next/image';
-
-// import AdminLayout from '../../../Layouts/AdminLayout';
-
-// // import { ContactSupportOutlined } from '@mui/icons-material';
-// // import JsonFind from "json-find";
-
-// import axios from 'axios';
-
-
-// import ImageGallery from 'react-image-gallery';
-
-
-
-
-
-// export const getServerSideProps = async () => {
-
-//     const res = await axios.get('http://localhost:4000/cars');
-
-//     const data = await res.data;
-
-
-//     return {
-//         props: {
-//             data: data
-//         }
-//     }
-// }
-
-
-// const n = 0
-
-// const Arrived = ({ data }) => {
-
-//     // 
-
-//     const l = useLanguage();
-
-//     // const [cars, setCars] = useState([]);
-//     const [carsss, setCarsss] = useState();
-//     const [Search, setSearch] = useState("");
-
-
-
-//     const pageSize = 200;
-//     const page = 1;
-//     const pages = Math.ceil(data.carDetail.length / pageSize);
-
-//     const pageData = data.carDetail?.slice((page * pageSize) - pageSize, page * pageSize);
-
-
-
-
-
-
-
-
-
-//     return (
-//         <>
-//             <Head>
-//                 <title >{l.Arrived}</title>
-//                 <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-//             </Head>
-
-//             <div className="pt-5  mb-32">
-
-
-//                 <div className="   z-30  mx-5   ">
-
-//                     <label className="relative block max-w-[150px] lg:max-w-[300px] ">
-//                         <span className="sr-only">Search</span>
-//                         <span className="absolute inset-y-0 left-0 flex items-center pl-2">
-//                             <FontAwesomeIcon icon={faSearch} />
-//                         </span>
-//                         <input onChange={(s) => { setSearch(s.target.value) }} className="placeholder:italic placeholder:text-slate-400 block  bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder={l.search} type="text" name="search" />
-//                     </label>
-
-
-
-//                 </div>
-//             </div>
-
-
-//             <>
-
-//                 {/* <button className="btn btn-primary" onClick={getUsers}>Get Users</button> */}
-
-//                 <div className=" grid grid-cols-1 sm:grid-cols-2   xl:grid-cols-3 2xl:grid-cols-4  gap-8  gap-y-20  ">
-
-//                     {
-
-//                         pageData
-
-//                         &&
-//                         pageData.filter((doc) => {
-//                             // 
-//                             if (Search == "") {
-//                                 return (
-//                                     <>
-//                                         {doc}
-
-//                                     </>)
-//                             }
-
-//                             else if (doc.modeName?.toLowerCase().includes(Search.toLowerCase())) {
-//                                 return doc
-//                             }
-
-//                         }
-//                         )
-//                             ?.map((e, idx) => {
-
-//                                 const dataa = []
-
-//                                 e.pictureandvideorepair?.map((img, index) => {
-//                                     dataa.push({ "original": `http://localhost:4000/uploads/${img.filename}`, "thumbnail": `http://localhost:4000/uploads/${img.filename}` })
-//                                 })
-//                                 e.pictureandvideodamage?.map((img, index) => {
-//                                     dataa.push({ "original": `http://localhost:4000/uploads/${img.filename}`, "thumbnail": `http://localhost:4000/uploads/${img.filename}` })
-//                                 })
-
-
-
-//                                 return (
-
-
-//                                     e.Arrived === "true" &&
-//                                     <div div key={idx} >
-
-//                                         <div className="card  max-w-[550px] min-w-[300px]    bg-base-300 shadow-xl  ">
-
-
-
-//                                             <figure className="  flex h-72  overflow-hidden scrollbar-hide  ">
-
-
-//                                                 < ImageGallery
-//                                                     width={10}
-//                                                     onErrorImageURL="https://picsum.photos/id/1018/1000/600/"
-//                                                     slideInterval={100}
-//                                                     slideDuration={50}
-//                                                     flickThreshold={0.6}
-//                                                     swipeThreshold={40}
-//                                                     slideOnThumbnailOver={true}
-//                                                     showThumbnails={false}
-//                                                     showBullets="true"
-//                                                     autoPlayers="true"
-//                                                     lazyLoad={true}
-
-//                                                     showFullscreenButton={false}
-//                                                     showPlayButton={false}
-//                                                     items={dataa}
-//                                                     // additionalClassName="xdrr "
-//                                                     className="bg-base-content "
-//                                                 />
-
-//                                             </figure>
-//                                             <div>
-//                                                 <Link href={`/Dashboard/ListofCars/Arrived/${e._id}`} key={e._id}>
-
-
-//                                                     <div className="card-body z-50">
-//                                                         {e.id}
-//                                                         <div className="flex justify-between ">
-//                                                             <h1 >{e.modeName}</h1>
-
-//                                                             <div id="new_car" className="badge badge-accent badge-outline text-xl p-3">{`${l.price}   ` + ":"}<label className="dark:text-white text-black"> {e.carCost.price}$</label> </div>
-
-//                                                         </div>
-
-//                                                         <div className="text-sm">
-//                                                             {e.name}
-//                                                         </div>
-
-//                                                         <div id="new_car" className="badge badge-secondary">{l.new}</div>
-
-//                                                         <p>{ }</p>
-//                                                         <div className="card-actions justify-end">
-//                                                             {/* {e.Arrived.toString() == "true" ? <div id="arived_car" className="badge badge-outline bg-green-500 text-black p-3">{l.arive} </div> : <div id="arived_car" className="badge badge-outline bg-red-500 text-black p-3">{l.notarive} </div>} */}
-//                                                             {e.carCost.tobalance == "Loan" ? <div id="loan_car" className="badge badge-outline bg-red-300 text-black p-3">{l.loan}</div> : <div id="loan_car" className="badge badge-outline bg-green-200 text-black p-3">{l.cash}</div>}
-//                                                         </div>
-//                                                     </div></Link>
-//                                             </div>
-//                                         </div>
-//                                     </div>
-
-
-
-
-//                                 )
-
-//                             })
-//                     }
-
-
-
-
-
-
-
-//                 </div >
-
-//             </ >
-
-//         </>
-//     );
-
-
-
-// }
-
-// Arrived.Layout = AdminLayout;
-// export default Arrived;
-
-
-
-
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
 import { faSearch, } from '@fortawesome/free-solid-svg-icons';
 import useLanguage from '../../../Component/language';
@@ -234,7 +9,7 @@ import Image from 'next/image';
 
 import AdminLayout from '../../../Layouts/AdminLayout';
 import axios from 'axios';
-import Axios from '../../api/Axios';
+import Axios, { baseURL } from '../../api/Axios';
 
 
 import ImageGallery from 'react-image-gallery';
@@ -249,7 +24,7 @@ export const getServerSideProps = async ({ req }) => {
 
 
 
-    if (!session || !session?.userRole == "Admin") {
+    if (!session || session?.userRole !== "Admin") {
         return {
             redirect: {
                 destination: '/',
@@ -367,7 +142,7 @@ const Arrived = () => {
 
                                     e.pictureandvideorepair?.map((img, index) => {
                                         img.mimetype != "video/mp4" && dataa.push({
-                                            "original": `http://localhost:4000/uploads/${img.filename}`,
+                                            "original": `${baseURL}/${img.filename}`,
                                             "thumbnail": `/uploads/${img.filename}`,
                                             "renderItem": renderVideo
 
@@ -376,13 +151,13 @@ const Arrived = () => {
                                     })
                                     e.pictureandvideodamage?.map((img, index) => {
                                         img.mimetype != "video/mp4" && dataa.push({
-                                            "original": `http://localhost:4000/uploads/${img.filename}`, "thumbnail": `/uploads/${img.filename}`,
+                                            "original": `${baseURL}/${img.filename}`, "thumbnail": `/uploads/${img.filename}`,
                                             "renderItem": renderVideo,
                                         })
                                     })
                                     e.carDamage?.map((img, index) => {
                                         img.mimetype != "video/mp4" && dataa.push({
-                                            "original": `http://localhost:4000/uploads/${img.filename}`, "thumbnail": `/uploads/${img.filename}`,
+                                            "original": `${baseURL}/${img.filename}`, "thumbnail": `/uploads/${img.filename}`,
                                             "renderItem": renderVideo,
                                         })
                                     })

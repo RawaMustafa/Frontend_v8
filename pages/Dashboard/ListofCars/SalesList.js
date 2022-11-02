@@ -11,7 +11,7 @@ import Image from 'next/image';
 
 import AdminLayout from '../../../Layouts/AdminLayout';
 import axios from 'axios';
-import Axios from '../../api/Axios';
+import Axios, { baseURL } from '../../api/Axios';
 
 
 import ImageGallery from 'react-image-gallery';
@@ -26,7 +26,7 @@ export const getServerSideProps = async ({ req }) => {
 
 
 
-    if (!session || !session?.userRole == "Admin") {
+    if (!session || session?.userRole !== "Admin") {
         return {
             redirect: {
                 destination: '/',
@@ -144,7 +144,7 @@ const Sales = () => {
 
                                     e.pictureandvideorepair?.map((img, index) => {
                                         img.mimetype != "video/mp4" && dataa.push({
-                                            "original": `http://localhost:4000/uploads/${img.filename}`,
+                                            "original": `${baseURL}/${img.filename}`,
                                             "thumbnail": `/uploads/${img.filename}`,
                                             "renderItem": renderVideo
 
@@ -153,13 +153,13 @@ const Sales = () => {
                                     })
                                     e.pictureandvideodamage?.map((img, index) => {
                                         img.mimetype != "video/mp4" && dataa.push({
-                                            "original": `http://localhost:4000/uploads/${img.filename}`, "thumbnail": `/uploads/${img.filename}`,
+                                            "original": `${baseURL}/${img.filename}`, "thumbnail": `/uploads/${img.filename}`,
                                             "renderItem": renderVideo,
                                         })
                                     })
                                     e.carDamage?.map((img, index) => {
                                         img.mimetype != "video/mp4" && dataa.push({
-                                            "original": `http://localhost:4000/uploads/${img.filename}`, "thumbnail": `/uploads/${img.filename}`,
+                                            "original": `${baseURL}/${img.filename}`, "thumbnail": `/uploads/${img.filename}`,
                                             "renderItem": renderVideo,
                                         })
                                     })

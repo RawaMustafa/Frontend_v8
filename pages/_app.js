@@ -6,7 +6,7 @@ import { SessionProvider } from 'next-auth/react';
 import { useState } from 'react';
 import RefreshTokenHandler from './refreshTokenHandler';
 import Head from 'next/head';
-
+import { getSession } from 'next-auth/react';
 
 if (typeof window !== 'undefined') {
 
@@ -16,7 +16,7 @@ if (typeof window !== 'undefined') {
   //   ?.split('=')[1]
   // axios.defaults.headers.common['Content-Type'] = 'application/json'
 
-  //   // console.log(document.cookie.split('; ')
+
   //   //   .find((row) => row.startsWith('Token='))
   //   //   ?.split('=')[1])
 
