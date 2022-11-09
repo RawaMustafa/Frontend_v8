@@ -11,7 +11,7 @@ import AdminLayout from '../../Layouts/AdminLayout';
 
 
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faCar, faMoneyCheckDollar, faSackDollar, faHandHoldingDollar } from '@fortawesome/free-solid-svg-icons';
+import { faCar, faMoneyCheckDollar, faSackDollar, faHandHoldingDollar, faDollar } from '@fortawesome/free-solid-svg-icons';
 
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
@@ -27,6 +27,7 @@ export const getServerSideProps = async ({ req }) => {
 
     const session = await getSession({ req })
 
+    Axios.defaults.headers.common.Authorization = `Bearer ${session?.Token}`;
 
 
     if (!session || session?.userRole !== "Admin") {
@@ -56,6 +57,7 @@ const Dashboard = (props) => {
     const [Data, setData] = useState()
     const [DataQarz, setDataQarz] = useState()
     const [DataownCost, setDataownCost] = useState()
+    const [UserInfo, setUserInfo] = useState()
 
     const { status } = useSession()
 
@@ -69,11 +71,11 @@ const Dashboard = (props) => {
             const one = "/cost"
             const two = "/cost/qarz"
             const three = "/cost/ownCost"
+            const Forth = "users/detail/Admin@gmail.com"
 
             const requestTwo = await Axios.get(two).then((res) => {
                 return res
             }).catch((err) => {
-                // err.response.status == 404 || err.response.status == 500 || err.response.status == 400 || err.response.status == 401 || err.response.status == 403 && null
 
 
             });
@@ -81,18 +83,22 @@ const Dashboard = (props) => {
             const requestOne = await Axios.get(one).then((res) => {
                 return res
             }).catch((err) => {
-                // err.response.status == 404 || err.response.status == 500 || err.response.status == 400 || err.response.status == 401 || err.response.status == 403 && null
 
             });
             const requestThree = await Axios.get(three).then((res) => {
                 return res
             }).catch((err) => {
-                // err.response.status == 404 || err.response.status == 500 || err.response.status == 400 || err.response.status == 401 || err.response.status == 403 && null
+
+            })
+            const requestForth = await Axios.get(Forth).then((res) => {
+                return res
+            }).catch((err) => {
 
             })
 
 
-            await axios.all([requestOne, requestThree, requestTwo]).
+
+            await axios.all([requestOne, requestThree, requestTwo, requestForth]).
 
                 then(
                     await axios.spread((...responses) => {
@@ -100,14 +106,16 @@ const Dashboard = (props) => {
                         const dataFertch = responses?.[0]?.data?.TotalList[0];
                         const dataFertchqarz = responses?.[2]?.data?.QarzTotal[0];
                         const dataFertchownCost = responses?.[1]?.data?.QarzTotal[0];
+                        const UserBalance = responses?.[3]?.data.userDetail
 
+
+                        setUserInfo(UserBalance)
                         setData(dataFertch)
                         setDataQarz(dataFertchqarz)
                         setDataownCost(dataFertchownCost)
 
 
                     })).catch(errors => {
-                        // errors.response.status == 404 || errors.response.status == 500 || errors.response.status == 400 || errors.response.status == 401 || errors.response.status == 403 && null
 
                     })
 
@@ -116,7 +124,6 @@ const Dashboard = (props) => {
         ddashboard()
 
     }, [props]);
-
 
 
     const dataChart = {
@@ -190,7 +197,7 @@ const Dashboard = (props) => {
             </Head>
 
 
-            <div className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-4  gap-5 lg:gap-5 mx-4      ">
+            <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4   gap-5 lg:gap-5 mx-4       ">
 
 
                 <Link href="/Dashboard/ListofCars/AllCars"><a><div className="p-5  border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
@@ -198,12 +205,29 @@ const Dashboard = (props) => {
 
                         <div>
                             <div className="">{l.allcars}</div>
-                            <div className="text-2xl font-bold  first-letter:">{Data?.carNumber}</div>
+                            <div className="text-2xl font-bold  first-letter:">{Data?.carNumber || " 0"}</div>
                         </div>
                         <div>
                             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500">
 
                                 <FontAwesomeIcon icon={faCar} className="text-2xl " />
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div></a></Link>
+                <Link href="/Dashboard/ListofCars/AllCars"><a><div className="p-5  border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
+                    <div className="flex items-center  justify-around  ">
+
+                        <div>
+                            <div className="">{l.balance}</div>
+                            <div className="text-2xl font-bold  first-letter:">{UserInfo?.TotalBals || " 0"}</div>
+                        </div>
+                        <div>
+                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500">
+
+                                <FontAwesomeIcon icon={faDollar} className="text-2xl " />
 
                             </div>
                         </div>
@@ -216,7 +240,7 @@ const Dashboard = (props) => {
 
                         <div>
                             <div className="">{l.sold}</div>
-                            <div className="text-2xl font-bold ">${Data?.totalpriceSold}</div>
+                            <div className="text-2xl font-bold ">${Data?.totalpriceSold || " 0"}</div>
                         </div>
                         <div>
                             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500 ">
@@ -229,12 +253,12 @@ const Dashboard = (props) => {
                     </div>
                 </div></a></Link>
 
-                <Link href="/Dashboard/"><a><div className="p-5 border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
+                {/* <Link href="/Dashboard/"><a><div className="p-5 border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
                     <div className="flex items-center  justify-around  ">
 
                         <div>
                             <div className=""> {l.totalpricePaidbid}</div>
-                            <div className="text-2xl font-bold ">${Data?.totalpricePaidbid}</div>
+                            <div className="text-2xl font-bold ">${Data?.totalpricePaidbid || " 0"}</div>
                         </div>
                         <div>
                             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500 ">
@@ -245,14 +269,14 @@ const Dashboard = (props) => {
                         </div>
 
                     </div>
-                </div></a></Link>
+                </div></a></Link> */}
 
                 <Link href="/Dashboard/"><a><div className="p-5 border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl  drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
                     <div className="flex items-center  justify-around  ">
 
                         <div>
                             <div className="">{l.profit} </div>
-                            <div className="text-2xl font-bold ">${Data?.totalbenefit}</div>
+                            <div className="text-2xl font-bold ">${Data?.totalbenefit || " 0"}</div>
                         </div>
                         <div>
                             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500">
@@ -291,21 +315,26 @@ const Dashboard = (props) => {
 
                             <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
                                 <div className="text-sm font-medium ">{l.expense}</div>
-                                <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataownCost?.owenCost}</div>
+                                <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataownCost?.owenCost || " 0"}</div>
+                            </div>
+
+                            <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
+                                <div className="text-sm font-medium ">{l.totalpricePaidbid}</div>
+                                <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalpricePaidbid || " 0"}</div>
                             </div>
 
 
 
                             <div className="collapse collapse-arrow ">
 
-                                <label htmlFor="totalloan" >totalloan :</label>
+
                                 <input id="totalloan" type="checkbox" className=" w-full  " />
 
                                 <div className="collapse-title text-xl font-medium">
 
                                     <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
                                         <div className="text-sm font-medium ">{l.totalloan}</div>
-                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzTotal}</div>
+                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzTotal || " 0"}</div>
                                     </div>
 
                                 </div>
@@ -315,11 +344,11 @@ const Dashboard = (props) => {
 
                                     <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
                                         <div className="text-sm font-medium ">{l.qarzAmountTotal}</div>
-                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzAmountTotal}</div>
+                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzAmountTotal || " 0"}</div>
                                     </div>
                                     <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
                                         <div className="text-sm font-medium ">{l.qarzCarTotalByAmount}</div>
-                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzCarTotalByAmount}</div>
+                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzCarTotalByAmount || " 0"}</div>
                                     </div>
 
 
@@ -347,26 +376,26 @@ const Dashboard = (props) => {
 
                                     <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
                                         <div className="text-sm font-medium ">{l.totalCoCCost}</div>
-                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalCoCCost}</div>
+                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalCoCCost|| " 0"}</div>
                                     </div>
                                     <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
                                         <div className="text-sm font-medium ">{l.totalFeesAndRepaidCostDubai}</div>
-                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalFeesAndRepaidCostDubai}</div>
+                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalFeesAndRepaidCostDubai|| " 0"}</div>
                                     </div>
 
                                     <div className=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
                                         <div className="text-sm font-medium ">{l.totalFeesRaqamAndRepairCostinKurdistan}</div>
-                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalFeesRaqamAndRepairCostinKurdistan}</div>
+                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalFeesRaqamAndRepairCostinKurdistan|| " 0"}</div>
                                     </div>
 
                                     <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
                                         <div className="text-sm font-medium ">{l.totalFeesinAmerica}</div>
-                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalFeesinAmerica}</div>
+                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalFeesinAmerica|| " 0"}</div>
                                     </div>
 
                                     <div className=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[1E2021]">
                                         <div className="text-sm font-medium ">{l.totalTransportationCost}</div>
-                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalTransportationCost}</div>
+                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalTransportationCost|| " 0"}</div>
                                     </div>
 
 

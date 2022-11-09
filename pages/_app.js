@@ -1,17 +1,18 @@
 import '../styles/globals.css'
 import { ThemeProvider } from 'next-themes'
-import axios from 'axios'
 
 import { SessionProvider } from 'next-auth/react';
 import { useState } from 'react';
 import RefreshTokenHandler from './refreshTokenHandler';
-import Head from 'next/head';
-import { getSession } from 'next-auth/react';
+
 
 if (typeof window !== 'undefined') {
-
+  // const session = getSession()
   // axios.defaults.baseURL = "http://localhost:4000"
-  // axios.defaults.headers.common['Authorization'] = 'Bearer ' + document.cookie.split('; ')
+  // axios.defaults.headers.common['Authorization'] = + document.cookie.split('; ')
+
+  // Axios.defaults.headers.common['Authorization'] = `Bearer ${session?.Token}`;
+
   //   .find((row) => row.startsWith('Token='))
   //   ?.split('=')[1]
   // axios.defaults.headers.common['Content-Type'] = 'application/json'
@@ -21,6 +22,8 @@ if (typeof window !== 'undefined') {
   //   //   ?.split('=')[1])
 
 }
+
+
 
 
 if (typeof document !== "undefined") {
@@ -73,10 +76,6 @@ if (typeof document !== "undefined") {
     localStorage.setItem("language", "en")
   }
 
-
-
-
-
 }
 
 
@@ -87,12 +86,13 @@ if (typeof document !== "undefined") {
 function MyApp({ Component, pageProps }) {
 
   const [interval, setInterval] = useState(0);
-
   const Layout = Component.Layout || EmptyLayout
+
+
 
   return (
     <SessionProvider session={pageProps.session} refetchInterval={interval}>
-      <ThemeProvider enableSystem={true}  >
+      <ThemeProvider   >
         <Layout  >
           <Component   {...pageProps} />
           <RefreshTokenHandler setInterval={setInterval} />

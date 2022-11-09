@@ -30,15 +30,18 @@ import { faCalendarPlus, faTrash, faEdit, faSave, faBan, faFileDownload, faCalen
 
 
 
-const cost_regex = /^[0-9]{0,8}$/;
+const Amount_regex = /^[0-9-]{0,8}$/;
 const date_regex = /^\d{4}-\d{2}-\d{2}$/;
-const DESC_regex = /^[0-9a-zA-Z]{0,50}$/;
+const action_regex = /^[0-9a-zA-Z=> ]{0,50}$/;
 
 
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 
 export const getServerSideProps = async ({ req }) => {
+
     const session = await getSession({ req })
+
+
 
     if (!session || session?.userRole !== "Admin") {
         return {
@@ -49,16 +52,29 @@ export const getServerSideProps = async ({ req }) => {
 
         }
     }
+
+    let data
+
+    try {
+        const res = await Axios.get(`/users/?search=&page=1&limit=10`)
+        data = await res.data.total
+    } catch {
+        data = ""
+    }
+
+
+
     return {
         props: {
 
-
+            AllUsers: data,
+            SessionID: session.id
         }
     }
 }
 
-const Table = ({ COLUMNS }) => {
-
+const Table = ({ COLUMNS, AllUsers, SessionID }) => {
+    const UsersSesstion = useSession()
     const [ReNewData, setReNewData] = useState(false);
 
     const [Search, setSearch] = useState("");
@@ -68,22 +84,27 @@ const Table = ({ COLUMNS }) => {
     const [StartDate, setStartDate] = useState("2000-1-1");
     const [EndDate, setEndDate] = useState("2100-1-1");
 
+    const [PageS, setPageS] = useState(Math.ceil(AllUsers / Limit));
+    const [TotalUsers, setTotalUsers] = useState(AllUsers);
 
 
     const [DataTable, setDataTable] = useState([]);
 
     const [Idofrow, setIdofrow] = useState(null);
     const [Deletestate, setDeletestate] = useState(null);
+    const [UsersBalance, setUsersBalance] = useState()
     const [Data, setData] = useState({
-        date: "",
-        DESC: "",
-        cost: 0,
+
+        Amount: 0,
+        action: "",
+
     });
 
     const [DataUpdate, setDataUpdate] = useState({
-        date: "",
-        DESC: "",
-        cost: 0,
+
+        amount: 0,
+        action: "",
+
     });
 
 
@@ -102,7 +123,7 @@ const Table = ({ COLUMNS }) => {
 
     const CRef = useRef();
     const DRef = useRef();
-    const DERef = useRef();
+    const ACRef = useRef();
     const inputRef = useRef();
 
 
@@ -114,23 +135,23 @@ const Table = ({ COLUMNS }) => {
 
 
 
-        if (savename == "DESC") {
+        if (savename == "action") {
 
-            savevalue = event.target.value.match(DESC_regex)?.[0];
-            savevalue?.match(DESC_regex) == null || savevalue.match(DESC_regex)[0] != savevalue ? setDEValid(false) : setDEValid(true);
+            savevalue = event.target.value.match(action_regex)?.[0];
+            savevalue?.match(action_regex) == null || savevalue.match(action_regex)[0] != savevalue ? setDEValid(false) : setDEValid(true);
 
         }
 
         if (type == "number") {
-            savevalue?.match(cost_regex) == null || savevalue.match(cost_regex)[0] != savevalue ? setCValid(false) : setCValid(true);
-            savevalue = event.target.value.match(cost_regex)?.map(Number)[0];
+            savevalue?.match(Amount_regex) == null || savevalue.match(Amount_regex)[0] != savevalue ? setCValid(false) : setCValid(true);
+            savevalue = event.target.value.match(Amount_regex)?.map(Number)[0];
 
         }
 
-        if (savename == "date") {
-            savevalue?.match(date_regex) == null || savevalue.match(date_regex)[0] != savevalue ? setDValid(false) : setDValid(true);
-            savevalue = event.target.value.match(date_regex)?.map(String)[0];
-        }
+        // if (savename == "date") {
+        //     savevalue?.match(date_regex) == null || savevalue.match(date_regex)[0] != savevalue ? setDValid(false) : setDValid(true);
+        //     savevalue = event.target.value.match(date_regex)?.map(String)[0];
+        // }
 
 
 
@@ -142,18 +163,18 @@ const Table = ({ COLUMNS }) => {
     }
 
 
-
+    //NOTE - validation for updating taible for my Balance
 
     let count = 0
 
     useEffect(() => {
 
 
-        CRef.current?.value?.match(cost_regex) == null || CRef.current.value?.match(cost_regex)[0] != CRef.current.value ? setCValid(false) : setCValid(true);
+        CRef.current?.value?.match(Amount_regex) == null || CRef.current.value?.match(Amount_regex)[0] != CRef.current.value ? setCValid(false) : setCValid(true);
 
-        DERef.current?.value?.match(DESC_regex) == null || DERef.current.value?.match(DESC_regex)[0] != DERef.current.value ? setDEValid(false) : setDEValid(true);
+        ACRef.current?.value?.match(action_regex) == null || ACRef.current.value?.match(action_regex)[0] != ACRef.current.value ? setDEValid(false) : setDEValid(true);
 
-        DRef.current?.value?.match(date_regex) == null || DRef.current.value?.match(date_regex)[0] != DRef.current.value ? setDValid(false) : setDValid(true);
+        // DRef.current?.value?.match(date_regex) == null || DRef.current.value?.match(date_regex)[0] != DRef.current.value ? setDValid(false) : setDValid(true);
 
 
 
@@ -161,12 +182,12 @@ const Table = ({ COLUMNS }) => {
         const newdataUpdate = { ...DataUpdate }
 
 
-        newdataUpdate.cost = CRef.current?.value.match(cost_regex)?.map(String)[0];
+        newdataUpdate.amount = CRef.current?.value.match(Amount_regex)?.map(String)[0];
 
 
-        newdataUpdate.date = DRef.current?.value.match(date_regex)?.map(String)[0];
+        // newdataUpdate.date = DRef.current?.value.match(date_regex)?.map(String)[0];
 
-        newdataUpdate.DESC = DERef.current?.value.match(DESC_regex)?.map(String)[0];
+        newdataUpdate.action = ACRef.current?.value.match(action_regex)?.map(String)[0];
 
 
 
@@ -177,36 +198,68 @@ const Table = ({ COLUMNS }) => {
 
 
 
-    }, [CRef?.current?.value, DRef?.current?.value, DERef?.current?.value, count])
+    }, [CRef?.current?.value, DRef?.current?.value, ACRef?.current?.value, count])
 
-    // inputRef?.current
+    //REVIEW -           - 
 
 
+    useEffect(() => {
+        const getExpenseData = async () => {
+            // /${StartDate}/${EndDate}?search=${Search}&page=${Page}&limit=${Limit}
+            const res = await Axios.get(`/bal`)
+            const users = await Axios.get(`/users/detail/Admin@gmail.com`)
+            setUsersBalance(users.data.userDetail.TotalBals)
+            setDataTable(res.data.History.reverse())
+            setTotalUsers(res.data.total)
+
+        }
+        getExpenseData()
+        setReNewData(false)
+    }, [Search, Page, Limit, StartDate, EndDate, ReNewData])
+
+
+
+
+
+    //REVIEW - 
 
 
     const handleUpdatExpense = async () => {
 
-
         try {
 
+            const UDetails = await Axios.get('/users/detail/Admin@gmail.com')
 
-            await Axios.patch(`/ownCost/${Idofrow}`, DataUpdate)
-            toast.success("Data Updated Successfully")
+            const DataBalance = UDetails.data.userDetail.TotalBals
+
+            let donebalance = Math.floor(DataUpdate.amount) - Math.floor(Idofrow?.[1])
+
+
+            if (-donebalance <= DataBalance) {
+
+
+                await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance + donebalance })
+
+                toast.success("Your Balance Now= " + (DataBalance + donebalance) + " $");
+
+                await Axios.patch(`/bal/${Idofrow?.[0]}`, DataUpdate)
+
+
+                toast.success("Data Updated Successfully")
+            }
+
         } catch (error) {
 
-            error.response.status == 403 || error.response.status == 409 || error.response.status == 404 || error.response.status == 401 &&
 
-                toast.error("Something Went Wrong")
+            toast.error("Something Went Wrong *")
         } finally {
 
             setIdofrow(null);
             setDeletestate(null);
             setData({
-                date: "",
-                DESC: "",
-                cost: 0,
+                amount: 0,
+                action: "",
             });
-            // getExpenseData()
             setReNewData(true)
 
         }
@@ -217,26 +270,31 @@ const Table = ({ COLUMNS }) => {
 
     const handledeleteExpenseData = async () => {
 
+
+        const UDetails = await Axios.get('/users/detail/Admin@gmail.com')
+
+        const DataBalance = UDetails.data.userDetail.TotalBals
+
         try {
-            await Axios.delete(`/ownCost/${Deletestate}`)
+            await Axios.delete(`/bal/${Deletestate?.[0]}`)
+
+            await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - Deletestate?.[1] })
+
+            toast.success("Your Balance Now = " + (DataBalance - Deletestate?.[1]) + " $");
 
             toast.warn("Data Deleted Successfully")
 
         } catch (error) {
 
-
-            error.response.status == 403 || error.response.status == 409 || error.response.status == 404 || error.response.status == 401 &&
-
-                toast.error("Something Went Wrong")
+            toast.error("Something Went Wrong *")
 
         } finally {
 
             setIdofrow(null);
             setDeletestate(null);
             setData({
-                date: "",
-                DESC: "",
-                cost: 0,
+                amount: 0,
+                action: "",
             });
             // getExpenseData()
             setReNewData(true)
@@ -251,47 +309,44 @@ const Table = ({ COLUMNS }) => {
 
 
 
-    const addExpense = async () => {
+
+
+
+
+
+    const addBalance = async () => {
 
         try {
 
-            await Axios.post("/ownCost/", Data)
+            await Axios.patch("/users/" + UsersSesstion.data.id, {
+                TotalBals: UsersBalance + Data.Amount
+            },)
 
-            toast.success("Data Adeed Successfully");
+            await Axios.post("/bal/", {
+                amount: Data.Amount,
+                action: "Add"
+
+            },)
+            setReNewData(true)
+
+            toast.success("Balance Adeed Successfully");
 
         } catch (error) {
-            error.request.status === 409 || error.request.status === 403 || error.request.status === 404 || error.request.status === 401 &&
-                toast.error("Data Not Added");
+            // error.request.status === 409 || error.request.status === 403 || error.request.status === 404 || error.request.status === 401 &&
+            toast.error("Balance Not Added *");
             // 
         } finally {
 
-            setData({
-                date: "",
-                DESC: "",
-                cost: 0,
-            });
+            // setData({
+            //     date: "",
+            //     DESC: "",
+            //     Amount: 0,
+            // });
             // getExpenseData()
             setReNewData(true)
         }
 
     }
-
-
-
-    useEffect(() => {
-        const getExpenseData = async () => {
-
-            const res = await Axios.get(`/ownCost/${StartDate}/${EndDate}?search=${Search}&page=${Page}&limit=${Limit}`)
-
-            setDataTable(res.data.costDetail)
-        }
-        getExpenseData()
-        setReNewData(false)
-    }, [Search, Page, Limit, StartDate, EndDate, ReNewData])
-
-
-
-
 
 
 
@@ -310,7 +365,7 @@ const Table = ({ COLUMNS }) => {
         doc.autoTable({
 
 
-            head: [[`Amount`, " pay for", "Date"]],
+            head: [[`Amount`, " User Id", "Action", "Date"]],
             body: table_td
         });
 
@@ -333,8 +388,8 @@ const Table = ({ COLUMNS }) => {
         doc.text(`Data{ Hawbir }`, 95, 10);
 
         doc.autoTable({
-            head: [[`Amount`, " pay for", "Date"]],
-            body: res.map((d) => [d.OtherCost, d.DescCost, d.actionDate])
+            head: [[`Amount`, " User Id", "Action", "Date"]],
+            body: res.map((d) => [d.amount, d.userId, d.action, d.actionDate])
         });
         doc.save("ALL(Data).pdf");
 
@@ -382,11 +437,11 @@ const Table = ({ COLUMNS }) => {
 
 
     return (
-        <div className="  ml-1 ">
+        <div className=" container mx-auto  overflow-auto ">
 
 
 
-            <div className=" flex justify-between border rounded-lg container mx-auto items-center p-2  ">
+            <div className=" flex justify-between   container mx-auto items-center p-2 min-w-[700px] ">
 
                 <div>
 
@@ -398,10 +453,12 @@ const Table = ({ COLUMNS }) => {
                     <div className="modal">
                         <div className="modal-box space-y-12">
 
-                            <div>{l.expense}</div>
+                            <div>{l.add} {l.balance}</div>
                             <div>
+
+
                                 <input
-                                    required name='cost' type="number" placeholder={l.amount}
+                                    required name='Amount' type="number" placeholder={l.amount}
                                     onClick={(event) => { handleSaveExpenseData(event) }}
                                     onChange={(event) => { handleSaveExpenseData(event) }}
                                     onFocus={() => { setCFocus(true) }}
@@ -409,7 +466,7 @@ const Table = ({ COLUMNS }) => {
 
                                     className=" input input-bordered input-info w-full max-w-xl mt-5 dark:placeholder:text-white dark:color-white"
                                 />
-                                <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!CValid && !CFocus && Data.cost != "" ? "block" : "hidden"}`}>
+                                <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!CValid && !CFocus && Data.Amount != "" ? "block" : "hidden"}`}>
                                     {l.incorrect}
                                     <br />
                                     {l.number7}
@@ -418,7 +475,7 @@ const Table = ({ COLUMNS }) => {
                                 </p>
 
                             </div>
-                            <div>
+                            {/* <div>
                                 <textarea name='DESC'
                                     onChange={(event) => { handleSaveExpenseData(event) }}
                                     onClick={(event) => { handleSaveExpenseData(event) }}
@@ -450,14 +507,14 @@ const Table = ({ COLUMNS }) => {
 
                                 </p>
 
-                            </div>
+                            </div> */}
 
 
                             <div className="modal-action">
                                 <div></div>
                                 <label htmlFor="my-modal" className="btn btn-error"  >{l.cancel}</label>
                                 <label htmlFor="my-modal" onSubmit={(e) => { e.click() }}   >
-                                    <input type="submit" className="btn btn-success" disabled={DValid && CValid ? false : true} onClick={addExpense} value={l.add} />
+                                    <input type="submit" className="btn btn-success" disabled={CValid ? false : true} onClick={addBalance} value={l.add} />
                                 </label>
 
                             </div>
@@ -467,14 +524,15 @@ const Table = ({ COLUMNS }) => {
                 </div>
 
 
-                <div className="flex justify-center items-center lg:space-x-4">
-                    <input type="search" placeholder="Search ..." className="input   input-primary  w-full max-w-xs"
+                <div className="flex justify-center items-center lg:space-x-4 ">
+                    <input type="search" placeholder={`${l.search} ...`} className="input   input-info  w-full max-w-xs mx-5 focus:outline-0"
                         onChange={e =>
                             setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
                         }
                     />
 
-                    <div className="dropdown dropdown-end ">
+                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left ">
+
                         <label tabIndex="0" className=" m-1 active:scale-95 ">
                             <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 active:scale-95 " />
                         </label>
@@ -503,14 +561,9 @@ const Table = ({ COLUMNS }) => {
 
 
 
-
-
-
-
-
                     <div className="dropdown rtl:dropdown-right ltr:dropdown-left ">
                         <label tabIndex="0" className=" m-1  " >
-                            <FontAwesomeIcon icon={faFileDownload} className="text-3xl m-auto md:mx-5 mx-1 active:scale-90 active:rotate-180 ease-in-out  transition" />
+                            <FontAwesomeIcon icon={faFileDownload} className="text-3xl m-auto md:mx-5 mx-1 active:scale-90   ease-in-out  transition" />
                         </label>
 
                         <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 flex justify-center space-y-2 ">
@@ -523,7 +576,7 @@ const Table = ({ COLUMNS }) => {
                                 buttonText="XLSX" />  </li>
 
                             <li><button className='btn btn-outline ' onClick={table_2_pdf}>PDF</button> </li>
-                            <li><button className='btn btn-outline' onClick={table_All_pdff}>ALL_PDF</button> </li>
+                            {/* <li><button className='btn btn-outline' onClick={table_All_pdff}>ALL_PDF</button> </li> */}
                         </ul>
                     </div>
 
@@ -535,144 +588,143 @@ const Table = ({ COLUMNS }) => {
 
 
 
-            <div className="flex justify-center  py-2    ">
+            {/* <div className=" xl:flex justify-center  py-3  overflow-x-auto      "> */}
 
 
 
 
-                <table id="table-to-xls" className=" ml-1  overflow-auto inline-block   " {...getTableProps()}>
+            <table id="table-to-xls" className="my-10  inline-block   min-w-[1000px] " {...getTableProps()}>
 
 
-                    <thead className="  ">
+                <thead className="  ">
 
-                        {headerGroups.map((headerGroups, idx) => (
+                    {headerGroups.map((headerGroups, idx) => (
 
-                            <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
+                        <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
 
-                                {headerGroups.headers.map((column, idx) => (
+                            {headerGroups.headers.map((column, idx) => (
 
-                                    <th key={idx} className="p-4 m-44      w-80   " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
+                                <th key={idx} className="p-4 m-44 w-[400px]   " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
 
-                                        <span>
-                                            {column.isSorted ? (column.isSortedDesc ? "<" : ">") : ""}
-                                        </span>
+                                    <span>
+                                        {column.isSorted ? (column.isSortedDesc ? " ↑ " : " 🡓 ") : ""}
 
-
-
-                                    </th>
+                                    </span>
 
 
 
-                                ))}
-
-                            </tr>
-
-                        )
-                        )
+                                </th>
 
 
-                        }
 
-                    </thead >
+                            ))}
 
+                        </tr>
 
-                    <tbody {...getTableBodyProps()}>
-
-                        {page.map((row, idx) => {
-
-                            prepareRow(row)
-                            return (
-                                <tr key={idx}   {...row.getRowProps()} >
-                                    {row.cells.map((cell, idx) => {
-                                        return (
+                    )
+                    )
 
 
-                                            <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
+                    }
+
+                </thead >
 
 
-                                                {
-                                                    cell.column.id !== "Delete" &&
-                                                        cell.column.id !== "Edit" &&
-                                                        row.original._id == Idofrow ?
-                                                        <>
+                <tbody {...getTableBodyProps()}>
 
-                                                            {cell.column.id == "OtherCost" && <input defaultValue={row.original.OtherCost}
-                                                                ref={CRef}
+                    {page.map((row, idx) => {
+                        prepareRow(row)
+                        return (
+                            <tr key={idx}   {...row.getRowProps()} >
+                                {row.cells.map((cell, idx) => {
+                                    return (
+
+
+                                        <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
+
+
+                                            {
+                                                cell.column.id !== "Delete" &&
+                                                    cell.column.id !== "Edit" &&
+                                                    row.original._id == Idofrow?.[0] ?
+                                                    <>
+
+                                                        {cell.column.id == "amount" && <input defaultValue={row.original.amount}
+                                                            ref={CRef}
+                                                            onChange={(event) => { handleSaveExpenseData(event) }}
+                                                            onClick={(event) => { handleSaveExpenseData(event) }}
+                                                            onFocus={() => { setCFocus(true) }}
+                                                            onBlur={() => { setCFocus(false) }}
+
+                                                            type="number" placeholder={cell.column.id} name='amount' className="input input-bordered input-warning w-full max-w-xs" />}
+
+                                                        {cell.column.id == "action" &&
+                                                            <textarea name='action'
+                                                                defaultValue={row.original.action}
+                                                                ref={ACRef}
+                                                                type="textarea"
                                                                 onChange={(event) => { handleSaveExpenseData(event) }}
                                                                 onClick={(event) => { handleSaveExpenseData(event) }}
-                                                                onFocus={() => { setCFocus(true) }}
-                                                                onBlur={() => { setCFocus(false) }}
+                                                                onFocus={() => { setDEFocus(true) }}
+                                                                onBlur={() => { setDEFocus(false) }}
 
-                                                                type="number" placeholder={cell.column.id} name='cost' className="input input-bordered input-warning w-full max-w-xs" />}
+                                                                className="textarea textarea-warning  w-full max-w-xs" placeholder={cell.column.id}></textarea>}
+                                                        {cell.column.id == "actionDate" && <input disabled
+                                                            defaultValue={row.original.actionDate}
+                                                            ref={DRef}
+                                                            onChange={(event) => { handleSaveExpenseData(event) }}
+                                                            onClick={(event) => { handleSaveExpenseData(event) }}
+                                                            onFocus={() => { setDFocus(true) }}
+                                                            onBlur={() => { setDFocus(false) }}
 
-                                                            {cell.column.id == "DescCost" &&
-                                                                <textarea name='DESC'
-                                                                    defaultValue={row.original.DescCost}
-                                                                    ref={DERef}
-                                                                    type="textarea"
-                                                                    onChange={(event) => { handleSaveExpenseData(event) }}
-                                                                    onClick={(event) => { handleSaveExpenseData(event) }}
-                                                                    onFocus={() => { setDEFocus(true) }}
-                                                                    onBlur={() => { setDEFocus(false) }}
-
-                                                                    className="textarea textarea-warning  w-full max-w-xs" placeholder={cell.column.id}></textarea>}
-                                                            {cell.column.id == "actionDate" && <input
-                                                                defaultValue={row.original.actionDate}
-                                                                ref={DRef}
-                                                                onChange={(event) => { handleSaveExpenseData(event) }}
-                                                                onClick={(event) => { handleSaveExpenseData(event) }}
-                                                                onFocus={() => { setDFocus(true) }}
-                                                                onBlur={() => { setDFocus(false) }}
-
-                                                                name='date' type="date" placeholder={l.date} className="input input-warning   w-full max-w-xl  " />}
+                                                            name='actionDate' type="date" placeholder={l.date} className="input input-warning   w-full max-w-xl  " />}
 
 
-                                                        </>
-
-                                                        :
-                                                        cell.render('Cell')
-
-                                                }
-
-
-
-                                                {row.original._id !== Idofrow ?
-                                                    cell.column.id === "Edit" &&
-                                                    <button ref={inputRef} onClick={() => { setIdofrow(row.original._id) }} aria-label="upload picture"  ><FontAwesomeIcon icon={faEdit} className="text-2xl cursor-pointer text-blue-500" /></button>
+                                                    </>
 
                                                     :
-                                                    <div className=" space-x-3">
-                                                        {cell.column.id === "Edit" && <button type='submit' className="btn btn-accent" disabled={CValid && DEValid && DValid ? false : true} onClick={handleUpdatExpense} > <FontAwesomeIcon icon={faSave} className="text-2xl" /></button>}
-                                                        {cell.column.id === "Edit" && <button onClick={() => { setIdofrow(null) }} className="btn  btn-error"><FontAwesomeIcon icon={faBan} className="text-2xl" /></button>}
+                                                    cell.render('Cell')
 
-                                                    </div>
+                                            }
 
 
-                                                }
-                                                {cell.column.id === "Delete" && <label htmlFor="my-modal-3" className="m-0" onClick={() => { setDeletestate(row.original._id) }}><FontAwesomeIcon icon={faTrash} className="text-2xl cursor-pointer text-red-700" /></label>}
+
+                                            {row.original._id !== Idofrow?.[0] ?
+                                                cell.column.id === "Edit" &&
+                                                <button ref={inputRef} onClick={() => { setIdofrow([row.original._id, row.original.amount, row.original.action]) }} aria-label="upload picture"  ><FontAwesomeIcon icon={faEdit} className="text-2xl cursor-pointer text-blue-500" /></button>
+
+                                                :
+                                                <div className=" space-x-3">
+                                                    {cell.column.id === "Edit" && <button type='submit' className="btn btn-accent" disabled={CValid && DEValid ? false : true} onClick={handleUpdatExpense} > <FontAwesomeIcon icon={faSave} className="text-2xl" /></button>}
+                                                    {cell.column.id === "Edit" && <button onClick={() => { setIdofrow(null) }} className="btn  btn-error"><FontAwesomeIcon icon={faBan} className="text-2xl" /></button>}
+
+                                                </div>
 
 
-                                            </td>
-
-                                        )
-                                    })}
-
-                                </tr>
-                            )
-                        }
-
-                        )}
-
-                    </tbody>
+                                            }
+                                            {cell.column.id === "Delete" && <label htmlFor="my-modal-3" className="m-0" onClick={() => { setDeletestate([row.original._id, row.original.amount, row.original.action]) }}><FontAwesomeIcon icon={faTrash} className="text-2xl cursor-pointer text-red-700" /></label>}
 
 
-                </table>
-            </div >
+                                        </td>
+
+                                    )
+                                })}
+
+                            </tr>
+                        )
+                    }
+
+                    )}
+
+                </tbody>
+
+
+            </table>
+            {/* </div > */}
 
             <div className="botom_Of_Table" >
 
-                <div className=" flex justify-between container mx-auto items-center border rounded-xl p-3  px-1 mb-20 ">
-
+                <div className=" flex justify-between container mx-auto items-center   p-3  px-1 mb-20  min-w-[700px]">
 
 
                     <div className=" flex  space-x-5 mx-5 text-lg items-center     ">
@@ -687,7 +739,7 @@ const Table = ({ COLUMNS }) => {
 
                         <div>
 
-                            <select className="select select-primary  w-full max-w-xs"
+                            <select className="select select-info  w-full max-w-xs"
                                 onChange={(e) => {
                                     setLimit((e.target.value) * 2)
                                     setPageSize(Number(e.target.value)
@@ -710,10 +762,10 @@ const Table = ({ COLUMNS }) => {
 
                     <div className="space-x-2  overflow-auto inline-flex  scrollbar-hide ">
                         <div></div>
-                        <button className="btn w-2 h-2 btn-primary   " onClick={() => gotoPage(0)} disabled={!canPreviousPage}>{"<<"} </button>
-                        <button className="btn w-2 h-2 btn-primary" onClick={() => previousPage()} disabled={!canPreviousPage}>{"<"} </button>
-                        <button className="btn w-2 h-2 btn-primary" onClick={() => nextPage()} disabled={!canNextPage}>{">"} </button>
-                        <button className="btn w-2 h-2 btn-primary " onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>{">>"} </button>
+                        <button className="btn w-2 h-2 btn-info   " onClick={() => gotoPage(0)} disabled={!canPreviousPage}>{"<<"} </button>
+                        <button className="btn w-2 h-2 btn-info" onClick={() => previousPage()} disabled={!canPreviousPage}>{"<"} </button>
+                        <button className="btn w-2 h-2 btn-info" onClick={() => nextPage()} disabled={!canNextPage}>{">"} </button>
+                        <button className="btn w-2 h-2 btn-info " onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>{">>"} </button>
                     </div>
 
                 </div>
@@ -747,7 +799,7 @@ const Table = ({ COLUMNS }) => {
 
 
 
-const Expense = (props) => {
+const Expense = ({ SessionID }) => {
 
 
 
@@ -769,24 +821,36 @@ const Expense = (props) => {
 
                     disableFilters: true,
 
-                    accessor: 'OtherCost',
+                    accessor: 'amount',
 
 
                 },
 
 
 
+                // {
+                //     Header: () => {
+                //         return (
+
+                //             l.user
+                //         )
+                //     },
+
+                //     accessor: 'userId',
+                //     disableFilters: true,
+
+
+                // },
                 {
                     Header: () => {
-                        return (
 
-                            l.payfor
-                        )
+                        return l.action;
                     },
 
-                    accessor: 'DescCost',
-                    disableFilters: true,
-
+                    accessor: 'action',
+                    disableFilters: false,
+                    // Filter: DateRangeColumnFilter,
+                    // filter: dateBetweenFilterFn,
 
                 },
                 {
@@ -821,7 +885,7 @@ const Expense = (props) => {
 
 
 
-            ], [props]
+            ], [SessionID]
         )
 
 
@@ -840,7 +904,7 @@ const Expense = (props) => {
 
 
 
-            <Table COLUMNS={COLUMNS} />
+            <Table COLUMNS={COLUMNS} SessionID={SessionID} />
 
 
 

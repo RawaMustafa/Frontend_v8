@@ -31,7 +31,11 @@ const nextAuthOptions = (req, res) => {
 
 
                         if (user) {
-                            
+
+                            const cookies = user.headers['set-cookie']
+                            // console.log(user.data)
+                            res.setHeader('Set-Cookie', user.data.refreshToken)
+
                             return { status: 'success', data: user.data }
 
                         }
@@ -71,7 +75,7 @@ const nextAuthOptions = (req, res) => {
 
 
 
-                token = refreshAccessToken(token);
+                token = refreshAccessToken(token, req, res);
                 return Promise.resolve(token);
 
 
@@ -85,9 +89,12 @@ const nextAuthOptions = (req, res) => {
                     session.userRole = token.userRole
                     session.error = token.error
                     session.id = token.id
+                    session.Token = token.accessToken
                     session.accessTokenExpiry = token.accessTokenExpiry
-
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${token.accessToken}`;
+                    req.headers.authorization = `Bearer ${token.accessToken}`;
                 }
+                console.log(res.header)
 
                 return session;
 

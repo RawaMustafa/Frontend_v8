@@ -7,7 +7,7 @@ export const ku = {
     reseler: "فرۆشیارەکان",
     newcard: "سەیارەی نوێ",
     loancar: "(قەرز) فرۆشراوەکان",
-    arived: "گەیشتوەکان",
+    arived: "گەیشتوە",
     notarive: "نەگەیشتوە",
     notarived: "نەگەیشتوەکان",
     account: "هەژمارەکان",
@@ -37,6 +37,7 @@ export const ku = {
     feesinadubai: "باج لە دووبەی",
     repaircost: "تێچووی چاککردن",
     fees: "باجەکان",
+    feesother: "باجی تر",
     note: "تێبینی",
     coccost: " تێچوەی CoC ",
     transportationcost: "تێچوی گواستنەوە",
@@ -63,7 +64,7 @@ export const ku = {
     page: "پەڕەی",
     of: "لە",
     show: "نیشاندانی",
-    all: "هەموو",
+    all: "تێکڕا",
     from: "لە",
     to: "بۆ",
     cancel: "ڕەتکردنەوە",
@@ -81,7 +82,8 @@ export const ku = {
     uslocation: "شوێن لە ئەمریکا",
 
     isSold: "فرشراوە",
-    sold: "فرۆشتن",
+    sold: "فرشراوە",
+    retrieve: "گەڕاندنەوە",
     give: "ناردن",
 
 
@@ -97,14 +99,14 @@ export const ku = {
     note: "تێبینیەکان",
     info: "زانیاریەکان",
 
-    deletemsg: " دڵنینیت  لە سڕینەوەی ئەم کاڵایە ؟",
-    givemsg: "دەتەوێت ئەم کاڵایە بۆکێ بنێریت ؟",
-    soldmsg: "دڵنیای لە فرۆشتنی ئەم کاڵایە ؟",
+    deletemsg: " دڵنینیت  لە سڕینەوەی ئەم سەیارە ؟",
+    givemsg: "دەتەوێت ئەم سەیارە بۆکێ بنێریت ؟",
+    soldmsg: "دڵنیای لە گەڕاندنەوەی ئەم سەیارە ؟",
+    sellmsg: "دڵنیای لە فرۆشتنی ئەم سەیارە ؟",
 
     send: "ناردن",
     yes: "بەڵێ",
     no: "نەخێر",
-
     mybalance: "باڵانسەکانم",
 
 
@@ -183,6 +185,37 @@ export const ku = {
     charecter150: "مێویستە لە ١٥٠  پیت یان ژمارە زیاتر نەبێ",
 
     ispaid: "دراوەتەوە",
+    action: "کردار",
+    user: "بەکارهێنەر"
+    ,
+    add: "زیادکردن",
+    edit: "دەستکاری",
+    delete: "سڕینەوە",
+    update: "نوێکردنەوە",
+    cancel: "پاشگەزبوونەوە",
+    save: "پاشەکەوتکردن",
+    search: "گەڕان",
+    reset: "ڕێکخستنەوە",
+    close: "داخستن",
+    back: "گەڕانەوە",
+    select: "هەڵبژێرە",
+    selectone: "هەڵبژێرە",
+
+    filter: "جیاکردنەوە"
+    ,
+    sell: "بیفرۆشه",
+
+
+    loanmsg: "ئەم سەیارەیە بە پارەی قەرز زیادکراوە",
+    feesAndRepaidCostDubaiothers: "تێچوی تر لە دوبەی",
+
+    fromamericatodubaicost: " تێچوو لە ئەمریکا بۆ دوبەی ",
+    fromamericatodubaigumrg: "باج  لە ئەمریکا بۆ دوبەی ",
+    fromdubaitokurdistancosts: "تێچوو لە دوبەی بۆ کوردستان ",
+    fromdubaitokurdistangumrg: "باج لە دوبەی بۆ کوردستان ",
+
+    fromdubaitokurdistanothers:"تێچووی تر لە کوردستان "
+
 
 
 

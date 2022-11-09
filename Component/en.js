@@ -21,9 +21,9 @@ export const en = {
     loan: "Loan",
     arive: "Arrived",
 
-    namecar: "Name of Car Model",
+    namecar: "Name of Car ",
     tire: "Tire",
-    modelyear: "Model Year",
+    modelyear: "Model ",
     color: "Color",
     mileage: "Mileage",
     vinnumber: "VIN Number",
@@ -38,11 +38,15 @@ export const en = {
     repaircost: "Repair Cost",
     dubairepaircost: "Dubai Repair Cost",
     fees: "Fees",
+    feesother: "Other Fees",
     note: "Note",
     coccost: "CoC Cost",
     transportationcost: "Transportation Cost",
-    fromamericatodubai: "From America to Dubai",
-    fromdubaitokurdistan: "From Dubai to Kurdistan",
+    fromamericatodubaicost: "Costs From America to Dubai",
+    fromamericatodubaigumrg: "Taxes From America to Dubai",
+    fromdubaitokurdistancosts: "Costs From Dubai to Kurdistan",
+    fromdubaitokurdistangumrg: "Taxes From Dubai to Kurdistan",
+    fromdubaitokurdistanothers: "Other Costs in Kurdistan",
     numberandrepaircostinkurdistan: "Number and Repair Cost in Kurdistan",
     numberinkurdistan: "Number  in Kurdistan",
     repaircostinkurdistan: "Repair Cost in Kurdistan",
@@ -92,7 +96,7 @@ export const en = {
     note: "Note",
     info: "Info",
     update: "Update",
-    deletemsg: " sure ,  you want to delete this item ?",
+    deletemsg: " sure ?,  you want to delete this item ?",
     givemsg: " Who do you want to send this item to ?",
 
     yes: "Yes",
@@ -101,8 +105,10 @@ export const en = {
     send: "Send",
     give: "Give",
     sold: "Sold",
-
-    soldmsg: "sure , you want to sold this item ?",
+    sell: "Sell",
+    retrieve: "Retrieve",
+    soldmsg: "sure ?, you want to retrieve this item ?",
+    sellmsg: "sure ?, you want to sell this item ?",
 
     mybalance: "My Balance",
 
@@ -177,8 +183,12 @@ export const en = {
     number7: "Number 7",
     text: "Text",
     ispaid: "Is Paid",
+    action: "Action",
+    user: "User"
 
-
+    ,
+    filter: "Filter",
+    loanmsg: "you add this car in Loan Amount"
 
 
 

@@ -7,7 +7,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import useLanguage from '../../../../Component/language';
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faTrashAlt, faPaperPlane, faHandHoldingUsd } from '@fortawesome/free-solid-svg-icons';
+import { faTrashAlt, faPaperPlane, faHandHoldingUsd, faArrowsRotate, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import AdminLayout from '../../../../Layouts/AdminLayout';
 import Image from "next/image";
 import { ToastContainer, toast, } from 'react-toastify';
@@ -60,7 +60,10 @@ export const getServerSideProps = async (context) => {
     const response = await Axios.get('/cars/' + _id)
     const data = await response.data
     return {
-        props: { cars: data },
+        props: {
+            carss: data,
+            SessionID: session.id,
+        },
 
     }
 
@@ -69,28 +72,24 @@ export const getServerSideProps = async (context) => {
 }
 
 
-const Detail = ({ cars }) => {
+const Detail = ({ carss, SessionID }) => {
 
 
     const InputUpdate = useRef()
 
     const router = useRouter()
+    const [cars, setCars] = useState(carss);
     const [User, setUser] = useState([]);
     const [ChooseUser, setChooseUser] = useState("");
     const [UserID, setUserID] = useState(null);
     const [detpage, setDetpage] = useState(1);
+
     const l = useLanguage();
 
 
 
-    const HandleAddCars = (e) => {
-
-
-
-
-    }
-
     const V_B_N = (e) => {
+
         if (typeof document !== "undefined") {
             const xd = document.getElementsByName(e)
 
@@ -124,34 +123,98 @@ const Detail = ({ cars }) => {
         }
     }
 
-
+    let TotalCurrentCosts =
+        Math.floor(cars.carDetail.carCost.pricePaidbid) +
+        Math.floor(cars.carDetail.carCost.coCCost) +
+        Math.floor(cars.carDetail.carCost.feesinAmericaStoragefee) +
+        Math.floor(cars.carDetail.carCost.feesinAmericaCopartorIAAfee) +
+        Math.floor(cars.carDetail.carCost.feesAndRepaidCostDubairepairCost) +
+        Math.floor(cars.carDetail.carCost.feesAndRepaidCostDubaiFees) +
+        Math.floor(cars.carDetail.carCost.feesAndRepaidCostDubaiothers) +
+        Math.floor(cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost) +
+        Math.floor(cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost) +
+        Math.floor(cars.carDetail.carCost.dubaiToIraqGCostTranscost) +
+        Math.floor(cars.carDetail.carCost.dubaiToIraqGCostgumrgCost) +
+        Math.floor(cars.carDetail.carCost.raqamAndRepairCostinKurdistanrepairCost) +
+        Math.floor(cars.carDetail.carCost.raqamAndRepairCostinKurdistanothers)
 
     const handleDeleteCars = async () => {
 
-        try {
-            const id = router.query._id
 
-            await Axios.delete("/cars/" + id)
+        if (cars.carDetail.carCost.isSold == false) {
 
-            toast.error("Car has been Deleted")
-            router.back()
+            try {
+                //FIXME - chage Email to Id to get /users/detail/
+                const UDetails = await Axios.get('/users/detail/Admin@gmail.com')
 
-        } catch (err) {
+                const DataBalance = UDetails.data.userDetail.TotalBals
 
-            toast.error("error to Deleting Car")
+                try {
+                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance + TotalCurrentCosts })
+
+                    toast.success("Your Balance Now= " + (DataBalance + TotalCurrentCosts) + " $");
 
 
+                    try {
+                        const id = router.query._id
+
+                        await Axios.delete("/cars/" + id)
+
+                        await Axios.post("/bal/",
+                            {
+                                amount: TotalCurrentCosts,
+                                action: "Delete=> " + cars.carDetail.modeName
+                            })
+
+                        toast.error("Car has been Deleted")
+                        router.back()
+
+                    } catch (err) {
+
+                        toast.error("error to Deleting Car *")
+
+
+                    }
+
+                }
+                catch (err) {
+
+                    toast.error("Error from user balance *")
+
+                }
+
+
+            } catch (e) {
+                toast.error("error to get Balance *");
+
+
+            }
         }
 
+        if (cars.carDetail.carCost.isSold == true) {
+
+            try {
+                const id = router.query._id
+
+                await Axios.delete("/cars/" + id)
+
+                toast.error("Car has been Deleted")
+                router.back()
+
+            } catch (err) {
+
+                toast.error("error to Deleting Car")
+
+
+            }
+        }
 
     }
 
 
     const handleUpdateCars = async () => {
-
         const DataUpload = {
-
-
+            "Tocar": V_B_N("Tocar"),
             "Price": V_B_N("Price"),
             "IsSold": V_B_N("IsSold"),
             "ModeName": V_B_N("ModeName"),
@@ -162,7 +225,7 @@ const Detail = ({ cars }) => {
             "WheelDriveType": V_B_N("WheelDriveType"),
 
             "PricePaidbid": V_B_N("PricePaidbid"),
-            "Tocar": V_B_N("Tocar"),
+
             "Tobalance": V_B_N("Tobalance"),
             "Tire": V_B_N("Tire"),
             "Date": V_B_N("Date"),
@@ -192,69 +255,229 @@ const Detail = ({ cars }) => {
         }
 
 
+
+        let TotalCosts =
+            Math.floor(DataUpload.PricePaidbid) +
+            Math.floor(DataUpload.CoCCost) +
+            Math.floor(DataUpload.FeesinAmericaStoragefee) +
+            Math.floor(DataUpload.FeesinAmericaCopartorIAAfee) +
+            Math.floor(DataUpload.FeesAndRepaidCostDubairepairCost) +
+            Math.floor(DataUpload.FeesAndRepaidCostDubaiFees) +
+            Math.floor(DataUpload.FeesAndRepaidCostDubaiothers) +
+            Math.floor(DataUpload.TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost) +
+            Math.floor(DataUpload.TransportationCostFromAmericaLocationtoDubaiGCostTranscost) +
+            Math.floor(DataUpload.DubaiToIraqGCostTranscost) +
+            Math.floor(DataUpload.DubaiToIraqGCostgumrgCost) +
+            Math.floor(DataUpload.RaqamAndRepairCostinKurdistanrepairCost) +
+            Math.floor(DataUpload.RaqamAndRepairCostinKurdistanothers)
+
+        let DoneBalance = TotalCosts - TotalCurrentCosts;
+
+
+
+
+
+        if (DataUpload.Tobalance == "Cash") {
+
+            try {
+                //FIXME -  change Email to Id of user
+                const UDetails = await Axios.get('/users/detail/Admin@gmail.com')
+
+                const DataBalance = UDetails.data.userDetail.TotalBals
+
+                if (TotalCosts <= DataBalance) {
+                    try {
+
+                        await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - DoneBalance })
+
+                        toast.success("Your Balance Now= " + (DataBalance - DoneBalance) + " $");
+
+                    } catch (err) {
+
+                        toast.error("Error from user balance *")
+
+                    }
+                }
+
+            } catch (e) {
+                toast.error("error to update Balance *");
+
+
+            }
+
+        }
+
+        //FIXME - if Update Car    ----- Loan 
+        if (DataUpload.Tobalance == "Loann") {
+
+            try {
+                const UDetails = await Axios.get('/users/detail/Admin@gmail.com')
+
+                const DataBalance = UDetails.data.userDetail.TotalBals
+
+                if (TotalCosts <= DataBalance) {
+                    try {
+
+                        await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - DoneBalance })
+
+                        toast.success("Your Balance Now= " + (DataBalance - DoneBalance) + " $");
+
+                    } catch (err) {
+
+                        toast.error("Error from user balance *")
+
+                    }
+                }
+
+            } catch (e) {
+                toast.error("error to update Balance *");
+
+
+            }
+
+
+        }
+
+
         try {
             const id = router.query._id
             const res = await Axios.patch(`/cars/${id}`,
                 DataUpload
             )
 
-            toast.done("success to updated car")
-            router.reload()
+            toast.success("Data updated successfully");
+            // router.reload()
 
         } catch (err) {
-
-
             toast.error("error to updated car")
-
         }
-    }
-
-    const handleSoldCars = async () => {
-        try {
-            const id = router.query._id
-
-            await Axios.patch(`/cars/${id}`,
-                {
-                    "IsSold": true
-                })
-
-            toast.success("Car Sold")
-            router.reload()
-
-        } catch (err) {
-
-            (err.response.status == 404 || err.response.status == 400 || err.response.status == 500 || err.response.status == 401 || err.response.status == 403 || err.response.status == 409) &&
-                toast.error("error to sold")
-
-
-        }
-
-
+        // setDetpage(1)
     }
 
 
-    const id = router.query._id
-    useEffect(() => {
 
-        const handleGetUsers = async () => {
+    const handleSoldCars = async (bool) => {
+
+
+        if (cars.carDetail.carCost.isSold == true) {
+
 
             try {
 
+                const UDetails = await Axios.get('/users/detail/Admin@gmail.com')
+                const DataBalance = UDetails.data.userDetail.TotalBals
 
-                const res = await Axios.get(`/users`)
+                if (cars.carDetail.carCost.price <= DataBalance) {
+                    try {
 
-                setUser(res.data.userDetail)
+                        await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - cars.carDetail.carCost.price })
 
-            } catch (err) {
+                        toast.success("Your Balance Now= " + (DataBalance - cars.carDetail.carCost.price) + " $");
 
-                (err.response.status == 404 || err.response.status == 400 || err.response.status == 500 || err.response.status == 401 || err.response.status == 403 || err.response.status == 409) &&
-                    toast.error("error to Get Users")
+
+                        try {
+                            const id = router.query._id
+
+                            await Axios.patch(`/cars/${id}`,
+                                {
+                                    "IsSold": bool
+                                })
+
+                            await Axios.post("/bal/",
+                                {
+                                    amount: -cars.carDetail.carCost.price,
+                                    action: "Retrieve=> " + cars.carDetail.modeName
+                                })
+
+                            toast.success("Car Retrieve")
+                            router.reload()
+
+                        } catch (err) {
+
+                            // (err.response.status == 404 || err.response.status == 400 || err.response.status == 500 || err.response.status == 401 || err.response.status == 403 || err.response.status == 409) &&
+                            toast.error("error to sold")
+
+
+                        }
+
+                    }
+                    catch (err) {
+
+                        toast.error("Error from user balance *")
+
+                    }
+                }
+                else {
+                    toast.warn("You don't have enough balance");
+
+                }
+
+            } catch (e) {
+                toast.error("error to get Balance *");
+
+
             }
         }
 
-        handleGetUsers()
-    }, [id])
+        if (cars.carDetail.carCost.isSold == false) {
 
+            try {
+                //FIXME -  change Email to Id of user
+                const UDetails = await Axios.get('/users/detail/Admin@gmail.com')
+
+                const DataBalance = UDetails.data.userDetail.TotalBals
+
+
+                try {
+
+                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance + cars.carDetail.carCost.price })
+
+                    toast.success("Your Balance Now= " + (DataBalance + cars.carDetail.carCost.price) + " $");
+
+                    try {
+                        const id = router.query._id
+
+                        await Axios.patch(`/cars/${id}`,
+                            {
+                                "IsSold": bool
+                            })
+
+                        await Axios.post("/bal/",
+                            {
+                                amount: cars.carDetail.carCost.price,
+                                action: "Sold=> " + cars.carDetail.modeName
+                            })
+
+                        toast.success("Car Sold")
+                        router.reload()
+
+                    } catch (err) {
+
+                        // (err.response.status == 404 || err.response.status == 400 || err.response.status == 500 || err.response.status == 401 || err.response.status == 403 || err.response.status == 409) &&
+                        toast.error("error to sold")
+
+
+                    }
+
+                } catch (err) {
+
+                    toast.error("Error from user balance *")
+
+                }
+
+
+            } catch (e) {
+                toast.error("error to get Balance *");
+
+
+            }
+        }
+
+
+
+
+
+    }
     const handleGiveToReseller = async () => {
 
         try {
@@ -276,6 +499,10 @@ const Detail = ({ cars }) => {
     const handleGiveToQarz = async () => {
 
 
+
+        if ("") {
+
+        }
         try {
             const id = router.query._id
 
@@ -298,13 +525,47 @@ const Detail = ({ cars }) => {
 
     }
 
+    useEffect(() => {
 
+        const handleGetCars = async () => {
+
+            try {
+                const id = router.query._id
+
+                const res = await Axios.get(`/cars/${id}`)
+
+                setCars(res.data)
+
+            } catch (err) {
+
+                // (err.response.status == 404 || err.response.status == 400 || err.response.status == 500 || err.response.status == 401 || err.response.status == 403 || err.response.status == 409) &&
+                toast.error("error to Get Car *")
+
+            }
+        }
+
+        handleGetCars()
+
+    }, [detpage])
+
+    const id = router.query._id
+    useEffect(() => {
+        const handleGetUsers = async () => {
+            try {
+                const res = await Axios.get(`/users`)
+                setUser(res.data.userDetail)
+            } catch (err) {
+                toast.error("error to Get Users *")
+            }
+        }
+        handleGetUsers()
+    }, [id])
 
 
     const Doc_2_pdf = () => {
 
         const doc = new jsPDF("p", "mm", "a4");
-        console.log(cars?.carDetail?.carDamage)
+
         cars?.carDetail?.carDamage.length > 0 ?
             doc.addImage(`${baseURL}/${cars?.carDetail?.carDamage?.[0]?.filename}`, 'PNG', -12, -89, 226, 149 + 12, null, null, 270)
             :
@@ -402,15 +663,15 @@ const Detail = ({ cars }) => {
                     draggablePercent={60}
                 />
 
-                <div className="navbar mb-16  flex justify-between  max-w-8xl    lg:w-[calc(100%-1rem)]  mt-2  bg-opacity-5    backdrop-blur-md bg-slate-300 rounded-2xl   ">
+                <div className="navbar mb-16  flex justify-between scrollbar-hide  max-w-8xl overflow-auto space-x-2  lg:w-[calc(100%-1rem)]  mt-2  bg-opacity-5    backdrop-blur-md bg-slate-300 rounded-2xl   ">
 
 
                     <button className="btn btn-success" onClick={() => { setDetpage(3) }}>{l.update}</button>
                     <label htmlFor="my-modal-3" className="btn btn-error modal-button">{l.delete}</label>
                     <label htmlFor="give-modal-3" className="btn btn-info modal-button">{l.give}</label>
-                    <label htmlFor="sold-modal-3" className="btn btn-warning modal-button">{l.sold}</label>
-                    <label className="btn btn-ghost modal-button" onClick={Doc_2_pdf}>PDF</label>
-
+                    {cars.carDetail.carCost.isSold == true && <label htmlFor="sold-modal-3" className="btn btn-warning modal-button">{l.retrieve}</label>}
+                    {cars.carDetail.carCost.isSold == false && <label htmlFor="sell-modal-3" className="btn btn-warning modal-button">{l.sell}</label>}
+                    <label className="btn btn-outline modal-button" onClick={Doc_2_pdf}>PDF</label>
 
 
 
@@ -447,36 +708,49 @@ const Detail = ({ cars }) => {
                             <div className="space-x-10">{
 
                             }
-                                <div className="text-center m-5 space-y-10 ">
+                                <div className="text-center m-5 space-y-5 ">
                                     <select onChange={(e) => {
                                         setUserID(null)
                                         setChooseUser(e.target.value)
-                                    }} type='select' name="Tocar" defaultValue={cars.carDetail.tocar} className="select select-info w-full max-w-xs">
-                                        <option value="" >Select</option>
-                                        <option value="Qarz_1" >Qarz</option>
-                                        <option value="Reseller_2" >Geve to Reseller</option>
+                                    }} type='select' defaultValue={"Select"} className="select select-info w-full max-w-xs">
+                                        <option value="Select" >{l.select}</option>
+                                        <option value="Qarz_1" >{l.loan}</option>
+                                        <option value="Reseller_2" >{l.reseler}</option>
 
                                     </select>
                                     {(ChooseUser == "Qarz_1" && ChooseUser !== "") &&
 
-                                        <select onChange={(event) => { setUserID(event.target.value) }} onClick={(event) => { setUserID(event.target.value) }} className="select select-info w-full max-w-xs">
-                                            <option disabled >Select Reseller</option>
-                                            {User?.map((item, index) => {
-                                                if (item.userRole == "Reseller") {
-                                                    return null;
-                                                }
-                                                if (item.userRole == "Qarz") {
-                                                    return (<option key={index} value={item._id} >{item.userName}</option>
-                                                    )
-                                                }
-                                            })}
-                                        </select>
+                                        <>
+                                            {cars.carDetail.tobalance == "Loan" &&
+                                                //FIXME -  how i can give car to qarz account if Tobalance is Loan
+                                                <div className=" flex justify-center ">
+                                                    <div className="alert alert-warning shadow-lg w-80 text-start  ">
+                                                        <FontAwesomeIcon icon={faTriangleExclamation} className="text-xl " />
+                                                        <span className="text-start ">{l.loanmsg}</span>
+                                                    </div>
+                                                </div>
+
+                                            }
+
+                                            <select disabled={cars.carDetail.tobalance == "Loan" ? true : false} defaultValue={"Select"} onChange={(event) => { setUserID(event.target.value) }} className="select select-info w-full max-w-xs">
+                                                <option disabled value="Select">{l.select}</option>
+                                                {User?.map((item, index) => {
+                                                    if (item.userRole == "Reseller") {
+                                                        return null;
+                                                    }
+                                                    if (item.userRole == "Qarz") {
+                                                        return (<option key={index} value={item._id} >{item.userName}</option>
+                                                        )
+                                                    }
+                                                })}
+                                            </select>
+                                        </>
                                     }
 
 
                                     {(ChooseUser == "Reseller_2" && ChooseUser !== "") &&
-                                        <select onChange={(event) => { setUserID(event.target.value) }} onClick={(event) => { setUserID(event.target.value) }} className="select select-info w-full max-w-xs">
-                                            <option disabled >Select Reseller</option>
+                                        <select defaultValue={"Select"} onChange={(event) => { setUserID(event.target.value) }} className="select select-info w-full max-w-xs">
+                                            <option disabled value="Select">{l.select}</option>
                                             {User?.map((item, index) => {
 
                                                 if (item.userRole == "Qarz") {
@@ -517,11 +791,25 @@ const Detail = ({ cars }) => {
                     <div className="modal">
                         <div className="modal-box relative">
                             <label htmlFor="sold-modal-3" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faHandHoldingUsd} className="text-5xl " /></h3>
+                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faArrowsRotate} className="text-5xl " /></h3>
                             <p className="py-4">{l.soldmsg}</p>
                             <div className="space-x-10">
-                                <label htmlFor="sold-modal-3" className="btn btn-warning" onClick={handleSoldCars}>{l.yes}</label>
+                                <label htmlFor="sold-modal-3" className="btn btn-warning" onClick={() => handleSoldCars("false")}>{l.yes}</label>
                                 <label htmlFor="sold-modal-3" className="btn btn-error" >{l.no}</label>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <input type="checkbox" id="sell-modal-3" className="modal-toggle btn btn-error" />
+                    <div className="modal">
+                        <div className="modal-box relative">
+                            <label htmlFor="sell-modal-3" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faHandHoldingUsd} className="text-5xl " /></h3>
+                            <p className="py-4">{l.sellmsg}</p>
+                            <div className="space-x-10">
+                                <label htmlFor="sell-modal-3" className="btn btn-warning" onClick={() => handleSoldCars("true")}>{l.yes}</label>
+                                <label htmlFor="sell-modal-3" className="btn btn-error" >{l.no}</label>
                             </div>
                         </div>
                     </div>
@@ -550,7 +838,6 @@ const Detail = ({ cars }) => {
 
 
                     <div className="  mb-40 mx-2  ">
-
 
 
                         <div className="overflow-x-auto max-w-5xl z-0">
@@ -653,22 +940,22 @@ const Detail = ({ cars }) => {
                                         <td>{cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostLocation}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.fromamericatodubai} :</td>
+                                        <td>{l.fromamericatodubaicost} :</td>
                                         <td>{cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost} :</td>
+                                        <td>{l.fromamericatodubaigumrg} :</td>
                                         <td>{cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost}</td>
 
                                     </tr>
 
 
                                     <tr className="">
-                                        <td>{l.fromdubaitokurdistan} :</td>
+                                        <td>{l.fromdubaitokurdistancosts} :</td>
                                         <td>{cars.carDetail.carCost.dubaiToIraqGCostTranscost}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.dubaiToIraqGCostgumrgCost} :</td>
+                                        <td>{l.fromdubaitokurdistangumrg} :</td>
                                         <td>{cars.carDetail.carCost.dubaiToIraqGCostgumrgCost}</td>
                                     </tr>
 
@@ -686,7 +973,7 @@ const Detail = ({ cars }) => {
 
 
                                     <tr className="">
-                                        <td>{l.raqamAndRepairCostinKurdistanothers} :</td>
+                                        <td>{l.fromdubaitokurdistanothers} :</td>
                                         <td>{cars.carDetail.carCost.raqamAndRepairCostinKurdistanothers}</td>
                                     </tr>
 
@@ -701,13 +988,13 @@ const Detail = ({ cars }) => {
                                     <tr className="">
                                         <td>{l.tocar} :</td>
                                         <td>
-
-                                            <select onChange={(e) => { HandleAddCars(e) }} type='select' name="Tocar" defaultValue={cars.carDetail.tocar} className="select select-info w-full max-w-xs">
-                                                <option >Sedan</option>
-                                                <option >SUV</option>
-                                                <option >PickUp</option>
+                                            <select disabled name="Tocar" defaultValue={cars.carDetail.tocar} className="select select-info w-full max-w-xs">
+                                                <option value="Sedan">Sedan</option>
+                                                <option value="SUV">SUV</option>
+                                                <option value="PickUp">PickUp</option>
 
                                             </select>
+
 
 
                                         </td>
@@ -716,7 +1003,7 @@ const Detail = ({ cars }) => {
                                         <td>{l.tire} :</td>
                                         <td>
 
-                                            <input onChange={(e) => { HandleAddCars(e) }} name="Tire" type="text" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.tire} />
+                                            <input name="Tire" type="text" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.tire} />
 
                                         </td>
                                     </tr>
@@ -735,7 +1022,7 @@ const Detail = ({ cars }) => {
                                         </td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.namecar} :</td>
+                                        <td>{l.modelyear} :</td>
                                         <td>
 
                                             <input name="Model" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.model} />
@@ -789,7 +1076,7 @@ const Detail = ({ cars }) => {
                                         <td>{l.isSold} :</td>
                                         <td>
 
-                                            <select name="IsSold" defaultValue={cars.carDetail.carCost.isSold} className="select select-info w-full max-w-xs">
+                                            <select disabled name="IsSold" defaultValue={cars.carDetail.carCost.isSold} className="select select-info w-full max-w-xs">
                                                 <option value={true} >Yes</option>
                                                 <option value={false}>No</option>
                                             </select>
@@ -810,49 +1097,57 @@ const Detail = ({ cars }) => {
                                         <td>{l.pricepaidorcaratbid}:</td>
                                         <td>
 
-                                            <input name="PricePaidbid" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.pricePaidbid} />
+                                            <input name="PricePaidbid" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.pricePaidbid}
+
+                                            />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.storagefee} :</td>
                                         <td>
 
-                                            <input name="FeesinAmericaStoragefee" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesinAmericaStoragefee} />
+                                            <input name="FeesinAmericaStoragefee" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesinAmericaStoragefee}
+                                            />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.copartoriaafee} :</td>
                                         <td>
 
-                                            <input name="FeesinAmericaCopartorIAAfee" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesinAmericaCopartorIAAfee} />
+                                            <input name="FeesinAmericaCopartorIAAfee" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesinAmericaCopartorIAAfee}
+                                            />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td> {l.dubairepaircost} :</td>
                                         <td>
 
-                                            <input name="FeesAndRepaidCostDubairepairCost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubairepairCost} />
+                                            <input name="FeesAndRepaidCostDubairepairCost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubairepairCost}
+                                            />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td> {l.feesinadubai} :</td>
                                         <td>
 
-                                            <input name="FeesAndRepaidCostDubaiFees" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubaiFees} />
+                                            <input name="FeesAndRepaidCostDubaiFees" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubaiFees}
+                                            />
                                         </td>
                                     </tr>
                                     <tr className="">
-                                        <td> {l.feesinadubai} :</td>
+                                        <td> {l.feesAndRepaidCostDubaiothers} :</td>
                                         <td>
 
-                                            <input name="FeesAndRepaidCostDubaiothers" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubaiothers} />
+                                            <input name="FeesAndRepaidCostDubaiothers" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubaiothers}
+                                            />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.coccost} :</td>
                                         <td>
 
-                                            <input name="CoCCost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.coCCost} />
+                                            <input name="CoCCost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.coCCost}
+                                            />
                                         </td>
                                     </tr>
                                     <tr className="">
@@ -863,31 +1158,33 @@ const Detail = ({ cars }) => {
                                         </td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.fromamericatodubai} :</td>
+                                        <td>{l.fromamericatodubaicost} :</td>
                                         <td>
                                             <input name="TransportationCostFromAmericaLocationtoDubaiGCostTranscost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost}
                                             />
                                         </td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.fromamericatodubai} :</td>
+                                        <td>{l.fromamericatodubaigumrg} :</td>
                                         <td>
                                             <input name="TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost}
                                             />
                                         </td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.fromdubaitokurdistan} :</td>
+                                        <td>{l.fromdubaitokurdistancosts} :</td>
                                         <td>
 
-                                            <input name="DubaiToIraqGCostTranscost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.dubaiToIraqGCostTranscost} />
+                                            <input name="DubaiToIraqGCostTranscost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.dubaiToIraqGCostTranscost}
+                                            />
                                         </td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.fromdubaitokurdistan} :</td>
+                                        <td>{l.fromdubaitokurdistangumrg} :</td>
                                         <td>
 
-                                            <input name="DubaiToIraqGCostgumrgCost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.dubaiToIraqGCostgumrgCost} />
+                                            <input name="DubaiToIraqGCostgumrgCost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.dubaiToIraqGCostgumrgCost}
+                                            />
                                         </td>
                                     </tr>
                                     <tr className="">
@@ -901,15 +1198,17 @@ const Detail = ({ cars }) => {
                                         <td>{l.repaircostinkurdistan} :</td>
                                         <td>
 
-                                            <input name="RaqamAndRepairCostinKurdistanrepairCost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanrepairCost} />
+                                            <input name="RaqamAndRepairCostinKurdistanrepairCost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanrepairCost}
+                                            />
                                         </td>
                                     </tr>
 
                                     <tr className="">
-                                        <td>{l.numberinkurdistan} :</td>
+                                        <td>{l.fromdubaitokurdistanothers} :</td>
                                         <td>
 
-                                            <input name="RaqamAndRepairCostinKurdistanothers" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanothers} />
+                                            <input name="RaqamAndRepairCostinKurdistanothers" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanothers}
+                                            />
                                         </td>
                                     </tr>
 

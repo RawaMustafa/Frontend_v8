@@ -99,7 +99,7 @@ const Reseller = () => {
             {
                 (NoCars || Data.length == '0') &&
 
-                <div className="text-center pt-20   ">
+                <div className="m-auto top-[50%] -translate-y-[50%] absolute -translate-x-[50%] left-[50%] lg:left-[60%]  ">
                     < Image alt="NoData" src="/NoData.svg" width={200} height={200} quality={'1'} />
                 </div>
 

@@ -11,7 +11,7 @@ import { ToastContainer, toast, } from 'react-toastify';
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
 import { faUserPlus, faTrash, faEdit, faSave, faBan, faFileDownload } from '@fortawesome/free-solid-svg-icons';
 
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 
 
 export async function getServerSideProps({ req, query }) {
@@ -29,9 +29,28 @@ export async function getServerSideProps({ req, query }) {
 
         }
     }
+
+    let data
+
+    try {
+        const res = await Axios.get(`/users/?search=&page=1&limit=10`, {
+            headers: {
+                "Content-Type": "application/json",
+                // 'Authorization': `Bearer ${session?.data?.Token}`
+            },
+        })
+        data = await res.data.total
+    } catch {
+        data = ""
+    }
+
+
+
+
     return {
         props: {
-            initQuery: query
+
+            AllUsers: data,
         }
     }
 }
@@ -48,13 +67,16 @@ const userRole_regex = /^[a-zA-Z0-9\.\-\_]{4,16}$/;
 const TotalBals_regex = /^[0-9]{0,7}$/;
 
 
-const Table = ({ COLUMNS }) => {
+const Table = ({ COLUMNS, AllUsers }) => {
 
     const [ReNewData, setReNewData] = useState(false);
 
     const [Search, setSearch] = useState("");
     const [Page, setPage] = useState(1);
     const [Limit, setLimit] = useState(4);
+
+    const [PageS, setPageS] = useState(Math.ceil(AllUsers / Limit));
+    const [TotalUsers, setTotalUsers] = useState(AllUsers);
 
 
 
@@ -74,6 +96,10 @@ const Table = ({ COLUMNS }) => {
         "userRole": "",
         "TotalBals": 0,
     });
+
+
+
+    const session = useSession()
 
     const l = useLanguage();
 
@@ -182,7 +208,12 @@ const Table = ({ COLUMNS }) => {
     const handleUpdateUser = async () => {
 
         try {
-            await Axios.patch(`/users/${Idofrow}`, DataUpdate)
+            await Axios.patch(`/users/${Idofrow}`, DataUpdate, {
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Authorization': `Bearer ${session?.data?.Token}`
+                },
+            })
 
             toast.success("User Updated Successfully")
 
@@ -213,7 +244,12 @@ const Table = ({ COLUMNS }) => {
     const handledeleteUser = async () => {
 
         try {
-            await Axios.delete(`/users/${Deletestate}`)
+            await Axios.delete(`/users/${Deletestate}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Authorization': `Bearer ${session?.data?.Token}`
+                },
+            })
             toast.success("User Deleted Successfully")
 
         } catch (error) {
@@ -249,7 +285,12 @@ const Table = ({ COLUMNS }) => {
 
         try {
 
-            await Axios.post("/users/signup/", Data)
+            await Axios.post("/users/signup/", Data, {
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Authorization': `Bearer ${session?.data?.Token}`
+                },
+            })
 
             toast.success("User added Successfully");
 
@@ -277,18 +318,28 @@ const Table = ({ COLUMNS }) => {
     useEffect(() => {
         const getUsers = async () => {
             try {
-                const res = await Axios.get(`/users/?search=${Search}&page=${Page}&limit=${Limit}`)
+                const res = await Axios.get(`/users/?search=${Search}&page=${Page}&limit=${Limit}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        // 'Authorization': `Bearer ${session?.data?.Token}`
+                    },
+                })
 
                 setDataTable(res.data.userDetail)
+                setTotalUsers(res.data.total)
 
             } catch (error) {
                 if (error.response.status === 404) {
-                    toast.error("No User Found");
+                    // toast.error("No User Found");
+                    setDataTable([])
+
                 }
 
 
             }
         }
+        setPageS(Math.ceil(TotalUsers / Limit))
+
         getUsers()
         setReNewData(false)
     }, [Search, Limit, Page, patata, ReNewData]);
@@ -326,33 +377,33 @@ const Table = ({ COLUMNS }) => {
         doc.save("Table.pdf");
     };
 
-    const table_All_pdff = () => {
+    // const table_All_pdff = () => {
 
 
 
-        var obj = JSON.parse(JSON.stringify(DataTable))
+    //     var obj = JSON.parse(JSON.stringify(DataTable))
 
-        var res = [];
-        for (var i in obj)
-            res.push(obj[i]);
-
-
-        const doc = new jsPDF("p", "mm", "a3");
+    //     var res = [];
+    //     for (var i in obj)
+    //         res.push(obj[i]);
 
 
-        doc.text(`Data{ Hawbir }`, 95, 10);
-
-        doc.autoTable({
-            head: [[`User Name`, `Email`, "User Role", "Total Balance"]],
-            body: res.map((d) => [d.userName, d.email, d.userRole, d.TotalBals])
-        });
-        doc.save("ALL(Data).pdf");
+    //     const doc = new jsPDF("p", "mm", "a3");
 
 
+    //     doc.text(`Data{ Hawbir }`, 95, 10);
+
+    //     doc.autoTable({
+    //         head: [[`User Name`, `Email`, "User Role", "Total Balance"]],
+    //         body: res.map((d) => [d.userName, d.email, d.userRole, d.TotalBals])
+    //     });
+    //     doc.save("ALL(Data).pdf");
 
 
 
-    };
+
+
+    // };
 
 
 
@@ -392,11 +443,11 @@ const Table = ({ COLUMNS }) => {
     const { pageIndex, pageSize } = state
 
     return (
-        <div className="  ml-1 ">
+        <div className=" container mx-auto overflow-auto  scrollbar-hide">
 
 
 
-            <div className=" flex justify-between border rounded-lg container mx-auto items-center p-2  ">
+            <div className=" flex justify-between   rounded-lg container mx-auto items-center p-2 min-w-[700px] ">
 
 
 
@@ -409,7 +460,6 @@ const Table = ({ COLUMNS }) => {
 
                     <input type="checkbox" id="my-modal" className="modal-toggle" />
                     <div className="modal">
-
 
                         <div className="modal-box space-y-12">
 
@@ -511,15 +561,15 @@ const Table = ({ COLUMNS }) => {
                 </div>
 
 
-                <div className="flex justify-center items-center lg:space-x-4">
-                    <input type="search" placeholder="Search ..." className="input   input-primary  w-full max-w-xs"
+                <div className="flex justify-center items-center ">
+                    <input type="search" placeholder={`${l.search} ...`} className="input   input-info  w-full max-w-xs focus:outline-0"
                         onChange={e =>
                             setSearch(e.target.value.match(/^[a-zA-Z0-9]*/))
                         }
                     />
 
 
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left ">
+                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left mx-10">
                         <label tabIndex="0" className=" m-1  " >
                             <FontAwesomeIcon icon={faFileDownload} className="text-3xl m-auto md:mx-5 mx-1 active:scale-90 active:rotate-180 ease-in-out  transition" />
                         </label>
@@ -527,206 +577,206 @@ const Table = ({ COLUMNS }) => {
                         <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 flex justify-center space-y-2 ">
                             <li>  <ReactHTMLTableToExcel
                                 id="test-table-xls-button"
-                                className="btn download-table-xls-button"
+                                className="btn btn-outline download-table-xls-button"
                                 table="table-to-xls"
                                 filename="tablexls"
                                 sheet="tablexls"
                                 buttonText="XLSX" />  </li>
-                            <li><button className='btn' onClick={table_2_pdf}>PDF</button> </li>
-                            <li><button className='btn' onClick={table_All_pdff}>ALL_PDF</button> </li>
+                            <li><button className='btn btn-outline' onClick={table_2_pdf}>PDF</button> </li>
+                            {/* <li><button className='btn' onClick={table_All_pdff}>ALL_PDF</button> </li> */}
                         </ul>
                     </div>
 
 
                 </div>
 
-
             </div>
 
 
 
-            <div className="flex justify-center  py-2    ">
+
+            {/* <div className="xl:flex justify-center overflow-auto  py-2    "> */}
 
 
 
 
-                <table id="table-to-xls" className=" ml-1  overflow-auto inline-block   " {...getTableProps()}>
-                    <thead className="  ">
+            <table id="table-to-xls" className=" my-10 inline-block  min-w-[1000px]  " {...getTableProps()}>
+                <thead className="  ">
 
-                        {headerGroups.map((headerGroups, idx) => (
+                    {headerGroups.map((headerGroups, idx) => (
 
-                            <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
+                        <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
 
-                                {headerGroups.headers.map((column, idx) => (
+                            {headerGroups.headers.map((column, idx) => (
 
-                                    <th key={idx} className="p-4 m-44      w-80   " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
+                                <th key={idx} className="p-4 m-44      w-80   " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
 
-                                        <span>
-                                            {column.isSorted ? (column.isSortedDesc ? "<" : ">") : ""}
-                                        </span>
-
-
-
-                                    </th>
+                                    <span>
+                                        {column.isSorted ? (column.isSortedDesc ? "<" : ">") : ""}
+                                    </span>
 
 
 
-                                ))}
-
-                            </tr>
-
-                        )
-                        )
+                                </th>
 
 
-                        }
 
-                    </thead >
+                            ))}
 
+                        </tr>
 
-                    <tbody {...getTableBodyProps()}>
-
-                        {page.map((row, idx) => {
-
-                            prepareRow(row)
-                            return (
-                                <tr key={idx}  {...row.getRowProps()} >
-                                    {row.cells.map((cell, idx) => {
-                                        return (
+                    )
+                    )
 
 
-                                            <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
+                    }
+
+                </thead >
 
 
-                                                {
-                                                    cell.column.id !== "Delete" &&
-                                                        cell.column.id !== "Edit" &&
-                                                        row.original._id == Idofrow ?
-                                                        <>
-                                                            {cell.column.id == "userName" &&
-                                                                <input
-                                                                    ref={URef}
-                                                                    defaultValue={row.original.userName}
-                                                                    name={cell.column.id}
-                                                                    type="text"
-                                                                    placeholder={cell.column.id}
-                                                                    className="input input-bordered input-warning w-full max-w-xs"
+                <tbody {...getTableBodyProps()}>
 
-                                                                    onChange={(event) => { handleSaveUser(event) }}
-                                                                    onClick={(event) => { handleSaveUser(event) }}
-                                                                    onFocus={() => { setUFocus(true) }}
-                                                                    onBlur={() => { setUFocus(false) }}
+                    {page.map((row, idx) => {
+
+                        prepareRow(row)
+                        return (
+                            <tr key={idx}  {...row.getRowProps()} >
+                                {row.cells.map((cell, idx) => {
+                                    return (
 
 
-                                                                />}
+                                        <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
 
-                                                            {cell.column.id == "email" && <input
-                                                                ref={ERef}
 
-                                                                name={cell.column.id} defaultValue={row.original.email}
-                                                                type="email" placeholder={cell.column.id} className="input input-bordered input-warning w-full max-w-xs"
+                                            {
+                                                cell.column.id !== "Delete" &&
+                                                    cell.column.id !== "Edit" &&
+                                                    row.original._id == Idofrow ?
+                                                    <>
+                                                        {cell.column.id == "userName" &&
+                                                            <input
+                                                                ref={URef}
+                                                                defaultValue={row.original.userName}
+                                                                name={cell.column.id}
+                                                                type="text"
+                                                                placeholder={cell.column.id}
+                                                                className="input input-bordered input-warning w-full max-w-xs"
+
                                                                 onChange={(event) => { handleSaveUser(event) }}
                                                                 onClick={(event) => { handleSaveUser(event) }}
-                                                                onFocus={() => { setEFocus(true) }}
-                                                                onBlur={() => { setEFocus(false) }}
+                                                                onFocus={() => { setUFocus(true) }}
+                                                                onBlur={() => { setUFocus(false) }}
 
 
                                                             />}
 
+                                                        {cell.column.id == "email" && <input
+                                                            ref={ERef}
 
-                                                            {cell.column.id == "userRole" &&
-                                                                <select
-                                                                    ref={RRef}
+                                                            name={cell.column.id} defaultValue={row.original.email}
+                                                            type="email" placeholder={cell.column.id} className="input input-bordered input-warning w-full max-w-xs"
+                                                            onChange={(event) => { handleSaveUser(event) }}
+                                                            onClick={(event) => { handleSaveUser(event) }}
+                                                            onFocus={() => { setEFocus(true) }}
+                                                            onBlur={() => { setEFocus(false) }}
 
-                                                                    onChange={(event) => { handleSaveUser(event) }}
-                                                                    onClick={(event) => { handleSaveUser(event) }}
-                                                                    onFocus={() => { setRFocus(true) }}
-                                                                    onBlur={() => { setRFocus(false) }}
 
-                                                                    name={cell.column.id} defaultValue={row.original.userRole} placeholder={cell.column.id} className="select select-warning w-full max-w-xs">
-                                                                    <option>Reseller</option>
-                                                                    <option>Qarz</option>
-                                                                </select>}
-                                                            {cell.column.id == "TotalBals" && <input
-                                                                ref={BRef}
+                                                        />}
+
+
+                                                        {cell.column.id == "userRole" &&
+                                                            <select
+                                                                ref={RRef}
+
                                                                 onChange={(event) => { handleSaveUser(event) }}
                                                                 onClick={(event) => { handleSaveUser(event) }}
+                                                                onFocus={() => { setRFocus(true) }}
+                                                                onBlur={() => { setRFocus(false) }}
+
+                                                                name={cell.column.id} defaultValue={row.original.userRole} placeholder={cell.column.id} className="select select-warning w-full max-w-xs">
+                                                                <option>Reseller</option>
+                                                                <option>Qarz</option>
+                                                            </select>}
+                                                        {cell.column.id == "TotalBals" && <input
+                                                            ref={BRef}
+                                                            onChange={(event) => { handleSaveUser(event) }}
+                                                            onClick={(event) => { handleSaveUser(event) }}
 
 
-                                                                name={cell.column.id} defaultValue={row.original.TotalBals} type="text" placeholder={cell.column.id} className="input input-bordered input-warning w-full max-w-xs"
-                                                            />}
+                                                            name={cell.column.id} defaultValue={row.original.TotalBals} type="text" placeholder={cell.column.id} className="input input-bordered input-warning w-full max-w-xs"
+                                                        />}
 
 
 
-                                                        </>
-
-                                                        :
-                                                        cell.render('Cell')
-
-                                                }
-
-
-
-                                                {row.original._id !== Idofrow ?
-                                                    cell.column.id === "Edit" &&
-
-                                                    <label onClick={() => { setIdofrow(row.original._id) }} aria-label="upload picture" ><FontAwesomeIcon icon={faEdit} className="text-2xl text-blue-500" /></label>
+                                                    </>
 
                                                     :
-                                                    <div className=" space-x-3">
-                                                        {cell.column.id === "Edit" && <button disabled={EValid && RValid && BValid && UValid ? false : true} type='submit' onClick={handleUpdateUser} className="btn btn-accent"> <FontAwesomeIcon icon={faSave} className="text-2xl" /></button>}
-                                                        {cell.column.id === "Edit" && <button onClick={() => { setIdofrow(null) }} className="btn  btn-error"><FontAwesomeIcon icon={faBan} className="text-2xl" /></button>}
+                                                    cell.render('Cell')
 
-                                                    </div>
+                                            }
 
 
-                                                }
-                                                {cell.column.id === "Delete" && <label htmlFor="my-modal-3" className="m-0" onClick={() => { setDeletestate(row.original._id) }}><FontAwesomeIcon icon={faTrash} className="text-2xl text-red-700" /></label>}
+
+                                            {row.original._id !== Idofrow ?
+                                                cell.column.id === "Edit" &&
+
+                                                <label onClick={() => { setIdofrow(row.original._id) }} aria-label="upload picture" ><FontAwesomeIcon icon={faEdit} className="text-2xl text-blue-500" /></label>
+
+                                                :
+                                                <div className=" space-x-3">
+                                                    {cell.column.id === "Edit" && <button disabled={EValid && RValid && BValid && UValid ? false : true} type='submit' onClick={handleUpdateUser} className="btn btn-accent"> <FontAwesomeIcon icon={faSave} className="text-2xl" /></button>}
+                                                    {cell.column.id === "Edit" && <button onClick={() => { setIdofrow(null) }} className="btn  btn-error"><FontAwesomeIcon icon={faBan} className="text-2xl" /></button>}
+
+                                                </div>
 
 
-                                            </td>
-
-                                        )
-                                    })}
-
-                                </tr>
-                            )
-                        }
-
-                        )}
-
-                    </tbody>
+                                            }
+                                            {cell.column.id === "Delete" && <label htmlFor="my-modal-3" className="m-0" onClick={() => { setDeletestate(row.original._id) }}><FontAwesomeIcon icon={faTrash} className="text-2xl text-red-700" /></label>}
 
 
-                </table>
+                                        </td>
 
-            </div >
+                                    )
+                                })}
+
+                            </tr>
+                        )
+                    }
+
+                    )}
+
+                </tbody>
+
+
+            </table>
+
+            {/* </div > */}
 
             <div className="botom_Of_Table" >
 
-                <div className=" flex justify-between container mx-auto items-center border rounded-xl p-3  px-1 mb-20 ">
+                <div className=" flex justify-between container mx-auto items-center  rounded-xl p-3  px-1 mb-20 min-w-[700px] ">
 
 
 
-                    <div className=" flex  space-x-5 mx-5 text-lg items-center     ">
+                    <div className=" flex   justify-around mx-5 text-lg items-center     ">
+
+
+                        <span className="px-3">
+                            {l.page}{" " + Page}/{PageS}
+                        </span>
+
+
+
 
                         <div>
-
-                            {l.page}{""}
-                            <span>
-                                {pageIndex + 1}{l.of}{pageOptions.length}
-                                {/* {setPage(pageIndex + 1)} */}
-                            </span>
-                        </div>
-
-                        <div>
-                            <select className="select select-primary  w-full max-w-xs" onChange={(e) => {
-                                setLimit(Number(e.target.value) * 2)
-                                setPageSize(Number(e.target.value))
-                            }}
+                            <select className="select select-info  w-full max-w-xs focus:outline-0"
+                                onChange={(e) => {
+                                    setLimit((e.target.value))
+                                    setPageSize(Number(e.target.value)
+                                    )
+                                }}
 
                                 value={pageSize}>
-
                                 {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
                                     <option key={idx} value={pageSize}>
                                         {l.show} ({(pageSize !== 100000) ? pageSize : l.all})
@@ -740,12 +790,51 @@ const Table = ({ COLUMNS }) => {
 
 
 
-                    <div className="space-x-2  overflow-auto inline-flex  scrollbar-hide ">
+                    <div className="space-x-3  overflow-auto inline-flex  scrollbar-hide ">
                         <div></div>
-                        <button className="btn w-2 h-2 btn-primary   " onClick={() => gotoPage(0)} disabled={!canPreviousPage}>{"<<"} </button>
-                        <button className="btn w-2 h-2 btn-primary" onClick={() => previousPage()} disabled={!canPreviousPage}>{"<"} </button>
-                        <button className="btn w-2 h-2 btn-primary" onClick={() => nextPage()} disabled={!canNextPage}>{">"} </button>
-                        <button className="btn w-2 h-2 btn-primary " onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>{">>"} </button>
+
+
+
+                        <button className="btn w-2 h-2 btn-info border-0  " onClick={() =>
+                            setPage(1)
+                        }
+                            disabled={
+                                Page == 1 ? true : false
+                            }
+                        >{"<<"} </button>
+
+
+                        <button className="btn w-2 h-2 btn-info" onClick={() =>
+                            setPage(Page - 1)
+                        }
+                            disabled={
+                                Page <= 1 ? true : false
+
+                            }
+                        >{"<"}
+                        </button>
+
+
+                        <button className="btn w-2 h-2 btn-info" onClick={() =>
+                            Page >= 1 && setPage(Page + 1)
+                        }
+                            disabled={
+                                Page >= PageS ? true : false
+                            }
+                        >{">"} </button>
+
+
+                        <button className="btn w-2 h-2 btn-info "
+                            onClick={() =>
+                                Page >= 1 && setPage(PageS)
+                            }
+                            disabled={
+                                Page >= PageS ? true : false
+                            }
+                        >{">>"} </button>
+
+
+
                     </div>
 
                 </div>
@@ -773,7 +862,7 @@ const Table = ({ COLUMNS }) => {
 }
 
 
-const Accounts = (props) => {
+const Accounts = ({ AllUsers }) => {
 
 
 
@@ -857,7 +946,7 @@ const Accounts = (props) => {
 
 
 
-            ], [props]
+            ], [AllUsers]
         )
 
 
@@ -873,7 +962,7 @@ const Accounts = (props) => {
                 <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             </Head>
 
-            <Table COLUMNS={COLUMNS} />
+            <Table COLUMNS={COLUMNS} AllUsers={AllUsers} />
             <ToastContainer
                 draggablePercent={60}
             />
