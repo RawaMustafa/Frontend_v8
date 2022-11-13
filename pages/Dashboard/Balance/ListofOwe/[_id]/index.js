@@ -624,32 +624,223 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
 
 
-        try {
+        if (DataUpdate.isPaid == "true" && Idofrow?.[1] == false) {
 
 
-            await Axios.patch(`/qarz/${Idofrow}`, DataUpdate, {
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${session?.data?.Token}`
+            try {
+
+
+                const UDetails = await Axios.get(`/users/detail/${session?.data.id}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
+
+                const DataBalance = UDetails.data.userDetail.TotalBals
+
+
+
+                if (DataUpdate.amount <= DataBalance) {
+
+
+                    await Axios.patch(`/users/${session?.data.id}`, { "TotalBals": DataBalance - DataUpdate.amount }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
+
+                    toast.success("Your Balance Now= " + (DataBalance - DataUpdate.amount) + " $");
+
+
+
+
+                    await Axios.post("/bal/",
+                        {
+                            amount: DataUpdate.amount,
+                            action: DataUpdate.DESC
+                        }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
+
+                    try {
+
+                        await Axios.patch(`/qarz/${Idofrow?.[0]}`, DataUpdate, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
+                        toast.success("Data Updated Successfully")
+                    } catch (error) {
+
+                        toast.error("Something Went Wrong *")
+                    } finally {
+
+                        setIdofrow(null);
+                        setDeletestate(null);
+                        setData({
+                            userId: ID,
+                            isPaid: "",
+                            amount: 0,
+                        });
+                        // getQarzData()
+                        setReNewData(true)
+
+                    }
+
+
+
                 }
-            },)
-            toast.success("Data Updated Successfully")
-        } catch (error) {
+                else {
 
-            toast.error("Something Went Wrong")
-        } finally {
+                    toast.error("Your Balance is not enough");
+                }
 
-            setIdofrow(null);
-            setDeletestate(null);
-            setData({
-                userId: ID,
-                isPaid: "",
-                amount: 0,
-            });
-            // getQarzData()
-            setReNewData(true)
+
+
+
+
+
+
+
+            } catch {
+
+                toast.error("Something Went Wrong with Admin balance *")
+
+
+            }
+
 
         }
+
+
+
+
+        else if (DataUpdate.isPaid == "false" && Idofrow?.[1] == true) {
+
+
+            try {
+
+
+                const UDetails = await Axios.get(`/users/detail/${session?.data.id}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
+
+                const DataBalance = Math.floor(UDetails.data.userDetail.TotalBals)
+
+
+
+
+                await Axios.patch(`/users/${session?.data.id}`, { "TotalBals": DataBalance + Math.floor(DataUpdate.amount) }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
+
+                toast.success("Your Balance Now= " + (DataBalance + Math.floor(DataUpdate.amount)) + " $");
+
+
+
+
+                await Axios.post("/bal/",
+                    {
+                        amount: DataUpdate.amount,
+                        action: DataUpdate.DESC
+                    }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
+
+                try {
+
+                    await Axios.patch(`/qarz/${Idofrow?.[0]}`, DataUpdate, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
+                    toast.success("Data Updated Successfully")
+                } catch (error) {
+
+                    toast.error("Something Went Wrong *")
+                } finally {
+
+                    setIdofrow(null);
+                    setDeletestate(null);
+                    setData({
+                        userId: ID,
+                        isPaid: "",
+                        amount: 0,
+                    });
+                    // getQarzData()
+                    setReNewData(true)
+
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+            } catch {
+
+                toast.error("Something Went Wrong with Admin balance *")
+
+
+            }
+
+
+        }
+
+        else if (DataUpdate.isPaid == Idofrow?.[1].toString()) {
+            console.log("yassssssssssssssss")
+
+
+            try {
+
+                await Axios.patch(`/qarz/${Idofrow?.[0]}`, DataUpdate, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
+                toast.success("Data Updated Successfully")
+            } catch (error) {
+
+                toast.error("Something Went Wrong *")
+            } finally {
+
+                setIdofrow(null);
+                setDeletestate(null);
+                setData({
+                    userId: ID,
+                    isPaid: "",
+                    amount: 0,
+                });
+                // getQarzData()
+                setReNewData(true)
+
+            }
+        }
+
+
 
 
 
@@ -658,7 +849,7 @@ const TableQarz = ({ COLUMNS, ID }) => {
     const handledeleteQarzData = async () => {
 
         try {
-            await Axios.delete(`/qarz/${Deletestate}`, {
+            await Axios.delete(`/qarz/${Deletestate?.[0]}`, {
                 headers: {
                     "Content-Type": "application/json",
                     'Authorization': `Bearer ${session?.data?.Token}`
@@ -670,9 +861,8 @@ const TableQarz = ({ COLUMNS, ID }) => {
         } catch (error) {
 
 
-            error.response.status == 403 || error.response.status == 409 || error.response.status == 404 || error.response.status == 401 &&
 
-                toast.error("Something Went Wrong")
+            toast.error("Something Went Wrong")
 
         } finally {
 
@@ -1051,7 +1241,7 @@ const TableQarz = ({ COLUMNS, ID }) => {
                                         <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
 
 
-                                            {cell.column.id === 'isPaid' && row.original._id !== Idofrow && (
+                                            {cell.column.id === 'isPaid' && row.original._id !== Idofrow?.[0] && (
 
                                                 cell.value === true ? <FontAwesomeIcon icon={faCheck} className="text-green-500" /> : <FontAwesomeIcon icon={faTimes} className="text-red-500" />
                                             )}
@@ -1060,7 +1250,7 @@ const TableQarz = ({ COLUMNS, ID }) => {
                                             {
                                                 cell.column.id !== "Delete" &&
                                                     cell.column.id !== "Edit" &&
-                                                    row.original._id == Idofrow ?
+                                                    row.original._id == Idofrow?.[0] ?
                                                     <>
 
                                                         {cell.column.id == "qarAmount" && <input defaultValue={row.original.qarAmount}
@@ -1103,9 +1293,9 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
 
 
-                                            {row.original._id !== Idofrow ?
+                                            {row.original._id !== Idofrow?.[0] ?
                                                 cell.column.id === "Edit" &&
-                                                <button ref={inputRef} onClick={() => { setIdofrow(row.original._id) }} aria-label="upload picture"   ><FontAwesomeIcon icon={faEdit} className="text-2xl cursor-pointer text-blue-500" /></button>
+                                                <button ref={inputRef} onClick={() => { setIdofrow([row.original._id, row.original.isPaid, row.original.qarAmount]) }} aria-label="upload picture"   ><FontAwesomeIcon icon={faEdit} className="text-2xl cursor-pointer text-blue-500" /></button>
 
                                                 :
                                                 <div className=" space-x-3">
@@ -1116,7 +1306,7 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
 
                                             }
-                                            {cell.column.id === "Delete" && <label htmlFor="my-modal-3" className="m-0" onClick={() => { setDeletestate(row.original._id) }}><FontAwesomeIcon icon={faTrash} className="text-2xl cursor-pointer text-red-700" /></label>}
+                                            {cell.column.id === "Delete" && <label htmlFor="my-modal-3" className="m-0" onClick={() => { setDeletestate([row.original._id, row.original.isPaid, row.original.qarAmount]) }}><FontAwesomeIcon icon={faTrash} className="text-2xl cursor-pointer text-red-700" /></label>}
 
 
                                         </td>
@@ -1200,6 +1390,9 @@ const TableQarz = ({ COLUMNS, ID }) => {
                 </div>
             </div>
 
+            <ToastContainer
+                draggablePercent={60}
+            />
         </div >
 
     );
