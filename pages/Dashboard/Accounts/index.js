@@ -17,8 +17,8 @@ import { getSession, useSession } from "next-auth/react";
 export async function getServerSideProps({ req, query }) {
     const session = await getSession({ req })
 
-
-
+    console.log("cookieseeee ==========", req?.cookies?.Token)
+    console.log("Sesssion --------->", session?.Token)
 
     if (!session || session?.userRole !== "Admin") {
         return {
@@ -30,26 +30,26 @@ export async function getServerSideProps({ req, query }) {
         }
     }
 
-    let data
+    let data = 1
+    // try {
+    //     const res = Axios.get(`/users/?search=&page=1&limit=10`, {
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //             'Authorization': `Bearer ${session?.Token}`
+    //         },
+    //     })
+    //     data = await res.data.total
+    //     console.log(res.data)
 
-    try {
-        const res = await Axios.get(`/users/?search=&page=1&limit=10`, {
-            headers: {
-                "Content-Type": "application/json",
-                // 'Authorization': `Bearer ${session?.data?.Token}`
-            },
-        })
-        data = await res.data.total
-    } catch {
-        data = ""
-    }
+    // } catch (err) {
+    //     data = ""
+    //     console.log(err)
 
-
-
+    // }
 
     return {
         props: {
-
+            SessionID: session?.id || null,
             AllUsers: data,
         }
     }
@@ -67,7 +67,7 @@ const userRole_regex = /^[a-zA-Z0-9\.\-\_]{4,16}$/;
 const TotalBals_regex = /^[0-9]{0,7}$/;
 
 
-const Table = ({ COLUMNS, AllUsers }) => {
+const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
     const [ReNewData, setReNewData] = useState(false);
 
@@ -100,6 +100,8 @@ const Table = ({ COLUMNS, AllUsers }) => {
 
 
     const session = useSession()
+
+
 
     const l = useLanguage();
 
@@ -207,74 +209,395 @@ const Table = ({ COLUMNS, AllUsers }) => {
 
     const handleUpdateUser = async () => {
 
-        try {
-            await Axios.patch(`/users/${Idofrow}`, DataUpdate, {
+
+
+        if (Idofrow?.[3] == "Reseller" && DataUpdate.userRole !== "Reseller") {
+
+            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, {
                 headers: {
                     "Content-Type": "application/json",
-                    // 'Authorization': `Bearer ${session?.data?.Token}`
-                },
-            })
+                    'Authorization': `Bearer ${session?.data?.Token}`
+                }
+            },)
 
-            toast.success("User Updated Successfully")
 
-        } catch (error) {
-            error.response.status == 400 || error.response.status == 404 || error.response.status == 401 ? toast.error("User Not Updated") : toast.error("Something Went Wrong")
 
-        } finally {
 
-            setIdofrow(null);
-            setDeletestate(null);
-            setData({
-                userName: "",
-                email: "",
-                password: "",
-                userRole: "",
-                TotalBals: "",
-            });
 
-            // getUsers()
-            setReNewData(true)
+            const DataBalance = UDetails.data.userDetail.TotalBals
+
+
+            try {
+                await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance + Idofrow?.[1] }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
+
+                toast.success("Your Balance Now= " + (DataBalance + Idofrow?.[1]) + " $");
+
+
+                await Axios.post("/bal/",
+                    {
+                        amount: Idofrow?.[1],
+                        action: "Tooken from " + Idofrow?.[2]
+                    }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
+
+
+
+                try {
+                    await Axios.patch(`/users/${Idofrow?.[0]}`, DataUpdate, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        },
+                    })
+
+                    toast.success("User Updated Successfully")
+
+                } catch (error) {
+                    toast.error("Something Went Wrong *")
+
+                } finally {
+
+                    setIdofrow(null);
+                    setDeletestate(null);
+                    setData({
+                        userName: "",
+                        email: "",
+                        password: "",
+                        userRole: "",
+                        TotalBals: "",
+                    });
+
+                    // getUsers()
+                    setReNewData(true)
+
+                }
+
+
+
+
+
+
+
+
+            } catch {
+                toast.error(" error to update user * ")
+            }
+        }
+
+
+        else if (Idofrow?.[3] == "Reseller" && DataUpdate.userRole == "Reseller") {
+
+            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${session?.data?.Token}`
+                }
+            },)
+
+
+            const DataBalance = UDetails.data.userDetail.TotalBals
+
+            const donebalnace = DataUpdate.TotalBals - Idofrow?.[1]
+
+            if (donebalnace <= DataBalance) {
+
+                try {
+                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - donebalnace })
+
+                    toast.success("Your Balance Now= " + (DataBalance - donebalnace) + " $");
+
+
+                    await Axios.post("/bal/",
+                        {
+                            amount: -donebalnace,
+                            action: "updated to " + Idofrow?.[2]
+                        }, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
+
+                    try {
+                        await Axios.patch(`/users/${Idofrow?.[0]}`, DataUpdate, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            },
+                        })
+
+                        toast.success("User Updated Successfully")
+
+                    } catch (error) {
+                        toast.error("Something Went Wrong *")
+
+                    } finally {
+
+                        setIdofrow(null);
+                        setDeletestate(null);
+                        setData({
+                            userName: "",
+                            email: "",
+                            password: "",
+                            userRole: "",
+                            TotalBals: "",
+                        });
+
+                        // getUsers()
+                        setReNewData(true)
+
+                    }
+
+                } catch {
+                    toast.error(" error to update user * ")
+                }
+
+
+
+
+            }
+
+
+
 
         }
 
+
+
+        else if (Idofrow?.[3] !== "Reseller" && DataUpdate.userRole == "Reseller") {
+
+            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${session?.data?.Token}`
+                }
+            },)
+
+
+            const DataBalance = UDetails.data.userDetail.TotalBals
+
+
+            if (DataUpdate.TotalBals <= DataBalance) {
+
+                try {
+                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - DataUpdate.TotalBals }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
+
+                    toast.success("Your Balance Now= " + (DataBalance - DataUpdate.TotalBals) + " $");
+
+
+                    await Axios.post("/bal/",
+                        {
+                            amount: -DataUpdate.TotalBals,
+                            action: "updated to " + Idofrow?.[2]
+                        }, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
+
+                    try {
+                        await Axios.patch(`/users/${Idofrow?.[0]}`, DataUpdate, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            },
+                        })
+
+                        toast.success("User Updated Successfully")
+
+                    } catch (error) {
+                        toast.error("Something Went Wrong *")
+
+                    } finally {
+
+                        setIdofrow(null);
+                        setDeletestate(null);
+                        setData({
+                            userName: "",
+                            email: "",
+                            password: "",
+                            userRole: "",
+                            TotalBals: "",
+                        });
+
+                        // getUsers()
+                        setReNewData(true)
+
+                    }
+
+                } catch {
+                    toast.error(" error to update user * ")
+                }
+
+
+
+
+            }
+
+
+
+
+        }
+
+
+        else if (Idofrow?.[3] !== "Reseller" && DataUpdate.userRole !== "Reseller") {
+
+            try {
+                await Axios.patch(`/users/${Idofrow?.[0]}`, DataUpdate, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    },
+                })
+
+                toast.success("User Updated Successfully")
+
+            } catch (error) {
+                toast.error("Something Went Wrong *")
+
+            } finally {
+
+                setIdofrow(null);
+                setDeletestate(null);
+                setData({
+                    userName: "",
+                    email: "",
+                    password: "",
+                    userRole: "",
+                    TotalBals: "",
+                });
+
+                // getUsers()
+                setReNewData(true)
+
+            }
+        }
 
 
     }
 
     const handledeleteUser = async () => {
 
-        try {
-            await Axios.delete(`/users/${Deletestate}`, {
+
+        if (Deletestate?.[3] == "Reseller") {
+            //FIXME - change Email to Id
+
+            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, {
                 headers: {
                     "Content-Type": "application/json",
-                    // 'Authorization': `Bearer ${session?.data?.Token}`
-                },
-            })
-            toast.success("User Deleted Successfully")
+                    'Authorization': `Bearer ${session?.data?.Token}`
+                }
+            },)
 
-        } catch (error) {
-            //
-        } finally {
-            //
-            setIdofrow(null);
-            setDeletestate(null);
-            setData({
-                userName: "",
-                email: "",
-                password: "",
-                userRole: "",
-                TotalBals: "",
-            });
-            // getUsers()
-            setReNewData(true)
+
+            const DataBalance = UDetails.data.userDetail.TotalBals
+
+            // let donebalance = Math.floor(DataUpdate.cost) - Math.floor(Idofrow?.[1])
+
+
+            try {
+                await Axios.delete(`/users/${Deletestate?.[0]}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    },
+                })
+                toast.success("User Deleted Successfully")
+
+
+                await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance + Deletestate?.[1] }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
+
+                toast.success("Your Balance Now= " + (DataBalance + Deletestate?.[1]) + " $");
+
+
+                await Axios.post("/bal/",
+                    {
+                        amount: Deletestate?.[1],
+                        action: "Tooken from " + Deletestate?.[2]
+                    }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
+
+            } catch (error) {
+                //
+            } finally {
+                //
+                setIdofrow(null);
+                setDeletestate(null);
+                setData({
+                    userName: "",
+                    email: "",
+                    password: "",
+                    userRole: "",
+                    TotalBals: "",
+                });
+                // getUsers()
+                setReNewData(true)
+            }
+
+
         }
 
+
+
+        if (Deletestate?.[3] != "Reseller") {
+
+
+            try {
+                await Axios.delete(`/users/${Deletestate?.[0]}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    },
+                })
+                toast.success("User Deleted Successfully")
+
+            } catch (error) {
+                //
+            } finally {
+                //
+                setIdofrow(null);
+                setDeletestate(null);
+                setData({
+                    userName: "",
+                    email: "",
+                    password: "",
+                    userRole: "",
+                    TotalBals: "",
+                });
+                // getUsers()
+                setReNewData(true)
+            }
+        }
 
 
     }
 
 
-    let patata = 0
+    let changeNumber = 0
 
     const addUsers = async () => {
 
@@ -283,32 +606,109 @@ const Table = ({ COLUMNS, AllUsers }) => {
 
 
 
-        try {
+        if (Data.userRole == "Reseller") {
 
-            await Axios.post("/users/signup/", Data, {
+            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, {
                 headers: {
                     "Content-Type": "application/json",
-                    // 'Authorization': `Bearer ${session?.data?.Token}`
-                },
-            })
-
-            toast.success("User added Successfully");
+                    'Authorization': `Bearer ${session?.data?.Token}`
+                }
+            },)
 
 
-        } catch (error) {
-            error.request.status === 409 ? toast.error("User Already Exist") :
-                toast.error("User Not Added");
-        } finally {
+            const DataBalance = UDetails.data.userDetail.TotalBals
 
-            // getUsers()
-            setReNewData(true)
-            setData({
-                userName: "",
-                email: "",
-                password: "",
-                userRole: "",
-                TotalBals: "",
-            });
+            // let donebalance = Math.floor(DataUpdate.cost) - Math.floor(Idofrow?.[1])
+
+            if (Data.TotalBals <= DataBalance) {
+
+
+                try {
+
+
+
+                    await Axios.post("/users/signup/", Data, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        },
+                    })
+
+
+
+                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - Data.TotalBals }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
+
+                    toast.success("Your Balance Now= " + (DataBalance - Data.TotalBals) + " $");
+
+
+                    await Axios.post("/bal/",
+                        {
+                            amount: -Data.TotalBals,
+                            action: "Gived to " + Data.userName
+                        }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
+
+
+
+
+
+
+                    toast.success("User added Successfully");
+
+
+                } catch (error) {
+                    error.request.status === 409 ? toast.error("User Already Exist") :
+                        toast.error("User Not Added *");
+                }
+
+                setReNewData(true)
+
+
+            }
+            else {
+                toast.error("Not Enough Balance")
+            }
+
+        }
+
+        else if (Data.userRole != "Reseller") {
+
+            try {
+
+                await Axios.post("/users/signup/", Data, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    },
+                })
+
+                toast.success("User added Successfully");
+
+
+            } catch (error) {
+                error.request.status === 409 ? toast.error("User Already Exist") :
+                    toast.error("User Not Added");
+            } finally {
+
+                // getUsers()
+                setReNewData(true)
+                setData({
+                    userName: "",
+                    email: "",
+                    password: "",
+                    userRole: "",
+                    TotalBals: "",
+                });
+            }
         }
 
     }
@@ -318,22 +718,29 @@ const Table = ({ COLUMNS, AllUsers }) => {
     useEffect(() => {
         const getUsers = async () => {
             try {
+
                 const res = await Axios.get(`/users/?search=${Search}&page=${Page}&limit=${Limit}`, {
                     headers: {
                         "Content-Type": "application/json",
-                        // 'Authorization': `Bearer ${session?.data?.Token}`
+                        'Authorization': `Bearer ${session?.data?.Token}`
                     },
                 })
+
+
+
+
+
 
                 setDataTable(res.data.userDetail)
                 setTotalUsers(res.data.total)
 
             } catch (error) {
-                if (error.response.status === 404) {
+                if (error?.response?.status === 404) {
                     // toast.error("No User Found");
                     setDataTable([])
 
                 }
+
 
 
             }
@@ -342,7 +749,7 @@ const Table = ({ COLUMNS, AllUsers }) => {
 
         getUsers()
         setReNewData(false)
-    }, [Search, Limit, Page, patata, ReNewData]);
+    }, [Search, Limit, Page, changeNumber, ReNewData, session?.data?.Token]);
 
 
 
@@ -651,7 +1058,7 @@ const Table = ({ COLUMNS, AllUsers }) => {
                                             {
                                                 cell.column.id !== "Delete" &&
                                                     cell.column.id !== "Edit" &&
-                                                    row.original._id == Idofrow ?
+                                                    row.original._id == Idofrow?.[0] ?
                                                     <>
                                                         {cell.column.id == "userName" &&
                                                             <input
@@ -717,21 +1124,24 @@ const Table = ({ COLUMNS, AllUsers }) => {
 
 
 
-                                            {row.original._id !== Idofrow ?
+                                            {row.original._id !== Idofrow?.[0] ?
                                                 cell.column.id === "Edit" &&
 
-                                                <label onClick={() => { setIdofrow(row.original._id) }} aria-label="upload picture" ><FontAwesomeIcon icon={faEdit} className="text-2xl text-blue-500" /></label>
+                                                <label onClick={() => {
+                                                    setIdofrow([row.original._id, row.original.TotalBals, row.original.userName, row.original.userRole])
+                                                    setDataUpdate(""), setEValid(false), setUValid(false), setBValid(false)
+                                                }} aria-label="upload picture" ><FontAwesomeIcon icon={faEdit} className="text-2xl text-blue-500" /></label>
 
                                                 :
                                                 <div className=" space-x-3">
                                                     {cell.column.id === "Edit" && <button disabled={EValid && RValid && BValid && UValid ? false : true} type='submit' onClick={handleUpdateUser} className="btn btn-accent"> <FontAwesomeIcon icon={faSave} className="text-2xl" /></button>}
-                                                    {cell.column.id === "Edit" && <button onClick={() => { setIdofrow(null) }} className="btn  btn-error"><FontAwesomeIcon icon={faBan} className="text-2xl" /></button>}
+                                                    {cell.column.id === "Edit" && <button onClick={() => { setIdofrow(null), setDataUpdate(null), setEValid(false), setUValid(false), setBValid(false) }} className="btn  btn-error"><FontAwesomeIcon icon={faBan} className="text-2xl" /></button>}
 
                                                 </div>
 
 
                                             }
-                                            {cell.column.id === "Delete" && <label htmlFor="my-modal-3" className="m-0" onClick={() => { setDeletestate(row.original._id) }}><FontAwesomeIcon icon={faTrash} className="text-2xl text-red-700" /></label>}
+                                            {cell.column.id === "Delete" && <label htmlFor="my-modal-3" className="m-0" onClick={() => { setDeletestate([row.original._id, row.original.TotalBals, row.original.userName, row.original.userRole]) }}><FontAwesomeIcon icon={faTrash} className="text-2xl text-red-700" /></label>}
 
 
                                         </td>
@@ -862,10 +1272,10 @@ const Table = ({ COLUMNS, AllUsers }) => {
 }
 
 
-const Accounts = ({ AllUsers }) => {
+const Accounts = ({ AllUsers, SessionID }) => {
 
-
-
+    const router = useRouter()
+    const session = useSession();
     const COLUMNS =
         useMemo(() =>
             [
@@ -953,29 +1363,45 @@ const Accounts = ({ AllUsers }) => {
 
     const l = useLanguage();
 
-    return (
+
+    if (session.status === "loading") {
+        return (
+            <div className="w-100 h-100 text-center">
+                Loading...
+            </div>
+        )
+    }
+
+    if (session.status === "unauthenticated") {
+        return router.push("/")
+    }
+
+    if (session.status === "authenticated") {
+        return (
 
 
-        <>
-            <Head>
-                <title >{l.account}</title>
-                <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-            </Head>
+            <>
+                <Head>
+                    <title >{l.account}</title>
+                    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+                </Head>
 
-            <Table COLUMNS={COLUMNS} AllUsers={AllUsers} />
-            <ToastContainer
-                draggablePercent={60}
-            />
+                <Table COLUMNS={COLUMNS} AllUsers={AllUsers} SessionID={SessionID} />
+                <ToastContainer
+                    draggablePercent={60}
+                />
 
 
-        </ >
-    );
+            </ >
+        );
+    }
 }
 
 
 
 
 import AdminLayout from '../../../Layouts/AdminLayout';
+import { useRouter } from 'next/router';
 Accounts.Layout = AdminLayout;
 
 

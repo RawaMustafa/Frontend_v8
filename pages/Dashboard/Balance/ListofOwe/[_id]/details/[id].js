@@ -13,7 +13,8 @@ import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
 import { faTrashAlt, faPaperPlane, faHandHoldingUsd } from '@fortawesome/free-solid-svg-icons';
 
 
-import { getSession } from "next-auth/react";
+import { getSession,useSession } from "next-auth/react";
+
 
 
 export const getServerSideProps = async (context) => {
@@ -33,7 +34,12 @@ export const getServerSideProps = async (context) => {
     const _id = context.params?.id;
     const Qarz_ID = context.query.Qarz
 
-    const response = await Axios.get('/qarz/details/' + _id)
+    const response = await Axios.get('/qarz/details/' + _id, {
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${session?.data?.Token}`
+        }
+    },)
     const data = await response.data
     return {
         props: { cars: data, ID: Qarz_ID },
@@ -57,7 +63,12 @@ const Detail = ({ cars, ID }) => {
 
 
         try {
-            await Axios.delete(`/qarz/${ID}`)
+            await Axios.delete(`/qarz/${ID}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${session?.data?.Token}`
+                }
+            },)
 
             router.back()
         } catch (err) {

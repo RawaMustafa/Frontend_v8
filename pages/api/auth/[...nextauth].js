@@ -7,6 +7,7 @@ import dayjs from "dayjs"
 
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import { createNoSubstitutionTemplateLiteral } from 'typescript';
 
 // export default NextAuth(() => {
 
@@ -33,8 +34,13 @@ const nextAuthOptions = (req, res) => {
                         if (user) {
 
                             const cookies = user.headers['set-cookie']
-                            // console.log(user.data)
-                            res.setHeader('Set-Cookie', user.data.refreshToken)
+
+                            res.setHeader("set-cookie", `RefreshToken=${user.data.refreshToken}; path=/; samesite=lax; httponly;`)
+
+
+                            // res.setHeader("set-cookie", `Token=${user.data.token}; path=/; samesite=lax; httponly;`)
+
+                            // res.setHeader('Set-Cookie', user.data.refreshToken)
 
                             return { status: 'success', data: user.data }
 
@@ -75,7 +81,38 @@ const nextAuthOptions = (req, res) => {
 
 
 
+
                 token = refreshAccessToken(token, req, res);
+
+                async function refreshAccessToken(tokenObject, req, res) {
+
+
+                    // await res.setHeader("set-cookie", `Token=${tokenObject.token}; path=/; samesite=lax; httponly;`)
+                    try {
+
+                        const tokenResponse = await Axios.post("/users/reLogin", {
+
+                            patata: tokenObject.refreshToken
+
+                        });
+
+
+                        await res.setHeader("set-cookie", `Token=${tokenResponse.data.token}; path=/; samesite=lax; httponly;`)
+                        return {
+                            ...tokenObject,
+                            accessToken: tokenResponse.data.token,
+                        }
+                    } catch (error) {
+
+                        return {
+                            ...tokenObject,
+                            error: "RefreshAccessTokenError",
+
+                        }
+                    }
+                }
+
+
                 return Promise.resolve(token);
 
 
@@ -92,9 +129,9 @@ const nextAuthOptions = (req, res) => {
                     session.Token = token.accessToken
                     session.accessTokenExpiry = token.accessTokenExpiry
                     axios.defaults.headers.common['Authorization'] = `Bearer ${token.accessToken}`;
-                    req.headers.authorization = `Bearer ${token.accessToken}`;
+                    req.headers.Authorization = `Bearer ${token.accessToken}`;
+
                 }
-                console.log(res.header)
 
                 return session;
 
@@ -120,29 +157,29 @@ export default (req, res) => {
 
 
 
-async function refreshAccessToken(tokenObject) {
+// async function refreshAccessToken(tokenObject) {
 
-    try {
+//     try {
 
-        const tokenResponse = await Axios.post("/users/reLogin", {
+//         const tokenResponse = await Axios.post("/users/reLogin", {
 
-            patata: tokenObject.refreshToken
+//             patata: tokenObject.refreshToken
 
-        });
-
-
+//         });
 
 
-        return {
-            ...tokenObject,
-            accessToken: tokenResponse.data.token,
-        }
-    } catch (error) {
 
-        return {
-            ...tokenObject,
-            error: "RefreshAccessTokenError",
 
-        }
-    }
-}
+//         return {
+//             ...tokenObject,
+//             accessToken: tokenResponse.data.token,
+//         }
+//     } catch (error) {
+
+//         return {
+//             ...tokenObject,
+//             error: "RefreshAccessTokenError",
+
+//         }
+//     }
+// }

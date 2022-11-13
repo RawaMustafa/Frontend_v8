@@ -96,8 +96,9 @@ export const en = {
     note: "Note",
     info: "Info",
     update: "Update",
-    deletemsg: " sure ?,  you want to delete this item ?",
-    givemsg: " Who do you want to send this item to ?",
+    deletemsg: " sure ?,  you want to delete this car ?",
+    retrievemsg: " sure ?,  you want to retrieve this car ?",
+    givemsg: " Who do you want to send this car to ?",
 
     yes: "Yes",
     no: "No",
@@ -107,8 +108,8 @@ export const en = {
     sold: "Sold",
     sell: "Sell",
     retrieve: "Retrieve",
-    soldmsg: "sure ?, you want to retrieve this item ?",
-    sellmsg: "sure ?, you want to sell this item ?",
+    soldmsg: "sure ?, you want to retrieve this car ?",
+    sellmsg: "sure ?, you want to sell this car ?",
 
     mybalance: "My Balance",
 
@@ -188,7 +189,10 @@ export const en = {
 
     ,
     filter: "Filter",
-    loanmsg: "you add this car in Loan Amount"
+    loanmsg: "you add this car in Loan Amount",
+    rent: "Rent Car",
+    loading: "Loading...",
+    unauthenticated: "Unauthenticated",
 
 
 

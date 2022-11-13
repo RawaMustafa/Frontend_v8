@@ -165,7 +165,7 @@ const UserHeader = () => {
                         <li >  <div onClick={() => {
                             signOut({ callbackUrl: '/Login', redirect: true })
 
-                        }}>Logout</div></li>
+                        }}>{l.logout}</div></li>
                     </ul>
 
 
@@ -187,8 +187,15 @@ const UserHeader = () => {
                         </label>
 
                         <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-44 text-center border">
-                            <li> <a href={router.pathname} className="z-50" value="ku" onClick={() => { setLang("ku") }}><Image className="active:scale-[.85] text-5xl p-2 hover:bg-slate-300 hover:dark:bg-slate-700  " src="/flag_kurd.png" height={35} width={38} /> كوردی</a> </li>
-                            <li> <a href={router.pathname} className="z-50" value="en" onClick={() => { setLang("en") }}><Image className="active:scale-[.85] text-5xl p-2 hover:bg-slate-300 hover:dark:bg-slate-700 " src="/flag_english.png" height={35} width={35} />English</a></li>
+
+                            <li><a className="z-50" value="ku" onClick={() => {
+                                setLang("ku")
+                                router.reload()
+                            }}><Image className="active:scale-[.85] text-5xl p-2 hover:bg-slate-300 hover:dark:bg-slate-700  " src="/flag_kurd.png" height={35} width={38} /> كوردی</a> </li>
+                            <li><a className="z-50" value="en" onClick={() => {
+                                setLang("en")
+                                router.reload()
+                            }}><Image className="active:scale-[.85] text-5xl p-2 hover:bg-slate-300 hover:dark:bg-slate-700 " src="/flag_english.png" height={35} width={35} />English</a></li>
                         </ul>
 
                     </div>

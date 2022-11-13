@@ -110,11 +110,7 @@ const Header = () => {
 
 
         <div className="container  ">
-            <div className="navbar  z-[60] flex justify-between lg:justify-end lg:w-[calc(100%-17rem)] max-w-8xl lg:ml-64  rtl:lg:mr-64 mt-2 fixed  bg-opacity-5  transition-all duration-300  backdrop-blur-md bg-slate-300 rounded-2xl  bg-base-1">
-
-
-
-
+            <div className="navbar   z-[60] flex justify-between lg:justify-end lg:w-[calc(100%-17rem)] max-w-8xl lg:ml-64  rtl:lg:mr-64 mt-2 fixed  bg-opacity-5  transition-all duration-300  backdrop-blur-md bg-slate-300 rounded-2xl  bg-base-1 ">
 
 
 

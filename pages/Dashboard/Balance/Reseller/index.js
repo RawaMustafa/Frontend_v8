@@ -4,11 +4,12 @@ import { useEffect, useMemo, useState } from 'react';
 import Head from 'next/head'
 import Link from 'next/link';
 import axios from 'axios';
-import Axios,{baseURL} from '../../../api/Axios';
+import Axios, { baseURL } from '../../../api/Axios';
 import Image from 'next/image';
 import { InView } from 'react-intersection-observer';
 
-import { getSession } from "next-auth/react";
+import { getSession,useSession } from "next-auth/react";
+
 
 
 
@@ -38,6 +39,8 @@ export const getServerSideProps = async ({ req }) => {
 
 const Reseller = () => {
 
+    const session = useSession()
+
     const [Data, setData] = useState([]);
     const l = useLanguage();
 
@@ -53,7 +56,12 @@ const Reseller = () => {
 
         const getReseller = async () => {
             try {
-                const res = await Axios.get(`users/Reseller/?search=${Search}&page=${Page}&limit=${Limit}`)
+                const res = await Axios.get(`users/Reseller/?search=${Search}&page=${Page}&limit=${Limit}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
                 setData(res.data.userDetail)
 
             } catch (err) {

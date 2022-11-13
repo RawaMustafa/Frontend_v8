@@ -24,7 +24,7 @@ import { ToastContainer, toast, } from 'react-toastify';
 import Resizer from "react-image-file-resizer";
 
 
-import { getSession, usetSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 
 export const getServerSideProps = async ({ req }) => {
     const session = await getSession({ req })
@@ -64,8 +64,11 @@ let IsTimeToDrawing = ""
 
 const NewCars = ({ SessionID }) => {
 
+    const session = useSession()
+
     const [page, setPage] = useState(1)
     const [UserQarz, setUserQarz] = useState({})
+    const [UserQarzRent, setUserQarzRent] = useState({})
     const [pictureandvideorepair, setPictureandvideorepair] = useState([])
     const [pictureandvideodamage, setPictureandvideodamage] = useState([])
     const [CarDamage, setCarDamage] = useState([])
@@ -86,6 +89,8 @@ const NewCars = ({ SessionID }) => {
         "Mileage": "",
         "VINNumber": "",
         "WheelDriveType": "",
+
+
 
         "PricePaidbid": 0,
         // "UserGiven": "",
@@ -145,7 +150,6 @@ const NewCars = ({ SessionID }) => {
 
 
     useEffect(() => {
-
         const canvass = canvasRef.current;
         const contextt = canvass.getContext('2d')
         // contextt.lineCap = "round"
@@ -160,8 +164,6 @@ const NewCars = ({ SessionID }) => {
 
 
 
-        contextt.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
-        contextt.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
         contextt.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
 
 
@@ -623,11 +625,11 @@ const NewCars = ({ SessionID }) => {
         const savevalue = event.target.value;
 
         if (type == "number") {
-            savevalue = event.target.value.match(/^[0-9]{0,7}/)?.map(Number)[0];
+            savevalue = event.target.value.match(/^[0-9]{0,12}/)?.map(Number)[0];
 
         }
         if (type == "text") {
-            savevalue = event.target.value.match(/^[0-9a-zA-Z]{0,20}/)?.map(String)[0];
+            savevalue = event.target.value.match(/^[0-9a-zA-Z]{0,40}/)?.map(String)[0];
 
         }
 
@@ -637,12 +639,12 @@ const NewCars = ({ SessionID }) => {
         }
 
         if (type == "date") {
-            savevalue = event.target.value.match(/\d{4}-\d{2}-\d{2}/)
+            savevalue = event.target.value.match(/\d{2,4}(\/|\-)\d{2,4}(\/|\-)\d{2,4}/)
 
         }
 
         if (savename == "Tocar" || savename == "Tobalance") {
-            savevalue = event.target.value.match(/^[a-zA-Z]{2,6}/)?.map(String)[0]
+            savevalue = event.target.value.match(/^[a-zA-Z]{2,8}/)?.map(String)[0]
 
         }
 
@@ -700,10 +702,7 @@ const NewCars = ({ SessionID }) => {
 
 
     }
-
-
-
-
+    console.log(QarzUserId == "", Data.Tobalance)
 
     const postCarsId = async () => {
 
@@ -726,7 +725,13 @@ const NewCars = ({ SessionID }) => {
 
         try {
             //FIXME -  chage Email to Id
-            const UDetails = await Axios.get('/users/detail/Admin@gmail.com')
+            const UDetails = await Axios.get(`/users/detail/${SessionID}`, {
+                headers: {
+                    "Content-Type": "application/json",
+
+                    'Authorization': `Bearer ${session?.data?.Token}`
+                }
+            },)
 
 
 
@@ -778,22 +783,39 @@ const NewCars = ({ SessionID }) => {
 
                             'Content-Type': 'multipart/form-data',
 
+
+                            'Authorization': `Bearer ${session?.data?.Token}`
+
                         }
 
                     }
 
 
+
                     ).then(async (response) => {
-                        console.log(response.id)
                         try {
 
-                            await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - TotalCosts })
+                            await Axios.patch(`/users/${SessionID}`, { TotalBals: DataBalance - TotalCosts }, {
+                                headers: {
+                                    "Content-Type": "application/json",
+
+                                    'Authorization': `Bearer ${session?.data?.Token}`
+                                }
+                            },)
+
 
                             await Axios.post("/bal/",
                                 {
-                                    amount: -TotalCosts,
-                                    action: "Add=> " + Data.ModeName || "car"
-                                })
+                                    // amount: TotalCosts,
+                                    amount: 11,
+                                    action: "ModeName"
+                                }, {
+                                headers: {
+                                    "Content-Type": "application/json",
+
+                                    'Authorization': `Bearer ${session?.data?.Token}`
+                                }
+                            },)
 
                             toast.success("Your Balance Now= " + (DataBalance - TotalCosts) + " $");
 
@@ -824,7 +846,7 @@ const NewCars = ({ SessionID }) => {
                 }
             }
 
-            else if (Data.Tobalance == "Loan") {
+            else if (Data.Tobalance == "Loan" && QarzUserId != "") {
 
 
                 await Axios.post('/cars/', FormDataCar, {
@@ -833,17 +855,85 @@ const NewCars = ({ SessionID }) => {
 
                         'Content-Type': 'multipart/form-data',
 
+                        'Authorization': `Bearer ${session?.data?.Token}`
+
                     }
 
                 }
 
                 ).then(async (response) => {
 
+                    console.log(QarzUserId.split(","))
                     try {
 
-                        await Axios.patch('/users/' + QarzUserId.split(",")[0], { "TotalBals": Math.floor(QarzUserId.split(",")?.[1]) + TotalCosts })
+                        await Axios.post(`/qarz/`, {
+                            userId: QarzUserId.split(",")?.[0],
+                            amount: Math.floor(TotalCosts),
+                            isPaid: false,
 
-                        toast.success("Your Qarz Balance Now= " + (Math.floor(QarzUserId.split(",")?.[1]) + TotalCosts) + " $");
+                        }, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
+
+                        toast.success("Qarz ");
+
+
+
+                    } catch (err) {
+
+                        toast.error("Error from qarz balance *")
+
+                    }
+                    toast.success(l.adddata);
+
+                }).catch(error => {
+
+                    toast.error("error to save car *")
+
+
+                })
+
+            }
+
+
+            else if (Data.Tobalance == "Rent" && QarzUserId != "") {
+
+
+
+                // setTimeout(async () => {
+                const response = await Axios.post('/cars/', FormDataCar, {
+
+                    header: {
+
+                        'Content-Type': 'multipart/form-data',
+
+
+                        'Authorization': `Bearer ${session?.data?.Token}`
+
+                    }
+
+                }
+
+
+
+                ).then(async (response) => {
+                    try {
+
+                        await Axios.post(`/qarz/`, {
+                            userId: QarzUserId,
+                            carId: response.data.Id
+                        }, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
+
+                        toast.success("Rent Car Successfully")
+
 
                     } catch (err) {
 
@@ -858,11 +948,16 @@ const NewCars = ({ SessionID }) => {
 
 
                 })
+                // }, 100);
+
+
+
+
 
             }
 
-            else {
-                toast.warn("Please Select Cash or Loan");
+            else if (Data.Tobalance == "" || QarzUserId == "") {
+                toast.warn("Please Select type of Balance");
             }
 
 
@@ -874,17 +969,28 @@ const NewCars = ({ SessionID }) => {
 
     }
 
-    const handeleUserQarz = async () => {
 
-        const res = await Axios.get('users/Qarz')
-        const data = res.data
-        setUserQarz(data)
-        // //
-    }
 
     useEffect(() => {
-        handeleUserQarz()
-    }, [])
+
+        if (session.status == "authenticated") {
+
+            const handeleUserQarz = async () => {
+
+                const res = await Axios.get('users/Qarz', {
+                    headers: {
+                        "Content-Type": "application/json",
+
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
+                const data = res.data
+                setUserQarz(data)
+                // //
+            }
+            handeleUserQarz()
+        }
+    }, [session.status])
 
 
 
@@ -928,10 +1034,11 @@ const NewCars = ({ SessionID }) => {
                             </div>
 
                             <div><h1 className="py-2">{l.seletkbalance}</h1>
-                                <select name='Tobalance' defaultValue={"select"} required onChange={(e) => { HandleAddCars(e) }} className="select select-info w-full max-w-xs">
+                                <select name='Tobalance' defaultValue={"select"} required onChange={(e) => { HandleAddCars(e), setQarzUserId("") }} className="select select-info w-full max-w-xs">
                                     <option disabled value={"select"} >{l.none} </option>
                                     <option value="Cash"> {l.cash} </option>
                                     <option value="Loan" > {l.loan} </option>
+                                    <option value="Rent" > {l.rent} </option>
                                 </select>
                             </div>
 
@@ -948,7 +1055,24 @@ const NewCars = ({ SessionID }) => {
                                             return <option value={[item._id, item.TotalBals]} key={idx}>{item.userName}</option>
                                         })}
                                     </select>
-                                </div>}
+                                </div>
+                            }
+
+                            {Data.Tobalance == "Rent" &&
+                                <div><h1 className="py-2">{l.rent}</h1>
+                                    <select name='UserQarz' defaultValue={"Select"} onChange={(eve) => {
+                                        setQarzUserId(eve.target.value)
+                                    }}
+                                        className="select select-info w-full max-w-xs">
+
+                                        <option disabled value={"Select"} >{l.none}</option>
+                                        {UserQarz.userDetail?.map((item, idx) => {
+
+                                            return <option value={item._id} key={idx}>{item.userName}</option>
+                                        })}
+                                    </select>
+                                </div>
+                            }
 
 
 
@@ -1168,9 +1292,9 @@ const NewCars = ({ SessionID }) => {
 
 
 
-                        <h1 className="mt-5 text-center">{l.fromamericatodubai}</h1>
+                        <h1 className="mt-5 text-center">{l.fromamericatodubaicost}</h1>
                         <div className="flex  justify-center">
-                            <input name='TransportationCostFromAmericaLocationtoDubaiGCostTranscost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromamericatodubai} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input name='TransportationCostFromAmericaLocationtoDubaiGCostTranscost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromamericatodubaicost} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
                         <h1 className="mt-5 text-center">{l.uslocation}</h1>
@@ -1184,16 +1308,16 @@ const NewCars = ({ SessionID }) => {
                         </div>
 
 
-                        <h1 className="mt-5 text-center">{l.fromdubaitokurdistan}</h1>
+                        <h1 className="mt-5 text-center">{l.fromdubaitokurdistancosts}</h1>
                         <div className="flex  justify-center">
-                            <input name='DubaiToIraqGCostTranscost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromdubaitokurdistan} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input name='DubaiToIraqGCostTranscost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromdubaitokurdistancosts} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
 
-                        <h1 className="mt-5 text-center">{l.dubaiToIraqGCostgumrgCost} </h1>
+                        <h1 className="mt-5 text-center">{l.fromdubaitokurdistangumrg} </h1>
                         <div className="flex  justify-center">
-                            <input name='DubaiToIraqGCostgumrgCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.dubaiToIraqGCostgumrgCost} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input name='DubaiToIraqGCostgumrgCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromdubaitokurdistangumrg} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 

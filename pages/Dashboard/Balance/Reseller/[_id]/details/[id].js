@@ -18,7 +18,8 @@ import ImageGallery from 'react-image-gallery';
 
 
 
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
+
 
 
 
@@ -39,7 +40,12 @@ export const getServerSideProps = async (context) => {
     }
     const _id = context.params?.id;
 
-    const response = await Axios.get('/Reseller/details/' + _id)
+    const response = await Axios.get('/Reseller/details/' + _id, {
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${session?.Token}`
+        }
+    },)
     const data = await response.data
     return {
         props: { cars: data, ID: _id },
@@ -56,6 +62,7 @@ export const getServerSideProps = async (context) => {
 
 const Detail = ({ cars, ID }) => {
 
+    const session = useSession();
     const router = useRouter()
     const [detpage, setDetpage] = useState(1);
     const l = useLanguage();
@@ -100,7 +107,12 @@ const Detail = ({ cars, ID }) => {
     const handleDeleteCar = async () => {
 
         try {
-            await Axios.delete(`/Reseller/${ID}`)
+            await Axios.delete(`/Reseller/${ID}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${session?.data?.Token}`
+                }
+            },)
 
             router.back()
         } catch (err) {
@@ -155,14 +167,14 @@ const Detail = ({ cars, ID }) => {
                 <div className="flex  w-full h-full p-4 justify-end">
 
 
-                    <label htmlFor="my-modal-3" className="btn btn-error modal-button">{l.delete}</label>
+                    <label htmlFor="my-modal-3" className="btn btn-error modal-button">{l.retrieve}</label>
 
                     <input type="checkbox" id="my-modal-3" className="modal-toggle btn btn-error " />
                     <div className="modal  ">
                         <div className="modal-box relative ">
                             <label htmlFor="my-modal-3" className="btn btn-sm btn-circle absolute right-2 top-2 ">✕</label>
                             <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faTrashAlt} className="text-5xl text-red-700 " />  </h3>
-                            <p className="py-4 ">{l.deletemsg}</p>
+                            <p className="py-4 ">{l.retrievemsg}</p>
                             <div className="space-x-10 ">
                                 <label className="btn btn-error " onClick={handleDeleteCar}>{l.yes}</label>
                                 <label htmlFor="my-modal-3" className="btn btn-accent ">{l.no}</label>

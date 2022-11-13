@@ -11,12 +11,17 @@ import axios from "axios";
 // const token = await getToken({ req })
 export default axios.create({
 
-    baseURL: "http://localhost:4000",
+    baseURL: "http://localhost:4000/_API/",
     headers: {
         "Content-Type": "application/json",
+        // Authorization: `Bearer ${token}`,
+
+
+
+
         // "Authorization": "Bearer " + session.accessToken
     },
 
 })
 
-export const baseURL = "http://localhost:4000/uploads/"
+export const baseURL = "http://localhost:4000/api/uploads/"

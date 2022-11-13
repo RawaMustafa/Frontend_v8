@@ -27,8 +27,6 @@ export const getServerSideProps = async ({ req }) => {
 
     const session = await getSession({ req })
 
-    Axios.defaults.headers.common.Authorization = `Bearer ${session?.Token}`;
-
 
     if (!session || session?.userRole !== "Admin") {
         return {
@@ -42,6 +40,7 @@ export const getServerSideProps = async ({ req }) => {
 
 
 
+
     return {
         props: {}
 
@@ -51,15 +50,20 @@ export const getServerSideProps = async ({ req }) => {
 
 
 const Dashboard = (props) => {
+
+
     const l = useLanguage();
     const router = useRouter()
+    const session = useSession()
+    const { status } = useSession()
 
     const [Data, setData] = useState()
     const [DataQarz, setDataQarz] = useState()
     const [DataownCost, setDataownCost] = useState()
     const [UserInfo, setUserInfo] = useState()
 
-    const { status } = useSession()
+
+
 
 
 
@@ -67,63 +71,92 @@ const Dashboard = (props) => {
     useEffect(() => {
 
 
-        const ddashboard = async () => {
-            const one = "/cost"
-            const two = "/cost/qarz"
-            const three = "/cost/ownCost"
-            const Forth = "users/detail/Admin@gmail.com"
 
-            const requestTwo = await Axios.get(two).then((res) => {
-                return res
-            }).catch((err) => {
+        if (status == "authenticated") {
 
 
-            });
+            const ddashboard = async () => {
+                const one = "/cost"
+                const two = "/cost/qarz"
+                const three = "/cost/ownCost"
+                const Forth = `users/detail/${session?.data?.id}`
 
-            const requestOne = await Axios.get(one).then((res) => {
-                return res
-            }).catch((err) => {
+                const requestTwo = await Axios.get(two, {
+                    headers: {
+                        "Content-Type": "application/json",
 
-            });
-            const requestThree = await Axios.get(three).then((res) => {
-                return res
-            }).catch((err) => {
-
-            })
-            const requestForth = await Axios.get(Forth).then((res) => {
-                return res
-            }).catch((err) => {
-
-            })
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },).then((res) => {
+                    return res
+                }).catch((err) => {
 
 
+                });
 
-            await axios.all([requestOne, requestThree, requestTwo, requestForth]).
+                const requestOne = await Axios.get(one, {
+                    headers: {
+                        "Content-Type": "application/json",
 
-                then(
-                    await axios.spread((...responses) => {
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },).then((res) => {
+                    return res
+                }).catch((err) => {
 
-                        const dataFertch = responses?.[0]?.data?.TotalList[0];
-                        const dataFertchqarz = responses?.[2]?.data?.QarzTotal[0];
-                        const dataFertchownCost = responses?.[1]?.data?.QarzTotal[0];
-                        const UserBalance = responses?.[3]?.data.userDetail
+                });
+                const requestThree = await Axios.get(three, {
+                    headers: {
+                        "Content-Type": "application/json",
+
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },).then((res) => {
+                    return res
+                }).catch((err) => {
+
+                })
+                const requestForth = await Axios.get(Forth, {
+                    headers: {
+                        "Content-Type": "application/json",
+
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },).then((res) => {
+                    return res
+                }).catch((err) => {
+
+                })
 
 
-                        setUserInfo(UserBalance)
-                        setData(dataFertch)
-                        setDataQarz(dataFertchqarz)
-                        setDataownCost(dataFertchownCost)
+
+                await axios.all([requestOne, requestThree, requestTwo, requestForth]).
+
+                    then(
+                        await axios.spread((...responses) => {
+
+                            const dataFertch = responses?.[0]?.data?.TotalList[0];
+                            const dataFertchqarz = responses?.[2]?.data?.QarzTotal[0];
+                            const dataFertchownCost = responses?.[1]?.data?.QarzTotal[0];
+                            const UserBalance = responses?.[3]?.data.userDetail
 
 
-                    })).catch(errors => {
+                            setUserInfo(UserBalance)
+                            setData(dataFertch)
+                            setDataQarz(dataFertchqarz)
+                            setDataownCost(dataFertchownCost)
 
-                    })
 
+                        })).catch(errors => {
+
+                        })
+
+            }
+            ddashboard()
         }
 
-        ddashboard()
 
-    }, [props]);
+    }, [status]);
 
 
     const dataChart = {
@@ -181,79 +214,87 @@ const Dashboard = (props) => {
         }
     }
 
+    if (status == "loading") {
+        return (
+            <div className="text-center">
+                Loading...
+            </div>
+        )
+    }
 
     if (status == "unauthenticated") {
         return router.push('/');
     }
 
+    if (status == "authenticated") {
 
-    return (
+        return (
 
-        <div className="mb-52  first-line: container mx-auto">
+            <div className="mb-52  first-line: container mx-auto">
 
-            <Head>
-                <title >{l.dashboard}</title>
-                <meta name="Dashboard" content="initial-scale=1.0, width=device-width all data " />
-            </Head>
-
-
-            <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4   gap-5 lg:gap-5 mx-4       ">
+                <Head>
+                    <title >{l.dashboard}</title>
+                    <meta name="Dashboard" content="initial-scale=1.0, width=device-width all data " />
+                </Head>
 
 
-                <Link href="/Dashboard/ListofCars/AllCars"><a><div className="p-5  border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
-                    <div className="flex items-center  justify-around  ">
+                <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4   gap-5 lg:gap-5 mx-4       ">
 
-                        <div>
-                            <div className="">{l.allcars}</div>
-                            <div className="text-2xl font-bold  first-letter:">{Data?.carNumber || " 0"}</div>
-                        </div>
-                        <div>
-                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500">
 
-                                <FontAwesomeIcon icon={faCar} className="text-2xl " />
+                    <Link href="/Dashboard/ListofCars/AllCars"><a><div className="p-5  border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
+                        <div className="flex items-center  justify-around  ">
 
+                            <div>
+                                <div className="">{l.allcars}</div>
+                                <div className="text-2xl font-bold  first-letter:">{Data?.carNumber || " 0"}</div>
                             </div>
-                        </div>
+                            <div>
+                                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500">
 
-                    </div>
-                </div></a></Link>
-                <Link href="/Dashboard/ListofCars/AllCars"><a><div className="p-5  border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
-                    <div className="flex items-center  justify-around  ">
+                                    <FontAwesomeIcon icon={faCar} className="text-2xl " />
 
-                        <div>
-                            <div className="">{l.balance}</div>
-                            <div className="text-2xl font-bold  first-letter:">{UserInfo?.TotalBals || " 0"}</div>
-                        </div>
-                        <div>
-                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500">
-
-                                <FontAwesomeIcon icon={faDollar} className="text-2xl " />
-
+                                </div>
                             </div>
+
                         </div>
+                    </div></a></Link>
+                    <Link href="/Dashboard/ListofCars/AllCars"><a><div className="p-5  border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
+                        <div className="flex items-center  justify-around  ">
 
-                    </div>
-                </div></a></Link>
-
-                <Link href="/Dashboard/ListofCars/SalesList"><a><div className="p-5 border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
-                    <div className="flex items-center  justify-around  ">
-
-                        <div>
-                            <div className="">{l.sold}</div>
-                            <div className="text-2xl font-bold ">${Data?.totalpriceSold || " 0"}</div>
-                        </div>
-                        <div>
-                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500 ">
-
-                                <FontAwesomeIcon icon={faMoneyCheckDollar} className="text-2xl" />
-
+                            <div>
+                                <div className="">{l.balance}</div>
+                                <div className="text-2xl font-bold  first-letter:">{UserInfo?.TotalBals || " 0"}</div>
                             </div>
+                            <div>
+                                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500">
+
+                                    <FontAwesomeIcon icon={faDollar} className="text-2xl " />
+
+                                </div>
+                            </div>
+
                         </div>
+                    </div></a></Link>
 
-                    </div>
-                </div></a></Link>
+                    <Link href="/Dashboard/ListofCars/SalesList"><a><div className="p-5 border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
+                        <div className="flex items-center  justify-around  ">
 
-                {/* <Link href="/Dashboard/"><a><div className="p-5 border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
+                            <div>
+                                <div className="">{l.sold}</div>
+                                <div className="text-2xl font-bold ">${Data?.totalpriceSold || " 0"}</div>
+                            </div>
+                            <div>
+                                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500 ">
+
+                                    <FontAwesomeIcon icon={faMoneyCheckDollar} className="text-2xl" />
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div></a></Link>
+
+                    {/* <Link href="/Dashboard/"><a><div className="p-5 border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
                     <div className="flex items-center  justify-around  ">
 
                         <div>
@@ -271,156 +312,158 @@ const Dashboard = (props) => {
                     </div>
                 </div></a></Link> */}
 
-                <Link href="/Dashboard/"><a><div className="p-5 border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl  drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
-                    <div className="flex items-center  justify-around  ">
+                    <Link href="/Dashboard/"><a><div className="p-5 border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl  drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
+                        <div className="flex items-center  justify-around  ">
 
-                        <div>
-                            <div className="">{l.profit} </div>
-                            <div className="text-2xl font-bold ">${Data?.totalbenefit || " 0"}</div>
-                        </div>
-                        <div>
-                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500">
-
-                                <FontAwesomeIcon icon={faSackDollar} className="text-2xl" />
-
+                            <div>
+                                <div className="">{l.profit} </div>
+                                <div className="text-2xl font-bold ">${Data?.totalbenefit || " 0"}</div>
                             </div>
+                            <div>
+                                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500">
+
+                                    <FontAwesomeIcon icon={faSackDollar} className="text-2xl" />
+
+                                </div>
+                            </div>
+
                         </div>
-
-                    </div>
-                </div></a></Link>
+                    </div></a></Link>
 
 
-                {/* <lottie-player src="https://assets9.lottiefiles.com/datafiles/gUENLc1262ccKIO/data.json" background="transparent" speed="1" hover autoplay></lottie-player> */}
-
-            </div>
-
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 px-4 pt-10 ">
-
-
-                <div className="   max-w-[700px] -top-96  ">
-
-                    <Pie options={options} data={dataChart} />
+                    {/* <lottie-player src="https://assets9.lottiefiles.com/datafiles/gUENLc1262ccKIO/data.json" background="transparent" speed="1" hover autoplay></lottie-player> */}
 
                 </div>
 
-                <div className="overflow-hidden shadow-xl  bg-white dark:bg-[#1E2021]  sm:rounded-lg">
-                    <div className="px-4 py-5 sm:px-6">
-                        <h3 className="text-lg font-medium leading-6 ">{l.allcosts}</h3>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 px-4 pt-10 ">
+
+
+                    <div className="   max-w-[700px] -top-96  ">
+
+                        <Pie options={options} data={dataChart} />
+
                     </div>
-                    <div className="border-t border-gray-200 dark:bg-[#1E2021]">
-                        <div >
+
+                    <div className="overflow-hidden shadow-xl  bg-white dark:bg-[#1E2021]  sm:rounded-lg">
+                        <div className="px-4 py-5 sm:px-6">
+                            <h3 className="text-lg font-medium leading-6 ">{l.allcosts}</h3>
+                        </div>
+                        <div className="border-t border-gray-200 dark:bg-[#1E2021]">
+                            <div >
 
 
 
-                            <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
-                                <div className="text-sm font-medium ">{l.expense}</div>
-                                <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataownCost?.owenCost || " 0"}</div>
-                            </div>
-
-                            <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
-                                <div className="text-sm font-medium ">{l.totalpricePaidbid}</div>
-                                <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalpricePaidbid || " 0"}</div>
-                            </div>
-
-
-
-                            <div className="collapse collapse-arrow ">
-
-
-                                <input id="totalloan" type="checkbox" className=" w-full  " />
-
-                                <div className="collapse-title text-xl font-medium">
-
-                                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
-                                        <div className="text-sm font-medium ">{l.totalloan}</div>
-                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzTotal || " 0"}</div>
-                                    </div>
-
+                                <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
+                                    <div className="text-sm font-medium ">{l.expense}</div>
+                                    <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataownCost?.owenCost || " 0"}</div>
                                 </div>
-                                <div className="collapse-content">
 
-
-
-                                    <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
-                                        <div className="text-sm font-medium ">{l.qarzAmountTotal}</div>
-                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzAmountTotal || " 0"}</div>
-                                    </div>
-                                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
-                                        <div className="text-sm font-medium ">{l.qarzCarTotalByAmount}</div>
-                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzCarTotalByAmount || " 0"}</div>
-                                    </div>
-
-
+                                <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
+                                    <div className="text-sm font-medium ">{l.totalpricePaidbid}</div>
+                                    <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalpricePaidbid || " 0"}</div>
                                 </div>
-                            </div>
 
 
 
-                            <div className="collapse collapse-open ">
-                                {/*                                 
+                                <div className="collapse collapse-arrow ">
+
+
+                                    <input id="totalloan" type="checkbox" className=" w-full  " />
+
+                                    <div className="collapse-title text-xl font-medium">
+
+                                        <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
+                                            <div className="text-sm font-medium ">{l.totalloan}</div>
+                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzTotal || " 0"}</div>
+                                        </div>
+
+                                    </div>
+                                    <div className="collapse-content">
+
+
+
+                                        <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
+                                            <div className="text-sm font-medium ">{l.qarzAmountTotal}</div>
+                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzAmountTotal || " 0"}</div>
+                                        </div>
+                                        <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
+                                            <div className="text-sm font-medium ">{l.qarzCarTotalByAmount}</div>
+                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzCarTotalByAmount || " 0"}</div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+
+
+
+                                <div className="collapse collapse-open ">
+                                    {/*                                 
                                 <input type="checkbox" className=" w-full 
                                 "onChange={(e) => { e.target.value = '1' }} value={1} /> */}
 
-                                <div className="collapse-title text-xl font-medium">
+                                    <div className="collapse-title text-xl font-medium">
 
-                                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
-                                        <div className="text-sm font-medium ">{l.cost}</div>
-                                        {/* <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzCarTotalByAmount}</div> */}
+                                        <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
+                                            <div className="text-sm font-medium ">{l.cost}</div>
+                                            {/* <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzCarTotalByAmount}</div> */}
+                                        </div>
+
                                     </div>
+                                    <div className="collapse-content">
 
+
+
+                                        <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
+                                            <div className="text-sm font-medium ">{l.totalCoCCost}</div>
+                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalCoCCost || " 0"}</div>
+                                        </div>
+                                        <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
+                                            <div className="text-sm font-medium ">{l.totalFeesAndRepaidCostDubai}</div>
+                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalFeesAndRepaidCostDubai || " 0"}</div>
+                                        </div>
+
+                                        <div className=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
+                                            <div className="text-sm font-medium ">{l.totalFeesRaqamAndRepairCostinKurdistan}</div>
+                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalFeesRaqamAndRepairCostinKurdistan || " 0"}</div>
+                                        </div>
+
+                                        <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
+                                            <div className="text-sm font-medium ">{l.totalFeesinAmerica}</div>
+                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalFeesinAmerica || " 0"}</div>
+                                        </div>
+
+                                        <div className=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[1E2021]">
+                                            <div className="text-sm font-medium ">{l.totalTransportationCost}</div>
+                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalTransportationCost || " 0"}</div>
+                                        </div>
+
+
+                                    </div>
                                 </div>
-                                <div className="collapse-content">
 
 
 
-                                    <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
-                                        <div className="text-sm font-medium ">{l.totalCoCCost}</div>
-                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalCoCCost|| " 0"}</div>
-                                    </div>
-                                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
-                                        <div className="text-sm font-medium ">{l.totalFeesAndRepaidCostDubai}</div>
-                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalFeesAndRepaidCostDubai|| " 0"}</div>
-                                    </div>
 
-                                    <div className=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
-                                        <div className="text-sm font-medium ">{l.totalFeesRaqamAndRepairCostinKurdistan}</div>
-                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalFeesRaqamAndRepairCostinKurdistan|| " 0"}</div>
-                                    </div>
-
-                                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
-                                        <div className="text-sm font-medium ">{l.totalFeesinAmerica}</div>
-                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalFeesinAmerica|| " 0"}</div>
-                                    </div>
-
-                                    <div className=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[1E2021]">
-                                        <div className="text-sm font-medium ">{l.totalTransportationCost}</div>
-                                        <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalTransportationCost|| " 0"}</div>
-                                    </div>
-
-
-                                </div>
                             </div>
-
-
-
-
                         </div>
                     </div>
+
+
+
+
                 </div>
-
-
-
 
             </div>
 
-        </div>
 
-
-    )
-
+        )
+    }
 
 }
+
+
 
 Dashboard.Layout = AdminLayout
 export default Dashboard;

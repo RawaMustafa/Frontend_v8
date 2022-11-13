@@ -100,6 +100,7 @@ export const ku = {
     info: "زانیاریەکان",
 
     deletemsg: " دڵنینیت  لە سڕینەوەی ئەم سەیارە ؟",
+    retrievemsg: " دڵنینیت  لە گەڕاندنەوەی ئەم سەیارە ؟",
     givemsg: "دەتەوێت ئەم سەیارە بۆکێ بنێریت ؟",
     soldmsg: "دڵنیای لە گەڕاندنەوەی ئەم سەیارە ؟",
     sellmsg: "دڵنیای لە فرۆشتنی ئەم سەیارە ؟",
@@ -214,7 +215,9 @@ export const ku = {
     fromdubaitokurdistancosts: "تێچوو لە دوبەی بۆ کوردستان ",
     fromdubaitokurdistangumrg: "باج لە دوبەی بۆ کوردستان ",
 
-    fromdubaitokurdistanothers:"تێچووی تر لە کوردستان "
+    fromdubaitokurdistanothers: "تێچووی تر لە کوردستان ",
+    rent: "قەرزکردنی سەیارە",
+    loading: "چاوەڕوانبە..."
 
 
 

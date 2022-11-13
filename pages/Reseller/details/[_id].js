@@ -1,6 +1,6 @@
 
 import axios from "axios"
-import Axios from "../../api/Axios"
+import Axios, { baseURL } from "../../api/Axios"
 import Head from 'next/head'
 
 import useLanguage from '../../../Component/language';
@@ -31,7 +31,12 @@ export const getServerSideProps = async (context) => {
 
     const _id = context.params?._id;
 
-    const response = await Axios.get('/reseller/details/' + _id)
+    const response = await Axios.get('/reseller/details/' + _id, {
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${session?.Token}`
+        }
+    },)
     const data = await response.data
     return {
         props: { cars: data },
@@ -64,6 +69,8 @@ const Detail = ({ cars }) => {
     const renderVideo = (item) => {
         return (
             <div>
+
+
 
                 {item.taramash != "false" ?
                     <div className='video-wrapper flex text-center items-center justify-center '>

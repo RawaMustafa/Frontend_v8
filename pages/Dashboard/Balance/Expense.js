@@ -34,6 +34,7 @@ const DESC_regex = /^[0-9a-zA-Z]{0,50}$/;
 
 
 import { getSession, useSession } from "next-auth/react";
+import { useRouter } from 'next/router';
 
 export const getServerSideProps = async ({ req }) => {
     const session = await getSession({ req })
@@ -48,14 +49,21 @@ export const getServerSideProps = async ({ req }) => {
         }
     }
 
-    let data 
+    let data
     try {
-        const res = await Axios.get(`/users/?search=&page=1&limit=10`)
+        const res = await Axios.get(`/users/?search=&page=1&limit=10`, {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${session?.Token}`
+            }
+        },)
         data = await res.data.total
+
 
     } catch {
         data = ""
     }
+
 
 
 
@@ -70,7 +78,7 @@ export const getServerSideProps = async ({ req }) => {
 
 const Table = ({ COLUMNS, AllExpense, SessionID }) => {
 
-    const UsersSesstion = useSession()
+    const session = useSession()
 
 
     const [Search, setSearch] = useState("");
@@ -101,10 +109,6 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
         DESC: "",
         cost: 0,
     });
-
-
-
-
 
 
 
@@ -207,7 +211,13 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
         const getExpenseData = async () => {
 
             try {
-                const res = await Axios.get(`/ownCost/${StartDate}/${EndDate}?search=${Search}&page=${Page}&limit=${Limit}`)
+                const res = await Axios.get(`/ownCost/?search=${Search}&page=${Page}&limit=${Limit}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+
+                    }
+                },)
 
                 setDataTable(res.data.costDetail)
                 setTotalUsers(res.data.total)
@@ -232,8 +242,12 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
 
 
         try {
-            //FIXME - chage Email to Id to get /users/detail/
-            const UDetails = await Axios.get('/users/detail/Admin@gmail.com')
+            const UDetails = await Axios.get(`/users/detail/${SessionID}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${session?.data?.Token}`
+                }
+            },)
 
             const DataBalance = UDetails.data.userDetail.TotalBals
 
@@ -244,13 +258,23 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
 
 
                 try {
-                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - donebalance })
+                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - donebalance }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
 
                     toast.success("Your Balance Now= " + (DataBalance - donebalance) + " $");
 
 
 
-                    await Axios.patch(`/ownCost/${Idofrow?.[0]}`, DataUpdate)
+                    await Axios.patch(`/ownCost/${Idofrow?.[0]}`, DataUpdate, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
                     toast.success("Data Updated Successfully")
 
 
@@ -258,7 +282,12 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
                         {
                             amount: -donebalance,
                             action: DataUpdate.DESC
-                        })
+                        }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
 
 
                     setIdofrow(null);
@@ -290,15 +319,29 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
 
         try {
             //FIXME - chage Email to Id to get /users/detail/
-            const UDetails = await Axios.get('/users/detail/Admin@gmail.com')
+            const UDetails = await Axios.get(`/users/detail/${SessionID}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${session?.data?.Token}`
+                }
+            },)
 
             const DataBalance = UDetails.data.userDetail.TotalBals
 
 
 
 
+
+
+
             try {
-                await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance + Deletestate?.[1] })
+                await Axios.patch(`/users/${SessionID}`, { "TotalBals": DataBalance + Deletestate?.[1] }, {
+                    headers: {
+                        "Content-Type": "application/json",
+
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
 
                 toast.success("Your Balance Now= " + (DataBalance + Deletestate?.[1]) + " $");
 
@@ -306,10 +349,20 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
                     {
                         amount: Deletestate?.[1],
                         action: Deletestate?.[2]
-                    })
+                    }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
 
 
-                await Axios.delete(`/ownCost/${Deletestate?.[0]}`)
+                await Axios.delete(`/ownCost/${Deletestate?.[0]}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
 
                 toast.warn("Data Deleted Successfully")
                 setReNewData(true)
@@ -340,8 +393,12 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
 
 
         try {
-            //FIXME - chage Email to Id to get /users/detail/
-            const UDetails = await Axios.get('/users/detail/Admin@gmail.com')
+            const UDetails = await Axios.get(`/users/detail/${SessionID}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${session?.data?.Token}`
+                }
+            },)
 
             const DataBalance = UDetails.data.userDetail.TotalBals
 
@@ -349,7 +406,12 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
             if (Math.floor(Data.cost) <= Math.floor(DataBalance)) {
 
                 try {
-                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - Data.cost })
+                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - Data.cost }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
 
                     toast.success("Your Balance Now= " + (DataBalance - Data.cost) + " $");
 
@@ -360,13 +422,23 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
 
                     try {
 
-                        await Axios.post("/ownCost/", Data)
+                        await Axios.post("/ownCost/", Data, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
 
                         await Axios.post("/bal/",
                             {
                                 amount: Data.cost,
                                 action: Data.DESC
-                            })
+                            }, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
 
                         toast.success("Data Adeed Successfully");
 
@@ -907,9 +979,11 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
 const Expense = ({ AllExpense, SessionID }) => {
 
 
+    const session = useSession()
+    const router = useRouter()
 
 
-
+    const l = useLanguage();
 
     const COLUMNS =
         useMemo(() =>
@@ -983,33 +1057,45 @@ const Expense = ({ AllExpense, SessionID }) => {
 
 
 
-    const l = useLanguage();
+    if (session.status === "loading") {
+        return (
+            <div className="w-100 h-100 text-center">
+                Loading...
+            </div>
+        )
+    }
 
-    return (
+    if (session.status === "unauthenticated") {
+        return router.push("/")
+    }
 
-
-        < >
-            <Head>
-                <title >{l.account}</title>
-            </Head>
-
-
-
-
-
-            <Table COLUMNS={COLUMNS} AllExpense={AllExpense} SessionID={SessionID} />
-
+    if (session.status === "authenticated") {
+        return (
 
 
+            < >
+                <Head>
+                    <title >{l.account}</title>
+                </Head>
 
 
-            <ToastContainer
-                draggablePercent={60}
-            />
 
 
-        </ >
-    );
+
+                <Table COLUMNS={COLUMNS} AllExpense={AllExpense} SessionID={SessionID} />
+
+
+
+
+
+                <ToastContainer
+                    draggablePercent={60}
+                />
+
+
+            </ >
+        );
+    }
 }
 
 

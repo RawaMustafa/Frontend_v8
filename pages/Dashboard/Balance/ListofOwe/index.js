@@ -16,7 +16,8 @@ import { InView } from 'react-intersection-observer';
 
 
 
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
+
 
 export const getServerSideProps = async ({ req }) => {
     const session = await getSession({ req })
@@ -41,6 +42,7 @@ export const getServerSideProps = async ({ req }) => {
 
 const QarzList = () => {
 
+    const session = useSession();
 
     const [Data, setData] = useState([]);
     const l = useLanguage();
@@ -53,21 +55,35 @@ const QarzList = () => {
 
 
     useMemo(() => {
-        const getReseller = async () => {
 
-            try {
-                const res = await Axios.get(`/users/Qarz/?search=${Search}&page=${Page}&limit=${Limit}`)
-                setData(res.data.userDetail)
-                setNoCars(false)
-            } catch (err) {
-                setNoCars(true)
-                err.response.status == 404 && setData([])
+        if (session.status === "authenticated") {
+
+            const getQarz = async () => {
+
+                try {
+                    const res = await Axios.get(`/users/Qarz/?search=${Search}&page=${Page}&limit=${Limit}`
+                        , {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },
+                    )
+                    setData(res.data.userDetail)
+                    setNoCars(false)
+                } catch (err) {
+                    setNoCars(true)
+                    setData([])
+                }
+
             }
 
+            getQarz();
         }
 
-        getReseller();
-    }, [Search, Page, Limit])
+
+
+    }, [Search, Page, Limit, session?.data?.Token])
 
 
     return (

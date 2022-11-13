@@ -26,6 +26,7 @@ import { ToastContainer, toast, } from 'react-toastify';
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
 import { faCalendarPlus, faTrash, faEdit, faTimes, faCheck, faSave, faEye, faBan, faFileDownload, faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
 
+import Image from 'next/image';
 
 import { getSession, useSession } from "next-auth/react";
 import Link from 'next/link';
@@ -44,7 +45,7 @@ export const getServerSideProps = async ({ req }) => {
 
         }
     }
-    let data
+    let data = 1
     try {
         const res = await Axios.get(`/cars/?search=&page=1&limit=10`)
         data = await res.data.total
@@ -53,7 +54,7 @@ export const getServerSideProps = async ({ req }) => {
         data = ""
     }
 
-
+    console.log(data)
 
     return {
         props: {
@@ -741,7 +742,7 @@ const Expense = ({ AllProducts }) => {
                 <Table COLUMNS={COLUMNS} AllProducts={AllProducts} />
                 :
                 <div className="m-auto top-[50%] -translate-y-[50%] absolute -translate-x-[50%] left-[50%] lg:left-[60%] ">
-                    < Image alt="NoCar" src="/No_Cars.svg" width={400} height={400} quality={'1'} />
+                    <Image alt="NoCar" src="/No_Cars.svg" width={400} height={400} quality={'1'} />
                 </div>
 
             }

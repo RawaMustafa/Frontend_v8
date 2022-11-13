@@ -16,7 +16,7 @@ export const getServerSideProps = async (context) => {
 
     const session = await getSession({ req: context.req })
 
-
+    console.log(session)
     if (!session || session.userRole != "Qarz") {
         return {
             redirect: {
@@ -29,7 +29,11 @@ export const getServerSideProps = async (context) => {
 
     const _id = context.params?._id;
 
-    const response = await Axios.get('/qarz/details/' + _id)
+    const response = await Axios.get('/qarz/details/' + _id, {
+        headers: {
+            Authorization: `Bearer ${session.Token}`
+        }
+    })
     const data = await response.data
     return {
         props: { cars: data },
@@ -46,15 +50,22 @@ export const getServerSideProps = async (context) => {
 
 const Detail = ({ cars }) => {
 
+    const l = useLanguage();
     const router = useRouter()
     const { status } = useSession()
+
+
+    
     if (status == "unauthenticated") {
         router.push('/');
     }
-    const l = useLanguage();
 
 
-
+    if (status == "loading") {
+        return <div className="flex justify-center items-center h-screen">
+            {l.loading}
+        </div>
+    }
 
 
 
@@ -68,7 +79,7 @@ const Detail = ({ cars }) => {
 
 
 
-                        <video width="1900" height="1000"  controls className="h-auto max-w-full flex text-center items-center justify-center">
+                        <video width="1900" height="1000" controls className="h-auto max-w-full flex text-center items-center justify-center">
                             <source src={`${baseURL}/${item.taramash}`} type="video/mp4" />
                         </video>
 
@@ -120,118 +131,120 @@ const Detail = ({ cars }) => {
 
         })
     })
-
-    return (
-        <>
-            <Head>
-                <title>{l.detail}</title>
-            </Head>
-
-            < >
+    if (status == "authenticated") {
 
 
-                <div className="grid grid-cols-1  xl:grid-cols-2 gap-3 2xl:gap-20 4xl:gap-32  m-auto container mx-auto">
+        return (
+            <>
+                <Head>
+                    <title>{l.detail}</title>
+                </Head>
+
+                < >
 
 
-                    <ImageGallery
-                        onErrorImageURL="https://picsum.photos/id/1018/1000/600/"
-                        slideInterval={10000}
-                        slideDuration={50}
-                        flickThreshold={0.6}
-                        swipeThreshold={40}
-                        slideOnThumbnailOver="true"
-                        lazyLoad={true}
-                        showFullscreenButton="true"
-                        showThumbnails={true}
-                        items={dataa}
-                    // additionalClass="  "
-
-                    />
+                    <div className="grid grid-cols-1  xl:grid-cols-2 gap-3 2xl:gap-20 4xl:gap-32  m-auto container mx-auto">
 
 
+                        <ImageGallery
+                            onErrorImageURL="https://picsum.photos/id/1018/1000/600/"
+                            slideInterval={10000}
+                            slideDuration={50}
+                            flickThreshold={0.6}
+                            swipeThreshold={40}
+                            slideOnThumbnailOver="true"
+                            lazyLoad={true}
+                            showFullscreenButton="true"
+                            showThumbnails={true}
+                            items={dataa}
+                        // additionalClass="  "
 
-                    <div className="  mb-40 mx-2  ">
+                        />
 
 
 
-                        <div className="overflow-x-auto max-w-5xl ">
-                            <table className="table table-zebra w-full text-center  ">
-
-                                <thead className="">
-                                    <tr className=" text-center ">
-                                        <td className="  w-[50%] bg-slate-500 text-center " > </td>
-                                        <td className="  w-[50%] bg-slate-500 text-center " > </td>
-
-                                    </tr>
-                                </thead>
-                                <tbody  >
-
-
-                                    <tr className="">
-                                        <td>{l.price} :</td>
-                                        <td>{cars.carDetail.price}</td>
-                                    </tr>
-
-                                    <tr className="">
-                                        <td>{l.namecar} :</td>
-                                        <td>{cars.carDetail.modeName}</td>
-                                    </tr>
-                                    <tr className="">
-                                        <td>{l.modelyear} :</td>
-                                        <td>{cars.carDetail.model}</td>
-                                    </tr>
-                                    <tr className="">
-                                        <td>{l.tocar} :</td>
-                                        <td>{cars.carDetail.tocar}</td>
-                                    </tr>
-                                    <tr className="">
-                                        <td>{l.tire} :</td>
-                                        <td>{cars.carDetail.tire}</td>
-                                    </tr>
+                        <div className="  mb-40 mx-2  ">
 
 
 
-                                    <tr className="">
-                                        <td>{l.vinnumber} :</td>
-                                        <td>{cars.carDetail.VINNumber}</td>
-                                    </tr>
-                                    <tr className="">
-                                        <td>{l.mileage} :</td>
-                                        <td>{cars.carDetail.mileage}</td>
-                                    </tr>
-                                    <tr className="">
-                                        <td>{l.color} :</td>
-                                        <td>{cars.carDetail.color}</td>
-                                    </tr>
+                            <div className="overflow-x-auto max-w-5xl ">
+                                <table className="table table-zebra w-full text-center  ">
+
+                                    <thead className="">
+                                        <tr className=" text-center ">
+                                            <td className="  w-[50%] bg-slate-500 text-center " > </td>
+                                            <td className="  w-[50%] bg-slate-500 text-center " > </td>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody  >
+
+
+                                        <tr className="">
+                                            <td>{l.price} :</td>
+                                            <td>{cars.carDetail.price}</td>
+                                        </tr>
+
+                                        <tr className="">
+                                            <td>{l.namecar} :</td>
+                                            <td>{cars.carDetail.modeName}</td>
+                                        </tr>
+                                        <tr className="">
+                                            <td>{l.modelyear} :</td>
+                                            <td>{cars.carDetail.model}</td>
+                                        </tr>
+                                        <tr className="">
+                                            <td>{l.tocar} :</td>
+                                            <td>{cars.carDetail.tocar}</td>
+                                        </tr>
+                                        <tr className="">
+                                            <td>{l.tire} :</td>
+                                            <td>{cars.carDetail.tire}</td>
+                                        </tr>
+
+
+
+                                        <tr className="">
+                                            <td>{l.vinnumber} :</td>
+                                            <td>{cars.carDetail.VINNumber}</td>
+                                        </tr>
+                                        <tr className="">
+                                            <td>{l.mileage} :</td>
+                                            <td>{cars.carDetail.mileage}</td>
+                                        </tr>
+                                        <tr className="">
+                                            <td>{l.color} :</td>
+                                            <td>{cars.carDetail.color}</td>
+                                        </tr>
 
 
 
 
 
 
-                                </tbody>
+                                    </tbody>
 
-                            </table>
+                                </table>
+
+
+                            </div>
 
 
                         </div>
 
-
                     </div>
 
-                </div>
 
 
 
 
 
 
+                </>
 
             </>
-
-        </>
-    );
-
+        );
+    }
 }
 Detail.Layout = ResellerLayout;
 

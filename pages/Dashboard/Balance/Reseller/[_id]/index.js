@@ -17,7 +17,8 @@
 
 // import { InView } from 'react-intersection-observer';
 
-// import { getSession } from "next-auth/react";
+// import { getSession,useSession } from "next-auth/react";
+
 
 
 
@@ -62,7 +63,12 @@
 
 //         const GetCars = async () => {
 //             try {
-//                 const res = await Axios.get(`/reseller/${initQuery._id}?search=${Search}&page=${Page}&limit=${Limit}`);
+//                 const res = await Axios.get(`/reseller/${initQuery._id}?search=${Search}&page=${Page}&limit=${Limit}`, {
+//     headers: {
+//         "Content-Type": "application/json",
+//         'Authorization': `Bearer ${session?.data?.Token}`
+//     }
+// },);
 //                 setNoCars(false)
 //                 const data = await res.data;
 //                 setData(data)
@@ -377,13 +383,18 @@ export const getServerSideProps = async ({ req, query }) => {
 
         }
     }
-    let data
-    try {
-        const res = await Axios.get(`/reseller/${query._id}/?search=&page=1&limit=10`)
-        data = res.data.total
-    } catch {
-        data = ""
-    }
+    let data = "1"
+    // try {
+    //     const res = await Axios.get(`/reseller/${query._id}/?search=&page=1&limit=10`, {
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //             'Authorization': `Bearer ${session?.data?.Token}`
+    //         }
+    //     },)
+    //     data = res.data.total
+    // } catch {
+    //     data = ""
+    // }
 
 
 
@@ -422,8 +433,9 @@ IndeterminateCheckbox.displayName = 'IndeterminateCheckbox'
 
 
 
-const Table = ({ COLUMNS, AllProducts, initQuery }) => {
-    const UsersSesstion = useSession()
+const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
+    const session = useSession()
+
     const router = useRouter()
     const [ReNewData, setReNewData] = useState(false);
 
@@ -450,10 +462,15 @@ const Table = ({ COLUMNS, AllProducts, initQuery }) => {
     const l = useLanguage();
 
     useEffect(() => {
-        const getExpenseData = async () => {
+        const getResellerData = async () => {
 
             try {
-                const res = await Axios.get(`/reseller/${initQuery._id}?search=${Search}&page=${Page}&limit=${Limit}`)
+                const res = await Axios.get(`/reseller/${initQuery._id}?search=${Search}&page=${Page}&limit=${Limit}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
                 const data = await res.data.carList
 
                 setDataTable(data)
@@ -466,7 +483,7 @@ const Table = ({ COLUMNS, AllProducts, initQuery }) => {
             }
         }
         setPageS(Math.ceil(TotalCars / Limit))
-        getExpenseData()
+        getResellerData()
         setReNewData(false)
     }, [Search, Page, Limit, StartDate, EndDate, ReNewData])
 
@@ -851,16 +868,10 @@ const Table = ({ COLUMNS, AllProducts, initQuery }) => {
 
 
 
+const Reseller = ({ AllProducts, initQuery }) => {
 
-
-
-
-const Expense = ({ AllProducts, initQuery }) => {
-
-
-
-
-
+    const router = useRouter()
+    const session = useSession();
 
     const COLUMNS =
         useMemo(() =>
@@ -1056,42 +1067,58 @@ const Expense = ({ AllProducts, initQuery }) => {
             ], [AllProducts]
         )
 
-
-
     const l = useLanguage();
-    return (
+
+    if (session.status === "loading") {
+        return (
+            <div className=" flex justify-center items-center h-screen text-center">
+                <Head>
+                    <title>{l.loading}</title>
+                </Head>
+                {l.loading}
+            </div>
+        )
+    }
+
+    if (session.status === "unauthenticated") {
+        return router.push("/")
+    }
+
+    if (session.status === "authenticated") {
+        return (
 
 
-        <div className="" >
-            <Head>
-                <title >{l.account}</title>
-            </Head>
+            <div className="" >
+                <Head>
+                    <title >{l.reseler}</title>
+                </Head>
 
-            {AllProducts ?
-                <Table COLUMNS={COLUMNS} AllProducts={AllProducts} initQuery={initQuery} />
-
-
-                : <div className="m-auto top-[50%] -translate-y-[50%] absolute -translate-x-[50%] left-[50%] lg:left-[60%] ">
-                    < Image alt="NoCar" src="/No_Cars.svg" width={400} height={400} quality={'1'} />
-                </div>
-            }
+                {AllProducts ?
+                    <ResellerTable COLUMNS={COLUMNS} AllProducts={AllProducts} initQuery={initQuery} />
 
 
+                    : <div className="m-auto top-[50%] -translate-y-[50%] absolute -translate-x-[50%] left-[50%] lg:left-[60%] ">
+                        < Image alt="NoCar" src="/No_Cars.svg" width={400} height={400} quality={'1'} />
+                    </div>
+                }
 
-            <ToastContainer
-                draggablePercent={60}
-            />
 
 
-        </div>
-    );
+                <ToastContainer
+                    draggablePercent={60}
+                />
+
+
+            </div>
+        );
+    }
 }
 
 
 
-Expense.Layout = AdminLayout;
+Reseller.Layout = AdminLayout;
 
-export default Expense;
+export default Reseller;
 
 
 

@@ -12,7 +12,8 @@ import AdminLayout from '../../../../Layouts/AdminLayout';
 import Image from "next/image";
 import { ToastContainer, toast, } from 'react-toastify';
 import ImageGallery from 'react-image-gallery';
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
+
 import jsPDF from "jspdf";
 
 
@@ -57,7 +58,12 @@ export const getServerSideProps = async (context) => {
     }
     const _id = context.params?._id;
 
-    const response = await Axios.get('/cars/' + _id)
+    const response = await Axios.get('/cars/' + _id, {
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${session?.data?.Token}`
+        }
+    },)
     const data = await response.data
     return {
         props: {
@@ -74,6 +80,8 @@ export const getServerSideProps = async (context) => {
 
 const Detail = ({ carss, SessionID }) => {
 
+
+    const session = useSession()
 
     const InputUpdate = useRef()
 
@@ -145,12 +153,22 @@ const Detail = ({ carss, SessionID }) => {
 
             try {
                 //FIXME - chage Email to Id to get /users/detail/
-                const UDetails = await Axios.get('/users/detail/Admin@gmail.com')
+                const UDetails = await Axios.get(`/users/detail/${SessionID}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
 
                 const DataBalance = UDetails.data.userDetail.TotalBals
 
                 try {
-                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance + TotalCurrentCosts })
+                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance + TotalCurrentCosts }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
 
                     toast.success("Your Balance Now= " + (DataBalance + TotalCurrentCosts) + " $");
 
@@ -158,15 +176,25 @@ const Detail = ({ carss, SessionID }) => {
                     try {
                         const id = router.query._id
 
-                        await Axios.delete("/cars/" + id)
+                        await Axios.delete("/cars/" + id, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
 
                         await Axios.post("/bal/",
                             {
                                 amount: TotalCurrentCosts,
-                                action: "Delete=> " + cars.carDetail.modeName
-                            })
+                                action: cars.carDetail.modeName
+                            }, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
 
-                        toast.error("Car has been Deleted")
+                        toast.done("Car has been Deleted")
                         router.back()
 
                     } catch (err) {
@@ -196,7 +224,12 @@ const Detail = ({ carss, SessionID }) => {
             try {
                 const id = router.query._id
 
-                await Axios.delete("/cars/" + id)
+                await Axios.delete("/cars/" + id, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
 
                 toast.error("Car has been Deleted")
                 router.back()
@@ -228,7 +261,8 @@ const Detail = ({ carss, SessionID }) => {
 
             "Tobalance": V_B_N("Tobalance"),
             "Tire": V_B_N("Tire"),
-            "Date": V_B_N("Date"),
+            // "Date": V_B_N("Date"),
+            // "Date": "2022-12-12",
             Arrived: V_B_N("Arrived"),
             "FeesinAmericaStoragefee": V_B_N("FeesinAmericaStoragefee"),
             "FeesinAmericaCopartorIAAfee": V_B_N("FeesinAmericaCopartorIAAfee"),
@@ -236,7 +270,7 @@ const Detail = ({ carss, SessionID }) => {
             "FeesAndRepaidCostDubairepairCost": V_B_N("FeesAndRepaidCostDubairepairCost"),
             "FeesAndRepaidCostDubaiFees": V_B_N("FeesAndRepaidCostDubaiFees"),
             "FeesAndRepaidCostDubaiothers": V_B_N("FeesAndRepaidCostDubaiothers"),
-            // "FeesAndRepaidCostDubainote": V_B_N("FeesAndRepaidCostDubainote"),
+            "FeesAndRepaidCostDubainote": V_B_N("FeesAndRepaidCostDubainote"),
 
             "CoCCost": V_B_N("CoCCost"),
 
@@ -250,7 +284,7 @@ const Detail = ({ carss, SessionID }) => {
             "RaqamAndRepairCostinKurdistanrepairCost": V_B_N("RaqamAndRepairCostinKurdistanrepairCost"),
             "RaqamAndRepairCostinKurdistanRaqam": V_B_N("RaqamAndRepairCostinKurdistanRaqam"),
             "RaqamAndRepairCostinKurdistanothers": V_B_N("RaqamAndRepairCostinKurdistanothers"),
-            // "RaqamAndRepairCostinKurdistannote": V_B_N("RaqamAndRepairCostinKurdistannote"),
+            "RaqamAndRepairCostinKurdistannote": V_B_N("RaqamAndRepairCostinKurdistannote"),
 
         }
 
@@ -275,28 +309,128 @@ const Detail = ({ carss, SessionID }) => {
 
 
 
+        const CurrentPrice = Math.floor(cars.carDetail.carCost.price)
+        const updatePrice = Math.floor(DataUpload.Price)
 
 
-        if (DataUpload.Tobalance == "Cash") {
+
+        console.log(DoneBalance, DataUpload.IsSold)
+        console.log(CurrentPrice, updatePrice)
+
+
+        if (DataUpload.Tobalance == "Cash" && DataUpload.IsSold == 'false') {
 
             try {
                 //FIXME -  change Email to Id of user
-                const UDetails = await Axios.get('/users/detail/Admin@gmail.com')
+                const UDetails = await Axios.get(`/users/detail/${SessionID}`)
 
                 const DataBalance = UDetails.data.userDetail.TotalBals
 
-                if (TotalCosts <= DataBalance) {
+                if (DoneBalance <= DataBalance) {
                     try {
 
-                        await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - DoneBalance })
+                        await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - DoneBalance }, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
+
+                        await Axios.post("/bal/",
+                            {
+                                amount: -TotalCurrentCosts,
+                                action: cars.carDetail.modeName
+                            }, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
+
 
                         toast.success("Your Balance Now= " + (DataBalance - DoneBalance) + " $");
-
+                        // router.reload();
                     } catch (err) {
 
                         toast.error("Error from user balance *")
 
                     }
+                }
+                else {
+                    toast.error("Your Balance is not enough")
+                }
+
+            } catch (e) {
+                toast.error("error to update Balance *");
+
+
+            }
+
+        }
+
+        if (DataUpload.Tobalance == "Cash" && DataUpload.IsSold == 'true') {
+
+            try {
+                //FIXME -  change Email to Id of user
+                const UDetails = await Axios.get(`/users/detail/${SessionID}`)
+
+                const DataBalance = UDetails.data.userDetail.TotalBals
+                const DonePrice = DoneBalance - (updatePrice - CurrentPrice)
+
+                console.log("DonePrice", DonePrice)
+                
+                if (DonePrice <= DataBalance) {
+                    try {
+
+                        await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - DonePrice }, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
+
+                        await Axios.post("/bal/",
+                            {
+                                amount: -DonePrice,
+                                action: cars.carDetail.modeName
+                            }, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
+
+
+                        try {
+                            const id = router.query._id
+                            const res = await Axios.patch(`/cars/${id}`,
+                                DataUpload
+                                , {
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        'Authorization': `Bearer ${session?.data?.Token}`
+                                    }
+                                },)
+
+
+                            toast.success("Data updated successfully");
+                            // router.reload()
+
+                        } catch (err) {
+                            toast.error("error to updated car")
+                        }
+                        setDetpage(1)
+
+                        toast.success("Your Balance Now= " + (DataBalance - DonePrice) + " $");
+                        // router.reload();
+                    } catch (err) {
+
+                        toast.error("Error from user balance *")
+
+                    }
+                }
+                else {
+                    toast.error("Your Balance is not enough")
                 }
 
             } catch (e) {
@@ -311,14 +445,24 @@ const Detail = ({ carss, SessionID }) => {
         if (DataUpload.Tobalance == "Loann") {
 
             try {
-                const UDetails = await Axios.get('/users/detail/Admin@gmail.com')
+                const UDetails = await Axios.get(`/users/detail/${SessionID}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
 
                 const DataBalance = UDetails.data.userDetail.TotalBals
 
                 if (TotalCosts <= DataBalance) {
                     try {
 
-                        await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - DoneBalance })
+                        await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - DoneBalance }, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
 
                         toast.success("Your Balance Now= " + (DataBalance - DoneBalance) + " $");
 
@@ -338,19 +482,25 @@ const Detail = ({ carss, SessionID }) => {
 
         }
 
+        console.log(DataUpload)
+        // try {
+        //     const id = router.query._id
+        //     const res = await Axios.patch(`/cars/${id}`,
+        //         DataUpload
+        //         , {
+        //             headers: {
+        //                 "Content-Type": "application/json",
+        //                 'Authorization': `Bearer ${session?.data?.Token}`
+        //             }
+        //         },)
 
-        try {
-            const id = router.query._id
-            const res = await Axios.patch(`/cars/${id}`,
-                DataUpload
-            )
 
-            toast.success("Data updated successfully");
-            // router.reload()
+        //     toast.success("Data updated successfully");
+        //     // router.reload()
 
-        } catch (err) {
-            toast.error("error to updated car")
-        }
+        // } catch (err) {
+        //     toast.error("error to updated car")
+        // }
         // setDetpage(1)
     }
 
@@ -364,13 +514,23 @@ const Detail = ({ carss, SessionID }) => {
 
             try {
 
-                const UDetails = await Axios.get('/users/detail/Admin@gmail.com')
+                const UDetails = await Axios.get(`/users/detail/${SessionID}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
                 const DataBalance = UDetails.data.userDetail.TotalBals
 
                 if (cars.carDetail.carCost.price <= DataBalance) {
                     try {
 
-                        await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - cars.carDetail.carCost.price })
+                        await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - cars.carDetail.carCost.price }, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
 
                         toast.success("Your Balance Now= " + (DataBalance - cars.carDetail.carCost.price) + " $");
 
@@ -381,13 +541,23 @@ const Detail = ({ carss, SessionID }) => {
                             await Axios.patch(`/cars/${id}`,
                                 {
                                     "IsSold": bool
-                                })
+                                }, {
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    'Authorization': `Bearer ${session?.data?.Token}`
+                                }
+                            },)
 
                             await Axios.post("/bal/",
                                 {
-                                    amount: -cars.carDetail.carCost.price,
-                                    action: "Retrieve=> " + cars.carDetail.modeName
-                                })
+                                    amount: cars.carDetail.carCost.price,
+                                    action: cars.carDetail.modeName
+                                }, {
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    'Authorization': `Bearer ${session?.data?.Token}`
+                                }
+                            },)
 
                             toast.success("Car Retrieve")
                             router.reload()
@@ -423,30 +593,51 @@ const Detail = ({ carss, SessionID }) => {
 
             try {
                 //FIXME -  change Email to Id of user
-                const UDetails = await Axios.get('/users/detail/Admin@gmail.com')
+                const UDetails = await Axios.get(`/users/detail/${SessionID}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
 
                 const DataBalance = UDetails.data.userDetail.TotalBals
 
 
                 try {
 
-                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance + cars.carDetail.carCost.price })
+                    await Axios.patch(`/users/${SessionID}`, { "TotalBals": DataBalance + cars.carDetail.carCost.price }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
 
                     toast.success("Your Balance Now= " + (DataBalance + cars.carDetail.carCost.price) + " $");
-
+                    console.log(cars.carDetail.carCost.price)
                     try {
                         const id = router.query._id
 
                         await Axios.patch(`/cars/${id}`,
                             {
                                 "IsSold": bool
-                            })
+                            }, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
+
 
                         await Axios.post("/bal/",
                             {
                                 amount: cars.carDetail.carCost.price,
-                                action: "Sold=> " + cars.carDetail.modeName
-                            })
+                                action: cars.carDetail.modeName
+                            }, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
 
                         toast.success("Car Sold")
                         router.reload()
@@ -477,19 +668,24 @@ const Detail = ({ carss, SessionID }) => {
 
 
 
+
     }
     const handleGiveToReseller = async () => {
 
         try {
             const id = router.query._id
-            await Axios.patch(`reseller/{"userId":"${UserID}", "carId":"${id}"}`)
+            await Axios.patch(`reseller/{"userId":"${UserID}", "carId":"${id}"}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${session?.data?.Token}`
+                }
+            },)
             toast.success("Car Geven to Reseller Successfully")
 
         }
         catch (err) {
 
-            (err.response.status == 404 || err.response.status == 400 || err.response.status == 500 || err.response.status == 401 || err.response.status == 403 || err.response.status == 409) &&
-                toast.error("error to Give Car")
+            toast.error("error to Give Car")
 
         }
 
@@ -509,7 +705,14 @@ const Detail = ({ carss, SessionID }) => {
             await Axios.post(`/qarz/`, {
                 userId: UserID,
                 carId: id
-            })
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${session?.data?.Token}`
+                }
+            },)
+
+
 
             toast.success("Car Geven to Qarz Successfully")
 
@@ -526,40 +729,58 @@ const Detail = ({ carss, SessionID }) => {
     }
 
     useEffect(() => {
+        if (session.status === "authenticated") {
 
-        const handleGetCars = async () => {
+            const handleGetCars = async () => {
 
-            try {
-                const id = router.query._id
+                try {
+                    const id = router.query._id
 
-                const res = await Axios.get(`/cars/${id}`)
+                    const res = await Axios.get(`/cars/${id}`, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
 
-                setCars(res.data)
+                    setCars(res.data)
 
-            } catch (err) {
 
-                // (err.response.status == 404 || err.response.status == 400 || err.response.status == 500 || err.response.status == 401 || err.response.status == 403 || err.response.status == 409) &&
-                toast.error("error to Get Car *")
 
+                } catch (err) {
+
+                    // (err.response.status == 404 || err.response.status == 400 || err.response.status == 500 || err.response.status == 401 || err.response.status == 403 || err.response.status == 409) &&
+                    toast.error("error to Get Car *")
+
+                }
             }
+
+            handleGetCars()
         }
 
-        handleGetCars()
-
-    }, [detpage])
+    }, [detpage, session.status])
 
     const id = router.query._id
     useEffect(() => {
-        const handleGetUsers = async () => {
-            try {
-                const res = await Axios.get(`/users`)
-                setUser(res.data.userDetail)
-            } catch (err) {
-                toast.error("error to Get Users *")
+
+        if (session.status === "authenticated") {
+
+            const handleGetUsers = async () => {
+                try {
+                    const res = await Axios.get(`/users`, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
+                    setUser(res.data.userDetail)
+                } catch (err) {
+                    // toast.error("error to Get Users *")
+                }
             }
+            handleGetUsers()
         }
-        handleGetUsers()
-    }, [id])
+    }, [id, session.status])
 
 
     const Doc_2_pdf = () => {
@@ -823,7 +1044,7 @@ const Detail = ({ carss, SessionID }) => {
                     <ImageGallery
                         onErrorImageURL="/Video.svg"
                         slideInterval={10000}
-                        autoPlay={true}
+                        autoPlay={false}
                         showBullets={true}
                         useTranslate3D={true}
                         lazyLoad={true}
@@ -1088,6 +1309,7 @@ const Detail = ({ carss, SessionID }) => {
                                             <select name="Tobalance" defaultValue={cars.carDetail.tobalance} className="select select-info w-full max-w-xs">
                                                 <option value="Cash"> {l.cash} </option>
                                                 <option value="Loan" > {l.loan} </option>
+                                                <option value="Rent" > {l.rent} </option>
 
                                             </select>
 
