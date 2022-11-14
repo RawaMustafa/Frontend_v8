@@ -17,8 +17,8 @@ import { getSession, useSession } from "next-auth/react";
 export async function getServerSideProps({ req, query }) {
     const session = await getSession({ req })
 
-    console.log("cookieseeee ==========", req?.cookies?.Token)
-    console.log("Sesssion --------->", session?.Token)
+    // console.log("cookieseeee ==========", req?.cookies?.Token)
+    // console.log("Sesssion --------->", session?.Token)
 
     if (!session || session?.userRole !== "Admin") {
         return {
@@ -64,7 +64,7 @@ const emai_regex = /^[\w-\.]{4,20}@([a-z]{2,6}\.)+[a-z]{2,4}$/;
 const password_regex = /^[a-zA-Z0-9\.\-\_]{4,16}$/;
 const userName_regex = /^[a-zA-Z0-9]{4,12}$/;
 const userRole_regex = /^[a-zA-Z0-9\.\-\_]{4,16}$/;
-const TotalBals_regex = /^[0-9]{0,7}$/;
+const TotalBals_regex = /^[0-9]{0,12}$/;
 
 
 const Table = ({ COLUMNS, AllUsers, SessionID }) => {
@@ -84,17 +84,17 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
     const [Idofrow, setIdofrow] = useState(null);
     const [Deletestate, setDeletestate] = useState(null);
     const [Data, setData] = useState({
-        "userName": "",
-        "email": "",
-        "password": "",
-        "userRole": "",
-        "TotalBals": 0,
+        userName: "",
+        email: "",
+        password: "",
+        userRole: "",
+        TotalBals: 0,
     });
     const [DataUpdate, setDataUpdate] = useState({
-        "userName": "",
-        "email": "",
-        "userRole": "",
-        "TotalBals": 0,
+        userName: "",
+        email: "",
+        userRole: "",
+        TotalBals: 0,
     });
 
 
@@ -210,6 +210,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
     const handleUpdateUser = async () => {
 
 
+        console.log(Idofrow)
 
         if (Idofrow?.[3] == "Reseller" && DataUpdate.userRole !== "Reseller") {
 
@@ -240,16 +241,18 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
                 await Axios.post("/bal/",
                     {
-                        amount: Idofrow?.[1],
-                        action: "Tooken from " + Idofrow?.[2]
+                        amount: Math.floor(Idofrow?.[1]),
+                        action: "Tooken",
+                        userId: Idofrow?.[0]
                     }, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': `Bearer ${session?.data?.Token}`
-                        }
-                    },)
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
 
 
+                console.log(DataUpdate)
 
                 try {
                     await Axios.patch(`/users/${Idofrow?.[0]}`, DataUpdate, {
@@ -321,11 +324,11 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                             amount: -donebalnace,
                             action: "updated to " + Idofrow?.[2]
                         }, {
-                            headers: {
-                                "Content-Type": "application/json",
-                                'Authorization': `Bearer ${session?.data?.Token}`
-                            }
-                        },)
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
 
                     try {
                         await Axios.patch(`/users/${Idofrow?.[0]}`, DataUpdate, {
@@ -404,11 +407,11 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                             amount: -DataUpdate.TotalBals,
                             action: "updated to " + Idofrow?.[2]
                         }, {
-                            headers: {
-                                "Content-Type": "application/json",
-                                'Authorization': `Bearer ${session?.data?.Token}`
-                            }
-                        },)
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
 
                     try {
                         await Axios.patch(`/users/${Idofrow?.[0]}`, DataUpdate, {
@@ -529,17 +532,18 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
                 toast.success("Your Balance Now= " + (DataBalance + Deletestate?.[1]) + " $");
 
-
+                console.log()
                 await Axios.post("/bal/",
                     {
                         amount: Deletestate?.[1],
-                        action: "Tooken from " + Deletestate?.[2]
+                        action: "Tooken",
+                        userId: "Patata"
                     }, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': `Bearer ${session?.data?.Token}`
-                        }
-                    },)
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
 
             } catch (error) {
                 //
@@ -649,7 +653,8 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                     await Axios.post("/bal/",
                         {
                             amount: -Data.TotalBals,
-                            action: "Gived to " + Data.userName
+                            action: "Gived",
+                            // userId: Data.email
                         }, {
                         headers: {
                             "Content-Type": "application/json",
@@ -726,20 +731,15 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                     },
                 })
 
-
-
-
-
-
                 setDataTable(res.data.userDetail)
                 setTotalUsers(res.data.total)
 
-            } catch (error) {
-                if (error?.response?.status === 404) {
-                    // toast.error("No User Found");
-                    setDataTable([])
+            } catch {
+                // if (error?.response?.status === 404) {
+                // toast.error("No User Found");
+                setDataTable([])
 
-                }
+                // }
 
 
 

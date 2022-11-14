@@ -37,6 +37,7 @@ const action_regex = /^[0-9a-zA-Z=> ]{0,50}$/;
 
 import { getSession, useSession } from "next-auth/react";
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 export const getServerSideProps = async ({ req }) => {
 
@@ -166,7 +167,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
     }
 
 
-    //NOTE - validation for updating taible for my Balance
+    //NOTE - validation for updating table for my Balance
 
     let count = 0
 
@@ -209,12 +210,11 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
     useEffect(() => {
 
-        console.log(session)
         if (session.status === "authenticated") {
             const getExpenseData = async () => {
                 // ${StartDate}/${EndDate}?search=${Search}&page=${Page}&limit=${Limit}
 
-                const res = await axios.get(`http://localhost:4000/_API/${session.data.id}`, {
+                const res = await Axios.get(`/bal/`, {
                     headers: {
                         "Content-Type": "application/json",
                         'Authorization': `Bearer ${session?.data?.Token}`
@@ -223,16 +223,16 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                 )
 
 
-                // const users = await Axios.get(`/users/detail/${SessionID}`, {
-                //     headers: {
-                //         "Content-Type": "application/json",
+                const users = await Axios.get(`/users/detail/${SessionID}`, {
+                    headers: {
+                        "Content-Type": "application/json",
 
-                //         'Authorization': `Bearer ${session?.data?.Token}`
-                //     }
-                // },)
-                // setUsersBalance(users.data.userDetail.TotalBals)
-                // setDataTable(res.data.History.reverse())
-                // setTotalUsers(res.data.total)
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
+                setUsersBalance(users.data.userDetail.TotalBals)
+                setDataTable(res.data.History.reverse())
+                setTotalUsers(res.data.total)
 
 
             }
@@ -378,7 +378,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
         try {
 
-            await Axios.patch("/users/" + UsersSesstion.data.id, {
+            await Axios.patch("/users/" + SessionID, {
                 TotalBals: UsersBalance + Data.Amount
             }, {
                 headers: {
@@ -390,7 +390,8 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
             await Axios.post("/bal/", {
                 amount: Data.Amount,
-                action: "Add"
+                action: "Balance",
+                userId: SessionID
 
             }, {
                 headers: {
@@ -547,39 +548,6 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                 </p>
 
                             </div>
-                            {/* <div>
-                                <textarea name='DESC'
-                                    onChange={(event) => { handleSaveExpenseData(event) }}
-                                    onClick={(event) => { handleSaveExpenseData(event) }}
-                                    onFocus={() => { setDEFocus(true) }}
-                                    onBlur={() => { setDEFocus(false) }}
-
-                                    className="textarea textarea-info w-full max-w-xl mt-5 dark:placeholder:text-white dark:color-white" placeholder="Bio"></textarea>
-                                <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!DEValid && !DEFocus && Data.DESC != "" ? "block" : "hidden"}`}>
-                                    {l.incorrect}
-                                    <br />
-                                    {l.charecter416}
-
-
-                                </p>
-
-                            </div>
-
-                            <div>
-                                <input name='date' type="date" placeholder={l.date}
-                                    onClick={(event) => { handleSaveExpenseData(event) }}
-                                    onChange={(event) => { handleSaveExpenseData(event) }}
-                                    onFocus={() => { setDFocus(true) }}
-                                    onBlur={() => { setDFocus(false) }}
-                                    className="input input-bordered input-info w-full max-w-xl  dark:placeholder:text-white dark:color-white" />
-                                <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!DValid && !DFocus && Data.date != "" ? "block" : "hidden"}`}>
-                                    {l.incorrect}
-                                    <br />
-
-
-                                </p>
-
-                            </div> */}
 
 
                             <div className="modal-action">
@@ -660,11 +628,6 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
 
-            {/* <div className=" xl:flex justify-center  py-3  overflow-x-auto      "> */}
-
-
-
-
             <table id="table-to-xls" className="my-10  inline-block   min-w-[1000px] " {...getTableProps()}>
 
 
@@ -715,6 +678,38 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                         <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
 
 
+
+                                            {cell.column.id === 'amount' && row.original._id !== Idofrow?.[0] && (
+
+                                                cell.value >= 0 ? <div className="text-green-500">{cell.value}</div> : <div className="text-red-500">{cell.value}</div>
+                                            )}
+
+                                            {cell.column.id === 'userId' && row.original._id !== Idofrow?.[0] && (
+                                                <>
+                                                    {console.log(cell.value)}
+
+                                                    {cell.value?.userRole == "Qarz" && <Link href={`/Dashboard/Balance/ListofOwe/${cell.value?._id}`}><a className="text-red-300">{cell.value?.userName}</a></Link>}
+                                                    {cell.value?.userRole == "Reseller" && <Link href={`/Dashboard/Balance/Reseller/${cell.value?._id}`}><a className="text-violet-300">{cell.value?.userName}</a></Link>}
+                                                    {cell.value?.userRole == "Admin" && <a className="text-blue-400 cursor-crosshair">{cell.value?.userName}</a>}
+
+
+
+
+                                                </>
+
+                                            )}
+
+                                            {cell.column.id === 'carId' && row.original._id !== Idofrow?.[0] && (
+                                                <>
+                                                    {/* {console.log(cell.value)} */}
+
+                                                    <Link href={`/Dashboard/ListofCars/AllCars/${cell.value?._id}`}><a className="text-orange-200">{cell.value?.modeName || cell.value?.VINNumber || cell.value?.id}</a></Link>
+                                                </>
+
+                                            )
+                                            }
+
+
                                             {
                                                 cell.column.id !== "Delete" &&
                                                     cell.column.id !== "Edit" &&
@@ -755,22 +750,23 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                                     </>
 
                                                     :
-                                                    cell.render('Cell')
+                                                    (cell.column.id != 'userId' && cell.column.id != 'amount' && cell.column.id != 'carId') && cell.render('Cell')
 
                                             }
 
 
 
-                                            {row.original._id !== Idofrow?.[0] ?
-                                                cell.column.id === "Edit" &&
-                                                <button ref={inputRef} onClick={() => { setIdofrow([row.original._id, row.original.amount, row.original.action]) }} aria-label="upload picture"  ><FontAwesomeIcon icon={faEdit} className="text-2xl cursor-pointer text-blue-500" /></button>
+                                            {
+                                                row.original._id !== Idofrow?.[0] ?
+                                                    cell.column.id === "Edit" &&
+                                                    <button ref={inputRef} onClick={() => { setIdofrow([row.original._id, row.original.amount, row.original.action]) }} aria-label="upload picture"  ><FontAwesomeIcon icon={faEdit} className="text-2xl cursor-pointer text-blue-500" /></button>
 
-                                                :
-                                                <div className=" space-x-3">
-                                                    {cell.column.id === "Edit" && <button type='submit' className="btn btn-accent" disabled={CValid && DEValid ? false : true} onClick={handleUpdatExpense} > <FontAwesomeIcon icon={faSave} className="text-2xl" /></button>}
-                                                    {cell.column.id === "Edit" && <button onClick={() => { setIdofrow(null) }} className="btn  btn-error"><FontAwesomeIcon icon={faBan} className="text-2xl" /></button>}
+                                                    :
+                                                    <div className=" space-x-3">
+                                                        {cell.column.id === "Edit" && <button type='submit' className="btn btn-accent" disabled={CValid && DEValid ? false : true} onClick={handleUpdatExpense} > <FontAwesomeIcon icon={faSave} className="text-2xl" /></button>}
+                                                        {cell.column.id === "Edit" && <button onClick={() => { setIdofrow(null) }} className="btn  btn-error"><FontAwesomeIcon icon={faBan} className="text-2xl" /></button>}
 
-                                                </div>
+                                                    </div>
 
 
                                             }
@@ -803,9 +799,9 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
                         <div>
 
-                            {l.page}{""}
+                            {l.page}{" "}
                             <span>
-                                {pageIndex + 1}{l.of}{pageOptions.length}
+                                {pageIndex + 1}{"/"}{pageOptions.length}
                             </span>
                         </div>
 
@@ -889,7 +885,8 @@ const Expense = ({ SessionID }) => {
                     Header: () => {
                         return (
 
-                            l.amount
+                            // l.amount
+                            "Amount"
                         )
                     },
 
@@ -902,23 +899,12 @@ const Expense = ({ SessionID }) => {
 
 
 
-                // {
-                //     Header: () => {
-                //         return (
 
-                //             l.user
-                //         )
-                //     },
-
-                //     accessor: 'userId',
-                //     disableFilters: true,
-
-
-                // },
                 {
                     Header: () => {
 
-                        return l.action;
+                        // return l.action;
+                        return "Action"
                     },
 
                     accessor: 'action',
@@ -927,10 +913,40 @@ const Expense = ({ SessionID }) => {
                     // filter: dateBetweenFilterFn,
 
                 },
+
+                {
+                    Header: () => {
+                        return (
+
+                            "Car "
+                        )
+                    },
+
+                    accessor: 'carId',
+                    disableFilters: true,
+
+
+                },
+
+                {
+                    Header: () => {
+                        return (
+
+                            "User "
+                        )
+                    },
+
+                    accessor: 'userId',
+                    disableFilters: true,
+
+
+                },
+
                 {
                     Header: () => {
 
-                        return l.date;
+                        // return l.date;
+                        return "Date";
                     },
 
                     accessor: 'actionDate',

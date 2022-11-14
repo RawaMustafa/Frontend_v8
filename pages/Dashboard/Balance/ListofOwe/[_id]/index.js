@@ -94,7 +94,7 @@ const Details = ({ initQuery }) => {
 
                     const dataQarzList = await res2.data.qarzList
 
-                    // console.log("dataQarzList", data.qarzList)
+
                     if (data) {
 
 
@@ -640,26 +640,29 @@ const TableQarz = ({ COLUMNS, ID }) => {
                 const DataBalance = UDetails.data.userDetail.TotalBals
 
 
-
                 if (DataUpdate.amount <= DataBalance) {
 
 
-                    await Axios.patch(`/users/${session?.data.id}`, { "TotalBals": DataBalance - DataUpdate.amount }, {
+                    await Axios.patch(`/users/${session?.data.id}`, { "TotalBals": Math.floor(DataBalance) - Math.floor(DataUpdate.amount) }, {
                         headers: {
                             "Content-Type": "application/json",
                             'Authorization': `Bearer ${session?.data?.Token}`
                         }
                     },)
 
-                    toast.success("Your Balance Now= " + (DataBalance - DataUpdate.amount) + " $");
+
+                    toast.success("Your Balance Now= " + (Math.floor(DataBalance) - Math.floor(DataUpdate.amount)) + " $");
 
 
 
+                    console.log("patata", -DataUpdate.amount,
+                        "Loan", router.query._id)
 
                     await Axios.post("/bal/",
                         {
-                            amount: DataUpdate.amount,
-                            action: DataUpdate.DESC
+                            amount: Math.floor(-DataUpdate.amount),
+                            action: "Gived",
+                            userId: router.query._id,
                         }, {
                         headers: {
                             "Content-Type": "application/json",
@@ -754,7 +757,8 @@ const TableQarz = ({ COLUMNS, ID }) => {
                 await Axios.post("/bal/",
                     {
                         amount: DataUpdate.amount,
-                        action: DataUpdate.DESC
+                        action: "Loan",
+                        userId: router.query._id,
                     }, {
                     headers: {
                         "Content-Type": "application/json",
@@ -810,7 +814,7 @@ const TableQarz = ({ COLUMNS, ID }) => {
         }
 
         else if (DataUpdate.isPaid == Idofrow?.[1].toString()) {
-            console.log("yassssssssssssssss")
+
 
 
             try {
@@ -887,7 +891,7 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
     const addQarz = async () => {
 
-        console.log(Data)
+
 
         try {
 
@@ -932,7 +936,7 @@ const TableQarz = ({ COLUMNS, ID }) => {
                     }
                 },)
 
-                console.log(res.data.qarzList)
+
                 setDataTable(res.data.qarzList)
             }
             getQarzData()
@@ -1174,7 +1178,7 @@ const TableQarz = ({ COLUMNS, ID }) => {
                                 buttonText="XLSX" />  </li>
 
                             <li><button className='btn btn-outline ' onClick={table_2_pdf}>PDF</button> </li>
-                            <li><button className='btn btn-outline' onClick={table_All_pdff}>ALL_PDF</button> </li>
+                            {/* <li><button className='btn btn-outline' onClick={table_All_pdff}>ALL_PDF</button> </li> */}
                         </ul>
                     </div>
 
@@ -1243,7 +1247,7 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
                                             {cell.column.id === 'isPaid' && row.original._id !== Idofrow?.[0] && (
 
-                                                cell.value === true ? <FontAwesomeIcon icon={faCheck} className="text-green-500" /> : <FontAwesomeIcon icon={faTimes} className="text-red-500" />
+                                                cell.value === true ? <div className="text-green-500" >Yes</div> : <div className="text-red-500" >No</div>
                                             )}
 
 
@@ -1463,7 +1467,7 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
 //     const session = await getSession({ req })
 
-// console.log(session)
+
 //     if (!session || session?.userRole !== "Admin") {
 //         return {
 //             redirect: {

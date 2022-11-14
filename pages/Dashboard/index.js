@@ -81,10 +81,9 @@ const Dashboard = (props) => {
                 const three = "/cost/ownCost"
                 const Forth = `users/detail/${session?.data?.id}`
 
-                const requestTwo = await Axios.get(two, {
+                const requestTwo = Axios.get(two, {
                     headers: {
                         "Content-Type": "application/json",
-
                         'Authorization': `Bearer ${session?.data?.Token}`
                     }
                 },).then((res) => {
@@ -94,10 +93,9 @@ const Dashboard = (props) => {
 
                 });
 
-                const requestOne = await Axios.get(one, {
+                const requestOne = Axios.get(one, {
                     headers: {
                         "Content-Type": "application/json",
-
                         'Authorization': `Bearer ${session?.data?.Token}`
                     }
                 },).then((res) => {
@@ -105,10 +103,9 @@ const Dashboard = (props) => {
                 }).catch((err) => {
 
                 });
-                const requestThree = await Axios.get(three, {
+                const requestThree = Axios.get(three, {
                     headers: {
                         "Content-Type": "application/json",
-
                         'Authorization': `Bearer ${session?.data?.Token}`
                     }
                 },).then((res) => {
@@ -116,10 +113,9 @@ const Dashboard = (props) => {
                 }).catch((err) => {
 
                 })
-                const requestForth = await Axios.get(Forth, {
+                const requestForth = Axios.get(Forth, {
                     headers: {
                         "Content-Type": "application/json",
-
                         'Authorization': `Bearer ${session?.data?.Token}`
                     }
                 },).then((res) => {
@@ -133,7 +129,7 @@ const Dashboard = (props) => {
                 await axios.all([requestOne, requestThree, requestTwo, requestForth]).
 
                     then(
-                        await axios.spread((...responses) => {
+                        axios.spread((...responses) => {
 
                             const dataFertch = responses?.[0]?.data?.TotalList[0];
                             const dataFertchqarz = responses?.[2]?.data?.QarzTotal[0];

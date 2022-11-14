@@ -281,7 +281,9 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
                     await Axios.post("/bal/",
                         {
                             amount: -donebalance,
-                            action: DataUpdate.DESC
+                            action: DataUpdate.DESC,
+                        userId:SessionID
+
                         }, {
                         headers: {
                             "Content-Type": "application/json",
@@ -348,7 +350,8 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
                 await Axios.post("/bal/",
                     {
                         amount: Deletestate?.[1],
-                        action: Deletestate?.[2]
+                        action: Deletestate?.[2],
+                        userId:SessionID
                     }, {
                     headers: {
                         "Content-Type": "application/json",
@@ -431,8 +434,9 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
 
                         await Axios.post("/bal/",
                             {
-                                amount: Data.cost,
-                                action: Data.DESC
+                                amount: -Data.cost,
+                                action: Data.DESC,
+                                useid: SessionID
                             }, {
                             headers: {
                                 "Content-Type": "application/json",

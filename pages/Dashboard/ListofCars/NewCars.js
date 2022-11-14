@@ -174,6 +174,8 @@ const NewCars = ({ SessionID }) => {
     var size = rangee
 
     const startTuch = (e) => {
+        IsTimeToDrawing = "Yes"
+
         setIsCanvasChanged(1)
 
         getTouchPos()
@@ -223,6 +225,8 @@ const NewCars = ({ SessionID }) => {
     ///////////////////////////////
 
     const endTuch = () => {
+        IsTimeToDrawing = "No"
+
         setIsCanvasChanged(1)
 
         canvasRef.current?.removeEventListener('touchmove', paint, false);
@@ -806,9 +810,10 @@ const NewCars = ({ SessionID }) => {
 
                             await Axios.post("/bal/",
                                 {
-                                    // amount: TotalCosts,
-                                    amount: 11,
-                                    action: "ModeName"
+                                    amount: -TotalCosts,
+                                    action: "Add",
+                                    carId: response.data.Id,
+                                    userId: SessionID
                                 }, {
                                 headers: {
                                     "Content-Type": "application/json",

@@ -152,7 +152,7 @@ const Detail = ({ carss, SessionID }) => {
         if (cars.carDetail.carCost.isSold == false) {
 
             try {
-                //FIXME - chage Email to Id to get /users/detail/
+
                 const UDetails = await Axios.get(`/users/detail/${SessionID}`, {
                     headers: {
                         "Content-Type": "application/json",
@@ -176,6 +176,23 @@ const Detail = ({ carss, SessionID }) => {
                     try {
                         const id = router.query._id
 
+                        console.log(TotalCurrentCosts, cars.carDetail.modeName, SessionID)
+
+                        await Axios.post("/bal/",
+                            {
+                                amount: TotalCurrentCosts,
+                                action: "Deleted",
+                                // carId: cars.carDetail.modeName,
+                                userId: SessionID
+
+                            }, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                'Authorization': `Bearer ${session?.data?.Token}`
+                            }
+                        },)
+
+
                         await Axios.delete("/cars/" + id, {
                             headers: {
                                 "Content-Type": "application/json",
@@ -183,16 +200,7 @@ const Detail = ({ carss, SessionID }) => {
                             }
                         },)
 
-                        await Axios.post("/bal/",
-                            {
-                                amount: TotalCurrentCosts,
-                                action: cars.carDetail.modeName
-                            }, {
-                            headers: {
-                                "Content-Type": "application/json",
-                                'Authorization': `Bearer ${session?.data?.Token}`
-                            }
-                        },)
+
 
                         toast.done("Car has been Deleted")
                         router.back()
@@ -339,7 +347,9 @@ const Detail = ({ carss, SessionID }) => {
                         await Axios.post("/bal/",
                             {
                                 amount: -TotalCurrentCosts,
-                                action: cars.carDetail.modeName
+                                action: "Update",
+                                carId: cars.carDetail._id,
+                                userId: SessionID,
                             }, {
                             headers: {
                                 "Content-Type": "application/json",
@@ -368,7 +378,7 @@ const Detail = ({ carss, SessionID }) => {
 
         }
 
-        if (DataUpload.Tobalance == "Cash" && DataUpload.IsSold == 'true') {
+        else if (DataUpload.Tobalance == "Cash" && DataUpload.IsSold == 'true') {
 
             try {
                 //FIXME -  change Email to Id of user
@@ -378,7 +388,7 @@ const Detail = ({ carss, SessionID }) => {
                 const DonePrice = DoneBalance - (updatePrice - CurrentPrice)
 
                 console.log("DonePrice", DonePrice)
-                
+
                 if (DonePrice <= DataBalance) {
                     try {
 
@@ -392,7 +402,9 @@ const Detail = ({ carss, SessionID }) => {
                         await Axios.post("/bal/",
                             {
                                 amount: -DonePrice,
-                                action: cars.carDetail.modeName
+                                action: "Update",
+                                carId: cars.carDetail._id,
+                                userId: SessionID
                             }, {
                             headers: {
                                 "Content-Type": "application/json",
@@ -442,7 +454,7 @@ const Detail = ({ carss, SessionID }) => {
         }
 
         //FIXME - if Update Car    ----- Loan 
-        if (DataUpload.Tobalance == "Loann") {
+        else if (DataUpload.Tobalance == "Loann") {
 
             try {
                 const UDetails = await Axios.get(`/users/detail/${SessionID}`, {
@@ -480,6 +492,9 @@ const Detail = ({ carss, SessionID }) => {
             }
 
 
+        }
+        else {
+            toast.error("you cant update Loan and Rent balance *");
         }
 
         console.log(DataUpload)
@@ -674,7 +689,9 @@ const Detail = ({ carss, SessionID }) => {
 
         try {
             const id = router.query._id
-            await Axios.patch(`reseller/{"userId":"${UserID}", "carId":"${id}"}`, {
+
+            console.log(session?.data?.Token)
+            await Axios.patch(`reseller/{"userId":"${UserID}", "carId":"${id}"}`, {}, {
                 headers: {
                     "Content-Type": "application/json",
                     'Authorization': `Bearer ${session?.data?.Token}`
@@ -935,7 +952,7 @@ const Detail = ({ carss, SessionID }) => {
                                         setChooseUser(e.target.value)
                                     }} type='select' defaultValue={"Select"} className="select select-info w-full max-w-xs">
                                         <option value="Select" >{l.select}</option>
-                                        <option value="Qarz_1" >{l.loan}</option>
+                                        {/* <option value="Qarz_1" >{l.loan}</option> */}
                                         <option value="Reseller_2" >{l.reseler}</option>
 
                                     </select>
@@ -1306,7 +1323,7 @@ const Detail = ({ carss, SessionID }) => {
                                     <tr className="">
                                         <td>{l.tobalance} :</td>
                                         <td>
-                                            <select name="Tobalance" defaultValue={cars.carDetail.tobalance} className="select select-info w-full max-w-xs">
+                                            <select disabled name="Tobalance" defaultValue={cars.carDetail.tobalance} className="select select-info w-full max-w-xs">
                                                 <option value="Cash"> {l.cash} </option>
                                                 <option value="Loan" > {l.loan} </option>
                                                 <option value="Rent" > {l.rent} </option>
