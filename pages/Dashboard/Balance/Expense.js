@@ -269,7 +269,11 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
 
 
 
-                    await Axios.patch(`/ownCost/${Idofrow?.[0]}`, DataUpdate, {
+                    await Axios.patch(`/ownCost/${Idofrow?.[0]}`, {
+                        "date": DataUpdate.date,
+                        "DESC": DataUpdate.DESC,
+                        "cost": DataUpdate.cost
+                    }, {
                         headers: {
                             "Content-Type": "application/json",
                             'Authorization': `Bearer ${session?.data?.Token}`
@@ -282,7 +286,7 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
                         {
                             amount: -donebalance,
                             action: DataUpdate.DESC,
-                        userId:SessionID
+                            userId: SessionID
 
                         }, {
                         headers: {
@@ -351,7 +355,7 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
                     {
                         amount: Deletestate?.[1],
                         action: Deletestate?.[2],
-                        userId:SessionID
+                        userId: SessionID
                     }, {
                     headers: {
                         "Content-Type": "application/json",
@@ -425,18 +429,23 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
 
                     try {
 
-                        await Axios.post("/ownCost/", Data, {
+                        await Axios.post("/ownCost/", {
+                            "date": Data.date,
+                            "DESC": Data.DESC,
+                            "cost": Data.cost,
+                        }, {
                             headers: {
                                 "Content-Type": "application/json",
                                 'Authorization': `Bearer ${session?.data?.Token}`
                             }
                         },)
 
+
                         await Axios.post("/bal/",
                             {
                                 amount: -Data.cost,
                                 action: Data.DESC,
-                                useid: SessionID
+                                userId: SessionID
                             }, {
                             headers: {
                                 "Content-Type": "application/json",

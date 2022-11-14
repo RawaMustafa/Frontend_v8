@@ -37,7 +37,7 @@ export async function getServerSideProps({ req, query }) {
     // try {
     //     const res = await Axios.get(`/reseller/${session.id}/?search=&page=1&limit=10`)
     //     data = res.data.total
-    //     console.log
+
     // } catch {
     //     data = ""
     // }
@@ -855,7 +855,7 @@ export default Reseller;
 //                 const dataFetch = await res.data;
 //                 setData(dataFetch)
 
-//                 console.log(res.data)
+
 //             } catch (e) {
 //                 setNoCars(true)
 

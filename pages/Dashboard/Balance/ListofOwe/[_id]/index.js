@@ -655,8 +655,6 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
 
 
-                    console.log("patata", -DataUpdate.amount,
-                        "Loan", router.query._id)
 
                     await Axios.post("/bal/",
                         {

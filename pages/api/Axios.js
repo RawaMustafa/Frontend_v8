@@ -37,7 +37,7 @@ const Axios = () => {
     //     const session = await getSession({ req })
 
     //     if (session) {
-    //         // console.log(session)
+
     //         req.headers.common = {
     //             Authorization: `Bearer ${session?.Token}`
     //         }
@@ -50,7 +50,7 @@ const Axios = () => {
 
 
     // Axios.interceptors.response.use(async (res) => {
-    //     console.log(res)
+
 
     //     // const session = await getSession({ res })
 

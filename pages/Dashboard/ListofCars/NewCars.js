@@ -675,11 +675,11 @@ const NewCars = ({ SessionID }) => {
         "VINNumber": Data.VINNumber,
         "WheelDriveType": Data.WheelDriveType,
         "PricePaidbid": Data.PricePaidbid,
-        // "UserGiven": Data.UserGiven,
+        // // //"UserGiven": Data.UserGiven,
 
         "Tobalance": Data.Tobalance,
         "Tire": Data.Tire,
-        "Date": '2021-01-01',
+        "Date": Data.Date?.[0],
         "Arrived": Data.Arrived,
         "FeesinAmericaStoragefee": Data.FeesinAmericaStoragefee,
         "FeesinAmericaCopartorIAAfee": Data.FeesinAmericaCopartorIAAfee,
@@ -706,7 +706,8 @@ const NewCars = ({ SessionID }) => {
 
 
     }
-    console.log(QarzUserId == "", Data.Tobalance)
+
+
 
     const postCarsId = async () => {
 
@@ -868,7 +869,7 @@ const NewCars = ({ SessionID }) => {
 
                 ).then(async (response) => {
 
-                    console.log(QarzUserId.split(","))
+
                     try {
 
                         await Axios.post(`/qarz/`, {

@@ -214,7 +214,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
             const getExpenseData = async () => {
                 // ${StartDate}/${EndDate}?search=${Search}&page=${Page}&limit=${Limit}
 
-                const res = await Axios.get(`/bal/`, {
+                const res = await Axios.get(`/bal/?search=${Search}&page=${Page}&limit=${Limit}`, {
                     headers: {
                         "Content-Type": "application/json",
                         'Authorization': `Bearer ${session?.data?.Token}`
@@ -686,7 +686,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
                                             {cell.column.id === 'userId' && row.original._id !== Idofrow?.[0] && (
                                                 <>
-                                                    {console.log(cell.value)}
+
 
                                                     {cell.value?.userRole == "Qarz" && <Link href={`/Dashboard/Balance/ListofOwe/${cell.value?._id}`}><a className="text-red-300">{cell.value?.userName}</a></Link>}
                                                     {cell.value?.userRole == "Reseller" && <Link href={`/Dashboard/Balance/Reseller/${cell.value?._id}`}><a className="text-violet-300">{cell.value?.userName}</a></Link>}
@@ -701,7 +701,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
                                             {cell.column.id === 'carId' && row.original._id !== Idofrow?.[0] && (
                                                 <>
-                                                    {/* {console.log(cell.value)} */}
+
 
                                                     <Link href={`/Dashboard/ListofCars/AllCars/${cell.value?._id}`}><a className="text-orange-200">{cell.value?.modeName || cell.value?.VINNumber || cell.value?.id}</a></Link>
                                                 </>

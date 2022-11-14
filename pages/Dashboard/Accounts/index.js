@@ -17,8 +17,8 @@ import { getSession, useSession } from "next-auth/react";
 export async function getServerSideProps({ req, query }) {
     const session = await getSession({ req })
 
-    // console.log("cookieseeee ==========", req?.cookies?.Token)
-    // console.log("Sesssion --------->", session?.Token)
+
+
 
     if (!session || session?.userRole !== "Admin") {
         return {
@@ -39,11 +39,11 @@ export async function getServerSideProps({ req, query }) {
     //         },
     //     })
     //     data = await res.data.total
-    //     console.log(res.data)
+
 
     // } catch (err) {
     //     data = ""
-    //     console.log(err)
+
 
     // }
 
@@ -210,7 +210,6 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
     const handleUpdateUser = async () => {
 
 
-        console.log(Idofrow)
 
         if (Idofrow?.[3] == "Reseller" && DataUpdate.userRole !== "Reseller") {
 
@@ -229,20 +228,20 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
             try {
-                await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance + Idofrow?.[1] }, {
+                await Axios.patch('/users/' + SessionID, { "TotalBals": Math.floor(DataBalance) + Math.floor(Idofrow?.[1]) }, {
                     headers: {
                         "Content-Type": "application/json",
                         'Authorization': `Bearer ${session?.data?.Token}`
                     }
                 },)
 
-                toast.success("Your Balance Now= " + (DataBalance + Idofrow?.[1]) + " $");
+                toast.success("Your Balance Now= " + (Math.floor(DataBalance) + Math.floor(Idofrow?.[1])) + " $");
 
 
                 await Axios.post("/bal/",
                     {
                         amount: Math.floor(Idofrow?.[1]),
-                        action: "Tooken",
+                        action: "Update",
                         userId: Idofrow?.[0]
                     }, {
                     headers: {
@@ -252,7 +251,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                 },)
 
 
-                console.log(DataUpdate)
+
 
                 try {
                     await Axios.patch(`/users/${Idofrow?.[0]}`, DataUpdate, {
@@ -309,20 +308,28 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
             const DataBalance = UDetails.data.userDetail.TotalBals
 
-            const donebalnace = DataUpdate.TotalBals - Idofrow?.[1]
+            const donebalnace = Math.floor(DataUpdate.TotalBals) - Math.floor(Idofrow?.[1])
 
             if (donebalnace <= DataBalance) {
 
                 try {
-                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - donebalnace })
+                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - donebalnace }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
 
                     toast.success("Your Balance Now= " + (DataBalance - donebalnace) + " $");
+
+
 
 
                     await Axios.post("/bal/",
                         {
                             amount: -donebalnace,
-                            action: "updated to " + Idofrow?.[2]
+                            action: "Update",
+                            userId: Idofrow?.[0]
                         }, {
                         headers: {
                             "Content-Type": "application/json",
@@ -532,12 +539,11 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
                 toast.success("Your Balance Now= " + (DataBalance + Deletestate?.[1]) + " $");
 
-                console.log()
+
                 await Axios.post("/bal/",
                     {
-                        amount: Deletestate?.[1],
+                        amount: Math.floor(Deletestate?.[1]),
                         action: "Tooken",
-                        userId: "Patata"
                     }, {
                     headers: {
                         "Content-Type": "application/json",
