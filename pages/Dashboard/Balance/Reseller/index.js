@@ -1,14 +1,13 @@
 import useLanguage from '../../../../Component/language';
 import AdminLayout from '../../../../Layouts/AdminLayout';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import Head from 'next/head'
 import Link from 'next/link';
-import axios from 'axios';
-import Axios, { baseURL } from '../../../api/Axios';
+import Axios from '../../../api/Axios';
 import Image from 'next/image';
 import { InView } from 'react-intersection-observer';
 
-import { getSession,useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 
 
 
@@ -44,7 +43,6 @@ const Reseller = () => {
     const [Data, setData] = useState([]);
     const l = useLanguage();
 
-    const [data, useData] = useState()
     const [Search, setSearch] = useState("");
     const [Page, setPage] = useState(1);
     const [Limit, setLimit] = useState(4);
@@ -127,7 +125,7 @@ const Reseller = () => {
                                 </div>
                                 <div className="p-8 flex justify-between">
                                     <div> {l.balance} : {item.TotalBals}</div>
-                                    <div> {l.cars} : {item.TotalBals}</div>
+                                    {/* <div> {l.cars} : {item.TotalBals}</div> */}
                                 </div>
                             </div>
                         </a>

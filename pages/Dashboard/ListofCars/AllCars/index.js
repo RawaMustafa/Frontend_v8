@@ -1,35 +1,21 @@
-
-
 import useLanguage from '../../../../Component/language';
 import AdminLayout from '../../../../Layouts/AdminLayout';
-
 import { useEffect, useMemo, useState, useRef, forwardRef } from 'react';
 import Head from 'next/head'
-
-
-// import { Filter, DefaultColumnFilter, dateBetweenFilterFn, DateRangeColumnFilter } from '../Balance/Filter';
-
-
 import { useTable, useSortBy, useGlobalFilter, usePagination, useFilters, useGroupBy, useExpanded, } from 'react-table';
-// import { GlobalFilter } from '../Balance/GlobalFilter';
-
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
-
-
-import axios from "axios"
 import Axios from "../../../api/Axios"
-
-import { ToastContainer, toast, } from 'react-toastify';
-
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faCalendarPlus, faTrash, faEdit, faTimes, faCheck, faSave, faEye, faBan, faFileDownload, faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
-
+import { faEye, faFileDownload } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
-
 import { getSession, useSession } from "next-auth/react";
 import Link from 'next/link';
+
+
+
+
 
 export const getServerSideProps = async ({ req }) => {
 
@@ -45,13 +31,20 @@ export const getServerSideProps = async ({ req }) => {
 
         }
     }
+
+
     let data = 1
     try {
-        const res = await Axios.get(`/cars/?search=&page=1&limit=10`)
+        const res = await Axios.get(`/cars/?search=&page=1&limit=10`, {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${session?.Token}`
+            }
+        },)
         data = await res.data.total
 
     } catch {
-        data = ""
+        data = 1
     }
 
 
@@ -94,7 +87,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
 
 
-    const UsersSesstion = useSession()
+    const session = useSession()
     const [ReNewData, setReNewData] = useState(false);
 
     const [Search, setSearch] = useState("");
@@ -122,16 +115,22 @@ const Table = ({ COLUMNS, AllProducts }) => {
     useEffect(() => {
         const getExpenseData = async () => {
 
+            // ?${StartDate}/&${EndDate}
             try {
-                const res = await Axios.get(`/cars/?search=${Search}&page=${Page}&limit=${Limit}`)
+                const res = await Axios.get(`/cars/?search=${Search}&page=${Page}&limit=${Limit}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
                 const data = await res.data.carDetail
 
                 setDataTable(data)
                 setTotalCars(res.data.total)
 
-            } catch (err) {
+            } catch {
 
-                err.response.status == 404 && setDataTable([])
+                setDataTable([])
                 setPageS(1)
             }
         }
@@ -148,48 +147,23 @@ const Table = ({ COLUMNS, AllProducts }) => {
     const table_2_pdf = () => {
 
         const table = document.getElementById('table-to-xls')
-        // const table_th = [...table.rows].map(r => [...r.querySelectorAll('th')].map((th) => (th.textContent != "Details") ? th.textContent : null))
+        let TH = []
+        const table_th = [...table.rows].map(r => [...r.querySelectorAll('th')].map((th) => (TH.push(th.children?.[0].innerText != "Details" ? th.children?.[0].innerText : ""))))
         const table_td = [...table.rows].map((r) => [...r.querySelectorAll('td')].map(td => td.textContent))
 
         const doc = new jsPDF("p", "mm", "a2");
-        doc.text(`Data{ Hawbir }`, 95, 10);
+
+
 
         doc.autoTable({
+            head: [TH],
+            body: table_td,
 
-
-            head: [[`Price`, " Color", "Date", "Is Sold", "Mileage", "Name of Car", "Tire", "Type of Balance", "Type of Car", "Wheel Drive Type"]],
-            body: table_td
-        });
+        })
 
 
         doc.save("Table_Cars.pdf");
     };
-
-    // const table_All_pdff = () => {
-
-
-
-    //     var obj = JSON.parse(JSON.stringify(DataTable))
-    //     var res = [];
-    //     //
-    //     for (var i in obj)
-    //         res.push(obj[i]);
-
-
-    //     const doc = new jsPDF("p", "mm", "a3");
-    //     doc.text(`Data{ Hawbir }`, 95, 10);
-
-    //     doc.autoTable({
-    //         head: [[`Price`, " Color", "Date", "Is Sold", "Mileage", "Name of Car", "Tire", "Type of Balance", "Type of Car", "Wheel Drive Type"]],
-    //         body: res.map((d) => [d.amount, d.userId, d.action, d.actionDate])
-    //     });
-    //     doc.save("ALL(Data).pdf");
-
-
-
-
-
-    // };
 
 
 
@@ -251,7 +225,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                 <div className="modal" id="my-modal-2">
                     <div className="modal-box m-2">
                         <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} />
-                        <div className="font-bold text-lg overflow-auto max-h-52 scrollbar-hide space-y-2 ">
+                        <div className="font-bold text-lg overflow-auto max-h-80 scrollbar-hide space-y-2 ">
                             {allColumns.map(column => (
                                 <div key={column.id}>
                                     <div className=" w-full  rounded-lg   ">
@@ -261,7 +235,6 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
                                         </label>
                                     </div>
-                                    {/* <input type="checkbox" {...column.getToggleHiddenProps()} />{' '} */}
 
 
                                 </div>
@@ -283,9 +256,10 @@ const Table = ({ COLUMNS, AllProducts }) => {
                 <div className="flex justify-end ">
 
                     <div className="dropdown rtl:dropdown-right ltr:dropdown-left">
-                        <label tabIndex="0" className=" m-1 active:scale-9  ">
+                        {/* //TODO -   Fix-------Date*/}
+                        {/* <label tabIndex="0" className=" m-1 active:scale-9  ">
                             <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 active:scale-9 " />
-                        </label>
+                        </label> */}
 
                         <ul tabIndex="0" className="dropdown-content  shadow bg-base-100 rounded-box w-52 flex justify-center  ">
                             <li className="  py-2">
@@ -346,11 +320,12 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
                     {headerGroups.map((headerGroups, idx) => (
 
-                        <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
+                        <tr id="th-to-xls" className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
 
                             {headerGroups.headers.map((column, idx) => (
 
-                                < th key={idx} className={`p-4 m-44 ${true && "min-w-[200px]"} `} {...column.getHeaderProps(column.getSortByToggleProps())} > {column.render('Header')}
+                                <th key={idx} className={`p-4 m-44 ${true && "min-w-[200px]"} `} {...column.getHeaderProps(column.getSortByToggleProps())} >
+                                    <span >{column.render('Header')}</span>
                                     <span  >
                                         {column.isSorted ? (column.isSortedDesc ? "<" : ">") : ""}
                                     </span>
@@ -417,9 +392,6 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
 
             </table>
-            {/* </div > */}
-
-            {/* <div className="botom_Of_Table" > */}
 
             <div className=" flex justify-between container mx-auto items-center rounded-xl p-3  px-1 mb-20  min-w-[700px]">
 
@@ -507,8 +479,6 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
             </div>
 
-            {/* </div> */}
-
 
 
         </div >
@@ -536,19 +506,28 @@ const Expense = ({ AllProducts }) => {
         useMemo(() =>
             [
 
-
-                // {
-                //     Header: "123",
-
-                //     disableFilters: true,
-
-
-                // },
                 {
                     Header: () => {
                         return (
 
-                            l.price
+                            // l.namecar
+                            "Name of car"
+                        )
+                    },
+
+                    disableFilters: true,
+
+                    accessor: 'modeName',
+
+
+                },
+
+                {
+                    Header: () => {
+                        return (
+
+                            "Price"
+                            // l.price
                         )
                     },
 
@@ -562,7 +541,8 @@ const Expense = ({ AllProducts }) => {
                     Header: () => {
                         return (
 
-                            l.color
+                            // l.color
+                            "Color"
                         )
                     },
 
@@ -576,7 +556,8 @@ const Expense = ({ AllProducts }) => {
                     Header: () => {
                         return (
 
-                            l.date
+                            // l.date
+                            "Date"
                         )
                     },
 
@@ -590,7 +571,8 @@ const Expense = ({ AllProducts }) => {
                     Header: () => {
                         return (
 
-                            l.isSold
+                            // l.isSold
+                            "Is Sold"
                         )
                     },
 
@@ -604,7 +586,8 @@ const Expense = ({ AllProducts }) => {
                     Header: () => {
                         return (
 
-                            l.mileage
+                            // l.mileage
+                            "Mileage"
                         )
                     },
 
@@ -614,25 +597,13 @@ const Expense = ({ AllProducts }) => {
 
 
                 },
+
                 {
                     Header: () => {
                         return (
 
-                            l.namecar
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'modeName',
-
-
-                },
-                {
-                    Header: () => {
-                        return (
-
-                            l.modelyear
+                            // l.modelyear
+                            "Model"
                         )
                     },
 
@@ -649,7 +620,8 @@ const Expense = ({ AllProducts }) => {
                     Header: () => {
                         return (
 
-                            l.tire
+                            // l.tire
+                            "Tire"
                         )
                     },
 
@@ -664,7 +636,8 @@ const Expense = ({ AllProducts }) => {
                     Header: () => {
                         return (
 
-                            l.tobalance
+                            // l.tobalance
+                            "Type of Balance"
                         )
                     },
 
@@ -680,7 +653,8 @@ const Expense = ({ AllProducts }) => {
                     Header: () => {
                         return (
 
-                            l.tocar
+                            // l.tocar
+                            "Type of Car"
                         )
                     },
 
@@ -695,7 +669,8 @@ const Expense = ({ AllProducts }) => {
                     Header: () => {
                         return (
 
-                            l.wheeldrivetype
+                            // l.wheeldrivetype
+                            "Wheel Drive Type"
                         )
                     },
 
@@ -747,9 +722,6 @@ const Expense = ({ AllProducts }) => {
 
             }
 
-            <ToastContainer
-                draggablePercent={60}
-            />
 
 
         </div>
@@ -761,14 +733,5 @@ const Expense = ({ AllProducts }) => {
 Expense.Layout = AdminLayout;
 
 export default Expense;
-
-
-
-
-
-
-
-
-
 
 

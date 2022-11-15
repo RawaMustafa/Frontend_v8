@@ -63,7 +63,7 @@ const Details = ({ initQuery }) => {
     const [Search, setSearch] = useState("");
     const [Page, setPage] = useState(1);
     const [PageQarz, setPageQarz] = useState(1);
-    const [Limit, setLimit] = useState(40);
+    const [Limit, setLimit] = useState(14);
     const [NoCars, setNoCars] = useState(false);
 
     const l = useLanguage();
@@ -219,7 +219,7 @@ const Details = ({ initQuery }) => {
         <div className="container mx-auto">
 
             <Head>
-                <title >{l.allcars}</title>
+                <title >{l.loan}</title>
             </Head>
 
             <div className="pt-5  mb-32 grid grid-cols-1 md:grid-cols-2 gap-10  ">
@@ -809,9 +809,13 @@ const TableQarz = ({ COLUMNS, ID }) => {
             }
 
 
+
         }
 
-        else if (DataUpdate.isPaid == Idofrow?.[1].toString()) {
+
+
+
+        else if (DataUpdate.isPaid == Idofrow?.[1]) {
 
 
 
@@ -970,32 +974,6 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
 
         doc.save("Table.pdf");
-    };
-
-    const table_All_pdff = () => {
-
-
-
-        var obj = JSON.parse(JSON.stringify(DataTable))
-        var res = [];
-        //
-        for (var i in obj)
-            res.push(obj[i]);
-
-
-        const doc = new jsPDF("p", "mm", "a3");
-        doc.text(`Data{Hawbir}`, 95, 10);
-
-        doc.autoTable({
-            head: [[`Amount`, " pay for", "Date"]],
-            body: res.map((d) => [d.OtherCost, d.DescCost, d.actionDate])
-        });
-        doc.save("ALL(Data).pdf");
-
-
-
-
-
     };
 
 

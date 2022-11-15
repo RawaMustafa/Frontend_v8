@@ -193,6 +193,9 @@ export const en = {
     rent: "Rent Car",
     loading: "Loading...",
     unauthenticated: "Unauthenticated",
+    cpassword: "confirm password",
+    msgupdatei:"sure, you want to update your data",
+    msgupdates:"if you update your data you must Sign In again"
 
 
 

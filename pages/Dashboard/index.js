@@ -254,12 +254,12 @@ const Dashboard = (props) => {
 
                         </div>
                     </div></a></Link>
-                    <Link href="/Dashboard/ListofCars/AllCars"><a><div className="p-5  border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
+                    <Link href="/Dashboard/Balance/Mybalance"><a><div className="p-5  border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
                         <div className="flex items-center  justify-around  ">
 
                             <div>
                                 <div className="">{l.balance}</div>
-                                <div className="text-2xl font-bold  first-letter:">{UserInfo?.TotalBals || " 0"}</div>
+                                <div className="text-2xl font-bold  first-letter:">${UserInfo?.TotalBals || " 0"}</div>
                             </div>
                             <div>
                                 <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500">
@@ -272,7 +272,7 @@ const Dashboard = (props) => {
                         </div>
                     </div></a></Link>
 
-                    <Link href="/Dashboard/ListofCars/SalesList"><a><div className="p-5 border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
+                    <Link href="/Dashboard/Balance/Mybalance"><a><div className="p-5 border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
                         <div className="flex items-center  justify-around  ">
 
                             <div>
@@ -290,23 +290,7 @@ const Dashboard = (props) => {
                         </div>
                     </div></a></Link>
 
-                    {/* <Link href="/Dashboard/"><a><div className="p-5 border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
-                    <div className="flex items-center  justify-around  ">
 
-                        <div>
-                            <div className=""> {l.totalpricePaidbid}</div>
-                            <div className="text-2xl font-bold ">${Data?.totalpricePaidbid || " 0"}</div>
-                        </div>
-                        <div>
-                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500 ">
-
-                                <FontAwesomeIcon icon={faHandHoldingDollar} className="text-2xl" />
-
-                            </div>
-                        </div>
-
-                    </div>
-                </div></a></Link> */}
 
                     <Link href="/Dashboard/"><a><div className="p-5 border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl  drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
                         <div className="flex items-center  justify-around  ">
@@ -327,7 +311,6 @@ const Dashboard = (props) => {
                     </div></a></Link>
 
 
-                    {/* <lottie-player src="https://assets9.lottiefiles.com/datafiles/gUENLc1262ccKIO/data.json" background="transparent" speed="1" hover autoplay></lottie-player> */}
 
                 </div>
 
@@ -352,12 +335,12 @@ const Dashboard = (props) => {
 
                                 <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
                                     <div className="text-sm font-medium ">{l.expense}</div>
-                                    <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataownCost?.owenCost || " 0"}</div>
+                                    <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${DataownCost?.owenCost || " 0"}</div>
                                 </div>
 
                                 <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
                                     <div className="text-sm font-medium ">{l.totalpricePaidbid}</div>
-                                    <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalpricePaidbid || " 0"}</div>
+                                    <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${Data?.totalpricePaidbid || " 0"}</div>
                                 </div>
 
 
@@ -371,7 +354,7 @@ const Dashboard = (props) => {
 
                                         <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
                                             <div className="text-sm font-medium ">{l.totalloan}</div>
-                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzTotal || " 0"}</div>
+                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${DataQarz?.qarzTotal || " 0"}</div>
                                         </div>
 
                                     </div>
@@ -381,11 +364,11 @@ const Dashboard = (props) => {
 
                                         <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
                                             <div className="text-sm font-medium ">{l.qarzAmountTotal}</div>
-                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzAmountTotal || " 0"}</div>
+                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${DataQarz?.qarzAmountTotal || " 0"}</div>
                                         </div>
                                         <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
                                             <div className="text-sm font-medium ">{l.qarzCarTotalByAmount}</div>
-                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzCarTotalByAmount || " 0"}</div>
+                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${DataQarz?.qarzCarTotalByAmount || " 0"}</div>
                                         </div>
 
 
@@ -413,26 +396,26 @@ const Dashboard = (props) => {
 
                                         <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
                                             <div className="text-sm font-medium ">{l.totalCoCCost}</div>
-                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalCoCCost || " 0"}</div>
+                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${Data?.totalCoCCost || " 0"}</div>
                                         </div>
                                         <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
                                             <div className="text-sm font-medium ">{l.totalFeesAndRepaidCostDubai}</div>
-                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalFeesAndRepaidCostDubai || " 0"}</div>
+                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${Data?.totalFeesAndRepaidCostDubai || " 0"}</div>
                                         </div>
 
                                         <div className=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
                                             <div className="text-sm font-medium ">{l.totalFeesRaqamAndRepairCostinKurdistan}</div>
-                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalFeesRaqamAndRepairCostinKurdistan || " 0"}</div>
+                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${Data?.totalFeesRaqamAndRepairCostinKurdistan || " 0"}</div>
                                         </div>
 
                                         <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
                                             <div className="text-sm font-medium ">{l.totalFeesinAmerica}</div>
-                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalFeesinAmerica || " 0"}</div>
+                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${Data?.totalFeesinAmerica || " 0"}</div>
                                         </div>
 
                                         <div className=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[1E2021]">
                                             <div className="text-sm font-medium ">{l.totalTransportationCost}</div>
-                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{Data?.totalTransportationCost || " 0"}</div>
+                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${Data?.totalTransportationCost || " 0"}</div>
                                         </div>
 
 

@@ -679,7 +679,7 @@ const NewCars = ({ SessionID }) => {
 
         "Tobalance": Data.Tobalance,
         "Tire": Data.Tire,
-        "Date": Data.Date?.[0],
+        "Date": Data.Date?.[0] || "2022-01-01",
         "Arrived": Data.Arrived,
         "FeesinAmericaStoragefee": Data.FeesinAmericaStoragefee,
         "FeesinAmericaCopartorIAAfee": Data.FeesinAmericaCopartorIAAfee,
@@ -1214,7 +1214,7 @@ const NewCars = ({ SessionID }) => {
 
 
                         <div className="flex  justify-center">
-                            <input name='Date' onChange={(e) => { HandleAddCars(e) }} type="date" placeholder="YYYY-MM-DD" className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input name='Date' onChange={(e) => { HandleAddCars(e) }} type="date" placeholder="YYYY-MM-DD" defaultValue={"2022-1-1"} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
                     </div>
