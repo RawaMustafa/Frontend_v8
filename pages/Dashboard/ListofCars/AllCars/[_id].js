@@ -521,7 +521,7 @@ const Detail = ({ carss, SessionID }) => {
 
 
     const handleSoldCars = async (bool) => {
-        console.log(cars.carDetail.carCost.isSold)
+
 
         if (cars.carDetail.carCost.isSold == true) {
 
@@ -1051,7 +1051,7 @@ const Detail = ({ carss, SessionID }) => {
                             <div className="space-x-10">
                                 <label htmlFor="sell-modal-3" className="btn btn-warning" onClick={() => {
                                     handleSoldCars("true")
-                                    console.log("true")
+
                                 }
                                 }>{l.yes}</label>
                                 <label htmlFor="sell-modal-3" className="btn btn-error" >{l.no}</label>

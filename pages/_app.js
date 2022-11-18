@@ -56,9 +56,9 @@ function MyApp({ Component, pageProps }) {
   const router = useRouter()
 
   useEffect(() => {
-    console.log("MyApp--router?.locale========", router?.locale)
-    console.log("MyApp--document.body.dir======", document.body.dir)
-    console.log("MyApp--localStorage.getItem========", localStorage.getItem("language"))
+
+
+
 
 
     if (localStorage.getItem("language") === "ku") {

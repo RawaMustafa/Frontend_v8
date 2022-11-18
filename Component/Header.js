@@ -61,10 +61,10 @@ const Header = () => {
 
 
     useEffect(() => {
-        console.log("1--router?.locale========", router?.locale)
-        console.log("1--lang========", lang)
-        console.log("1--document.body.dir======", document.body.dir)
-        console.log("1--localStorage.getItem========", localStorage.getItem("language"))
+
+
+
+
 
         if (lang == "ku") {
 
@@ -88,10 +88,10 @@ const Header = () => {
             localStorage.setItem("language", "ku")
         }
 
-        console.log("2--router?.locale========", router?.locale)
-        console.log("2--lang========", lang)
-        console.log("2--document.body.dir======", document.body.dir)
-        console.log("2--localStorage.getItem========", localStorage.getItem("language"))
+
+
+
+
 
 
     }, [router?.locale]);
