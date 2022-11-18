@@ -1,5 +1,4 @@
 
-import { useMemo, useState, useEffect } from "react"
 import Axios, { baseURL } from "../../../../../api/Axios"
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -8,13 +7,10 @@ import AdminLayout from '../../../../../../Layouts/AdminLayout';
 import Image from "next/image";
 import { ToastContainer, toast, } from 'react-toastify';
 import ImageGallery from 'react-image-gallery';
-
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faTrashAlt, faPaperPlane, faHandHoldingUsd } from '@fortawesome/free-solid-svg-icons';
-
-
+import { faTrashAlt, } from '@fortawesome/free-solid-svg-icons';
 import { getSession, useSession } from "next-auth/react";
-
+import Link from "next/link";
 
 
 export const getServerSideProps = async (context) => {
@@ -157,8 +153,8 @@ const Detail = ({ cars, ID }) => {
 
                 <div className="flex  w-full h-full p-4 justify-end">
 
-
-                    <label htmlFor="my-modal-3" className="btn btn-error modal-button">{l.delete}</label>
+                    <Link rel="noopener noreferrer" href={`/Dashboard/ListofCars/AllCars/${router.query.id}`}><a target="_blank" className="btn btn-info mx-10">{l.detail}</a></Link>
+                    <label htmlFor="my-modal-3" className="btn btn-error modal-button">{l.retrieve}</label>
 
                     <input type="checkbox" id="my-modal-3" className="modal-toggle btn btn-error " />
                     <div className="modal  ">

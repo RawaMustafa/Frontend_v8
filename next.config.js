@@ -10,7 +10,13 @@ module.exports = nextConfig;
 
 module.exports = {
   reactStrictMode: true,
+  i18n: {
 
+    locales: ['en', 'ku'],
+
+    defaultLocale: 'en',
+
+  },
   images: {
 
     domains: ['localhost'],
@@ -19,13 +25,3 @@ module.exports = {
 
 }
 
-module.exports = {
-  reactStrictMode: true,
-  i18n: {
-
-    locales: ['en', 'ku'],
-
-    defaultLocale: 'en',
-
-  }
-}

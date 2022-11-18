@@ -302,7 +302,7 @@ const Detail = ({ carss, SessionID }) => {
 
 
 
-   
+
 
 
         if (DataUpload.Tobalance == "Cash" && DataUpload.IsSold == 'false') {
@@ -492,30 +492,33 @@ const Detail = ({ carss, SessionID }) => {
 
 
         }
-        else {
-            toast.error("you cant update Loan and Rent balance *");
+
+        else if (DataUpload.Tobalance == "Loan" || DataUpload.Tobalance == "Rent") {
+
+            try {
+                const id = router.query._id
+                const res = await Axios.patch(`/cars/${id}`,
+                    DataUpload
+                    , {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
+
+
+                toast.success("Data updated successfully");
+                // router.reload()
+
+            } catch (err) {
+                toast.error("error to updated car")
+            }
+            setDetpage(1)
         }
-
-
-        // try {
-        //     const id = router.query._id
-        //     const res = await Axios.patch(`/cars/${id}`,
-        //         DataUpload
-        //         , {
-        //             headers: {
-        //                 "Content-Type": "application/json",
-        //                 'Authorization': `Bearer ${session?.data?.Token}`
-        //             }
-        //         },)
-
-
-        //     toast.success("Data updated successfully");
-        //     // router.reload()
-
-        // } catch (err) {
-        //     toast.error("error to updated car")
+        // else {
+        //     toast.error("you cant update Loan and Rent balance *");
         // }
-        // setDetpage(1)
+
     }
 
 
@@ -822,6 +825,7 @@ const Detail = ({ carss, SessionID }) => {
 
     const renderVideo = (item) => {
 
+
         return (
             <div>
 
@@ -911,7 +915,7 @@ const Detail = ({ carss, SessionID }) => {
                     <label htmlFor="my-modal-3" className="btn btn-error modal-button">{l.delete}</label>
                     <label htmlFor="give-modal-3" className="btn btn-info modal-button">{l.give}</label>
                     {(cars.carDetail.carCost.isSold == true) && <label htmlFor="sold-modal-3" className="btn btn-warning modal-button">{l.retrieve}</label>}
-                    {cars.carDetail.carCost.isSold ==false && <label htmlFor="sell-modal-3" className="btn btn-warning modal-button">{l.sell}</label>}
+                    {cars.carDetail.carCost.isSold == false && <label htmlFor="sell-modal-3" className="btn btn-warning modal-button">{l.sell}</label>}
                     <label className="btn btn-outline modal-button" onClick={Doc_2_pdf}>PDF</label>
 
 

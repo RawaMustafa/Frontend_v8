@@ -13,7 +13,6 @@ const Axios = () => {
         baseURL: "http://localhost:4000/_API/",
         headers: {
             "Content-Type": "application/json",
-
         },
 
     })
