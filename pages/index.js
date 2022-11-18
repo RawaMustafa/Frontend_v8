@@ -1,12 +1,9 @@
 import { getSession } from 'next-auth/react'
 
 
-
 export async function getServerSideProps({ req, res }) {
 
   const session = await getSession({ req })
-
-
 
   if (session && session?.userRole == "Reseller") {
     return {

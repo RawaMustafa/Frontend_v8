@@ -246,7 +246,7 @@ const Qarz = ({ initQuery }) => {
                     <title >{l.loan}</title>
                 </Head>
 
-                <div className="pt-5  mb-32 flex justify-end">
+                <div className="pt-5  mb-20 flex justify-end">
 
 
 
@@ -255,7 +255,7 @@ const Qarz = ({ initQuery }) => {
                         PageQarz == 1 && setPageQarz(2)
                         PageQarz == 2 && setPageQarz(1)
                     }}
-                        className="p-5 cursor-pointer  justify-self-end border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg  w-64   active:scale-[98%] hover:scale-[99%]   z-30  mx-5 ">
+                        className="p-5 cursor-pointer scale-75 lg:scale-100  justify-self-end border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg  w-64      z-30    ">
                         <div className="flex items-center  justify-around  ">
 
                             <div>
@@ -285,7 +285,7 @@ const Qarz = ({ initQuery }) => {
                     <>
                         {
                             NoCars &&
-                            <div className="text-center  ">
+                            <div className="text-center  p-[100px]  ">
                                 < Image alt="NoCar" src="/No_Cars.svg" width={400} height={400} quality={'1'} />
                             </div>
                         }
@@ -453,15 +453,10 @@ const Qarz = ({ initQuery }) => {
                 }
                 {PageQarz == 2 && <div>
 
-
                     <TableQarz COLUMNS={COLUMNS} ID={initQuery} />
 
 
-
                 </div>}
-
-
-
 
 
             </div >
@@ -542,7 +537,6 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
         doc.autoTable({
 
-
             head: [[`Amount`, " pay for", "Date"]],
             body: table_td
         });
@@ -551,31 +545,7 @@ const TableQarz = ({ COLUMNS, ID }) => {
         doc.save("Table.pdf");
     };
 
-    const table_All_pdff = () => {
 
-
-
-        var obj = JSON.parse(JSON.stringify(DataTable))
-        var res = [];
-        //
-        for (var i in obj)
-            res.push(obj[i]);
-
-
-        const doc = new jsPDF("p", "mm", "a3");
-        doc.text(`Data{Hawbir}`, 95, 10);
-
-        doc.autoTable({
-            head: [[`Amount`, " pay for", "Date"]],
-            body: res.map((d) => [d.OtherCost, d.DescCost, d.actionDate])
-        });
-        doc.save("ALL(Data).pdf");
-
-
-
-
-
-    };
 
 
 
@@ -586,9 +556,7 @@ const TableQarz = ({ COLUMNS, ID }) => {
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        footerGroups,
         state,
-        setGlobalFilter,
         canNextPage,
         canPreviousPage,
         pageOptions,
@@ -615,22 +583,15 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
 
     return (
-        <div className="  container mx-auto overflow-auto">
+        <>
+            <div className=" flex justify-end     p-2   ">
 
+                <div className='flex z-[500]   '>
 
+                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left mx-5 lg:mx-5  ">
 
-            <div className=" flex justify-end   container mx-auto items-center p-2  min-w-[700px] ">
-
-
-
-                <div className="flex justify-center items-center lg:space-x-4">
-
-
-
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left">
-
-                        <label tabIndex="0" className=" m-1">
-                            <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 " />
+                        <label tabIndex="0" className=" m-1   ">
+                            <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="text-3xl  m-auto md:mx-5 active:scale-90   ease-in-out" />
                         </label>
 
                         <ul tabIndex="0" className="dropdown-content  shadow bg-base-100 rounded-box w-52 flex justify-center   ">
@@ -656,9 +617,9 @@ const TableQarz = ({ COLUMNS, ID }) => {
                     </div>
 
 
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left ">
+                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left mx-2 lg:mx-10">
                         <label tabIndex="0" className=" m-1  " >
-                            <FontAwesomeIcon icon={faFileDownload} className="text-3xl m-auto md:mx-5 mx-1 active:scale-90 active:rotate-180 ease-in-out  transition" />
+                            <FontAwesomeIcon icon={faFileDownload} className="text-3xl m-auto md:mx-5 mx-1 active:scale-90   ease-in-out  " />
                         </label>
 
                         <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 flex justify-center space-y-2 ">
@@ -674,148 +635,150 @@ const TableQarz = ({ COLUMNS, ID }) => {
                         </ul>
                     </div>
 
-
                 </div>
 
 
             </div>
 
-            <table id="table-to-xls" className=" my-10  inline-block min-w-[1000px]  " {...getTableProps()}>
+
+            <div className="  container mx-auto overflow-auto">
 
 
-                <thead className="  ">
-
-                    {headerGroups.map((headerGroups, idx) => (
-
-                        <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
-
-                            {headerGroups.headers.map((column, idx) => (
-
-                                <th key={idx} className="p-4 m-44      w-[380px]  " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
-
-                                    <span>
-                                        {column.isSorted ? (column.isSortedDesc ? " ↑ " : " 🡓 ") : ""}
-                                    </span>
+                <table id="table-to-xls" className=" my-10  inline-block min-w-[1000px]  " {...getTableProps()}>
 
 
+                    <thead className="  ">
 
-                                </th>
+                        {headerGroups.map((headerGroups, idx) => (
 
+                            <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
 
+                                {headerGroups.headers.map((column, idx) => (
 
-                            ))}
+                                    <th key={idx} className="p-4 m-44      w-[380px]  " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
 
-                        </tr>
-
-                    )
-                    )
-
-
-                    }
-
-                </thead >
-
-
-                <tbody {...getTableBodyProps()}>
-
-                    {page.map((row, idx) => {
-
-                        prepareRow(row)
-                        return (
-                            <tr key={idx}  {...row.getRowProps()} >
-                                {row.cells.map((cell, idx) => {
-                                    return (
-
-
-                                        <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
-
-
-                                            {cell.column.id === 'isPaid' && (
-
-                                                // cell.value === true ? <FontAwesomeIcon icon={faCheck} className="text-green-500" /> : <FontAwesomeIcon icon={faTimes} className="text-red-500" />
-                                                cell.value === true ? <div className="text-green-500" >Yes</div> : <div className="text-red-500" >No</div>
-                                            )}
-
-
-                                            {
-
-                                                cell.render('Cell')
-
-                                            }
+                                        <span>
+                                            {column.isSorted ? (column.isSortedDesc ? " ↑ " : " 🡓 ") : ""}
+                                        </span>
 
 
 
-                                        </td>
+                                    </th>
 
-                                    )
-                                })}
+
+
+                                ))}
 
                             </tr>
+
                         )
-                    }
-
-                    )}
-
-                </tbody>
+                        )
 
 
-            </table>
+                        }
 
-            <div className="botom_Of_Table" >
-
-                <div className=" flex justify-between container mx-auto items-center    px-1 mb-20  min-w-[700px] ">
+                    </thead >
 
 
+                    <tbody {...getTableBodyProps()}>
 
-                    <div className=" flex  space-x-5 mx-5 text-lg items-center     ">
+                        {page.map((row, idx) => {
 
-                        <div>
+                            prepareRow(row)
+                            return (
+                                <tr key={idx}  {...row.getRowProps()} >
+                                    {row.cells.map((cell, idx) => {
+                                        return (
 
-                            {l.page}
-                            <span>
-                                {""}{pageIndex + 1}/{pageOptions.length}{""}
-                            </span>
+
+                                            <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
+
+
+                                                {cell.column.id === 'isPaid' && (
+
+                                                    cell.value === true ? <div className="text-green-500" >Yes</div> : <div className="text-red-500" >No</div>
+                                                )}
+
+
+                                                {
+
+                                                    cell.render('Cell')
+
+                                                }
+
+
+
+                                            </td>
+
+                                        )
+                                    })}
+
+                                </tr>
+                            )
+                        }
+
+                        )}
+
+                    </tbody>
+
+
+                </table>
+
+                <div className="botom_Of_Table" >
+
+                    <div className=" flex justify-between container mx-auto items-center    px-1 mb-20  min-w-[700px] ">
+
+
+
+                        <div className=" flex  space-x-5 mx-5 text-lg items-center     ">
+
+                            <div>
+
+                                {l.page}
+                                <span>
+                                    {""}{pageIndex + 1}/{pageOptions.length}{""}
+                                </span>
+                            </div>
+
+                            <div>
+
+                                <select className="select select-info  w-full max-w-xs"
+                                    onChange={(e) => {
+                                        setLimit((e.target.value) * 2)
+                                        setPageSize(Number(e.target.value)
+                                        )
+                                    }}
+
+                                    value={pageSize}>
+                                    {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
+                                        <option key={idx} value={pageSize}>
+                                            {l.show} ({(pageSize !== 100000) ? pageSize : l.all})
+                                        </option>))
+                                    }
+
+                                </select>
+                            </div>
                         </div>
 
-                        <div>
 
-                            <select className="select select-info  w-full max-w-xs"
-                                onChange={(e) => {
-                                    setLimit((e.target.value) * 2)
-                                    setPageSize(Number(e.target.value)
-                                    )
-                                }}
 
-                                value={pageSize}>
-                                {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
-                                    <option key={idx} value={pageSize}>
-                                        {l.show} ({(pageSize !== 100000) ? pageSize : l.all})
-                                    </option>))
-                                }
 
-                            </select>
+                        <div className="space-x-2  overflow-auto inline-flex  scrollbar-hide ">
+                            <div></div>
+                            <button className="btn w-2 h-2 btn-info   " onClick={() => gotoPage(0)} disabled={!canPreviousPage}>{"<<"} </button>
+                            <button className="btn w-2 h-2 btn-info" onClick={() => previousPage()} disabled={!canPreviousPage}>{"<"} </button>
+                            <button className="btn w-2 h-2 btn-info" onClick={() => nextPage()} disabled={!canNextPage}>{">"} </button>
+                            <button className="btn w-2 h-2 btn-info " onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>{">>"} </button>
                         </div>
-                    </div>
 
-
-
-
-                    <div className="space-x-2  overflow-auto inline-flex  scrollbar-hide ">
-                        <div></div>
-                        <button className="btn w-2 h-2 btn-info   " onClick={() => gotoPage(0)} disabled={!canPreviousPage}>{"<<"} </button>
-                        <button className="btn w-2 h-2 btn-info" onClick={() => previousPage()} disabled={!canPreviousPage}>{"<"} </button>
-                        <button className="btn w-2 h-2 btn-info" onClick={() => nextPage()} disabled={!canNextPage}>{">"} </button>
-                        <button className="btn w-2 h-2 btn-info " onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>{">>"} </button>
                     </div>
 
                 </div>
 
-            </div>
 
 
-
-        </div >
-
+            </div >
+        </>
     );
 
 

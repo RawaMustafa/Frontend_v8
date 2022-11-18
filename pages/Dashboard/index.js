@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 
 
 import AdminLayout from '../../Layouts/AdminLayout';
+import { ToastContainer, toast, } from 'react-toastify';
 
 
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
@@ -66,65 +67,42 @@ const Dashboard = (props) => {
 
 
 
-
-
     useEffect(() => {
-
-
-
         if (status == "authenticated") {
 
+            const Auth = {
 
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${session?.data?.Token}`
+
+                }
+            }
             const ddashboard = async () => {
                 const one = "/cost"
                 const two = "/cost/qarz"
                 const three = "/cost/ownCost"
                 const Forth = `users/detail/${session?.data?.id}`
 
-                const requestTwo = Axios.get(two, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },).then((res) => {
+                const requestOne = Axios.get(one, Auth).then((res) => {
                     return res
-                }).catch((err) => {
-
-
-                });
-
-                const requestOne = Axios.get(one, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },).then((res) => {
-                    return res
-                }).catch((err) => {
-
-                });
-                const requestThree = Axios.get(three, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },).then((res) => {
-                    return res
-                }).catch((err) => {
+                }).catch(() => {
 
                 })
-                const requestForth = Axios.get(Forth, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },).then((res) => {
+                const requestTwo = Axios.get(two, Auth).then((res) => {
                     return res
-                }).catch((err) => {
+                }).catch(() => {
 
                 })
+                const requestThree = Axios.get(three, Auth).then((res) => {
+                    return res
+                }).catch(() => {
 
-
+                })
+                const requestForth = Axios.get(Forth, Auth).then((res) => {
+                    return res
+                }).catch((e) => {
+                })
 
                 await axios.all([requestOne, requestThree, requestTwo, requestForth]).
 
@@ -136,15 +114,19 @@ const Dashboard = (props) => {
                             const dataFertchownCost = responses?.[1]?.data?.QarzTotal[0];
                             const UserBalance = responses?.[3]?.data.userDetail
 
-
                             setUserInfo(UserBalance)
                             setData(dataFertch)
                             setDataQarz(dataFertchqarz)
                             setDataownCost(dataFertchownCost)
 
 
-                        })).catch(errors => {
-
+                        })).catch((err) => {
+                            if (err.response.status == 404) {
+                                toast.error("Not Found")
+                            }
+                            if (err.response.status == 401) {
+                                toast.error("Unauthorized")
+                            }
                         })
 
             }
@@ -433,7 +415,10 @@ const Dashboard = (props) => {
 
 
                 </div>
+                <ToastContainer
+                    label={1}
 
+                />
             </div>
 
 
@@ -441,7 +426,6 @@ const Dashboard = (props) => {
     }
 
 }
-
 
 
 Dashboard.Layout = AdminLayout

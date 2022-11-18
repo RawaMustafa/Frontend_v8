@@ -75,7 +75,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
     const [Page, setPage] = useState(1);
     const [PageUser, setPageUser] = useState(1);
     const [PageUpdate, setPageUpdate] = useState(1);
-    const [Limit, setLimit] = useState(4);
+    const [Limit, setLimit] = useState(10);
 
     const [PageS, setPageS] = useState(Math.ceil(AllUsers / Limit));
     const [TotalUsers, setTotalUsers] = useState(AllUsers);
@@ -803,36 +803,76 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
         const getUsers = async () => {
             try {
 
-                const res = await Axios.get(`/users/?search=${Search}&page=${Page}&limit=${Limit}`, {
+                const Auth = {
                     headers: {
                         "Content-Type": "application/json",
                         'Authorization': `Bearer ${session?.data?.Token}`
-                    },
+                    }
+                }
+
+                const one = `/users/?search=${Search}&page=${Page}&limit=${Limit}`
+                const two = `/users/detail/${session?.data?.id}`
+
+
+                const requestOne = Axios.get(one, Auth).then((res) => {
+                    return res
+                }).catch(() => {
+
                 })
-                const resDetails = await Axios.get(`/users/detail/${session?.data?.id}`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    },
+
+                const requestTwo = Axios.get(two, Auth).then((res) => {
+                    return res
+                }).catch(() => {
+
                 })
 
-                setDataAdmin(resDetails.data.userDetail)
+                await axios.all([requestOne, requestTwo,]).
+
+                    then(
+                        axios.spread((...responses) => {
 
 
-                setDataTable(res.data.userDetail)
-                setTotalUsers(res.data.total)
+                            const dataFertch = responses?.[0]?.data?.userDetail;
+                            const dataFertchTotal = responses?.[0]?.data?.total;
+
+                            const dataFertchownCost = responses?.[1]?.data?.userDetail;
+
+
+                            setDataTable(dataFertch || [])
+                            setTotalUsers(dataFertchTotal)
+                            setDataAdmin(dataFertchownCost)
+
+                        })).catch((err) => {
+                            //
+                            if (err.response.status == 404) {
+                                toast.error("Not Found")
+
+
+                            }
+
+
+                            if (err.response.status == 401) {
+                                toast.error("Unauthorized")
+                            }
+
+
+                        })
+
 
             } catch {
+                //
 
-                setDataTable([])
 
 
             }
+
         }
         setPageS(Math.ceil(TotalUsers / Limit))
-
         getUsers()
         setReNewData(false)
+
+        console.clear("patata")
+
     }, [Search, Limit, Page, changeNumber, ReNewData, session?.data?.Token]);
 
 
@@ -850,8 +890,21 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                     'Authorization': `Bearer ${session?.data?.Token}`
                 },
             })
-
             toast.success("Admin Updated Successfully")
+
+            await Axios.post("/bal/",
+                {
+                    amount: DataUpdateAdmin.TotalBals,
+                    action: "Reseated",
+                    userId: session?.data?.id
+
+                }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${session?.data?.Token}`
+                }
+            },)
+
 
             signOut({ callbackUrl: '/Login', redirect: true });
 
@@ -896,7 +949,6 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
         doc.save("Table.pdf");
     };
-
 
 
 
@@ -947,7 +999,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
                         <div>
                             {PageUser == 1 && <div className="">{l.user}</div>}
-                            {PageUser == 2 && <div className="">{DataAdmin.userName}</div>}
+                            {PageUser == 2 && <div className="">{DataAdmin?.userName}</div>}
                         </div>
                         <div>
                             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500 ">
@@ -1405,11 +1457,11 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                 <div>
                                     <label htmlFor="userName" className="p-2 text-lg">{l.userName}</label>
                                     <div id="userName" name="userName" className="bg-slate-300  p-1 rounded text-black text-md">
-                                        {PageUpdate == 1 && <h1 className="p-3"> {DataAdmin.userName}</h1>}
+                                        {PageUpdate == 1 && <h1 className="p-3"> {DataAdmin?.userName}</h1>}
                                         {PageUpdate == 2 && <div className="form-control w-full max-w-full dark:text-white">
 
                                             <input
-                                                defaultValue={DataAdmin.userName}
+                                                defaultValue={DataAdmin?.userName}
 
                                                 required name='userName' type="name" placeholder={l.userName}
                                                 onChange={(event) => { handleSaveUpdateUser(event) }}
@@ -1432,12 +1484,12 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                 <div>
                                     <label htmlFor="email" className="p-2 text-lg">{l.email}</label>
                                     <div id="email" className="bg-slate-300 p-1 rounded text-black text-md">
-                                        {PageUpdate == 1 && <h1 className="p-3"> {DataAdmin.email}</h1>}
+                                        {PageUpdate == 1 && <h1 className="p-3"> {DataAdmin?.email}</h1>}
                                         {PageUpdate == 2 &&
                                             <div className="form-control w-full max-w-full dark:text-white">
 
                                                 <input
-                                                    defaultValue={DataAdmin.email}
+                                                    defaultValue={DataAdmin?.email}
 
                                                     required name='email' type="email" placeholder={l.email}
                                                     onChange={(event) => { handleSaveUpdateUser(event) }}
@@ -1514,11 +1566,11 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                 <div>
                                     <label htmlFor="balance" className="p-2 text-lg">{l.balance}</label>
                                     <div id="balance" className="bg-slate-300 p-1 rounded text-black text-md">
-                                        {PageUpdate == 1 && <h1 className="p-3"> ${DataAdmin.TotalBals}</h1>}
+                                        {PageUpdate == 1 && <h1 className="p-3"> ${DataAdmin?.TotalBals}</h1>}
                                         {PageUpdate == 2 && <div className="form-control w-full max-w-full dark:text-white">
 
                                             <input
-                                                defaultValue={DataAdmin.TotalBals}
+                                                defaultValue={DataAdmin?.TotalBals}
                                                 required name='TotalBals' type="number" placeholder={l.balance}
                                                 onChange={(event) => { handleSaveUpdateUser(event) }}
                                                 onClick={(event) => { handleSaveUpdateUser(event) }}
@@ -1677,7 +1729,7 @@ const Accounts = ({ AllUsers, SessionID }) => {
 
 
 
-            ], [AllUsers]
+            ], [AllUsers, router.locale]
         )
 
 

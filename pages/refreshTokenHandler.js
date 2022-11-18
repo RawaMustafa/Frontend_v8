@@ -1,7 +1,9 @@
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { signOut } from "next-auth/react";
+
 import Axios from "./api/Axios";
+
 
 
 const RefreshTokenHandler = (props) => {
@@ -14,19 +16,23 @@ const RefreshTokenHandler = (props) => {
             const timeRemaining = Math.round((((session.accessTokenExpiry * 1000) - Date.now()) / 1000));
 
             if (timeRemaining <= 0) {
+
                 const logOut = async () => {
-                    await Axios.post("/users/logOut");
+                    await Axios.post("/users/logOut", {}, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },
+                    );
                 }
-                // logOut();
+                logOut()
                 signOut({ callbackUrl: '/Login', redirect: true });
             }
             props.setInterval(timeRemaining > 0 ? timeRemaining : 0);
-
-
         }
     }, [session, props]);
 
     return null;
 }
-
 export default RefreshTokenHandler;

@@ -18,26 +18,6 @@ import jsPDF from "jspdf";
 
 
 
-// export const getServerSidePaths = async () => {
-//     const res = await Axios.get('http://localhost:4000/cars')
-
-//     const posts = await res.data
-
-//     return {
-
-//         paths: posts.carDetail?.map((post) => {
-
-
-//             return {
-//                 params: { _id: post._id }
-//             }
-//         }),
-
-
-//         fallback: false
-//     };
-// }
-
 
 
 
@@ -254,6 +234,7 @@ const Detail = ({ carss, SessionID }) => {
 
 
     const handleUpdateCars = async () => {
+
         const DataUpload = {
             "Tocar": V_B_N("Tocar"),
             "Price": V_B_N("Price"),
@@ -321,8 +302,7 @@ const Detail = ({ carss, SessionID }) => {
 
 
 
-
-
+   
 
 
         if (DataUpload.Tobalance == "Cash" && DataUpload.IsSold == 'false') {
@@ -541,7 +521,7 @@ const Detail = ({ carss, SessionID }) => {
 
 
     const handleSoldCars = async (bool) => {
-
+        console.log(cars.carDetail.carCost.isSold)
 
         if (cars.carDetail.carCost.isSold == true) {
 
@@ -930,8 +910,8 @@ const Detail = ({ carss, SessionID }) => {
                     <button className="btn btn-success" onClick={() => { setDetpage(3) }}>{l.update}</button>
                     <label htmlFor="my-modal-3" className="btn btn-error modal-button">{l.delete}</label>
                     <label htmlFor="give-modal-3" className="btn btn-info modal-button">{l.give}</label>
-                    {cars.carDetail.carCost.isSold == true && <label htmlFor="sold-modal-3" className="btn btn-warning modal-button">{l.retrieve}</label>}
-                    {cars.carDetail.carCost.isSold == false && <label htmlFor="sell-modal-3" className="btn btn-warning modal-button">{l.sell}</label>}
+                    {(cars.carDetail.carCost.isSold == true) && <label htmlFor="sold-modal-3" className="btn btn-warning modal-button">{l.retrieve}</label>}
+                    {cars.carDetail.carCost.isSold ==false && <label htmlFor="sell-modal-3" className="btn btn-warning modal-button">{l.sell}</label>}
                     <label className="btn btn-outline modal-button" onClick={Doc_2_pdf}>PDF</label>
 
 
@@ -1069,7 +1049,11 @@ const Detail = ({ carss, SessionID }) => {
                             <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faHandHoldingUsd} className="text-5xl " /></h3>
                             <p className="py-4">{l.sellmsg}</p>
                             <div className="space-x-10">
-                                <label htmlFor="sell-modal-3" className="btn btn-warning" onClick={() => handleSoldCars("true")}>{l.yes}</label>
+                                <label htmlFor="sell-modal-3" className="btn btn-warning" onClick={() => {
+                                    handleSoldCars("true")
+                                    console.log("true")
+                                }
+                                }>{l.yes}</label>
                                 <label htmlFor="sell-modal-3" className="btn btn-error" >{l.no}</label>
                             </div>
                         </div>

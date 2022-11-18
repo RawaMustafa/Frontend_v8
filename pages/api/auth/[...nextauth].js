@@ -33,14 +33,10 @@ const nextAuthOptions = (req, res) => {
 
                         if (user) {
 
-                            const cookies = user.headers['set-cookie']
+                            // const cookies = user.headers['set-cookie']
 
-                            res.setHeader("set-cookie", `RefreshToken=${user.data.refreshToken}; path=/; samesite=lax; httponly;`)
+                            // res.setHeader("set-cookie", `RefreshToken=${user.data.refreshToken}; path=/; samesite=lax; httponly;`)
 
-
-                            // res.setHeader("set-cookie", `Token=${user.data.token}; path=/; samesite=lax; httponly;`)
-
-                            // res.setHeader('Set-Cookie', user.data.refreshToken)
 
                             return { status: 'success', data: user.data }
 
@@ -97,7 +93,7 @@ const nextAuthOptions = (req, res) => {
                         });
 
 
-                        await res.setHeader("set-cookie", `Token=${tokenResponse.data.token}; path=/; samesite=lax; httponly;`)
+                        // await res.setHeader("set-cookie", `Token=${tokenResponse.data.token}; path=/; samesite=lax; httponly;`)
                         return {
                             ...tokenObject,
                             accessToken: tokenResponse.data.token,

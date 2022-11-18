@@ -12,8 +12,7 @@ import { faAlignLeft, faMoon, faSun, faYinYang, faGlobe } from '@fortawesome/fre
 import { useRouter } from "next/router";
 
 import { useSession } from "next-auth/react";
-
-
+import Cookies from 'js-cookie'
 
 
 
@@ -21,36 +20,29 @@ import { useSession } from "next-auth/react";
 const Header = () => {
 
 
-    const patapa = useSession()
+    const session = useSession()
     const router = useRouter();
-    // if (patapa?.status === "unauthenticated") {
-    //     router?.push("/Login")
-    // }
-
 
     const l = useLanguage();
-
-    //for inserting the language switcher
-    const [lang, setLang] = useState();
-
+    const [lang, setLang] = useState("");
     const [themee, setThemee] = useState("");
-    const { theme, setTheme } = useTheme()
-    const menu = useRef(null)
+    const { theme, setTheme } = useTheme(null)
 
+
+    const patata = (lang) => {
+        router.push(router.asPath, router.asPath, { locale: lang })
+    }
 
     useEffect(() => {
 
-
-        // for inserting the dark mode
-
-        if (localStorage.getItem("theme") === "dark") {
+        if (theme === "dark") {
 
             // themeall.classList.add("dark")
             document.body.classList.add("dark");
 
 
         }
-        else if (localStorage.getItem("theme") === "light") {
+        else if (theme === "light") {
 
             // themeall.classList.remove("dark")
             document.body.classList.remove("dark");
@@ -59,22 +51,33 @@ const Header = () => {
 
         }
 
-        else if (localStorage.getItem("theme") == null) {
+        else if (theme == "system") {
             localStorage.setItem("theme", "dark")
-
-            // themeall.classList.remove("dark")
             document.body.classList.add("dark");
-
-
-            // sun.classList.add("hidden")
-
         }
 
 
-    }, [themee], []);
+    }, [themee]);
 
 
     useEffect(() => {
+        console.log("1--router?.locale========", router?.locale)
+        console.log("1--lang========", lang)
+        console.log("1--document.body.dir======", document.body.dir)
+        console.log("1--localStorage.getItem========", localStorage.getItem("language"))
+
+        if (lang == "ku") {
+
+            document.body.dir = "rtl";
+
+        }
+
+        else if (lang == "en") {
+
+            document.body.dir = "ltr";
+        }
+
+
 
         if (lang === 'en') {
             localStorage.setItem("language", "en")
@@ -84,33 +87,34 @@ const Header = () => {
         else if (lang === 'ku') {
             localStorage.setItem("language", "ku")
         }
-        else if (localStorage.getItem("language") == null) {
-            localStorage.setItem("language", "en")
-        }
 
-    }, [lang]);
+        console.log("2--router?.locale========", router?.locale)
+        console.log("2--lang========", lang)
+        console.log("2--document.body.dir======", document.body.dir)
+        console.log("2--localStorage.getItem========", localStorage.getItem("language"))
+
+
+    }, [router?.locale]);
+
 
     // useEffect(() => {
-    //     if (typeof window !== "undefined") {
-    //         if (localStorage.getItem("language") === "ku") {
+    //     if (localStorage.getItem("language") === "ku") {
 
-    //             document.body.dir = "rtl";
+    //         document.body.dir = "rtl";
 
-    //         }
-    //         else if (localStorage.getItem("language") === "en") {
-
-    //             document.body.dir = "ltr";
-    //         }
     //     }
-    // }, []);
+    //     else if (localStorage.getItem("language") === "en") {
 
+    //         document.body.dir = "ltr";
+    //     }
+    // });
 
 
     return (
 
-
+        //  transition-all duration-300
         <div className="container  ">
-            <div className="navbar   z-[60] flex justify-between lg:justify-end lg:w-[calc(100%-17rem)] max-w-8xl lg:ml-64  rtl:lg:mr-64 mt-2 fixed  bg-opacity-5  transition-all duration-300  backdrop-blur-md bg-slate-300 rounded-2xl  bg-base-1 ">
+            <div className="navbar z-[60] flex justify-between lg:justify-end lg:w-[calc(100%-17rem)] max-w-8xl lg:ml-64  rtl:lg:mr-64 mt-2 fixed  bg-opacity-5   backdrop-blur-lg bg-slate-300 rounded-2xl  bg-base-1 ">
 
 
 
@@ -141,11 +145,16 @@ const Header = () => {
                         <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-44 text-center border">
                             <li> <a className="" value="ku" onClick={() => {
                                 setLang("ku")
-                                router.reload()
+                                // router.reload()
+                                patata('ku')
+
                             }}><Image alt="FlaKu" className="active:scale-[.85] text-5xl p-2 hover:bg-slate-300 hover:dark:bg-slate-700  " src="/flag_kurd.png" height={35} width={38} /> كوردی</a> </li>
                             <li> <a className="" value="en" onClick={() => {
                                 setLang("en")
-                                router.reload()
+                                // router.reload()
+                                // Cookies.set('foo', 'ff')
+
+                                patata('en')
                             }}><Image alt="FlaEn" className="active:scale-[.85] text-5xl p-2 hover:bg-slate-300 hover:dark:bg-slate-700 " src="/flag_english.png" height={35} width={35} />English</a></li>
                         </ul>
 

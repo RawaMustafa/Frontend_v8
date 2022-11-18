@@ -13,7 +13,7 @@ import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
 import { faTrashAlt, faPaperPlane, faHandHoldingUsd } from '@fortawesome/free-solid-svg-icons';
 
 
-import { getSession,useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 
 
 
@@ -37,7 +37,7 @@ export const getServerSideProps = async (context) => {
     const response = await Axios.get('/qarz/details/' + _id, {
         headers: {
             "Content-Type": "application/json",
-            'Authorization': `Bearer ${session?.data?.Token}`
+            'Authorization': `Bearer ${session?.Token}`
         }
     },)
     const data = await response.data
@@ -54,9 +54,8 @@ export const getServerSideProps = async (context) => {
 const Detail = ({ cars, ID }) => {
 
     const router = useRouter()
-    const [detpage, setDetpage] = useState(1);
+    const session = useSession()
     const l = useLanguage();
-
 
 
     const handleDeleteCar = async () => {
@@ -210,7 +209,7 @@ const Detail = ({ cars, ID }) => {
 
                                     </tr>
                                 </thead>
-                                <tbody className={`${detpage !== 1 ? "hidden" : ""} `}>
+                                <tbody  >
 
 
                                     <tr className="">

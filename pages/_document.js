@@ -1,14 +1,13 @@
 import { Html, Head, Main, NextScript } from 'next/document'
-import Script from 'next/script'
 
 export default function Document(props) {
 
-
     return (
-        <Html lang="en" >
+        <Html
+        //  lang={props.locale}
+        >
             <Head  >
                 <link rel="icon" href="/fav/favicon.ico" />
-
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
                 <link href="https://fonts.googleapis.com/css2?family=Abyssinica+SIL&display=swap" rel="stylesheet" />
@@ -30,7 +29,9 @@ export default function Document(props) {
 
 
             </Head>
-            <body  >
+            {/* dir={props.locale == "ku" ? 'rtl' : 'ltr'}  */}
+
+            <body dir=''  >
 
                 <Main />
                 <NextScript />

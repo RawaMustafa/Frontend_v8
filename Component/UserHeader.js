@@ -1,26 +1,16 @@
-import Link from "next/link";
 import Image from "next/image";
-
 import { useTheme } from 'next-themes';
 import { useEffect, useState, useRef } from "react";
 import useLanguage from "./language";
 import { signOut } from 'next-auth/react';
-
-
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
 import { faUser, faMoon, faSun, faYinYang, faGlobe, } from '@fortawesome/free-solid-svg-icons';
-
 import { useRouter } from "next/router";
-import cookies from 'cookie-cutter'
-
-// import { useCookies } from 'react-cookie';
-
+import Axios from "../pages/api/Axios";
 import { useSession } from "next-auth/react";
 import { getSession } from 'next-auth/react';
 
-
-
-
+ 
 
 export async function getStaticProps({ req, res }) {
 
@@ -92,7 +82,7 @@ export async function getStaticProps({ req, res }) {
 
 const UserHeader = () => {
     const router = useRouter();
-    const dara = useSession();
+    const session = useSession();
     const l = useLanguage();
 
     const [lang, setLang] = useState();
@@ -144,6 +134,15 @@ const UserHeader = () => {
 
     }, [lang]);
 
+    const logOut = async () => {
+        await Axios.get("/users/logOut", {}, {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${session?.data?.Token}`
+            }
+        },
+        );
+    }
 
     return (
 
@@ -154,7 +153,7 @@ const UserHeader = () => {
 
 
 
-                {dara.status == "authenticated" ? <div className="dropdown rtl:dropdown-left ltr:dropdown-right w-8">
+                {session.status == "authenticated" ? <div className="dropdown rtl:dropdown-left ltr:dropdown-right w-8">
                     <label tabIndex="0" className="text-3xl  w-20 cursor-pointer active:text-2xl hover:duration-300  ">
                         <FontAwesomeIcon icon={faUser} className="active:scale-[.85] text-3xl p-2 hover:bg-slate-300 hover:dark:bg-slate-700 rounded-full transition ease-in-out    " />
 
@@ -163,6 +162,7 @@ const UserHeader = () => {
 
                     <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-44 text-center border">
                         <li >  <div onClick={() => {
+                            logOut()
                             signOut({ callbackUrl: '/Login', redirect: true })
 
                         }}>{l.logout}</div></li>

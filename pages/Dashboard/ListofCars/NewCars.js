@@ -20,10 +20,6 @@ import { ToastContainer, toast, } from 'react-toastify';
 
 
 
-
-import Resizer from "react-image-file-resizer";
-
-
 import { getSession, useSession } from "next-auth/react";
 
 export const getServerSideProps = async ({ req }) => {
@@ -633,12 +629,12 @@ const NewCars = ({ SessionID }) => {
 
         }
         if (type == "text") {
-            savevalue = event.target.value.match(/^[0-9a-zA-Z]{0,40}/)?.map(String)[0];
+            savevalue = event.target.value.match(/^[0-9a-zA-Z-_ ]{0,40}/)?.map(String)[0];
 
         }
 
         if (type == "text" && event.target.tagName == 'TEXTAREA') {
-            savevalue = event.target.value.match(/^[0-9a-zA-Z]{0,100}/)?.map(String)[0];
+            savevalue = event.target.value.match(/^[0-9a-zA-Z-_ ]{0,100}/)?.map(String)[0];
 
         }
 
@@ -665,48 +661,48 @@ const NewCars = ({ SessionID }) => {
     const DataUpload =
     {
 
-        "Tocar": Data.Tocar,
-        "Price": Data.Price,
-        "IsSold": Data.IsSold,
-        "ModeName": Data.ModeName,
-        "Model": Data.Model,
-        "Color": Data.Color,
-        "Mileage": Data.Mileage,
-        "VINNumber": Data.VINNumber,
-        "WheelDriveType": Data.WheelDriveType,
-        "PricePaidbid": Data.PricePaidbid,
+        "Tocar": Data.Tocar || "Sedan",
+        "Price": Data.Price || 0,
+        "IsSold": Data.IsSold || 0,
+        "ModeName": Data.ModeName || "No Data",
+        "Model": Data.Model || 0,
+        "Color": Data.Color || "No Data",
+        "Mileage": Data.Mileage || 0,
+        "VINNumber": Data.VINNumber || 0,
+        "WheelDriveType": Data.WheelDriveType || 0,
+        "PricePaidbid": Data.PricePaidbid || 0,
         // // //"UserGiven": Data.UserGiven,
 
-        "Tobalance": Data.Tobalance,
-        "Tire": Data.Tire,
+        "Tobalance": Data.Tobalance || "Cash",
+        "Tire": Data.Tire || "No Data",
         "Date": Data.Date?.[0] || "2022-01-01",
-        "Arrived": Data.Arrived,
-        "FeesinAmericaStoragefee": Data.FeesinAmericaStoragefee,
-        "FeesinAmericaCopartorIAAfee": Data.FeesinAmericaCopartorIAAfee,
+        // "Date": "iuywgado78wgad087aouybsdty79vwa6789d",
+        "Arrived": Data.Arrived || false,
+        "FeesinAmericaStoragefee": Data.FeesinAmericaStoragefee || 0,
+        "FeesinAmericaCopartorIAAfee": Data.FeesinAmericaCopartorIAAfee || 0,
 
-        "FeesAndRepaidCostDubairepairCost": Data.FeesAndRepaidCostDubairepairCost,
-        "FeesAndRepaidCostDubaiFees": Data.FeesAndRepaidCostDubaiFees,
-        "FeesAndRepaidCostDubaiothers": Data.FeesAndRepaidCostDubaiothers,
-        "FeesAndRepaidCostDubainote": Data.FeesAndRepaidCostDubainote,
+        "FeesAndRepaidCostDubairepairCost": Data.FeesAndRepaidCostDubairepairCost || 0,
+        "FeesAndRepaidCostDubaiFees": Data.FeesAndRepaidCostDubaiFees || 0,
+        "FeesAndRepaidCostDubaiothers": Data.FeesAndRepaidCostDubaiothers || 0,
+        "FeesAndRepaidCostDubainote": Data.FeesAndRepaidCostDubainote || "No Data",
 
-        "CoCCost": Data.CoCCost,
+        "CoCCost": Data.CoCCost || 0,
 
-        "TransportationCostFromAmericaLocationtoDubaiGCostLocation": Data.TransportationCostFromAmericaLocationtoDubaiGCostLocation,
-        "TransportationCostFromAmericaLocationtoDubaiGCostTranscost": Data.TransportationCostFromAmericaLocationtoDubaiGCostTranscost,
-        "TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost": Data.TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost,
+        "TransportationCostFromAmericaLocationtoDubaiGCostLocation": Data.TransportationCostFromAmericaLocationtoDubaiGCostLocation || "No Data",
+        "TransportationCostFromAmericaLocationtoDubaiGCostTranscost": Data.TransportationCostFromAmericaLocationtoDubaiGCostTranscost || 0,
+        "TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost": Data.TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost || 0,
 
-        "DubaiToIraqGCostTranscost": Data.DubaiToIraqGCostTranscost,
-        "DubaiToIraqGCostgumrgCost": Data.DubaiToIraqGCostgumrgCost,
+        "DubaiToIraqGCostTranscost": Data.DubaiToIraqGCostTranscost || 0,
+        "DubaiToIraqGCostgumrgCost": Data.DubaiToIraqGCostgumrgCost || 0,
 
-        "RaqamAndRepairCostinKurdistanrepairCost": Data.RaqamAndRepairCostinKurdistanrepairCost,
-        "RaqamAndRepairCostinKurdistanRaqam": Data.RaqamAndRepairCostinKurdistanRaqam,
-        "RaqamAndRepairCostinKurdistanothers": Data.RaqamAndRepairCostinKurdistanothers,
-        "RaqamAndRepairCostinKurdistannote": Data.RaqamAndRepairCostinKurdistannote
+        "RaqamAndRepairCostinKurdistanrepairCost": Data.RaqamAndRepairCostinKurdistanrepairCost || 0,
+        "RaqamAndRepairCostinKurdistanRaqam": Data.RaqamAndRepairCostinKurdistanRaqam || 0,
+        "RaqamAndRepairCostinKurdistanothers": Data.RaqamAndRepairCostinKurdistanothers || 0,
+        "RaqamAndRepairCostinKurdistannote": Data.RaqamAndRepairCostinKurdistannote || "No Data"
 
 
 
     }
-
 
 
     const postCarsId = async () => {
@@ -982,17 +978,22 @@ const NewCars = ({ SessionID }) => {
         if (session.status == "authenticated") {
 
             const handeleUserQarz = async () => {
+                try {
+                    const res = await Axios.get('users/Qarz', {
+                        headers: {
+                            "Content-Type": "application/json",
 
-                const res = await Axios.get('users/Qarz', {
-                    headers: {
-                        "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
 
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
-                const data = res.data
-                setUserQarz(data)
-                // //
+
+                    const data = res.data
+                    setUserQarz(data)
+                } catch {
+
+                }
+
             }
             handeleUserQarz()
         }
@@ -1105,48 +1106,48 @@ const NewCars = ({ SessionID }) => {
 
                         <h1 className="mt-5 text-center">{l.amount}</h1>
                         <div className="flex  justify-center">
-                            <input name='Price' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.amount} className="input input-bordered    input-info w-[200%] mt-5   max-w-xl mb-8" />
+                            <input name='Price' value={Data.Price} onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.amount} className="input input-bordered    input-info w-[200%] mt-5   max-w-xl mb-8" />
                         </div>
                         <h1 className="mt-5 text-center">{l.namecar}</h1>
                         <div className="flex  justify-center">
-                            <input name='ModeName' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.namecar} className="input input-bordered input-info w-[200%] mt-5   max-w-xl mb-8" />
+                            <input name='ModeName' value={Data.ModeName} onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.namecar} className="input input-bordered input-info w-[200%] mt-5   max-w-xl mb-8" />
                         </div>
 
 
                         <h1 className="mt-5 text-center">{l.modelyear}</h1>
                         <div className="flex  justify-center">
-                            <input name='Model' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.modelyear} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input name='Model' value={Data.Model} onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.modelyear} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
                         <h1 className="mt-5 text-center">{l.color}</h1>
                         <div className="flex  justify-center">
-                            <input name='Color' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.color} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.Color} name='Color' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.color} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
                         <h1 className="mt-5 text-center">{l.tire}</h1>
                         <div className="flex  justify-center">
-                            <input name='Tire' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.tire} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.Tire} name='Tire' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.tire} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
 
                         <h1 className="mt-5 text-center">{l.mileage}</h1>
                         <div className="flex  justify-center">
-                            <input name='Mileage' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.mileage} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.Mileage} name='Mileage' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.mileage} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
                         <h1 className="mt-5 text-center">{l.vinnumber}</h1>
                         <div className="flex  justify-center">
-                            <input name='VINNumber' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.vinnumber} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.VINNumber} name='VINNumber' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.vinnumber} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
                         <h1 className="mt-5 text-center">{l.wheeldrivetype}</h1>
                         <div className="flex  justify-center">
-                            <input name='WheelDriveType' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.wheeldrivetype} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.WheelDriveType} name='WheelDriveType' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.wheeldrivetype} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
@@ -1198,13 +1199,13 @@ const NewCars = ({ SessionID }) => {
 
                         <h1 className="mt-5 text-center">{l.pricepaidorcaratbid}</h1>
                         <div className="flex  justify-center">
-                            <input name='PricePaidbid' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.pricepaidorcaratbid} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.PricePaidbid} name='PricePaidbid' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.pricepaidorcaratbid} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
                         <h1 className="mt-5 text-center">{l.coccost}</h1>
                         <div className="flex  justify-center">
-                            <input name='CoCCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.coccost} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.CoCCost} name='CoCCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.coccost} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
@@ -1232,18 +1233,18 @@ const NewCars = ({ SessionID }) => {
 
                         <h1 className="mt-5 text-center">{l.storagefee}</h1>
                         <div className="flex  justify-center">
-                            <input name='FeesinAmericaStoragefee' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.storagefee} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.FeesinAmericaStoragefee} name='FeesinAmericaStoragefee' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.storagefee} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
                         <h1 className="mt-5 text-center">{l.copartoriaafee}</h1>
                         <div className="flex  justify-center">
-                            <input name='FeesinAmericaCopartorIAAfee' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.storagefee} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.FeesinAmericaCopartorIAAfee} name='FeesinAmericaCopartorIAAfee' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.storagefee} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
                         {/* <h1 className="mt-5 text-center">{l.note}</h1>
                         <div className="flex  justify-center">
-                            <textarea name='NoteAmerica' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.note} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <textarea value={Data.NoteAmerica} name='NoteAmerica' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.note} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div> */}
 
 
@@ -1263,24 +1264,24 @@ const NewCars = ({ SessionID }) => {
 
                         <h1 className="mt-5 text-center">{l.repaircost}</h1>
                         <div className="flex  justify-center">
-                            <input name='FeesAndRepaidCostDubairepairCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.repaircost} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.FeesAndRepaidCostDubairepairCost} name='FeesAndRepaidCostDubairepairCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.repaircost} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
                         <h1 className="mt-5 text-center">{l.fees}</h1>
                         <div className="flex  justify-center">
-                            <input name='FeesAndRepaidCostDubaiFees' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fees} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.FeesAndRepaidCostDubaiFees} name='FeesAndRepaidCostDubaiFees' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fees} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
                         <h1 className="mt-5 text-center">{l.feesother}</h1>
                         <div className="flex  justify-center">
-                            <input name='FeesAndRepaidCostDubaiothers' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fees} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.FeesAndRepaidCostDubaiothers} name='FeesAndRepaidCostDubaiothers' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fees} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
                         <h1 className="mt-5 text-center">{l.note}</h1>
                         <div className="flex  justify-center">
-                            <textarea name='FeesAndRepaidCostDubainote' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.note} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <textarea value={Data.FeesAndRepaidCostDubainote} name='FeesAndRepaidCostDubainote' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.note} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
@@ -1300,30 +1301,30 @@ const NewCars = ({ SessionID }) => {
 
                         <h1 className="mt-5 text-center">{l.fromamericatodubaicost}</h1>
                         <div className="flex  justify-center">
-                            <input name='TransportationCostFromAmericaLocationtoDubaiGCostTranscost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromamericatodubaicost} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.TransportationCostFromAmericaLocationtoDubaiGCostTranscost} name='TransportationCostFromAmericaLocationtoDubaiGCostTranscost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromamericatodubaicost} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
                         <h1 className="mt-5 text-center">{l.uslocation}</h1>
                         <div className="flex  justify-center">
-                            <input name='TransportationCostFromAmericaLocationtoDubaiGCostLocation' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.uslocation} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.TransportationCostFromAmericaLocationtoDubaiGCostLocation} name='TransportationCostFromAmericaLocationtoDubaiGCostLocation' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.uslocation} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
                         <h1 className="mt-5 text-center">{l.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost} </h1>
                         <div className="flex  justify-center">
-                            <input name='TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost} name='TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
                         <h1 className="mt-5 text-center">{l.fromdubaitokurdistancosts}</h1>
                         <div className="flex  justify-center">
-                            <input name='DubaiToIraqGCostTranscost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromdubaitokurdistancosts} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.DubaiToIraqGCostTranscost} name='DubaiToIraqGCostTranscost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromdubaitokurdistancosts} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
 
                         <h1 className="mt-5 text-center">{l.fromdubaitokurdistangumrg} </h1>
                         <div className="flex  justify-center">
-                            <input name='DubaiToIraqGCostgumrgCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromdubaitokurdistangumrg} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.DubaiToIraqGCostgumrgCost} name='DubaiToIraqGCostgumrgCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromdubaitokurdistangumrg} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
@@ -1345,25 +1346,25 @@ const NewCars = ({ SessionID }) => {
 
                         <h1 className="mt-5 text-center">{l.repaircostinkurdistan}</h1>
                         <div className="flex  justify-center">
-                            <input name='RaqamAndRepairCostinKurdistanrepairCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.repaircostinkurdistan} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.RaqamAndRepairCostinKurdistanrepairCost} name='RaqamAndRepairCostinKurdistanrepairCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.repaircostinkurdistan} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
                         <h1 className="mt-5 text-center">{l.numberinkurdistan}</h1>
                         <div className="flex  justify-center">
-                            <input name='RaqamAndRepairCostinKurdistanRaqam' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.numberinkurdistan} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.RaqamAndRepairCostinKurdistanRaqam} name='RaqamAndRepairCostinKurdistanRaqam' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.numberinkurdistan} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
                         <h1 className="mt-5 text-center">{l.raqamAndRepairCostinKurdistanothers} other</h1>
                         <div className="flex  justify-center">
-                            <input name='RaqamAndRepairCostinKurdistanothers' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.raqamAndRepairCostinKurdistanothers} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input value={Data.RaqamAndRepairCostinKurdistanothers} name='RaqamAndRepairCostinKurdistanothers' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.raqamAndRepairCostinKurdistanothers} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
                         <h1 className="mt-5 text-center">{l.note}</h1>
                         <div className="flex  justify-center">
-                            <textarea name='RaqamAndRepairCostinKurdistannote' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.note} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <textarea value={Data.ModeName} name='RaqamAndRepairCostinKurdistannote' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.note} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
                     </div>
@@ -1689,9 +1690,10 @@ const NewCars = ({ SessionID }) => {
 
 
                         <button type='button' className="btn lg:btn-wide " onClick={() => { setPage(2) }}>{l.back}</button>
-                        <button type="submit" className="btn lg:btn-wide " onClick={postCarsId} title={l.next}>{l.don}</button>
+                        <button type="submit" disabled={IsCanvasChanged == 0 ? false : true} className="btn lg:btn-wide " onClick={postCarsId} title={l.next}>{l.don}</button>
 
                     </div >
+
 
 
                 </div >

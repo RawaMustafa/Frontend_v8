@@ -518,6 +518,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
                 <div>
 
+
                     <label htmlFor="my-modal" className="btn modal-button flex justify-center items-center ">
                         <FontAwesomeIcon icon={faCalendarPlus} className="text-xl  " />
                     </label>
@@ -561,19 +562,25 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
                         </div>
                     </div>
+
                 </div>
+                <div className="flex">
 
-
-                <div className="flex justify-center items-center lg:space-x-4 ">
                     <input type="search" placeholder={`${l.search} ...`} className="input   input-info  w-full max-w-xs mx-5 focus:outline-0"
                         onChange={e =>
                             setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
                         }
                     />
+                </div>
+
+
+                <div className="flex justify-center items-center lg:space-x-4 ">
+
 
                     <div className="dropdown rtl:dropdown-right ltr:dropdown-left ">
 
-                        <label tabIndex="0" className=" m-1 active:scale-95 ">
+                        {/* //TODO -  fix Date */}
+                        {/* <label tabIndex="0" className=" m-1 active:scale-95 ">
                             <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 active:scale-95 " />
                         </label>
 
@@ -596,7 +603,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                     />
                                 </div>
                             </li>
-                        </ul>
+                        </ul> */}
                     </div>
 
 

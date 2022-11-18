@@ -2,20 +2,7 @@ import axios from "axios";
 import { getSession, signOut } from 'next-auth/react'
 import { Cookies } from 'react-cookie';
 
-// export default axios.create({
 
-//     baseURL: "http://localhost:4000/_API/",
-//     headers: {
-//         "Content-Type": "application/json",
-//         // Authorization: `Bearer ${token}`,
-
-
-
-
-//         // "Authorization": "Bearer " + session.accessToken
-//     },
-
-// })
 
 export const baseURL = "http://localhost:4000/api/uploads/"
 
@@ -31,20 +18,26 @@ const Axios = () => {
 
     })
 
-    Axios.interceptors.request.use(async (req) => {
+    // Axios.interceptors.request.use(async (req) => {
 
-        //     const session = await getSession({ req })
+    //     const session = await getSession({ req })
 
-        //     if (session) {
+    //     if (session) {
+    //         req.headers.common = {
+    //             Authorization: `Bearer ${session?.Token}`
+    //         }
+    //         return req
 
-        //         req.headers.common = {
-        //             Authorization: `Bearer ${session?.Token}`
-        //         }
 
-        //     }
-        console.log(req)
-        return req
-    })
+    //     }
+
+    //     if (!session) {
+
+
+    //         return req
+
+    //     }
+    // })
 
 
 
@@ -60,18 +53,18 @@ const Axios = () => {
     //     //     }
 
     //     // }
-    //     // console.log(res)
-
-    //     if (res?.status == 401) {
-    //         signOut({
-    //             callbackUrl: "/",
-    //             failureRedirect: "/login",
-    //             redirect: "/",
 
 
-    //         })
+    //     // if (res?.status == 401) {
+    //     //     signOut({
+    //     //         callbackUrl: "/",
+    //     //         failureRedirect: "/login",
+    //     //         redirect: "/",
 
-    //     }
+
+    //     //     })
+
+    //     // }
     //     return res
     // })
 

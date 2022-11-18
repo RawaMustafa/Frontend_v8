@@ -111,6 +111,7 @@ th:last-child:dir(rtl) {
 
 
 
+
 :root {
     /* Your default theme */
     --background: white;
@@ -122,7 +123,6 @@ th:last-child:dir(rtl) {
     --foreground: rgb(75, 240, 4);
     background-color: #181A1B;
   }
-
 
 /* 
   html,body{

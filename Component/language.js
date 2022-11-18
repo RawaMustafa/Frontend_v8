@@ -1,25 +1,30 @@
 import { useState, useEffect } from "react";
 import { en } from "./en";
 import { ku } from "./ku";
-
+import { useRouter } from "next/router";
+import Cookies from 'js-cookie'
+import i18next from 'i18next';
 const useLanguage = () => {
 
     const [language, setLanguage] = useState();
+    const router = useRouter();
+    const { locale } = router
+    const l = locale == 'ku' ? ku : en;
 
 
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        if (localStorage.getItem('language') == "en") {
-            setLanguage(en);
-        }
-        else if (localStorage.getItem('language') == "ku") {
-            setLanguage(ku);
-        }
 
-    }, [language]);
+    //     if (locale == "en") {
+    //         localStorage.setItem('language', "en")
+    //     }
+    //     else if (locale == "ku") {
+    //         localStorage.setItem('language', "ku")
+    //     }
 
-    const l = language === ku ? ku : en;
+    // }, [locale]);
+
 
 
 

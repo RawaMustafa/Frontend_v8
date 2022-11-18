@@ -117,6 +117,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
             // ?${StartDate}/&${EndDate}
             try {
+
                 const res = await Axios.get(`/cars/?search=${Search}&page=${Page}&limit=${Limit}`, {
                     headers: {
                         "Content-Type": "application/json",

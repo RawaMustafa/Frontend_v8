@@ -1,23 +1,19 @@
-import { InView } from 'react-intersection-observer';
 import useLanguage from '../../Component/language';
 import ResellerLayout from '../../Layouts/ResellerLayout';
 import { useEffect, useMemo, useRef, useState, forwardRef } from 'react';
 import Head from 'next/head'
 import Link from 'next/link';
-import axios from 'axios';
-import Axios, { baseURL } from '../api/Axios';
+import Axios  from '../api/Axios';
 import Image from 'next/image';
-import ImageGallery from 'react-image-gallery';
 import { useRouter } from "next/router";
 import { getSession, useSession } from "next-auth/react";
-import { ToastContainer, toast, } from 'react-toastify';
 import { useTable, useSortBy, useGlobalFilter, usePagination, useFilters, useGroupBy, useExpanded, } from 'react-table';
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faCalendarPlus, faTrash, faEdit, faTimes, faCheck, faMoneyCheckDollar, faEye, faBan, faFileDownload, faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
+import {   faMoneyCheckDollar, faEye,   faFileDownload,  } from '@fortawesome/free-solid-svg-icons';
 
 
 
@@ -34,13 +30,13 @@ export async function getServerSideProps({ req, query }) {
     }
 
     let data=1
-    // try {
-    //     const res = await Axios.get(`/reseller/${session.id}/?search=&page=1&limit=10`)
-    //     data = res.data.total
+    try {
+        const res = await Axios.get(`/reseller/${session.id}/?search=&page=1&limit=10`)
+        data = res.data.total
 
-    // } catch {
-    //     data = ""
-    // }
+    } catch {
+        data = 1
+    }
 
 
 
@@ -149,61 +145,26 @@ const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
 
 
 
-
-    const table_2_pdf = () => {
+      const table_2_pdf = () => {
 
         const table = document.getElementById('table-to-xls')
-        const table_th = [...table.rows].map(r => [...r.querySelectorAll('th')].map((th) => (th.textContent!=" Details"?th.textContent: null)))
+        let TH = []
+        const table_th = [...table.rows].map(r => [...r.querySelectorAll('th')].map((th) => (TH.push(th.children?.[0].innerText != "Details" ? th.children?.[0].innerText : ""))))
         const table_td = [...table.rows].map((r) => [...r.querySelectorAll('td')].map(td => td.textContent))
-        
+
         const doc = new jsPDF("p", "mm", "a2");
-        doc.text(`Data{ Hawbir }`, 95, 10);
+
+
 
         doc.autoTable({
-
-            head: table_th,
+            head: [TH],
             body: table_td,
-  
-            styles: {
-                font: "kurdi",
-                fontSize: 10,
-                overflow: 'linebreak',
-                
-            },
 
-        });
+        })
 
 
         doc.save("Table_Cars.pdf");
     };
-
-    // const table_All_pdff = () => {
-
-
-
-    //     var obj = JSON.parse(JSON.stringify(DataTable))
-    //     var res = [];
-    //     //
-    //     for (var i in obj)
-    //         res.push(obj[i]);
-
-
-    //     const doc = new jsPDF("p", "mm", "a3");
-    //     doc.text(`Data{ Hawbir }`, 95, 10);
-
-    //     doc.autoTable({
-    //         head: [[`Price`, " Color", "Date", "Is Sold", "Mileage", "Name of Car", "Tire", "Type of Balance", "Type of Car", "Wheel Drive Type"]],
-    //         body: res.map((d) => [d.amount, d.userId, d.action, d.actionDate])
-    //     });
-    //     doc.save("ALL(Data).pdf");
-
-
-
-
-
-    // };
-
-
 
 
 
@@ -319,9 +280,9 @@ const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
                     <div className="flex justify-end ">
 
                         <div className="dropdown rtl:dropdown-right ltr:dropdown-left">
-                            <label tabIndex="0" className=" m-1 active:scale-9  ">
+                            {/* <label tabIndex="0" className=" m-1 active:scale-9  ">
                                 <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 active:scale-9 " />
-                            </label>
+                            </label> */}
 
                             <ul tabIndex="0" className="dropdown-content  shadow bg-base-100 rounded-box w-52 flex justify-center  ">
                                 <li className="  py-2">
@@ -386,7 +347,8 @@ const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
 
                                 {headerGroups.headers.map((column, idx) => (
 
-                                    < th key={idx} className={`p-4 m-44 ${true && "min-w-[200px]"}`} {...column.getHeaderProps(column.getSortByToggleProps())} > {column.render('Header')}
+                                    < th key={idx} className={`p-4 m-44 ${true && "min-w-[200px]"}`} {...column.getHeaderProps(column.getSortByToggleProps())} >
+                                        <span  >{column.render('Header')} </span>
                                         <span  >
                                             {column.isSorted ? (column.isSortedDesc ? "<" : ">") : ""}
                                         </span>
@@ -803,11 +765,7 @@ const Reseller = ({ AllProducts, initQuery }) => {
                 }
 
 
-
-                <ToastContainer
-                    draggablePercent={60}
-                />
-
+ 
 
             </div>
         );
