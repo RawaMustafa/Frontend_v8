@@ -30,7 +30,7 @@ import { faCalendarPlus, faTrash, faEdit, faSave, faBan, faFileDownload, faCalen
 
 
 
-const Amount_regex = /^[0-9-]{0,8}$/;
+const Amount_regex = /^[0-9.]{0,8}$/;
 const date_regex = /^\d{4}-\d{2}-\d{2}$/;
 const action_regex = /^[0-9a-zA-Z=> ]{0,50}$/;
 

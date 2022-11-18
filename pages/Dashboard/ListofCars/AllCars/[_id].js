@@ -84,7 +84,7 @@ const Detail = ({ carss, SessionID }) => {
             if (xd?.[0]?.type == "text") {
 
 
-                return xd?.[0]?.value.match(/^[0-9a-zA-Z]{0,24}/)?.[0]
+                return xd?.[0]?.value.match(/^[0-9a-zA-Z-_  ]{0,40}/)?.[0]
             }
 
 
@@ -92,7 +92,7 @@ const Detail = ({ carss, SessionID }) => {
             if (xd?.[0]?.type == "number") {
 
 
-                return xd?.[0]?.value.match(/^[0-9]{0,7}/)?.[0]
+                return xd?.[0]?.value.match(/^[0-9]{0,12}/)?.[0]
             }
 
 
@@ -892,7 +892,7 @@ const Detail = ({ carss, SessionID }) => {
 
 
 
-
+    // console.log(V_B_N("Tocar"))
 
 
 
@@ -1252,7 +1252,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.tire} :</td>
                                         <td>
 
-                                            <input name="Tire" type="text" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.tire} />
+                                            <input name="Tire" type="text" placeholder={l.tire} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.tire} />
 
                                         </td>
                                     </tr>
@@ -1266,36 +1266,36 @@ const Detail = ({ carss, SessionID }) => {
                                     <tr className="">
                                         <td>{l.namecar} :</td>
                                         <td>
-
-                                            <input name="ModeName" type="text" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.modeName} />
+                                            {console.log(V_B_N("Color"))}
+                                            <input value={'hh'} name="ModeName" type="text" placeholder={l.namecar} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.modeName} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.modelyear} :</td>
                                         <td>
 
-                                            <input name="Model" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.model} />
+                                            <input name="Model" type="number" placeholder={l.modelyear} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.model} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.vinnumber} :</td>
                                         <td>
 
-                                            <input name="VINNumber" type="text" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.VINNumber} />
+                                            <input name="VINNumber" type="text" placeholder={l.vinnumber} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.VINNumber} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.mileage} :</td>
                                         <td>
 
-                                            <input name="Mileage" type="text" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.mileage} />
+                                            <input name="Mileage" type="text" placeholder={l.mileage} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.mileage} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.color} :</td>
                                         <td>
 
-                                            <input name="Color" type="text" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.color} />
+                                            <input name="Color" type="text" placeholder={l.color} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.color} />
                                         </td>
                                     </tr>
                                     <tr className="">
@@ -1311,14 +1311,14 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.wheeldrivetype} :</td>
                                         <td>
 
-                                            <input name="WheelDriveType" type="text" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.wheelDriveType} />
+                                            <input name="WheelDriveType" type="text" placeholder={l.wheeldrivetype} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.wheelDriveType} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.price} :</td>
                                         <td>
 
-                                            <input name="Price" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.price} />
+                                            <input name="Price" type="number" placeholder={l.price} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.price} />
                                         </td>
                                     </tr>
                                     <tr className="">
@@ -1347,7 +1347,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.pricepaidorcaratbid}:</td>
                                         <td>
 
-                                            <input name="PricePaidbid" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.pricePaidbid}
+                                            <input name="PricePaidbid" type="number" placeholder={l.pricepaidorcaratbid} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.pricePaidbid}
 
                                             />
                                         </td>
@@ -1356,7 +1356,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.storagefee} :</td>
                                         <td>
 
-                                            <input name="FeesinAmericaStoragefee" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesinAmericaStoragefee}
+                                            <input name="FeesinAmericaStoragefee" type="number" placeholder={l.storagefee} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesinAmericaStoragefee}
                                             />
                                         </td>
                                     </tr>
@@ -1364,7 +1364,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.copartoriaafee} :</td>
                                         <td>
 
-                                            <input name="FeesinAmericaCopartorIAAfee" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesinAmericaCopartorIAAfee}
+                                            <input name="FeesinAmericaCopartorIAAfee" type="number" placeholder={l.copartoriaafee} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesinAmericaCopartorIAAfee}
                                             />
                                         </td>
                                     </tr>
@@ -1372,7 +1372,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td> {l.dubairepaircost} :</td>
                                         <td>
 
-                                            <input name="FeesAndRepaidCostDubairepairCost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubairepairCost}
+                                            <input name="FeesAndRepaidCostDubairepairCost" type="number" placeholder={l.dubairepaircost} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubairepairCost}
                                             />
                                         </td>
                                     </tr>
@@ -1380,7 +1380,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td> {l.feesinadubai} :</td>
                                         <td>
 
-                                            <input name="FeesAndRepaidCostDubaiFees" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubaiFees}
+                                            <input name="FeesAndRepaidCostDubaiFees" type="number" placeholder={l.feesinadubai} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubaiFees}
                                             />
                                         </td>
                                     </tr>
@@ -1388,7 +1388,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td> {l.feesAndRepaidCostDubaiothers} :</td>
                                         <td>
 
-                                            <input name="FeesAndRepaidCostDubaiothers" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubaiothers}
+                                            <input name="FeesAndRepaidCostDubaiothers" type="number" placeholder={l.feesAndRepaidCostDubaiothers} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubaiothers}
                                             />
                                         </td>
                                     </tr>
@@ -1396,7 +1396,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.coccost} :</td>
                                         <td>
 
-                                            <input name="CoCCost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.coCCost}
+                                            <input name="CoCCost" type="number" placeholder={l.coccost} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.coCCost}
                                             />
                                         </td>
                                     </tr>
@@ -1404,20 +1404,20 @@ const Detail = ({ carss, SessionID }) => {
                                         <td> {l.uslocation} :</td>
                                         <td>
 
-                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostLocation" type="text" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostLocation} />
+                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostLocation" type="text" placeholder={l.uslocation} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostLocation} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.fromamericatodubaicost} :</td>
                                         <td>
-                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostTranscost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost}
+                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostTranscost" type="number" placeholder={l.fromamericatodubaicost} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost}
                                             />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.fromamericatodubaigumrg} :</td>
                                         <td>
-                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost}
+                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost" type="number" placeholder={l.fromamericatodubaigumrg} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost}
                                             />
                                         </td>
                                     </tr>
@@ -1425,7 +1425,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.fromdubaitokurdistancosts} :</td>
                                         <td>
 
-                                            <input name="DubaiToIraqGCostTranscost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.dubaiToIraqGCostTranscost}
+                                            <input name="DubaiToIraqGCostTranscost" type="number" placeholder={l.fromdubaitokurdistancosts} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.dubaiToIraqGCostTranscost}
                                             />
                                         </td>
                                     </tr>
@@ -1433,7 +1433,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.fromdubaitokurdistangumrg} :</td>
                                         <td>
 
-                                            <input name="DubaiToIraqGCostgumrgCost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.dubaiToIraqGCostgumrgCost}
+                                            <input name="DubaiToIraqGCostgumrgCost" type="number" placeholder={l.fromdubaitokurdistangumrg} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.dubaiToIraqGCostgumrgCost}
                                             />
                                         </td>
                                     </tr>
@@ -1441,14 +1441,14 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.numberinkurdistan} :</td>
                                         <td>
 
-                                            <input name="RaqamAndRepairCostinKurdistanRaqam" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanRaqam} />
+                                            <input name="RaqamAndRepairCostinKurdistanRaqam" type="number" placeholder={l.numberinkurdistan} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanRaqam} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.repaircostinkurdistan} :</td>
                                         <td>
 
-                                            <input name="RaqamAndRepairCostinKurdistanrepairCost" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanrepairCost}
+                                            <input name="RaqamAndRepairCostinKurdistanrepairCost" type="number" placeholder={l.repaircostinkurdistan} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanrepairCost}
                                             />
                                         </td>
                                     </tr>
@@ -1457,7 +1457,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.fromdubaitokurdistanothers} :</td>
                                         <td>
 
-                                            <input name="RaqamAndRepairCostinKurdistanothers" type="number" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanothers}
+                                            <input name="RaqamAndRepairCostinKurdistanothers" type="number" placeholder={l.fromdubaitokurdistanothers} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanothers}
                                             />
                                         </td>
                                     </tr>
