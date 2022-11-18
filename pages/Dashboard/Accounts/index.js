@@ -1739,9 +1739,15 @@ const Accounts = ({ AllUsers, SessionID }) => {
 
     if (session.status === "loading") {
         return (
-            <div className="w-100 h-100 text-center">
-                Loading...
-            </div>
+            <>
+                <Head>
+                    <title >{l.account}</title>
+                    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+                </Head>
+                <div className="w-100 h-100 text-center">
+                    {l.loading}
+                </div>
+            </>
         )
     }
 

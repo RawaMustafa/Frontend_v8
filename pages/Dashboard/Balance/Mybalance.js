@@ -988,11 +988,15 @@ const Expense = ({ SessionID }) => {
 
 
     if (session.status === "loading") {
-        return (
-            <div className="w-100 h-100 text-center">
-                Loading...
+        return (<>
+            <Head>
+                <title >{l.mybalance}</title>
+                <meta name="Dashboard" content="initial-scale=1.0, width=device-width all data " />
+            </Head>
+            <div className="text-center">
+                {l.loading}
             </div>
-        )
+        </>)
     }
 
     if (session.status === "unauthenticated") {
@@ -1005,7 +1009,7 @@ const Expense = ({ SessionID }) => {
 
             < >
                 <Head>
-                    <title >{l.account}</title>
+                    <title >{l.mybalance}</title>
                 </Head>
 
 

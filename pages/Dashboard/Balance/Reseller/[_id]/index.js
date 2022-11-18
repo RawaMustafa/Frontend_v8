@@ -667,9 +667,9 @@ const Reseller = ({ AllProducts, initQuery }) => {
 
     if (session.status === "loading") {
         return (
-            <div className=" flex justify-center items-center h-screen text-center">
+            <div className=" text-center">
                 <Head>
-                    <title>{l.loading}</title>
+                    <title>{l.reseler}</title>
                 </Head>
                 {l.loading}
             </div>

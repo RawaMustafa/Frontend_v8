@@ -531,31 +531,7 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
         doc.save("Table.pdf");
     };
 
-    const table_All_pdff = () => {
 
-
-
-        var obj = JSON.parse(JSON.stringify(DataTable))
-        var res = [];
-        //
-        for (var i in obj)
-            res.push(obj[i]);
-
-
-        const doc = new jsPDF("p", "mm", "a3");
-        doc.text(`Data{ Hawbir }`, 95, 10);
-
-        doc.autoTable({
-            head: [[`Amount`, " pay for", "Date"]],
-            body: res.map((d) => [d.OtherCost, d.DescCost, d.actionDate])
-        });
-        doc.save("ALL(Data).pdf");
-
-
-
-
-
-    };
 
 
 
@@ -1065,17 +1041,21 @@ const Expense = ({ AllExpense, SessionID }) => {
 
 
 
-            ], [AllExpense]
+            ], [AllExpense, router.locale]
         )
 
 
 
     if (session.status === "loading") {
-        return (
-            <div className="w-100 h-100 text-center">
-                Loading...
+        return (<>
+            <Head>
+                <title >{l.expense}</title>
+                <meta name="Dashboard" content="initial-scale=1.0, width=device-width all data " />
+            </Head>
+            <div className="text-center">
+                {l.loading}
             </div>
-        )
+        </>)
     }
 
     if (session.status === "unauthenticated") {
@@ -1088,7 +1068,7 @@ const Expense = ({ AllExpense, SessionID }) => {
 
             < >
                 <Head>
-                    <title >{l.account}</title>
+                    <title >{l.expense}</title>
                 </Head>
 
 

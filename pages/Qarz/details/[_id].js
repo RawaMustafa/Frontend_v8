@@ -55,19 +55,24 @@ const Detail = ({ cars }) => {
     const { status } = useSession()
 
 
-    
+
     if (status == "unauthenticated") {
         router.push('/');
     }
 
 
     if (status == "loading") {
-        return <div className="flex justify-center items-center h-screen">
-            {l.loading}
-        </div>
+        return (<>
+            <Head>
+                <title >{l.detail}</title>
+                <meta name="Dashboard" content="initial-scale=1.0, width=device-width all data " />
+            </Head>
+            <div className="text-center">
+                {l.loading}
+            </div>
+        </>)
+
     }
-
-
 
 
     const renderVideo = (item) => {

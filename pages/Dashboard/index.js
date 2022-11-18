@@ -194,9 +194,16 @@ const Dashboard = (props) => {
 
     if (status == "loading") {
         return (
-            <div className="text-center">
-                Loading...
-            </div>
+            <>
+                <Head>
+                    <title >{l.dashboard}</title>
+                    <meta name="Dashboard" content="initial-scale=1.0, width=device-width all data " />
+                </Head>
+                <div className="text-center">
+                    {l.loading}
+                </div>
+            </>
+
         )
     }
 

@@ -156,12 +156,16 @@ const Qarz = ({ initQuery }) => {
 
 
     if (status == "loading") {
-        return <div className="flex justify-center items-center h-screen">
+
+        return (<>
             <Head>
-                <title>{l.loading}</title>
+                <title >{l.locan}</title>
+                <meta name="Dashboard" content="initial-scale=1.0, width=device-width all data " />
             </Head>
-            {l.loading}
-        </div>
+            <div className="text-center">
+                {l.loading}
+            </div>
+        </>)
     }
 
     const COLUMNS =

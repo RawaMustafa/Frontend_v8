@@ -146,8 +146,8 @@ const NewCars = ({ SessionID }) => {
 
 
     useEffect(() => {
-        const canvass = canvasRef.current;
-        const contextt = canvass.getContext('2d')
+        const canvass = canvasRef?.current;
+        const contextt = canvass?.getContext('2d')
         // contextt.lineCap = "round"
         contextRef.current = contextt
         clear()
@@ -601,13 +601,13 @@ const NewCars = ({ SessionID }) => {
         image.src = `/${Data.Tocar}.PNG`;
 
 
-        contextRef.current.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
+        contextRef.current?.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
 
         canDataCount = 0;
         canData = [];
         undoData = canData;
         oldData = canData;
-        contextRef.current.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
+        contextRef.current?.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
         canDataCount = 0;
         canData = [];
         undoData = canData;
@@ -1002,8 +1002,6 @@ const NewCars = ({ SessionID }) => {
 
 
 
-
-
     return (
 
 
@@ -1042,7 +1040,7 @@ const NewCars = ({ SessionID }) => {
 
                             <div><h1 className="py-2">{l.seletkbalance}</h1>
                                 <select name='Tobalance' defaultValue={"select"} required onChange={(e) => { HandleAddCars(e), setQarzUserId("") }} className="select select-info w-full max-w-xs">
-                                    <option disabled value={"select"} >{l.none} </option>
+                                    <option disabled value={"select"} >{l.selectone} </option>
                                     <option value="Cash"> {l.cash} </option>
                                     <option value="Loan" > {l.loan} </option>
                                     <option value="Rent" > {l.rent} </option>
@@ -1056,7 +1054,7 @@ const NewCars = ({ SessionID }) => {
                                     }}
                                         className="select select-info w-full max-w-xs">
 
-                                        <option disabled value={"Select"} >{l.none}</option>
+                                        <option disabled value={"Select"} >{l.selectone}</option>
                                         {UserQarz.userDetail?.map((item, idx) => {
 
                                             return <option value={[item._id, item.TotalBals]} key={idx}>{item.userName}</option>
@@ -1705,8 +1703,8 @@ const NewCars = ({ SessionID }) => {
         </div >
 
     );
-}
 
+}
 NewCars.Layout = AdminLayout;
 
 export default NewCars;

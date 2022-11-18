@@ -97,18 +97,6 @@ const Header = () => {
     }, [router?.locale]);
 
 
-    // useEffect(() => {
-    //     if (localStorage.getItem("language") === "ku") {
-
-    //         document.body.dir = "rtl";
-
-    //     }
-    //     else if (localStorage.getItem("language") === "en") {
-
-    //         document.body.dir = "ltr";
-    //     }
-    // });
-
 
     return (
 
