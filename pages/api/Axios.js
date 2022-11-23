@@ -4,13 +4,13 @@ import { Cookies } from 'react-cookie';
 
 
 
-export const baseURL = "http://localhost:4000/api/uploads/"
+export const baseURL = "http://38.242.199.191/api/uploads/"
 
 const Axios = () => {
 
     const Axios = axios.create({
 
-        baseURL: "http://localhost:4000/_API/",
+        baseURL: "http://38.242.199.191/_API/",
         headers: {
             "Content-Type": "application/json",
         },
