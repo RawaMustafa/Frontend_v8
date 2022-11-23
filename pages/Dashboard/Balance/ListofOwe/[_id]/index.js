@@ -1,35 +1,25 @@
 
 import useLanguage from '../../../../../Component/language';
-import { useMemo, useState } from 'react';
 import Head from 'next/head'
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { ToastContainer, toast, } from 'react-toastify';
-
 import AdminLayout from '../../../../../Layouts/AdminLayout';
 import axios from 'axios';
-import Axios, { baseURL } from '../../../../api/Axios';
-
-
+import Axios from '../../../../api/Axios';
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faCalendarPlus, faTrash, faEdit, faCalendarCheck, faFileDownload, faBan, faSave, faCheck, faTimes, faMoneyCheckDollar, faCar, faSearch } from '@fortawesome/free-solid-svg-icons';
-
+import { faCalendarPlus, faTrash, faEdit, faCalendarCheck, faFileDownload, faBan, faSave, faCheck, faTimes, faMoneyCheckDollar, faCar, faSearch, faEye, faHandHoldingDollar } from '@fortawesome/free-solid-svg-icons';
+import { faAmazonPay } from "@fortawesome/free-brands-svg-icons"
 import { useTable, useSortBy, useGlobalFilter, usePagination, useFilters, useGroupBy, useExpanded, } from 'react-table';
-
-import { useEffect, useRef, forwardRef } from 'react';
-
-
-
-import ImageGallery from 'react-image-gallery';
-
-import { InView } from 'react-intersection-observer';
-
+import { useEffect, useMemo, useRef, forwardRef, useState } from 'react';
 import { getSession, useSession } from "next-auth/react";
 
+
+const Amount_regex = /^[0-9]{0,12}/;
+const IsPaid_regex = /^[a-zA-Z]{0,7}/;
 
 
 
@@ -46,15 +36,33 @@ export async function getServerSideProps({ req, query }) {
         }
     }
 
+
+    let data = 1
+    // try {
+    //     const res = await Axios.get(`/qarz/amount/${query._id}/?search=&page=1&limit=10`, {
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //             'Authorization': `Bearer ${session?.Token}`
+    //         }
+    //     },)
+    //     data = await res.data.qarzList.map((e) => { return e.id }).length
+
+    // } catch {
+    //     data = 1
+    // }
+
+
     return {
         props: {
-            initQuery: query
+            initQuery: query,
+            AllQarz: data,
+
         }
     }
 }
 
 
-const Details = ({ initQuery }) => {
+const Details = ({ initQuery, AllQarz }) => {
 
     const session = useSession();
     const [dataQarz, setDataQarz] = useState()
@@ -79,7 +87,6 @@ const Details = ({ initQuery }) => {
 
                 try {
 
-
                     const Auth = {
 
                         headers: {
@@ -92,12 +99,14 @@ const Details = ({ initQuery }) => {
                     const tow = `/qarz/amount/${initQuery._id}`
 
                     const response1 = await Axios.get(one, Auth).then((res) => {
+
                         return res
                     }).catch(() => {
                         setNoCars(true)
 
                     });
                     const response2 = await Axios.get(tow, Auth).then((res) => {
+
                         return res
                     }).catch(() => {
 
@@ -107,7 +116,7 @@ const Details = ({ initQuery }) => {
 
                         axios.spread((...responses) => {
 
-                            setData(responses?.[0]?.data)
+                            setData(responses?.[0]?.data.qarzList)
                             setDataQarz(responses?.[1]?.data.qarzList)
 
                             responses?.[0]?.data && setNoCars(false)
@@ -135,22 +144,6 @@ const Details = ({ initQuery }) => {
 
 
 
-    const renderVideo = (item) => {
-
-        return (
-            <div>
-                <Image width={1600} height={1040}
-                    alt='Cars'
-                    // objectFit='contain'
-                    // lazyBoundary='20px'
-                    quality={'1'}
-                    className='image-gallery-image  '
-                    // crossOrigin="anonymous"
-                    src={item.original} />
-            </div >
-        );
-
-    }
 
     let AllQarzAmount = 0
     dataQarz?.map((item, index) => {
@@ -168,7 +161,144 @@ const Details = ({ initQuery }) => {
                 Header: () => {
                     return (
 
+                        // l.amount
+                        "Name of Car"
+
+                    )
+                },
+
+                disableFilters: true,
+
+                accessor: 'carId',
+
+
+            },
+
+            {
+                Header: () => {
+                    return (
+
+                        // l.amount
+                        "IsSold"
+
+                    )
+                },
+
+                disableFilters: true,
+
+                accessor: 'isSold',
+
+
+            },
+            {
+                Header: () => {
+                    return (
+
+                        // l.amount
+                        "Model"
+
+                    )
+                },
+
+                disableFilters: true,
+
+                accessor: 'model',
+
+
+            },
+            {
+                Header: () => {
+                    return (
+
+                        // l.amount
+                        "Price"
+
+                    )
+                },
+
+                disableFilters: true,
+
+                accessor: 'price',
+
+
+            },
+            {
+                Header: () => {
+                    return (
+
+                        // l.amount
+                        "Type of Car"
+
+                    )
+                },
+
+                disableFilters: true,
+
+                accessor: 'tocar',
+
+
+            },
+
+
+
+
+            {
+                Header: () => {
+                    return (
+
+                        l.ispaid
+                    )
+                },
+
+                accessor: 'isPaid',
+                disableFilters: true,
+
+
+            },
+            {
+                Header: () => {
+
+                    return l.date;
+                },
+
+                accessor: 'dates',
+                disableFilters: false,
+                // Filter: DateRangeColumnFilter,
+                // filter: dateBetweenFilterFn,
+
+            },
+
+            {
+                Header: () => {
+
+                    return l.detail;
+                },
+
+                accessor: 'Details',
+                disableFilters: false,
+                // Filter: DateRangeColumnFilter,
+                // filter: dateBetweenFilterFn,
+
+            },
+
+
+
+
+
+
+        ]
+    // )
+    const COLUMN =
+        // useMemo(() =>
+        [
+
+
+            {
+                Header: () => {
+                    return (
+
                         l.amount
+
                     )
                 },
 
@@ -206,27 +336,148 @@ const Details = ({ initQuery }) => {
 
             },
 
-
             {
-                Header: "Edit",
-                disableFilters: true,
+                Header: () => {
 
+                    return "Pay";
+                },
 
+                accessor: 'Pay',
+                disableFilters: false,
+                // Filter: DateRangeColumnFilter,
+                // filter: dateBetweenFilterFn,
 
             },
             {
-                Header: "Delete",
+                Header: () => {
 
-                disableFilters: true,
+                    return "Edit";
+                },
 
-
+                accessor: 'Edit',
+                disableFilters: false,
+                // Filter: DateRangeColumnFilter,
+                // filter: dateBetweenFilterFn,
 
             },
+            {
+                Header: () => {
+
+                    return "Delete";
+                },
+
+                accessor: 'Delete',
+                disableFilters: false,
+                // Filter: DateRangeColumnFilter,
+                // filter: dateBetweenFilterFn,
+
+            },
+
+
 
 
 
         ]
     // )
+
+    const COLUMNSBal =
+        useMemo(() =>
+            [
+
+
+                {
+                    Header: () => {
+                        return (
+
+                            // l.amount
+                            "Amount"
+                        )
+                    },
+
+                    disableFilters: true,
+
+                    accessor: 'amount',
+
+
+                },
+
+
+
+
+                {
+                    Header: () => {
+
+                        // return l.action;
+                        return "Action"
+                    },
+
+                    accessor: 'action',
+                    disableFilters: false,
+                    // Filter: DateRangeColumnFilter,
+                    // filter: dateBetweenFilterFn,
+
+                },
+
+                {
+                    Header: () => {
+                        return (
+
+                            "Car "
+                        )
+                    },
+
+                    accessor: 'carId',
+                    disableFilters: true,
+
+
+                },
+
+                {
+                    Header: () => {
+                        return (
+
+                            "Is Paid "
+                        )
+                    },
+
+                    accessor: 'isPaid',
+                    disableFilters: true,
+
+
+                },
+                {
+                    Header: () => {
+
+                        // return l.date;
+                        return "Note";
+                    },
+
+                    accessor: 'note',
+                    disableFilters: false,
+                    // Filter: DateRangeColumnFilter,
+                    // filter: dateBetweenFilterFn,
+
+                },
+
+                {
+                    Header: () => {
+
+                        // return l.date;
+                        return "Date";
+                    },
+
+                    accessor: 'actionDate',
+                    disableFilters: false,
+                    // Filter: DateRangeColumnFilter,
+                    // filter: dateBetweenFilterFn,
+
+                },
+
+
+
+
+            ], [initQuery]
+        )
 
     if (session.status === "unauthenticated") {
         return router.push('/')
@@ -253,35 +504,28 @@ const Details = ({ initQuery }) => {
                 <Head>
                     <title >{l.loan}</title>
                 </Head>
-
-                <div className="pt-5  mb-32 grid grid-cols-1 md:grid-cols-2 gap-10  ">
-
-
-                    <div className="   z-30  mx-5   ">
-
-                        {/* <label className="relative block max-w-[150px] lg:max-w-[300px] ">
-                        <span className="sr-only">Search</span>
-                        <span className="absolute inset-y-0 left-0 flex items-center pl-2">
-                            <FontAwesomeIcon icon={faSearch} />
-                        </span>
-                        <input onChange={(s) => { setSearch(s.target.value) }} className="placeholder:italic placeholder:text-slate-400 block  bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder={l.search} type="text" name="search" />
-                    </label> */}
-
-                    </div>
+                <div className='  flex justify-end py-10'>
+                    <select defaultValue={1} onChange={(e) => { setPageQarz(e.target.value) }} className="select select-info w-full max-w-xs   ">
+                        <option value={1}>{l.listofcars}</option>
+                        <option value={2}>{l.listofloan}</option>
+                        <option value={3}>{l.mybalance}</option>
+                    </select>
+                </div>
+                {/* <div className="pt-5  mb-32 grid grid-cols-3  gap-5 px-2 ">
 
 
                     <div onClick={() => {
                         PageQarz == 1 && setPageQarz(2)
                         PageQarz == 2 && setPageQarz(1)
                     }}
-                        className="p-5 cursor-pointer scale-75 lg:scale-100 justify-self-end border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg  w-64      z-30    ">
+                        className="p-5 cursor-pointer scale-75 xl:scale-100 justify-self-end border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg w-32  sm:w-64 z-30    ">
                         <div className="flex items-center  justify-around  ">
 
                             <div>
                                 <div className="">{l.owee}</div>
                                 <div className="text-2xl font-bold ">{AllQarzAmount}</div>
                             </div>
-                            <div>
+                            <div className="hidden sm:block">
                                 <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500 ">
 
                                     {PageQarz == 2 && <FontAwesomeIcon icon={faMoneyCheckDollar} className="text-2xl" />}
@@ -293,211 +537,68 @@ const Details = ({ initQuery }) => {
                         </div>
                     </div>
 
+                    <div onClick={() => {
+                        PageQarz == 1 && setPageQarz(2)
+                        PageQarz == 2 && setPageQarz(1)
+                    }}
+                        className="p-5 cursor-pointer scale-75 xl:scale-100 justify-self-end border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg w-32  sm:w-64    z-30    ">
+                        <div className="flex items-center  justify-around  ">
 
-                </div>
+                            <div>
+                                <div className="">{l.owee}</div>
+                                <div className="text-2xl font-bold ">{AllQarzAmount}</div>
+                            </div>
+                            <div className="hidden sm:block">
+                                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500 ">
 
+                                    {PageQarz == 2 && <FontAwesomeIcon icon={faMoneyCheckDollar} className="text-2xl" />}
+                                    {PageQarz == 1 && <FontAwesomeIcon icon={faCar} className="text-2xl" />}
 
-                {PageQarz == 1 && <div >
-                    {
-                        NoCars &&
-                        <div className="text-center  ">
-                            < Image alt="No_Car" src="/No_Cars.svg" width={400} height={400} quality={'1'} />
+                                </div>
+                            </div>
+
                         </div>
-                    }
+                    </div>
 
-                    {
-                        !NoCars &&
-                        <>
+                    <div onClick={() => {
+                        PageQarz == 1 && setPageQarz(2)
+                        PageQarz == 2 && setPageQarz(1)
+                    }}
+                        className="p-5 cursor-pointer scale-75 xl:scale-100 justify-self-end border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg  w-32  sm:w-64      z-30    ">
+                        <div className="flex items-center  justify-around  ">
 
-                            <div className=" grid grid-cols-1 sm:grid-cols-2   xl:grid-cols-3 2xl:grid-cols-4  gap-8  gap-y-20 mb-40   ">
-                                {
-                                    data?.qarzList?.map((e, idx) => {
-                                        if (!e.carId) {
-                                            return ""
-                                        }
+                            <div>
+                                <div className="">{l.owee}</div>
+                                <div className="text-2xl font-bold ">{AllQarzAmount}</div>
+                            </div>
+                            <div className="hidden sm:block">
+                                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500 ">
 
-                                        const dataa = []
+                                    {PageQarz == 2 && <FontAwesomeIcon icon={faMoneyCheckDollar} className="text-2xl" />}
+                                    {PageQarz == 1 && <FontAwesomeIcon icon={faCar} className="text-2xl" />}
 
-                                        e.carId.pictureandvideorepair?.map((img, index) => {
-                                            img.mimetype != "video/mp4" && dataa.push({
-                                                "original": `${baseURL}${img.filename}`,
-                                                "thumbnail": `/uploads/${img.filename}`,
-                                                "renderItem": renderVideo
+                                </div>
+                            </div>
 
-
-                                            })
-                                        })
-                                        e.carId.pictureandvideodamage?.map((img, index) => {
-                                            img.mimetype != "video/mp4" && dataa.push({
-                                                "original": `${baseURL}${img.filename}`, "thumbnail": `/uploads/${img.filename}`,
-                                                "renderItem": renderVideo,
-                                            })
-                                        })
-                                        e.carId.carDamage?.map((img, index) => {
-                                            img.mimetype != "video/mp4" && dataa.push({
-                                                "original": `${baseURL}${img.filename}`, "thumbnail": `/uploads/${img.filename}`,
-                                                "renderItem": renderVideo,
-                                            })
-                                        })
+                        </div>
+                    </div>
+                </div> */}
 
 
-
-                                        return (
-
-                                            <div className="card   max-w-[400px] min-w-[300px]    bg-base-300 shadow-xl justify-self-center  " key={idx}>
-
-                                                <figure className="  h-48 overflow-hidden scrollbar-hide  "
-
-                                                    onClick={() => {
-                                                        setdataQarzID(e._id)
-                                                    }}
-                                                >
-
-                                                    < ImageGallery
-                                                        width={100}
-                                                        onErrorImageURL="/Video.svg"
-                                                        slideInterval={100000}
-                                                        showThumbnails={false}
-                                                        autoPlay={true}
-                                                        lazyLoad={true}
-                                                        showFullscreenButton={false}
-                                                        showPlayButton={false}
-                                                        items={dataa}
-                                                        className="bg-base-content "
-                                                    />
-
-                                                </figure>
-
-                                                <Link href={`/Dashboard/Balance/ListofOwe/${router.query._id}/details/${e.carId.id}?Qarz=${e.id}`} key={e.carId.id}><a><div>
-
-                                                    <div className="card-body z-50">
-                                                        <div className="flex justify-between  modal-middle card-title">
-                                                            <h1 >{e.carId.modeName}</h1>
-
-                                                            <div id="new_car" className=" text-info text-xs p-3">{`${l.price} ` + ":"}<label className="text-xl text-accent "> {e.carId.price}$</label> </div>
-
-                                                        </div>
-
-                                                        <div className="text-xl text-opacity-10">
-                                                            <span className='text-xs' >VIN :</span> {e.carId.VINNumber}
-                                                        </div>
-
-                                                        <div className="card-actions justify-end">
-                                                        </div>
-                                                    </div>
-
-                                                </div></a></Link>
-                                            </div>
-
-
-
-                                        )
-
-                                    })
-
-
-
-
-
-
-
-
-
-
-                                }
-                            </div >
-                            {data?.qarzList.length >= Limit &&
-                                <InView rootMargin='300px'
-                                    as="div" onChange={(inView, entry) => {
-
-                                        inView && setLimit(Limit + 4)
-                                    }} className=" grid grid-cols-1 sm:grid-cols-2   xl:grid-cols-3 2xl:grid-cols-4  gap-8  gap-y-20 mb-20  ">
-
-
-                                    <div role="status" className="p-4 max-w-sm  border border-gray-200  animate-pulse md:p-6 dark:border-gray-700 rounded-2xl shadow-xl">
-                                        <div className="flex justify-center items-center mb-12 h-48 bg-gray-300 rounded dark:bg-gray-700">
-                                            <svg className="w-12 h-12 text-gray-200 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor" viewBox="0 0 640 512"><path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" /></svg>
-                                        </div>
-                                        <div className="flex  justify-between mb-6">
-                                            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-20 mb-4"></div>
-                                            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-20 mb-4"></div>
-                                        </div>
-                                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-                                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-                                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-6"></div>
-
-                                        <span className="sr-only">Loading...</span>
-                                    </div>
-
-                                    <div role="status" className="p-4 max-w-sm  border border-gray-200  animate-pulse md:p-6 dark:border-gray-700 rounded-2xl shadow-xl">
-                                        <div className="flex justify-center items-center mb-12 h-48 bg-gray-300 rounded dark:bg-gray-700">
-                                            <svg className="w-12 h-12 text-gray-200 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor" viewBox="0 0 640 512"><path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" /></svg>
-                                        </div>
-                                        <div className="flex  justify-between mb-6">
-                                            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-20 mb-4"></div>
-                                            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-20 mb-4"></div>
-                                        </div>
-                                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-                                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-                                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-6"></div>
-
-                                        <span className="sr-only">Loading...</span>
-                                    </div>
-
-                                    <div role="status" className="p-4 max-w-sm  border border-gray-200  animate-pulse md:p-6 dark:border-gray-700 rounded-2xl shadow-xl">
-                                        <div className="flex justify-center items-center mb-12 h-48 bg-gray-300 rounded dark:bg-gray-700">
-                                            <svg className="w-12 h-12 text-gray-200 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor" viewBox="0 0 640 512"><path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" /></svg>
-                                        </div>
-                                        <div className="flex  justify-between mb-6">
-                                            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-20 mb-4"></div>
-                                            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-20 mb-4"></div>
-                                        </div>
-                                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-                                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-                                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-6"></div>
-
-                                        <span className="sr-only">Loading...</span>
-                                    </div>
-
-                                    <div role="status" className="p-4 max-w-sm  border border-gray-200  animate-pulse md:p-6 dark:border-gray-700 rounded-2xl shadow-xl">
-                                        <div className="flex justify-center items-center mb-12 h-48 bg-gray-300 rounded dark:bg-gray-700">
-                                            <svg className="w-12 h-12 text-gray-200 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor" viewBox="0 0 640 512"><path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" /></svg>
-                                        </div>
-                                        <div className="flex  justify-between mb-6">
-                                            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-20 mb-4"></div>
-                                            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-20 mb-4"></div>
-                                        </div>
-                                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-                                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-                                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-6"></div>
-
-                                        <span className="sr-only">Loading...</span>
-                                    </div>
-
-
-
-                                </InView >
-                            }
-
-                        </ >
-                    }
-
-
-
-
-                </div>}
+                {PageQarz == 1 &&
+                    <CarsTable COLUMNS={COLUMNS} initQuery={router.query._id} AllProducts={AllQarz} />
+                }
 
 
                 {PageQarz == 2 && <div>
-
-
-                    <TableQarz COLUMNS={COLUMNS} ID={router.query._id} />
-
-
+                    <TableQarz COLUMNS={COLUMN} ID={router.query._id} AllQarz={AllQarz} />
 
                 </div>}
 
+                {PageQarz == 3 && <div>
+                    <TableBal COLUMNS={COLUMNSBal} ID={router.query._id} AllQarz={AllQarz} />
 
+                </div>}
 
 
 
@@ -513,13 +614,7 @@ export default Details;
 
 
 
-
-
-const Amount_regex = /^[0-9]{0,12}/;
-const IsPaid_regex = /^[a-zA-Z]{0,7}/;
-
-
-const TableQarz = ({ COLUMNS, ID }) => {
+const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
 
     const session = useSession();
     const router = useRouter();
@@ -528,8 +623,9 @@ const TableQarz = ({ COLUMNS, ID }) => {
     const [Page, setPage] = useState(1);
     const [Limit, setLimit] = useState(10);
 
-    const [StartDate, setStartDate] = useState("2000-10-10");
-    const [EndDate, setEndDate] = useState("3000-10-10");
+    const [PageS, setPageS] = useState(Math.ceil(AllQarz / Limit));
+    const [StartDate, setStartDate] = useState("2000-01-01");
+    const [EndDate, setEndDate] = useState("2500-01-01");
 
 
 
@@ -537,6 +633,7 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
     const [Idofrow, setIdofrow] = useState(null);
     const [Deletestate, setDeletestate] = useState(null);
+    const [Paystate, setPaystate] = useState(null);
     const [Data, setData] = useState({
         userId: ID,
         isPaid: "",
@@ -645,169 +742,133 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
     }, [ARef.current?.value, IPRef.current?.value, count])
 
-    //  inputRef?.current
 
-
-
-
-
-    const handleUpdatQarz = async () => {
-
-
-
-        if (DataUpdate.isPaid == "true" && Idofrow?.[1] == false) {
-
-
-            try {
-
-
-                const UDetails = await Axios.get(`/users/detail/${session?.data.id}`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
-
-                const DataBalance = UDetails.data.userDetail.TotalBals
-
-
-                if (DataUpdate.amount <= DataBalance) {
-
-
-                    await Axios.patch(`/users/${session?.data.id}`, { "TotalBals": Math.floor(DataBalance) - Math.floor(DataUpdate.amount) }, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': `Bearer ${session?.data?.Token}`
-                        }
-                    },)
-
-
-                    toast.success("Your Balance Now= " + (Math.floor(DataBalance) - Math.floor(DataUpdate.amount)) + " $");
-
-
-
-
-                    await Axios.post("/bal/",
-                        {
-                            amount: Math.floor(-DataUpdate.amount),
-                            action: "Gived",
-                            userId: router.query._id,
-                        }, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': `Bearer ${session?.data?.Token}`
-                        }
-                    },)
-
-                    try {
-
-                        await Axios.patch(`/qarz/${Idofrow?.[0]}`, DataUpdate, {
-                            headers: {
-                                "Content-Type": "application/json",
-                                'Authorization': `Bearer ${session?.data?.Token}`
-                            }
-                        },)
-                        toast.success("Data Updated Successfully")
-                    } catch (error) {
-
-                        toast.error("Something Went Wrong *")
-                    } finally {
-
-                        setIdofrow(null);
-                        setDeletestate(null);
-                        setData({
-                            userId: ID,
-                            isPaid: "",
-                            amount: 0,
-                        });
-                        // getQarzData()
-                        setReNewData(true)
-
-                    }
-
-
-
-                }
-                else {
-
-                    toast.error("Your Balance is not enough");
-                }
-
-
-
-
-
-
-
-
-            } catch {
-
-                toast.error("Something Went Wrong with Admin balance *")
-
-
+    const handlePay = async (Pay) => {
+        console.log('handlePay', Paystate, Pay);
+        const auth = {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${session?.data?.Token}`
             }
-
-
         }
 
+        const UDetails = await Axios.get(`/users/detail/${session?.data.id}`, auth)
+        const DataBalance = UDetails.data.userDetail.TotalBals
+
+        const Qarz = await Axios.get(`/users/detail/${ID}`, auth)
+        const QarzBalance = Qarz.data.userDetail.TotalBals
 
 
-
-        else if (DataUpdate.isPaid == "false" && Idofrow?.[1] == true) {
-
-
+        if (Pay == false) {
             try {
 
+                await Axios.patch(`/users/${session?.data.id}`, { "TotalBals": Math.floor(DataBalance) + Math.floor(Paystate?.[2]) }, auth)
+                await Axios.patch(`/users/${ID}`, { "TotalBals": QarzBalance + Math.floor(Paystate?.[2]) }, auth)
 
-                const UDetails = await Axios.get(`/users/detail/${session?.data.id}`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
-
-                const DataBalance = Math.floor(UDetails.data.userDetail.TotalBals)
-
-
-
-
-                await Axios.patch(`/users/${session?.data.id}`, { "TotalBals": DataBalance + Math.floor(DataUpdate.amount) }, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
-
-                toast.success("Your Balance Now= " + (DataBalance + Math.floor(DataUpdate.amount)) + " $");
-
-
+                toast.success("Your Balance Now= " + (Math.floor(DataBalance) + Math.floor(Paystate?.[2])) + " $");
 
 
                 await Axios.post("/bal/",
                     {
-                        amount: DataUpdate.amount,
+                        amount: -Math.floor(Paystate?.[2]),
                         action: "Loan",
+                        isPaid: false,
+                        note: "Borrow",
                         userId: router.query._id,
-                    }, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
+                    }, auth)
 
+
+                await Axios.patch(`/qarz/${Paystate?.[0]}`,
+                    { isPaid: false }
+                    , auth)
+
+                toast.success("Data Updated Successfully")
+
+                setPaystate(null);
+                setReNewData(true)
+            } catch {
+                toast.error("Something went wrong  *")
+            }
+
+        }
+        if (Pay == true) {
+            if (DataBalance >= Paystate?.[2]) {
                 try {
 
-                    await Axios.patch(`/qarz/${Idofrow?.[0]}`, DataUpdate, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': `Bearer ${session?.data?.Token}`
-                        }
-                    },)
-                    toast.success("Data Updated Successfully")
-                } catch (error) {
+                    await Axios.patch(`/users/${session?.data.id}`, { "TotalBals": Math.floor(DataBalance) - Math.floor(Paystate?.[2]) }, auth)
+                    await Axios.patch(`/users/${ID}`, { "TotalBals": QarzBalance - Math.floor(Paystate?.[2]) }, auth)
 
-                    toast.error("Something Went Wrong *")
-                } finally {
+                    toast.success("Your Balance Now= " + (Math.floor(DataBalance) - Math.floor(Paystate?.[2])) + " $");
+
+
+                    await Axios.post("/bal/",
+                        {
+                            amount: Math.floor(Paystate?.[2]),
+                            action: "Loan",
+                            isPaid: true,
+                            note: "Repayment",
+                            userId: router.query._id,
+                        }, auth)
+
+
+                    await Axios.patch(`/qarz/${Paystate?.[0]}`,
+                        { isPaid: true }
+                        , auth)
+
+                    toast.success("Data Updated Successfully")
+
+                    setPaystate(null)
+                    setReNewData(true)
+                } catch {
+                    toast.error("Something went wrong  *")
+                }
+            } else {
+
+                toast.error("You don't have enough balance")
+
+            }
+        }
+    }
+
+
+    const handleUpdatQarz = async () => {
+        const auth = {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${session?.data?.Token}`
+            }
+        }
+        const UDetails = await Axios.get(`/users/detail/${session?.data.id}`, auth)
+        const DataBalance = UDetails.data.userDetail.TotalBals
+
+        const Qarz = await Axios.get(`/users/detail/${ID}`, auth)
+        const QarzBalance = Qarz.data.userDetail.TotalBals
+
+
+        if (DataUpdate.isPaid == "true" && Idofrow?.[1] == false) {
+            const donebalance = Math.floor(DataUpdate.amount) + Math.floor(Idofrow?.[2])
+            try {
+                if (donebalance <= DataBalance) {
+
+                    await Axios.patch(`/users/${session?.data.id}`, { "TotalBals": Math.floor(DataBalance) - Math.floor(donebalance) }, auth)
+                    await Axios.patch(`/users/${ID}`, { "TotalBals": QarzBalance - Math.floor(donebalance) }, auth)
+
+                    toast.success("Your Balance Now= " + (Math.floor(DataBalance) - Math.floor(donebalance)) + " $");
+
+
+                    await Axios.post("/bal/",
+                        {
+                            amount: donebalance,
+                            action: "Loan",
+                            isPaid: true,
+                            note: "Repayment",
+                            userId: router.query._id,
+                        }, auth)
+
+
+                    await Axios.patch(`/qarz/${Idofrow?.[0]}`, DataUpdate, auth)
+
+                    toast.success("Data Updated Successfully")
 
                     setIdofrow(null);
                     setDeletestate(null);
@@ -816,53 +877,45 @@ const TableQarz = ({ COLUMNS, ID }) => {
                         isPaid: "",
                         amount: 0,
                     });
-                    // getQarzData()
                     setReNewData(true)
 
+
+                }
+                else {
+
+                    toast.error("Your Balance is not enough");
                 }
 
-
-
-
-
-
-
-
-
-
-
-
             } catch {
-
-                toast.error("Something Went Wrong with Admin balance *")
-
-
+                toast.error("Something went wrong  *")
             }
 
 
-
         }
+        if (DataUpdate.isPaid == "false" && Idofrow?.[1] == true) {
 
-
-
-
-        else if (DataUpdate.isPaid == Idofrow?.[1]) {
-
-
-
+            const donebalance = Math.floor(DataUpdate.amount) + Idofrow?.[2]
             try {
 
-                await Axios.patch(`/qarz/${Idofrow?.[0]}`, DataUpdate, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
-                toast.success("Data Updated Successfully")
-            } catch (error) {
 
-                toast.error("Something Went Wrong *")
-            } finally {
+                await Axios.patch(`/users/${session?.data.id}`, { "TotalBals": Math.floor(DataBalance) + Math.floor(donebalance) }, auth)
+                await Axios.patch(`/users/${ID}`, { "TotalBals": QarzBalance + Math.floor(donebalance) }, auth)
+                toast.success("Your Balance Now= " + (Math.floor(DataBalance) + Math.floor(donebalance)) + " $");
+
+
+                await Axios.post("/bal/",
+                    {
+                        amount: -donebalance,
+                        action: "Loan",
+                        isPaid: false,
+                        note: "Repayment",
+                        userId: router.query._id,
+                    }, auth)
+
+
+                await Axios.patch(`/qarz/${Idofrow?.[0]}`, DataUpdate, auth)
+
+                toast.success("Data Updated Successfully")
 
                 setIdofrow(null);
                 setDeletestate(null);
@@ -871,50 +924,296 @@ const TableQarz = ({ COLUMNS, ID }) => {
                     isPaid: "",
                     amount: 0,
                 });
-                // getQarzData()
                 setReNewData(true)
 
+
+
+            } catch {
+
+                toast.error("Something went wrong  *")
+
+
             }
+
+
         }
 
+        if (DataUpdate.isPaid == "false" && Idofrow?.[1] == false) {
 
+            const donebalance = Math.floor(DataUpdate.amount) - Idofrow?.[2]
+            try {
+
+
+                await Axios.patch(`/users/${session?.data.id}`, { "TotalBals": Math.floor(DataBalance) + Math.floor(donebalance) }, auth)
+                await Axios.patch(`/users/${ID}`, { "TotalBals": QarzBalance + Math.floor(donebalance) }, auth)
+                toast.success("Your Balance Now= " + (Math.floor(DataBalance) + Math.floor(donebalance)) + " $");
+
+
+                await Axios.post("/bal/",
+                    {
+                        amount: -donebalance,
+                        action: "Loan",
+                        isPaid: false,
+                        note: "Repayment",
+                        userId: router.query._id,
+                    }, auth)
+
+
+                await Axios.patch(`/qarz/${Idofrow?.[0]}`, DataUpdate, auth)
+
+                toast.success("Data Updated Successfully")
+
+                setIdofrow(null);
+                setDeletestate(null);
+                setData({
+                    userId: ID,
+                    isPaid: "",
+                    amount: 0,
+                });
+                setReNewData(true)
+
+
+
+            } catch {
+
+                toast.error("Something went wrong  *")
+
+
+            }
+
+
+        }
+
+        if (DataUpdate.isPaid == "true" && Idofrow?.[1] == true) {
+
+            const donebalance = Math.floor(DataUpdate.amount) - Idofrow?.[2]
+            try {
+
+
+                await Axios.patch(`/users/${session?.data.id}`, { "TotalBals": Math.floor(DataBalance) - Math.floor(donebalance) }, auth)
+                await Axios.patch(`/users/${ID}`, { "TotalBals": QarzBalance - Math.floor(donebalance) }, auth)
+                toast.success("Your Balance Now= " + (Math.floor(DataBalance) - Math.floor(donebalance)) + " $");
+
+
+                await Axios.post("/bal/",
+                    {
+                        amount: donebalance,
+                        action: "Loan",
+                        isPaid: true,
+                        note: "Repayment",
+                        userId: router.query._id,
+                    }, auth)
+
+
+                await Axios.patch(`/qarz/${Idofrow?.[0]}`, DataUpdate, auth)
+
+                toast.success("Data Updated Successfully")
+
+                setIdofrow(null);
+                setDeletestate(null);
+                setData({
+                    userId: ID,
+                    isPaid: "",
+                    amount: 0,
+                });
+                setReNewData(true)
+
+
+
+            } catch {
+                toast.error("Something went wrong  *")
+            }
+
+
+        }
+        // else if (DataUpdate.isPaid == "false" && Idofrow?.[1] == true) {
+
+
+        //     try {
+
+
+        //         const UDetails = await Axios.get(`/users/detail/${session?.data.id}`, {
+        //             headers: {
+        //                 "Content-Type": "application/json",
+        //                 'Authorization': `Bearer ${session?.data?.Token}`
+        //             }
+        //         },)
+
+        //         const DataBalance = Math.floor(UDetails.data.userDetail.TotalBals)
+
+
+
+
+        //         await Axios.patch(`/users/${session?.data.id}`, { "TotalBals": DataBalance + Math.floor(DataUpdate.amount) }, {
+        //             headers: {
+        //                 "Content-Type": "application/json",
+        //                 'Authorization': `Bearer ${session?.data?.Token}`
+        //             }
+        //         },)
+
+        //         toast.success("Your Balance Now= " + (DataBalance + Math.floor(DataUpdate.amount)) + " $");
+
+
+
+
+        //         await Axios.post("/bal/",
+        //             {
+        //                 amount: DataUpdate.amount,
+        //                 action: "Loan",
+        //                 userId: router.query._id,
+        //             }, {
+        //             headers: {
+        //                 "Content-Type": "application/json",
+        //                 'Authorization': `Bearer ${session?.data?.Token}`
+        //             }
+        //         },)
+
+        //         try {
+
+        //             await Axios.patch(`/qarz/${Idofrow?.[0]}`, DataUpdate, {
+        //                 headers: {
+        //                     "Content-Type": "application/json",
+        //                     'Authorization': `Bearer ${session?.data?.Token}`
+        //                 }
+        //             },)
+        //             toast.success("Data Updated Successfully")
+        //         } catch (error) {
+
+        //             toast.error("Something Went Wrong *")
+        //         } finally {
+
+        //             setIdofrow(null);
+        //             setDeletestate(null);
+        //             setData({
+        //                 userId: ID,
+        //                 isPaid: "",
+        //                 amount: 0,
+        //             });
+        //             // getQarzData()
+        //             setReNewData(true)
+
+        //         }
+
+
+
+
+
+
+
+
+
+
+
+
+        //     } catch {
+
+        //         toast.error("Something Went Wrong with Admin balance *")
+
+
+        //     }
+
+
+
+        // }
+
+
+        // else if (DataUpdate.isPaid == Idofrow?.[1]) {
+
+
+
+        //     try {
+
+        //         await Axios.patch(`/qarz/${Idofrow?.[0]}`, DataUpdate, {
+        //             headers: {
+        //                 "Content-Type": "application/json",
+        //                 'Authorization': `Bearer ${session?.data?.Token}`
+        //             }
+        //         },)
+        //         toast.success("Data Updated Successfully")
+        //     } catch (error) {
+
+        //         toast.error("Something Went Wrong *")
+        //     } finally {
+
+        //         setIdofrow(null);
+        //         setDeletestate(null);
+        //         setData({
+        //             userId: ID,
+        //             isPaid: "",
+        //             amount: 0,
+        //         });
+        //         // getQarzData()
+        //         setReNewData(true)
+
+        //     }
+        // }
 
 
 
     }
 
     const handledeleteQarzData = async () => {
+        const auth =
+        {
+            headers: {
+                "Content-Type": "application/json",
 
-        try {
-            await Axios.delete(`/qarz/${Deletestate?.[0]}`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${session?.data?.Token}`
-                }
-            },)
-
-            toast.warn("Data Deleted Successfully")
-
-        } catch (error) {
-
-
-
-            toast.error("Something Went Wrong")
-
-        } finally {
-
-            setIdofrow(null);
-            setDeletestate(null);
-            setData({
-                userId: "",
-                isPaid: "",
-                amount: 0,
-            });
-            // getQarzData()
-            setReNewData(true)
+                'Authorization': `Bearer ${session?.data?.Token}`
+            }
         }
 
+        const UDetails = await Axios.get(`/users/detail/${session?.data.id}`, auth)
+        const DataBalance = UDetails.data.userDetail.TotalBals
 
+        const Qarz = await Axios.get(`/users/detail/${ID}`, auth)
+        const QarzBalance = Qarz.data.userDetail.TotalBals
+
+
+        if (Deletestate?.[1] == false) {
+            if (DataBalance >= Deletestate?.[2]) {
+                await Axios.patch(`/users/${session?.data.id}`, { "TotalBals": DataBalance - Math.floor(Deletestate?.[2]) }, auth)
+                await Axios.patch(`/users/${ID}`, { "TotalBals": QarzBalance - Math.floor(Deletestate?.[2]) }, auth)
+
+                await Axios.post("/bal/", {
+                    amount: -Deletestate?.[2],
+                    action: "Loan",
+                    userId: ID,
+                    note: "Deleted",
+                    isPaid: true,
+                }, auth)
+                await Axios.delete(`/qarz/${Deletestate?.[0]}`, auth)
+
+                setIdofrow(null);
+                setDeletestate(null)
+                setReNewData(true)
+
+            }
+            else {
+                toast.error("don't have enough balance")
+            }
+        }
+        if (Deletestate?.[1] == true) {
+
+            try {
+                await Axios.delete(`/qarz/${Deletestate?.[0]}`, auth)
+                await Axios.post("/bal/", {
+                    amount: 0,
+                    action: "Loan",
+                    userId: ID,
+                    note: "Deleted",
+                    isPaid: true,
+                }, auth)
+                toast.warn("Data Deleted Successfully")
+
+            } catch (error) {
+                toast.error("Something Went Wrong *")
+            } finally {
+                setIdofrow(null);
+                setDeletestate(null);
+                setReNewData(true)
+            }
+
+        }
 
     }
 
@@ -924,34 +1223,91 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
     const addQarz = async () => {
 
+        const auth =
+        {
+            headers: {
+                "Content-Type": "application/json",
 
-
-        try {
-
-            await Axios.post("/qarz/", Data, {
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${session?.data?.Token}`
-                }
-            },)
-
-            toast.success("Data Adeed Successfully");
-            router.reload()
-
-        } catch (error) {
-            toast.error("Data Not Added *");
-
-        } finally {
-
-            setData({
-                userId: "",
-                isPaid: "",
-                amount: 0,
-            });
-            // getQarzData()
-            setReNewData(true)
+                'Authorization': `Bearer ${session?.data?.Token}`
+            }
         }
 
+
+        const UDetails = await Axios.get(`/users/detail/${session?.data.id}`, auth)
+
+        const DataBalance = UDetails.data.userDetail.TotalBals
+        const Qarz = await Axios.get(`/users/detail/${ID}`, auth)
+
+        const QarzBalance = Qarz.data.userDetail.TotalBals
+        if (Data?.isPaid == 'false') {
+            try {
+                await Axios.patch(`/users/${session?.data.id}`, { "TotalBals": DataBalance + Math.floor(Data.amount) }, auth)
+                await Axios.patch(`/users/${ID}`, { "TotalBals": QarzBalance + Math.floor(Data.amount) }, auth)
+
+                await Axios.post("/qarz/", {
+                    amount: Data?.amount,
+                    isPaid: Data?.isPaid,
+                    userId: ID
+
+                }, auth)
+
+                await Axios.post("/bal/", {
+                    amount: -Data.amount,
+                    action: "Loan",
+                    userId: ID,
+                    isPaid: true
+
+                }, auth)
+
+                toast.success("Data Adeed Successfully");
+
+
+            } catch (error) {
+                toast.error("Data Not Added *");
+            }
+            setReNewData(true)
+
+
+        }
+
+
+        if (Data?.isPaid == 'true') {
+
+
+
+            if (DataBalance >= Data.amount) {
+                try {
+                    await Axios.patch(`/users/${session?.data.id}`, { "TotalBals": DataBalance - Math.floor(Data.amount) }, auth)
+                    await Axios.patch(`/users/${ID}`, { "TotalBals": QarzBalance - Math.floor(Data.amount) }, auth)
+
+                    await Axios.post("/qarz/", {
+                        amount: Data?.amount,
+                        isPaid: Data?.isPaid,
+                        userId: ID
+
+                    }, auth)
+
+                    await Axios.post("/bal/", {
+                        amount: Data.amount,
+                        action: "Loan",
+                        userId: ID,
+                        isPaid: true
+
+                    }, auth)
+
+                    toast.success("Data Adeed Successfully");
+
+
+                } catch (error) {
+                    toast.error("Data Not Added *");
+                }
+                setReNewData(true)
+
+            } else {
+                toast.error("You don't have enough money")
+
+            }
+        }
     }
 
 
@@ -961,23 +1317,29 @@ const TableQarz = ({ COLUMNS, ID }) => {
         if (session.status === 'authenticated') {
 
             const getQarzData = async () => {
-                // ${StartDate}/${EndDate}?search=${Search}&page=${Page}&limit=${Limit}
-                const res = await Axios.get(`/qarz/amount/${ID}?${StartDate}/${EndDate}`, {
+                // ${StartDate}/${EndDate}?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate}&edate=${EndDate}
+                const res = await Axios.get(`/qarz/amount/${ID}/?&page=${Page}&limit=${Limit}&sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2500-01-01"}`, {
                     headers: {
                         "Content-Type": "application/json",
                         'Authorization': `Bearer ${session?.data?.Token}`
                     }
                 },)
 
-
+                const data = await res.data.qarzList.map((e) => { return e.id }).length
                 setDataTable(res.data.qarzList)
+
+                setPageS(1)
+
+                console.log(res.data)
             }
             getQarzData()
             setReNewData(false)
+
         }
 
     }, [Search, Page, Limit, StartDate, EndDate, ID, ReNewData, session?.data?.Token])
 
+    // console.log(PageS)
 
 
 
@@ -1045,7 +1407,7 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
 
     return (
-        <div className="  container mx-auto overflow-auto">
+        <div className="text-center  container mx-auto overflow-auto  scrollbar-hide ">
 
 
 
@@ -1074,7 +1436,7 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
                                     className="input input-bordered input-info w-full max-w-xl mt-5 dark:placeholder:text-white dark:color-white"
                                 />
-                                <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!AValid && !AFocus && Data.amount != "" ? "block" : "hidden"}`}>
+                                <p id="password-error" className={`bg-rose-700 rounded m-1 text-sm p-2 text-black  ${!AValid && !AFocus && Data.amount != "" ? "block" : "hidden"}`}>
                                     {l.incorrect}
                                     <br />
                                     {l.number7}
@@ -1096,7 +1458,7 @@ const TableQarz = ({ COLUMNS, ID }) => {
                                     <option value="false">No</option>
                                 </select>
 
-                                <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!IPValid && !IPFocus && Data.isPaid != "" ? "block" : "hidden"}`}>
+                                <p id="password-error" className={`bg-rose-700 rounded m-1 text-sm p-2 text-black  ${!IPValid && !IPFocus && Data.isPaid != "" ? "block" : "hidden"}`}>
                                     {l.incorrect}
                                     <br />
                                     {l.charecter416}
@@ -1143,10 +1505,9 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
                     <div className="dropdown rtl:dropdown-right ltr:dropdown-left">
 
-                        {/* //TODO -  Fix Date */}
-                        {/* <label tabIndex="0" className=" m-1">
+                        <label tabIndex="0" className=" m-1">
                             <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 " />
-                        </label> */}
+                        </label>
 
                         <ul tabIndex="0" className="dropdown-content  shadow bg-base-100 rounded-box w-52 flex justify-center   ">
                             <li className="  py-2">
@@ -1214,7 +1575,7 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
                             {headerGroups.headers.map((column, idx) => (
 
-                                <th key={idx} className="p-4 m-44      w-[380px]  " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
+                                <th key={idx} className="p-4 m-44  w-[380px]  " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
 
                                     <span>
                                         {column.isSorted ? (column.isSortedDesc ? " ↑ " : " 🡓 ") : ""}
@@ -1255,8 +1616,15 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
                                             {cell.column.id === 'isPaid' && row.original._id !== Idofrow?.[0] && (
 
-                                                cell.value === true ? <div className="text-green-500" >Yes</div> : <div className="text-red-500" >No</div>
+                                                cell.value === true ? <div className="text-green-700" >Yes</div> : <div className="text-red-700" >No</div>
                                             )}
+                                            {cell.column.id === 'Pay' && row.original._id !== Idofrow?.[0] && (
+
+                                                row.original.isPaid ? <label htmlFor="Borrow-Mod" className="btn btn-error p-2" onClick={() => { setPaystate([row.original._id, row.original.isPaid, row.original.qarAmount]) }}>{l.borrowing}
+                                                </label> : <label htmlFor="Pay-Mod" className="btn btn-accent p-2" onClick={() => { setPaystate([row.original._id, row.original.isPaid, row.original.qarAmount]) }}>{l.pay}
+                                                </label>
+                                            )
+                                            }
 
 
                                             {
@@ -1305,16 +1673,17 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
 
 
-                                            {row.original._id !== Idofrow?.[0] ?
-                                                cell.column.id === "Edit" &&
-                                                <button ref={inputRef} onClick={() => { setIdofrow([row.original._id, row.original.isPaid, row.original.qarAmount]) }} aria-label="upload picture"   ><FontAwesomeIcon icon={faEdit} className="text-2xl cursor-pointer text-blue-500" /></button>
+                                            {
+                                                row.original._id !== Idofrow?.[0] ?
+                                                    cell.column.id === "Edit" &&
+                                                    <button ref={inputRef} onClick={() => { setIdofrow([row.original._id, row.original.isPaid, row.original.qarAmount]) }} aria-label="upload picture"   ><FontAwesomeIcon icon={faEdit} className="text-2xl cursor-pointer text-blue-500" /></button>
 
-                                                :
-                                                <div className=" space-x-3">
-                                                    {cell.column.id === "Edit" && <button type='submit' className="btn btn-accent" disabled={AValid && IPValid ? false : true} onClick={handleUpdatQarz} > <FontAwesomeIcon icon={faSave} className="text-2xl" /></button>}
-                                                    {cell.column.id === "Edit" && <button onClick={() => { setIdofrow(null) }} className="btn  btn-error"><FontAwesomeIcon icon={faBan} className="text-2xl" /></button>}
+                                                    :
+                                                    <div className=" space-x-3">
+                                                        {cell.column.id === "Edit" && <button type='submit' className="btn btn-accent" disabled={AValid && IPValid ? false : true} onClick={handleUpdatQarz} > <FontAwesomeIcon icon={faSave} className="text-2xl" /></button>}
+                                                        {cell.column.id === "Edit" && <button onClick={() => { setIdofrow(null) }} className="btn  btn-error"><FontAwesomeIcon icon={faBan} className="text-2xl" /></button>}
 
-                                                </div>
+                                                    </div>
 
 
                                             }
@@ -1340,25 +1709,21 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
             <div className="botom_Of_Table" >
 
-                <div className=" flex justify-between container mx-auto items-center    px-1 mb-20  min-w-[700px] ">
+                <div className=" flex justify-between container mx-auto items-center   p-3  px-1 mb-20  min-w-[700px] ">
 
 
 
-                    <div className=" flex  space-x-5 mx-5 text-lg items-center     ">
+                    <div className=" flex   justify-around mx-5 text-lg items-center     ">
 
-                        <div>
 
-                            {l.page}
-                            <span>
-                                {""}{pageIndex + 1}/{pageOptions.length}{""}
-                            </span>
-                        </div>
+                        <span className="px-3">
+                            {l.page}{" " + Page}/{PageS}
+                        </span>
 
                         <div>
-
-                            <select className="select select-info  w-full max-w-xs"
+                            <select className="select select-info  w-full max-w-xs focus:outline-0"
                                 onChange={(e) => {
-                                    setLimit((e.target.value) * 2)
+                                    setLimit((e.target.value))
                                     setPageSize(Number(e.target.value)
                                     )
                                 }}
@@ -1377,12 +1742,51 @@ const TableQarz = ({ COLUMNS, ID }) => {
 
 
 
-                    <div className="space-x-2  overflow-auto inline-flex  scrollbar-hide ">
+                    <div className="space-x-3  overflow-auto inline-flex  scrollbar-hide ">
                         <div></div>
-                        <button className="btn w-2 h-2 btn-info   " onClick={() => gotoPage(0)} disabled={!canPreviousPage}>{"<<"} </button>
-                        <button className="btn w-2 h-2 btn-info" onClick={() => previousPage()} disabled={!canPreviousPage}>{"<"} </button>
-                        <button className="btn w-2 h-2 btn-info" onClick={() => nextPage()} disabled={!canNextPage}>{">"} </button>
-                        <button className="btn w-2 h-2 btn-info " onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>{">>"} </button>
+
+
+
+                        <button className="btn w-2 h-2 btn-info border-0  " onClick={() =>
+                            setPage(1)
+                        }
+                            disabled={
+                                Page == 1 ? true : false
+                            }
+                        >{"<<"} </button>
+
+
+                        <button className="btn w-2 h-2 btn-info" onClick={() =>
+                            setPage(Page - 1)
+                        }
+                            disabled={
+                                Page <= 1 ? true : false
+
+                            }
+                        >{"<"}
+                        </button>
+
+
+                        <button className="btn w-2 h-2 btn-info" onClick={() =>
+                            Page >= 1 && setPage(Page + 1)
+                        }
+                            disabled={
+                                Page >= PageS ? true : false
+                            }
+                        >{">"} </button>
+
+
+                        <button className="btn w-2 h-2 btn-info "
+                            onClick={() =>
+                                Page >= 1 && setPage(PageS)
+                            }
+                            disabled={
+                                Page >= PageS ? true : false
+                            }
+                        >{">>"} </button>
+
+
+
                     </div>
 
                 </div>
@@ -1394,10 +1798,37 @@ const TableQarz = ({ COLUMNS, ID }) => {
                 <div className="modal-box relative ">
                     <label htmlFor="my-modal-3" className="btn btn-sm btn-circle absolute right-2 top-2 ">✕</label>
                     <div className="text-lg font-bold text-center"><FontAwesomeIcon icon={faBan} className="text-7xl text-red-700  " /> </div>
-                    <p className="py-4 ">{l.deletemsg}</p>
+                    <p className="py-10 text-start">{l.deletemsg}</p>
                     <div className="space-x-10 ">
                         <label htmlFor="my-modal-3" className="btn btn-error " onClick={handledeleteQarzData}>{l.yes}</label>
                         <label htmlFor="my-modal-3" className="btn btn-accent " onClick={() => { setDeletestate(null) }} >{l.no}</label>
+                    </div>
+                </div>
+            </div>
+
+
+            <input name="error_btn" type="checkbox" id="Pay-Mod" className="modal-toggle btn btn-error " />
+            <div className="modal  ">
+                <div className="modal-box relative ">
+                    <label htmlFor="Pay-Mod" className="btn btn-sm btn-circle absolute right-2 top-2 ">✕</label>
+                    <div className="text-lg font-bold text-center"><FontAwesomeIcon icon={faAmazonPay} className="text-7xl text-green-700  " /> </div>
+                    <p className="py-10 text-start">{l.paymsg}</p>
+                    <div className="text-end">
+                        <label htmlFor="Pay-Mod" className="btn  btn-accent mx-10" onClick={() => handlePay(true)}>{l.yes}</label>
+                        <label htmlFor="Pay-Mod" className="btn btn-error " onClick={() => { setPaystate(null) }} >{l.no}</label>
+                    </div>
+                </div>
+            </div>
+
+            <input name="error_btn" type="checkbox" id="Borrow-Mod" className="modal-toggle btn btn-error " />
+            <div className="modal  ">
+                <div className="modal-box relative ">
+                    <label htmlFor="Borrow-Mod" className="btn btn-sm btn-circle absolute right-2 top-2 ">✕</label>
+                    <div className="text-lg font-bold text-center"><FontAwesomeIcon icon={faHandHoldingDollar} className="text-7xl text-red-700  " /> </div>
+                    <p className="py-10 text-start ">{l.borrowmsg}</p>
+                    <div className="text-end">
+                        <label htmlFor="Borrow-Mod" className="btn  btn-accent mx-10" onClick={() => handlePay(false)}>{l.yes}</label>
+                        <label htmlFor="Borrow-Mod" className="btn btn-error " onClick={() => { setPaystate(null) }} >{l.no}</label>
                     </div>
                 </div>
             </div>
@@ -1413,7 +1844,844 @@ const TableQarz = ({ COLUMNS, ID }) => {
 }
 
 
+const IndeterminateCheckbox = forwardRef(
+    ({ indeterminate, ...rest }, ref) => {
+        const defaultRef = useRef()
+        const resolvedRef = ref || defaultRef
+        const l = useLanguage();
+        useEffect(() => {
+            resolvedRef.current.indeterminate = indeterminate
+        }, [resolvedRef, indeterminate])
 
+        return <div className="w-full    " >
+
+            <label className="cursor-pointer label my-2 ">
+                {l.all}
+                <input type="checkbox" className="toggle toggle-accent focus:outline-0  " ref={resolvedRef}  {...rest} />
+
+            </label>
+            <hr />
+        </div >
+    }
+)
+IndeterminateCheckbox.displayName = 'IndeterminateCheckbox'
+
+
+
+
+
+const CarsTable = ({ COLUMNS, AllProducts, initQuery }) => {
+
+    const session = useSession()
+    const router = useRouter()
+    const [Search, setSearch] = useState("");
+    const [Page, setPage] = useState(1);
+    const [Limit, setLimit] = useState(10);
+    const [PageS, setPageS] = useState(Math.ceil(AllProducts / Limit));
+    const [DataTable, setDataTable] = useState([]);
+    const [TotalCars, setTotalCars] = useState(AllProducts);
+    const [StartDate, setStartDate] = useState("2000-01-01");
+    const [EndDate, setEndDate] = useState("2500-01-01");
+    const l = useLanguage();
+
+
+
+    useEffect(() => {
+
+        if (session.status === 'authenticated') {
+            const GetCars = async () => {
+
+                try {
+
+                    const Auth = {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    }
+                    const one = `/qarz/${initQuery}/?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2200-01-01"}`
+
+
+                    const response1 = await Axios.get(one, Auth).then((res) => {
+                        return res
+                    }).catch(() => {
+                    });
+
+
+                    await axios.all([response1]).then(
+
+                        axios.spread((...responses) => {
+                            setDataTable(responses?.[0]?.data.qarzList || [])
+                            setPageS(Math.ceil(responses?.[0]?.data.total / Limit))
+
+                        })).catch((e) => {
+                            setDataTable([])
+                        })
+
+
+
+                } catch {
+
+
+                    setDataTable([])
+
+
+                }
+
+            }
+
+
+            GetCars()
+        }
+
+    }, [Search, Page, Limit, initQuery._id, session.status, StartDate, EndDate])
+
+
+
+
+    const table_2_pdf = () => {
+
+        const table = document.getElementById('table-to-xls')
+
+        let TH = []
+        const table_th = [...table.rows].map(r => [...r.querySelectorAll('th')].map((th) => (TH.push(th.children?.[0].innerText != "Details" ? th.children?.[0].innerText : ""))))
+        const table_td = [...table.rows].map((r) => [...r.querySelectorAll('td')].map(td => td.textContent))
+
+        const doc = new jsPDF("p", "mm", "a2");
+
+
+
+        doc.autoTable({
+            head: [TH],
+            body: table_td,
+
+        })
+
+
+        doc.save("Table_Cars.pdf");
+    };
+
+
+
+
+
+    const {
+        getTableProps,
+        getTableBodyProps,
+        headerGroups,
+        state,
+        allColumns,
+        getToggleHideAllColumnsProps,
+        page,
+        setPageSize,
+        prepareRow,
+
+    } = useTable({
+
+        columns: COLUMNS,
+        data: DataTable,
+        // defaultColumn: { Filter: DefaultColumnFilter },
+
+    }, useGlobalFilter, useFilters, useGroupBy, useSortBy, useExpanded, usePagination,
+
+    );
+
+    // const { globalFilter } = state;
+    const { pageIndex, pageSize } = state
+
+    return (
+        <div className="container mx-auto overflow-auto scrollbar-hide  ">
+
+
+
+            <div className=" flex justify-between  rounded-lg  items-center p-2 min-w-[700px] ">
+
+
+                <input type="search" placeholder={`${l.search} ...`} className="input  input-info  w-full max-w-xs  focus:outline-0"
+                    onChange={e =>
+                        setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
+                    }
+                />
+
+                <a href="#my-modal-2" className="btn btn-outline">{l.filter}</a>
+                <div className="modal" id="my-modal-2">
+                    <div className="modal-box m-2">
+                        <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} />
+                        <div className="font-bold text-lg overflow-auto max-h-52 scrollbar-hide space-y-2 ">
+                            {allColumns.map(column => (
+                                <div key={column.id}>
+                                    <div className=" w-full  rounded-lg   ">
+                                        <label className="cursor-pointer label">
+                                            {column.id}
+                                            <input type="checkbox" className="toggle toggle-accent focus:outline-0 " {...column.getToggleHiddenProps()} />
+
+                                        </label>
+                                    </div>
+
+                                </div>
+                            ))}
+
+
+                        </div>
+
+                        <div className="modal-action">
+                            <a href="#" className="btn">{l.don}</a>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+                <div className="flex justify-end ">
+
+                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left">
+                        <label tabIndex="0" className=" m-1 active:scale-9  ">
+                            <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 active:scale-9 " />
+                        </label>
+
+                        <ul tabIndex="0" className="dropdown-content  shadow bg-base-100 rounded-box w-52 flex justify-center  ">
+                            <li className="  py-2">
+
+                                <div className="space-y-1">
+                                    <h1>{l.from}</h1><input className="input input-bordered input-info  focus:outline-0 "
+                                        onChange={(e) => {
+                                            setStartDate(e.target.value)
+                                        }}
+                                        type="date"
+                                    />
+                                    <h1>{l.to}</h1>
+                                    <input className="input input-bordered input-info  focus:outline-0"
+                                        onChange={(e) => {
+                                            setEndDate(e.target.value)
+                                        }}
+                                        type="date"
+                                    />
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+
+
+
+                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left px-5 ">
+                        <label tabIndex="0" className=" m-1  " >
+                            <FontAwesomeIcon icon={faFileDownload} className="text-3xl m-auto md:mx-5 mx-1 active:scale-9   ease-in-out  transition" />
+                        </label>
+
+                        <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 flex justify-center space-y-2 ">
+                            <li>  <ReactHTMLTableToExcel
+                                id="test-table-xls-button"
+                                className="btn btn-outline download-table-xls-button"
+                                table="table-to-xls"
+                                filename="tablexls"
+                                sheet="tablexls"
+                                buttonText="XLSX" />  </li>
+
+                            <li><button className='btn btn-outline ' onClick={table_2_pdf}>PDF</button> </li>
+                        </ul>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+
+            <table id="table-to-xls" className="ml-1 my-10   " {...getTableProps()}>
+
+
+                <thead className="  ">
+
+                    {headerGroups.map((headerGroups, idx) => (
+
+                        <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
+
+                            {headerGroups.headers.map((column, idx) => (
+
+                                < th key={idx} className={`p-4 m-44 ${true && "min-w-[200px]"} `} {...column.getHeaderProps(column.getSortByToggleProps())} >
+                                    <span>{column.render('Header')}</span>
+                                    <span  >
+                                        {column.isSorted ? (column.isSortedDesc ? "<" : ">") : ""}
+                                    </span>
+                                </th>
+                            ))}
+                        </tr>
+                    )
+                    )
+                    }
+                </thead >
+                <tbody {...getTableBodyProps()}>
+
+                    {page.map((row, idx) => {
+
+                        prepareRow(row)
+                        return (
+                            <tr key={idx}   {...row.getRowProps()} >
+                                {row.cells.map((cell, idx) => {
+                                    return (
+
+
+                                        <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
+
+
+                                            {(cell.column.id != 'carId') && cell.render('Cell')}
+
+                                            {cell.column.id === 'carId' && (
+
+                                                <>
+                                                    <Link href={`/Dashboard/Balance/ListofOwe/${router.query._id}/details/${row.original?.carId?.id}?Qarz=${row.original.id}`}><a>{cell.value?.modeName || cell.value?.VINNumber || cell.value?.id}</a></Link>
+                                                </>
+
+                                            )
+                                            }
+                                            {cell.column.id === 'model' && (
+
+                                                <>
+                                                    <span className="">{row.original.carId?.model}</span>
+
+                                                </>
+
+                                            )
+                                            }
+                                            {cell.column.id === 'tocar' && (
+
+                                                <>
+                                                    <span className="">{row.original.carId?.tocar}</span>
+
+                                                </>
+
+                                            )
+                                            }
+                                            {cell.column.id === 'price' && (
+
+                                                <>
+                                                    <span className="">{row.original.carId?.price}</span>
+
+                                                </>
+
+                                            )
+                                            }
+                                            {cell.column.id === 'isSold' && (
+
+
+                                                row.original.carId?.isSold === true ?
+                                                    <span className="text-green-700">Yes</span>
+                                                    :
+                                                    <span className="text-red-700">No</span>
+
+
+                                            )
+                                            }
+
+
+                                            {cell.column.id === 'isPaid' && (
+
+                                                cell.value === true ?
+                                                    <span className="text-green-700">Yes</span>
+                                                    :
+                                                    <span className="text-red-700">No</span>
+
+                                            )}
+                                            {cell.column.id === "Details" &&
+
+                                                <Link href={`/Dashboard/Balance/ListofOwe/${router.query._id}/details/${row.original?.carId?.id}?Qarz=${row.original?.id}`}><a  >
+                                                    <label>
+                                                        <FontAwesomeIcon icon={faEye} className="text-2xl cursor-pointer text-blue-800 " />
+                                                    </label>
+                                                </a>
+                                                </Link>
+
+                                            }
+
+
+
+                                        </td>
+
+                                    )
+                                })}
+
+                            </tr>
+                        )
+                    }
+
+                    )}
+
+                </tbody>
+
+
+            </table>
+
+            <div className=" flex justify-between container mx-auto items-center rounded-xl p-3  px-1 mb-20  min-w-[700px]">
+                <div className=" flex   justify-around mx-5 text-lg items-center     ">
+
+                    <span className="px-3">
+                        {l.page}{" " + Page}/{PageS}
+                    </span>
+
+
+                    <div>
+                        <select className="select select-info  w-full max-w-xs focus:outline-0"
+                            onChange={(e) => {
+                                setLimit((e.target.value))
+                                setPageSize(Number(e.target.value)
+                                )
+                            }}
+
+                            value={pageSize}>
+                            {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
+                                <option key={idx} value={pageSize}>
+                                    {l.show} ({(pageSize !== 100000) ? pageSize : l.all})
+                                </option>))
+                            }
+
+                        </select>
+                    </div>
+                </div>
+
+
+
+
+                <div className="space-x-3  overflow-auto inline-flex  scrollbar-hide ">
+                    <div></div>
+
+
+
+                    <button className="btn w-2 h-2 btn-info border-0  " onClick={() =>
+                        setPage(1)
+                    }
+                        disabled={
+                            Page == 1 ? true : false
+                        }
+                    >{"<<"} </button>
+
+
+                    <button className="btn w-2 h-2 btn-info" onClick={() =>
+                        setPage(Page - 1)
+                    }
+                        disabled={
+                            Page <= 1 ? true : false
+
+                        }
+                    >{"<"}
+                    </button>
+
+
+                    <button className="btn w-2 h-2 btn-info" onClick={() =>
+                        Page >= 1 && setPage(Page + 1)
+                    }
+                        disabled={
+                            Page >= PageS ? true : false
+                        }
+                    >{">"} </button>
+
+
+                    <button className="btn w-2 h-2 btn-info "
+                        onClick={() =>
+                            Page >= 1 && setPage(PageS)
+                        }
+                        disabled={
+                            Page >= PageS ? true : false
+                        }
+                    >{">>"} </button>
+
+
+
+                </div>
+
+
+
+            </div>
+
+
+        </div >
+
+    );
+
+
+}
+
+
+
+const TableBal = ({ COLUMNS, AllBal }) => {
+    const session = useSession()
+    const [ReNewData, setReNewData] = useState(false);
+    const router = useRouter()
+
+    const [Search, setSearch] = useState("");
+    const [Page, setPage] = useState(1);
+    const [Limit, setLimit] = useState(10);
+    const [StartDate, setStartDate] = useState("2000-01-01");
+    const [EndDate, setEndDate] = useState("2500-01-01");
+    const [PageS, setPageS] = useState(Math.ceil(AllBal / Limit));
+    const [DataTable, setDataTable] = useState([]);
+
+
+    const l = useLanguage();
+
+
+
+
+    useEffect(() => {
+
+        if (session.status === "authenticated") {
+            const getQarzData = async () => {
+                try {
+                    const res = await Axios.get(`/bal/${router.query._id}/?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate || '2000-01-01'}&edate${EndDate || "2500-01-01"}`, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
+
+
+                    console.log(res.data)
+
+                    setDataTable(res.data.History)
+                    setPageS(Math.ceil(res.data.total / Limit))
+                } catch (e) {
+
+                    setDataTable([])
+                }
+            }
+            getQarzData()
+            setReNewData(false)
+        }
+    }, [Search, Page, Limit, StartDate, EndDate, ReNewData, session.status])
+
+
+
+
+
+
+
+
+    const table_2_pdf = () => {
+
+        const table = document.getElementById('table-to-xls')
+        // const table_th = [...table.rows].map(r => [...r.querySelectorAll('th')].map((th) => (th.textContent) !== "Edit" && (th.textContent) !== "Delete" ? th.textContent : null))
+        const table_td = [...table.rows].map((r) => [...r.querySelectorAll('td')].map(td => td.textContent))
+
+        // }
+        const doc = new jsPDF("p", "mm", "a3");
+        doc.text(`Data{ Hawbir }`, 95, 10);
+
+        doc.autoTable({
+
+
+            head: [[`Amount`, " User Id", "Action", "Note", "Date"]],
+            body: table_td
+        });
+
+
+        doc.save("Table.pdf");
+    };
+
+
+
+
+
+    const {
+
+
+        getTableProps,
+        getTableBodyProps,
+        headerGroups,
+        state,
+        page,
+        setPageSize,
+        prepareRow,
+
+    } = useTable({
+
+        columns: COLUMNS,
+        data: DataTable,
+        // defaultColumn: { Filter: DefaultColumnFilter },
+
+    }, useGlobalFilter, useFilters, useGroupBy, useSortBy, useExpanded, usePagination,
+
+    );
+
+    // const { globalFilter } = state;
+    const { pageIndex, pageSize } = state
+
+
+    return (
+        <div className=" container mx-auto  overflow-auto ">
+
+
+
+            <div className=" flex justify-between   container mx-auto items-center p-2 min-w-[700px] ">
+
+
+                <div className="flex">
+
+                    <input type="search" placeholder={`${l.search} ...`} className="input   input-info  w-full max-w-xs mx-5 focus:outline-0"
+                        onChange={e =>
+                            setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
+                        }
+                    />
+                </div>
+
+
+                <div className="flex justify-center items-center lg:space-x-4 ">
+
+
+                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left ">
+
+                        {/* //TODO -  fix Date */}
+                        <label tabIndex="0" className=" m-1 active:scale-95 ">
+                            <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 active:scale-95 " />
+                        </label>
+
+                        <ul tabIndex="0" className="dropdown-content  shadow bg-base-100 rounded-box w-52 flex justify-center   ">
+                            <li className="  py-2">
+
+                                <div className="space-y-1">
+                                    <h1>{l.from}</h1><input className="input input-bordered input-info "
+                                        onChange={(e) => {
+                                            setStartDate(e.target.value)
+                                        }}
+                                        type="date"
+                                    />
+                                    <h1>{l.to}</h1>
+                                    <input className="input input-bordered input-info "
+                                        onChange={(e) => {
+                                            setEndDate(e.target.value)
+                                        }}
+                                        type="date"
+                                    />
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+
+
+                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left ">
+                        <label tabIndex="0" className=" m-1  " >
+                            <FontAwesomeIcon icon={faFileDownload} className="text-3xl m-auto md:mx-5 mx-1 active:scale-90   ease-in-out  transition" />
+                        </label>
+
+                        <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 flex justify-center space-y-2 ">
+                            <li>  <ReactHTMLTableToExcel
+                                id="test-table-xls-button"
+                                className="btn btn-outline download-table-xls-button"
+                                table="table-to-xls"
+                                filename="tablexls"
+                                sheet="tablexls"
+                                buttonText="XLSX" />  </li>
+
+                            <li><button className='btn btn-outline ' onClick={table_2_pdf}>PDF</button> </li>
+                            {/* <li><button className='btn btn-outline' onClick={table_All_pdff}>ALL_PDF</button> </li> */}
+                        </ul>
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <table id="table-to-xls" className="my-10  inline-block   min-w-[1000px] " {...getTableProps()}>
+
+
+                <thead className="  ">
+
+                    {headerGroups.map((headerGroups, idx) => (
+
+                        <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
+
+                            {headerGroups.headers.map((column, idx) => (
+
+                                <th key={idx} className="p-4 m-44 w-[400px]   " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
+
+                                    <span>
+                                        {column.isSorted ? (column.isSortedDesc ? " ↑ " : " 🡓 ") : ""}
+
+                                    </span>
+
+
+
+                                </th>
+
+
+
+                            ))}
+
+                        </tr>
+
+                    )
+                    )
+
+
+                    }
+
+                </thead >
+
+
+                <tbody {...getTableBodyProps()}>
+
+                    {page.map((row, idx) => {
+                        prepareRow(row)
+                        return (
+                            <tr key={idx}   {...row.getRowProps()} >
+                                {row.cells.map((cell, idx) => {
+                                    return (
+
+                                        <td key={idx} className="  text-center   py-3 overflow-auto" {...cell.getCellProps()}>
+
+                                            {console.log(cell.column.id)}
+
+                                            {cell.column.id === 'amount' && (
+                                                <>
+                                                    {cell.value >= 0 ? <div className="text-green-700">{cell.value}</div> : <div className="text-red-700">{cell.value}</div>
+                                                    } </>
+                                            )}
+
+                                            {cell.column.id === 'isPaid' && (
+                                                <>
+
+
+                                                    {cell.value == true ?
+                                                        <div className="text-green-700">Yes</div> : cell.value == false ? <div className="text-red-700">No</div> : null}
+
+
+
+
+                                                </>
+
+                                            )}
+
+                                            {cell.column.id === 'carId' && (
+                                                <>
+
+                                                    <Link href={`/Dashboard/Balance/ListofOwe/${router.query._id}`}><a className="text-orange-700">{cell.value?.modeName || cell.value?.VINNumber || cell.value?.id}</a></Link>
+                                                </>
+
+                                            )
+                                            }
+                                            {
+                                                (cell.column.id === 'amount' || cell.column.id === 'carId') || cell.render('Cell')
+                                            }
+
+
+                                        </td>
+
+                                    )
+                                })}
+
+                            </tr>
+                        )
+                    }
+
+                    )}
+
+                </tbody>
+
+
+            </table>
+
+            <div className="botom_Of_Table" >
+
+                <div className=" flex justify-between container mx-auto items-center   p-3  px-1 mb-20  min-w-[700px] ">
+
+
+
+                    <div className=" flex   justify-around mx-5 text-lg items-center     ">
+
+
+                        <span className="px-3">
+                            {l.page}{" " + Page}/{PageS}
+                        </span>
+
+                        <div>
+                            <select className="select select-info  w-full max-w-xs focus:outline-0"
+                                onChange={(e) => {
+                                    setLimit((e.target.value))
+                                    setPageSize(Number(e.target.value)
+                                    )
+                                }}
+
+                                value={pageSize}>
+                                {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
+                                    <option key={idx} value={pageSize}>
+                                        {l.show} ({(pageSize !== 100000) ? pageSize : l.all})
+                                    </option>))
+                                }
+
+                            </select>
+                        </div>
+                    </div>
+
+
+
+
+                    <div className="space-x-3  overflow-auto inline-flex  scrollbar-hide ">
+                        <div></div>
+
+
+
+                        <button className="btn w-2 h-2 btn-info border-0  " onClick={() =>
+                            setPage(1)
+                        }
+                            disabled={
+                                Page == 1 ? true : false
+                            }
+                        >{"<<"} </button>
+
+
+                        <button className="btn w-2 h-2 btn-info" onClick={() =>
+                            setPage(Page - 1)
+                        }
+                            disabled={
+                                Page <= 1 ? true : false
+
+                            }
+                        >{"<"}
+                        </button>
+
+
+                        <button className="btn w-2 h-2 btn-info" onClick={() =>
+                            Page >= 1 && setPage(Page + 1)
+                        }
+                            disabled={
+                                Page >= PageS ? true : false
+                            }
+                        >{">"} </button>
+
+
+                        <button className="btn w-2 h-2 btn-info "
+                            onClick={() =>
+                                Page >= 1 && setPage(PageS)
+                            }
+                            disabled={
+                                Page >= PageS ? true : false
+                            }
+                        >{">>"} </button>
+
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+        </div >
+
+    );
+
+
+}
 
 
 

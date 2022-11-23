@@ -31,21 +31,7 @@ export async function getServerSideProps({ req, query }) {
     }
 
     let data = 1
-    // try {
-    //     const res = Axios.get(`/users/?search=&page=1&limit=10`, {
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             'Authorization': `Bearer ${session?.Token}`
-    //         },
-    //     })
-    //     data = await res.data.total
 
-
-    // } catch (err) {
-    //     data = ""
-
-
-    // }
 
     return {
         props: {
@@ -281,64 +267,167 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
     const handleUpdateUser = async () => {
+        const auth = {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${session?.data?.Token}`
+            },
+        }
 
 
+        if (Idofrow?.[3] == "Reseller" && DataUpdate.userRole == "Qarz") {
 
-        if (Idofrow?.[3] == "Reseller" && DataUpdate.userRole !== "Reseller") {
-
-            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${session?.data?.Token}`
-                }
-            },)
-
-
-
-
+            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, auth)
 
             const DataBalance = UDetails.data.userDetail.TotalBals
 
-
             try {
-                await Axios.patch('/users/' + SessionID, { "TotalBals": Math.floor(DataBalance) + Math.floor(Idofrow?.[1]) }, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
 
-                toast.success("Your Balance Now= " + (Math.floor(DataBalance) + Math.floor(Idofrow?.[1])) + " $");
+                const res1 = await Axios.patch('/users/' + SessionID, { "TotalBals": Math.floor(DataBalance) + Math.floor(Idofrow?.[1]) + DataUpdate.TotalBals }, auth)
+                const res2 = await Axios.patch(`/users/${Idofrow?.[0]}`, DataUpdate, auth)
+                const res3 = await Axios.post("/bal/", {
+                    amount: Math.floor(Idofrow?.[1]) + DataUpdate.TotalBals,
+                    action: "Update",
+                    userId: Idofrow?.[0]
+                }, auth)
 
-
-                await Axios.post("/bal/",
-                    {
-                        amount: Math.floor(Idofrow?.[1]),
-                        action: "Update",
-                        userId: Idofrow?.[0]
-                    }, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
-
-
-
-
-                try {
-                    await Axios.patch(`/users/${Idofrow?.[0]}`, DataUpdate, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': `Bearer ${session?.data?.Token}`
-                        },
-                    })
+                await axios.all([res1, res2, res3]).then(axios.spread((...responses) => {
 
                     toast.success("User Updated Successfully")
+                    toast.success("Your Balance Now= " + (Math.floor(DataBalance) + Math.floor(Idofrow?.[1] + DataUpdate.TotalBals)) + " $");
+                    setReNewData(true)
 
-                } catch (error) {
+                })).catch(() => {
                     toast.error("Something Went Wrong *")
+                })
 
+            } catch {
+                toast.error(" error to update user * ")
+            }
+        }
+
+        if (Idofrow?.[3] == "Qarz" && DataUpdate.userRole == "Reseller") {
+
+            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, auth)
+
+            const DataBalance = UDetails.data.userDetail.TotalBals
+
+            if (DataBalance >= (Idofrow?.[1] + DataUpdate.TotalBals)) {
+                try {
+
+                    const res1 = await Axios.patch('/users/' + SessionID, { "TotalBals": Math.floor(DataBalance) - Math.floor(Idofrow?.[1]) - DataUpdate.TotalBals }, auth)
+                    const res2 = await Axios.patch(`/users/${Idofrow?.[0]}`, DataUpdate, auth)
+                    const res3 = await Axios.post("/bal/", {
+                        amount: - Math.floor(Idofrow?.[1]) - DataUpdate.TotalBals,
+                        action: "Update",
+                        userId: Idofrow?.[0]
+                    }, auth)
+
+                    await axios.all([res1, res2, res3]).then(axios.spread((...responses) => {
+
+                        toast.success("User Updated Successfully")
+                        toast.success("Your Balance Now= " + (Math.floor(DataBalance) - Math.floor(Idofrow?.[1]) - DataUpdate.TotalBals) + " $");
+
+                    })).catch(() => {
+                        toast.error("Something Went Wrong *")
+                    })
+
+                } catch {
+                    toast.error(" error to update user * ")
+                }
+            }
+            else {
+                toast.error("You Dont Have Enough Balance *")
+            }
+        }
+
+        else if (Idofrow?.[3] == "Reseller" && DataUpdate.userRole == "Reseller") {
+
+            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, auth)
+
+            const DataBalance = UDetails.data.userDetail.TotalBals
+
+            const donebalnace = Math.floor(DataUpdate.TotalBals) - Math.floor(Idofrow?.[1])
+
+            if (donebalnace <= DataBalance) {
+
+                try {
+                    const res1 = await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - donebalnace }, auth)
+                    const res2 = await Axios.patch(`/users/${Idofrow?.[0]}`, DataUpdate, auth)
+                    const res3 = await Axios.post("/bal/",
+                        {
+                            amount: -donebalnace,
+                            action: "Update",
+                            userId: Idofrow?.[0]
+                        }, auth)
+
+                    await axios.all([res1, res2, res3]).then((() => {
+                        toast.success("User Updated Successfully")
+                        toast.success("Your Balance Now= " + (DataBalance - donebalnace) + " $");
+
+                    })).catch(() => {
+                        toast.error(" error to update user * ")
+
+                    })
+
+                } catch {
+                    toast.error(" error to update user * ")
+                }
+                finally {
+                    setIdofrow(null);
+                    setDeletestate(null);
+                    setData({
+                        userName: "",
+                        email: "",
+                        password: "",
+                        userRole: "",
+                        TotalBals: "",
+                    });
+                    setReNewData(true)
+
+                }
+
+
+
+
+            }
+
+
+
+
+        }
+
+        else if (Idofrow?.[3] == "Qarz" && DataUpdate.userRole == "Qarz") {
+
+            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, auth)
+
+            const DataBalance = UDetails.data.userDetail.TotalBals
+
+            const donebalnace = Math.floor(Idofrow?.[1]) - Math.floor(DataUpdate.TotalBals)
+
+            if (donebalnace <= DataBalance) {
+
+                try {
+                    const res1 = await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - donebalnace }, auth)
+                    const res2 = await Axios.patch(`/users/${Idofrow?.[0]}`, DataUpdate, auth)
+                    const res3 = await Axios.post("/bal/",
+                        {
+                            amount: -donebalnace,
+                            action: "Update",
+                            userId: Idofrow?.[0]
+                        }, auth)
+
+                    await axios.all([res1, res2, res3]).then(axios.spread((...responses) => {
+                        toast.success("User Updated Successfully")
+                        toast.success("Your Balance Now= " + (DataBalance - donebalnace) + " $");
+
+                    })).catch(() => {
+                        toast.error(" error to update user * ")
+
+                    })
+
+                } catch {
+                    toast.error(" error to update user * ")
                 } finally {
 
                     setIdofrow(null);
@@ -350,8 +439,6 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                         userRole: "",
                         TotalBals: "",
                     });
-
-                    // getUsers()
                     setReNewData(true)
 
                 }
@@ -359,202 +446,54 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
 
-
-
-
-
-            } catch {
-                toast.error(" error to update user * ")
             }
+
+
+
+
         }
 
+    }
 
-        else if (Idofrow?.[3] == "Reseller" && DataUpdate.userRole == "Reseller") {
+    const handledeleteUser = async () => {
+        const auth = {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${session?.data?.Token}`
+            },
+        }
 
-            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${session?.data?.Token}`
-                }
-            },)
+        if (Deletestate?.[3] == "Reseller") {
 
+            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, auth)
 
             const DataBalance = UDetails.data.userDetail.TotalBals
-
-            const donebalnace = Math.floor(DataUpdate.TotalBals) - Math.floor(Idofrow?.[1])
-
-            if (donebalnace <= DataBalance) {
-
-                try {
-                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - donebalnace }, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': `Bearer ${session?.data?.Token}`
-                        }
-                    },)
-
-                    toast.success("Your Balance Now= " + (DataBalance - donebalnace) + " $");
-
-
-
-
-                    await Axios.post("/bal/",
-                        {
-                            amount: -donebalnace,
-                            action: "Update",
-                            userId: Idofrow?.[0]
-                        }, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': `Bearer ${session?.data?.Token}`
-                        }
-                    },)
-
-                    try {
-                        await Axios.patch(`/users/${Idofrow?.[0]}`, DataUpdate, {
-                            headers: {
-                                "Content-Type": "application/json",
-                                'Authorization': `Bearer ${session?.data?.Token}`
-                            },
-                        })
-
-                        toast.success("User Updated Successfully")
-
-                    } catch (error) {
-                        toast.error("Something Went Wrong *")
-
-                    } finally {
-
-                        setIdofrow(null);
-                        setDeletestate(null);
-                        setData({
-                            userName: "",
-                            email: "",
-                            password: "",
-                            userRole: "",
-                            TotalBals: "",
-                        });
-
-                        // getUsers()
-                        setReNewData(true)
-
-                    }
-
-                } catch {
-                    toast.error(" error to update user * ")
-                }
-
-
-
-
-            }
-
-
-
-
-        }
-
-
-
-        else if (Idofrow?.[3] !== "Reseller" && DataUpdate.userRole == "Reseller") {
-
-            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${session?.data?.Token}`
-                }
-            },)
-
-
-            const DataBalance = UDetails.data.userDetail.TotalBals
-
-
-            if (DataUpdate.TotalBals <= DataBalance) {
-
-                try {
-                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - DataUpdate.TotalBals }, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': `Bearer ${session?.data?.Token}`
-                        }
-                    },)
-
-                    toast.success("Your Balance Now= " + (DataBalance - DataUpdate.TotalBals) + " $");
-
-
-                    await Axios.post("/bal/",
-                        {
-                            amount: -DataUpdate.TotalBals,
-                            action: "updated to " + Idofrow?.[2]
-                        }, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': `Bearer ${session?.data?.Token}`
-                        }
-                    },)
-
-                    try {
-                        await Axios.patch(`/users/${Idofrow?.[0]}`, DataUpdate, {
-                            headers: {
-                                "Content-Type": "application/json",
-                                'Authorization': `Bearer ${session?.data?.Token}`
-                            },
-                        })
-
-                        toast.success("User Updated Successfully")
-
-                    } catch (error) {
-                        toast.error("Something Went Wrong *")
-
-                    } finally {
-
-                        setIdofrow(null);
-                        setDeletestate(null);
-                        setData({
-                            userName: "",
-                            email: "",
-                            password: "",
-                            userRole: "",
-                            TotalBals: "",
-                        });
-
-                        // getUsers()
-                        setReNewData(true)
-
-                    }
-
-                } catch {
-                    toast.error(" error to update user * ")
-                }
-
-
-
-
-            }
-
-
-
-
-        }
-
-
-        else if (Idofrow?.[3] !== "Reseller" && DataUpdate.userRole !== "Reseller") {
 
             try {
-                await Axios.patch(`/users/${Idofrow?.[0]}`, DataUpdate, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    },
+                const res1 = Axios.delete(`/users/${Deletestate?.[0]}`, auth)
+                const res2 = Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance + Deletestate?.[1] }, auth)
+                const res3 = Axios.post("/bal/",
+                    {
+                        userId: session?.data?.id,
+                        amount: Math.floor(Deletestate?.[1]),
+                        action: "Tooken",
+                    }, auth)
+
+                await axios.all([res1, res2, res3]).then(() => {
+
+                    toast.success("User Deleted Successfully")
+                    toast.success("Your Balance Now= " + (DataBalance + Deletestate?.[1]) + " $");
+
+                }).catch(() => {
+                    toast.error("Something Went Wrong *")
+
                 })
 
-                toast.success("User Updated Successfully")
 
             } catch (error) {
                 toast.error("Something Went Wrong *")
 
             } finally {
-
                 setIdofrow(null);
                 setDeletestate(null);
                 setData({
@@ -564,114 +503,76 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                     userRole: "",
                     TotalBals: "",
                 });
-
-                // getUsers()
                 setReNewData(true)
-
             }
+
+
         }
+        if (Deletestate?.[3] == "Qarz") {
 
-
-    }
-
-    const handledeleteUser = async () => {
-
-
-        if (Deletestate?.[3] == "Reseller") {
-            //FIXME - change Email to Id
-
-            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${session?.data?.Token}`
-                }
-            },)
-
+            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, auth,)
 
             const DataBalance = UDetails.data.userDetail.TotalBals
 
-            // let donebalance = Math.floor(DataUpdate.cost) - Math.floor(Idofrow?.[1])
+            if (Deletestate?.[1] <= DataBalance) {
+                try {
+
+                    const res1 = Axios.delete(`/users/${Deletestate?.[0]}`, auth)
+                    const res2 = Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - Deletestate?.[1] }, auth)
+                    const res3 = Axios.post("/bal/",
+                        {
+                            userId: session?.data?.id,
+                            amount: -Math.floor(Deletestate?.[1]),
+                            action: "Gived",
+                        }, auth)
+
+                    await axios.all([res1, res2, res3]).then(() => {
+
+                        toast.success("User Deleted Successfully")
+                        toast.success("Your Balance Now= " + (DataBalance - Deletestate?.[1]) + " $");
+
+                    }).catch(() => {
+
+                    })
 
 
-            try {
-                await Axios.delete(`/users/${Deletestate?.[0]}`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    },
-                })
-                toast.success("User Deleted Successfully")
 
 
-                await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance + Deletestate?.[1] }, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
 
-                toast.success("Your Balance Now= " + (DataBalance + Deletestate?.[1]) + " $");
+                } catch (error) {
+
+                } finally {
+                    setIdofrow(null);
+                    setDeletestate(null);
+                    setData({
+                        userName: "",
+                        email: "",
+                        password: "",
+                        userRole: "",
+                        TotalBals: "",
+                    });
+                    setReNewData(true)
+                }
 
 
-                await Axios.post("/bal/",
-                    {
-                        amount: Math.floor(Deletestate?.[1]),
-                        action: "Tooken",
-                    }, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
-
-            } catch (error) {
-                //
-            } finally {
-                //
-                setIdofrow(null);
-                setDeletestate(null);
-                setData({
-                    userName: "",
-                    email: "",
-                    password: "",
-                    userRole: "",
-                    TotalBals: "",
-                });
-                // getUsers()
-                setReNewData(true)
             }
-
-
         }
 
 
 
-        if (Deletestate?.[3] != "Reseller") {
+        if (Deletestate?.[3] == "Admin") {
 
 
             try {
-                await Axios.delete(`/users/${Deletestate?.[0]}`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    },
-                })
+                await Axios.delete(`/users/${Deletestate?.[0]}`, auth)
                 toast.success("User Deleted Successfully")
 
             } catch (error) {
-                //
+                toast.error("Something Went Wrong *")
+
             } finally {
-                //
                 setIdofrow(null);
                 setDeletestate(null);
-                setData({
-                    userName: "",
-                    email: "",
-                    password: "",
-                    userRole: "",
-                    TotalBals: "",
-                });
-                // getUsers()
                 setReNewData(true)
             }
         }
@@ -686,22 +587,21 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
         (typeof document !== "undefined") && (document.getElementById("my-modal").click())
-
+        const auth = {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${session?.data?.Token}`
+            }
+        }
 
 
         if (Data.userRole == "Reseller") {
 
-            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${session?.data?.Token}`
-                }
-            },)
+            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, auth,)
 
 
             const DataBalance = UDetails.data.userDetail.TotalBals
 
-            // let donebalance = Math.floor(DataUpdate.cost) - Math.floor(Idofrow?.[1])
 
             if (Data.TotalBals <= DataBalance) {
 
@@ -710,40 +610,22 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
 
-                    await Axios.post("/users/signup/", Data, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': `Bearer ${session?.data?.Token}`
-                        },
-                    })
+                    await Axios.post("/users/signup/", Data, auth)
 
 
 
-                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - Data.TotalBals }, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': `Bearer ${session?.data?.Token}`
-                        }
-                    },)
+                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - Data.TotalBals }, auth,)
 
                     toast.success("Your Balance Now= " + (DataBalance - Data.TotalBals) + " $");
 
 
-                    await Axios.post("/bal/",
-                        {
-                            amount: -Data.TotalBals,
-                            action: "Gived",
-                            // userId: Data.email
-                        }, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': `Bearer ${session?.data?.Token}`
-                        }
-                    },)
+                    await Axios.post("/bal/", {
+                        amount: -Data.TotalBals,
+                        userId: session?.data.id,
+                        action: "Gived",
+                        note: Data.userName,
 
-
-
-
+                    }, auth,)
 
 
                     toast.success("User added Successfully");
@@ -763,8 +645,63 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
             }
 
         }
+        else if (Data.userRole == "Qarz") {
 
-        else if (Data.userRole != "Reseller") {
+            const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, auth,)
+
+
+            const DataBalance = UDetails.data.userDetail.TotalBals
+
+
+            if (Data.TotalBals <= DataBalance) {
+
+                try {
+
+                    const one = `/users/signup/`
+                    const two = `/users/${SessionID}`
+                    const thre = `/bal/`
+
+
+                    const res1 = Axios.post(one, Data, auth)
+
+
+
+                    const res2 = Axios.patch(two + SessionID, { "TotalBals": DataBalance + Data.TotalBals }, auth,)
+
+
+
+                    const res3 = Axios.post(thre,
+                        {
+                            userId: session?.data?.id,
+                            amount: Data.TotalBals,
+                            action: "Tooken",
+                            note: Data.userName,
+
+                        }, auth,)
+
+
+                    await axios.all([res1, res2, res3]).then((...res) => {
+                        toast.success("Your Balance Now= " + (DataBalance + Data.TotalBals) + " $");
+                        toast.success("User added Successfully");
+                    }).catch((err) => {
+
+                    })
+
+
+
+                } catch (error) {
+                    error.request.status === 409 ? toast.error("User Already Exist") :
+                        toast.error("User Not Added *");
+                }
+                setReNewData(true)
+            }
+            else {
+                toast.error("balance not enough")
+            }
+
+        }
+
+        else if (Data.userRole != "Admin") {
 
             try {
 
@@ -782,8 +719,6 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                 error.request.status === 409 ? toast.error("User Already Exist") :
                     toast.error("User Not Added");
             } finally {
-
-                // getUsers()
                 setReNewData(true)
                 setData({
                     userName: "",
@@ -879,51 +814,44 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
     const handleUpdateUserAdmin = async () => {
 
         try {
-            await Axios.patch(`/users/${session?.data?.id}`, {
-                password: DataUpdateAdmin.password,
-                email: DataUpdateAdmin.email,
-                userName: DataUpdateAdmin.userName,
-                TotalBals: DataUpdateAdmin.TotalBals
-            }, {
+
+            const one = `/users/${session?.data?.id}`
+            const two = `/bal/`
+            const auth = {
                 headers: {
                     "Content-Type": "application/json",
                     'Authorization': `Bearer ${session?.data?.Token}`
                 },
-            })
-            toast.success("Admin Updated Successfully")
+            }
+            const res1 = await Axios.patch(`/users/${session?.data?.id}`, {
+                password: DataUpdateAdmin.password,
+                email: DataUpdateAdmin.email,
+                userName: DataUpdateAdmin.userName,
+                TotalBals: DataUpdateAdmin.TotalBals
+            }, auth)
 
-            await Axios.post("/bal/",
+            const res2 = await Axios.post("/bal/",
                 {
                     amount: DataUpdateAdmin.TotalBals,
                     action: "Reseated",
                     userId: session?.data?.id
 
-                }, {
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${session?.data?.Token}`
-                }
-            },)
+                }, auth,)
 
+            await axios.all([res1, res2]).then((...res) => {
 
-            signOut({ callbackUrl: '/Login', redirect: true });
+                toast.success("Admin Updated Successfully")
+                signOut({ callbackUrl: '/Login', redirect: true });
+
+            }).catch(() => {
+                toast.error("Something Went Wrong *")
+
+            })
 
         } catch (error) {
             toast.error("Something Went Wrong *")
 
-        } finally {
-
-            setIdofrow(null);
-            setDeletestate(null);
-            setDataUpdateAdmin({
-                userName: "",
-                email: "",
-                password: "",
-                TotalBals: "",
-            });
-            setReNewData(true)
         }
-
 
 
     }
@@ -959,17 +887,8 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        footerGroups,
         state,
-        setGlobalFilter,
-        canNextPage,
-        canPreviousPage,
-        pageOptions,
-        gotoPage,
-        pageCount,
         page,
-        nextPage,
-        previousPage,
         setPageSize,
         prepareRow,
 

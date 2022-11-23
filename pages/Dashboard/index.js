@@ -86,22 +86,23 @@ const Dashboard = (props) => {
 
                 const requestOne = Axios.get(one, Auth).then((res) => {
                     return res
-                }).catch(() => {
+                }).catch((e) => {
 
                 })
                 const requestTwo = Axios.get(two, Auth).then((res) => {
                     return res
-                }).catch(() => {
+                }).catch((e) => {
 
                 })
                 const requestThree = Axios.get(three, Auth).then((res) => {
                     return res
-                }).catch(() => {
+                }).catch((e) => {
 
                 })
                 const requestForth = Axios.get(Forth, Auth).then((res) => {
                     return res
                 }).catch((e) => {
+
                 })
 
                 await axios.all([requestOne, requestThree, requestTwo, requestForth]).

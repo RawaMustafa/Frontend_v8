@@ -1,26 +1,20 @@
 
 import useLanguage from '../../../Component/language';
 import AdminLayout from '../../../Layouts/AdminLayout';
-// import Image from "next/image";
 import Head from 'next/head'
 import { useState, useEffect, useRef } from "react"
-
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-
 import { faRedo, faUndo, faTrashAlt, faSave, faPaintBrush, faCircle, faSquare, faPenNib, faPalette, faPaintRoller, faGear, faWandMagicSparkles, faCheck } from '@fortawesome/free-solid-svg-icons';
-
 import { faCircle as farFaCoffee, faSquare as farfaSquare, } from '@fortawesome/free-regular-svg-icons'
-
 import $ from 'jquery';
-
 import axios from "axios"
 import Axios from "../../api/Axios";
-
 import { ToastContainer, toast, } from 'react-toastify';
-
-
-
 import { getSession, useSession } from "next-auth/react";
+
+
+
+
 
 export const getServerSideProps = async ({ req }) => {
     const session = await getSession({ req })
@@ -36,6 +30,9 @@ export const getServerSideProps = async ({ req }) => {
 
         }
     }
+
+
+
     return {
         props: {
             SessionID: session.id,
@@ -68,6 +65,7 @@ const NewCars = ({ SessionID }) => {
     const [pictureandvideorepair, setPictureandvideorepair] = useState([])
     const [pictureandvideodamage, setPictureandvideodamage] = useState([])
     const [CarDamage, setCarDamage] = useState([])
+    const [Note, setNote] = useState('')
     const [QarzUserId, setQarzUserId] = useState("")
     const [IsCanvasChanged, setIsCanvasChanged] = useState(1)
 
@@ -164,8 +162,6 @@ const NewCars = ({ SessionID }) => {
 
 
     }, [Data.Tocar, page])
-
-
 
     var size = rangee
 
@@ -477,8 +473,6 @@ const NewCars = ({ SessionID }) => {
 
 
 
-
-
     var restore = (function () {
 
         const image = new Image()
@@ -557,9 +551,6 @@ const NewCars = ({ SessionID }) => {
         }
     });
 
-
-
-
     const to_image = () => {
         if (typeof window !== 'undefined') {
 
@@ -615,8 +606,9 @@ const NewCars = ({ SessionID }) => {
 
     }
 
-
-
+    //*----------------------------------------\---\----\---\----\---\----\---\----\---\--------------------------------------------------------------------------------------
+    //*------------------------------------------\---\----\---\----\---\----\---\----\---\------------------------------------------------------------------------------------
+    //*--------------------------------------------\---\----\---\----\---\----\---\----\---\----------------------------------------------------------------------------------
 
     const HandleAddCars = (event) => {
 
@@ -657,7 +649,6 @@ const NewCars = ({ SessionID }) => {
     }
 
 
-
     const DataUpload =
     {
 
@@ -671,12 +662,10 @@ const NewCars = ({ SessionID }) => {
         "VINNumber": Data.VINNumber || 0,
         "WheelDriveType": Data.WheelDriveType || 0,
         "PricePaidbid": Data.PricePaidbid || 0,
-        // // //"UserGiven": Data.UserGiven,
-
+        // //"UserGiven": Data.UserGiven,
         "Tobalance": Data.Tobalance || "Cash",
         "Tire": Data.Tire || "No Data",
         "Date": Data.Date?.[0] || "2022-01-01",
-        // "Date": "iuywgado78wgad087aouybsdty79vwa6789d",
         "Arrived": Data.Arrived || false,
         "FeesinAmericaStoragefee": Data.FeesinAmericaStoragefee || 0,
         "FeesinAmericaCopartorIAAfee": Data.FeesinAmericaCopartorIAAfee || 0,
@@ -704,7 +693,6 @@ const NewCars = ({ SessionID }) => {
 
     }
 
-
     const postCarsId = async () => {
 
 
@@ -725,23 +713,21 @@ const NewCars = ({ SessionID }) => {
 
 
         try {
-            //FIXME -  chage Email to Id
-            const UDetails = await Axios.get(`/users/detail/${SessionID}`, {
-                headers: {
-                    "Content-Type": "application/json",
 
+            const auth = {
+                headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session?.data?.Token}`
                 }
-            },)
+            }
 
+            const UDetails = await Axios.get(`/users/detail/${SessionID}`, auth)
 
 
 
             let DataBalance = UDetails.data.userDetail.TotalBals
 
 
-
-            //Tobalnce .............  
             // save image from canvas
             if (typeof document != "undefined") {
                 var canvas = document.getElementById("canvas");
@@ -749,7 +735,8 @@ const NewCars = ({ SessionID }) => {
                 setCarDamage(imageBlob)
             }
 
-            //^ change  data and Image to FormData 
+            //! change  data and Image to FormData ----------------------------------
+
             let FormDataCar = new FormData();
 
             for (let key in DataUpload) {
@@ -771,190 +758,88 @@ const NewCars = ({ SessionID }) => {
 
             CarDamage != '' && FormDataCar.append("CarDamage", CarDamage, "image.png");
 
+            //! change  data and Image to FormData ----------------------------------
 
-            //decrice balance  from Admin
 
             if (Data.Tobalance == "Cash") {
+
                 if (TotalCosts <= DataBalance) {
 
-                    // setTimeout(async () => {
-                    const res = await Axios.post('/cars/', FormDataCar, {
 
-                        header: {
-
-                            'Content-Type': 'multipart/form-data',
-
-
-                            'Authorization': `Bearer ${session?.data?.Token}`
-
-                        }
-
-                    }
-
-
+                    await Axios.post('/cars/', FormDataCar, auth
 
                     ).then(async (response) => {
-                        try {
 
-                            await Axios.patch(`/users/${SessionID}`, { TotalBals: DataBalance - TotalCosts }, {
-                                headers: {
-                                    "Content-Type": "application/json",
+                        const one = `/users/${SessionID}`
+                        const two = `/bal/`
 
-                                    'Authorization': `Bearer ${session?.data?.Token}`
-                                }
-                            },)
+                        const users = Axios.patch(one, { TotalBals: DataBalance - TotalCosts }, auth)
+                        const bal = Axios.post(two, {
+                            amount: -TotalCosts,
+                            action: "Add",
+                            carId: response.data.Id,
+                            userId: SessionID,
+                        }, auth)
 
+                        await axios.all([users, bal]).then(axios.spread(() => {
+                            toast.success(l.adddata);
+                        })).catch(errors => { toast.error('something went to wrong *') })
 
-                            await Axios.post("/bal/",
-                                {
-                                    amount: -TotalCosts,
-                                    action: "Add",
-                                    carId: response.data.Id,
-                                    userId: SessionID
-                                }, {
-                                headers: {
-                                    "Content-Type": "application/json",
-
-                                    'Authorization': `Bearer ${session?.data?.Token}`
-                                }
-                            },)
-
-                            toast.success("Your Balance Now= " + (DataBalance - TotalCosts) + " $");
-
-                        } catch (err) {
-
-                            toast.error("Error from user balance *")
-
-                        }
-                        toast.success(l.adddata);
 
                     }).catch(error => {
 
                         toast.error("error to save car *")
 
-
                     })
-                    // }, 100);
-
-
-
 
                 }
-
-
                 else {
                     toast.warn("You don't have enough balance");
 
                 }
             }
 
-            else if (Data.Tobalance == "Loan" && QarzUserId != "") {
-
-
-                await Axios.post('/cars/', FormDataCar, {
-
-                    header: {
-
-                        'Content-Type': 'multipart/form-data',
-
-                        'Authorization': `Bearer ${session?.data?.Token}`
-
-                    }
-
-                }
-
-                ).then(async (response) => {
-
-
-                    try {
-
-                        await Axios.post(`/qarz/`, {
-                            userId: QarzUserId.split(",")?.[0],
-                            amount: Math.floor(TotalCosts),
-                            isPaid: false,
-
-                        }, {
-                            headers: {
-                                "Content-Type": "application/json",
-                                'Authorization': `Bearer ${session?.data?.Token}`
-                            }
-                        },)
-
-                        toast.success("Qarz ");
-
-
-
-                    } catch (err) {
-
-                        toast.error("Error from qarz balance *")
-
-                    }
-                    toast.success(l.adddata);
-
-                }).catch(error => {
-
-                    toast.error("error to save car *")
-
-
-                })
-
-            }
-
-
             else if (Data.Tobalance == "Rent" && QarzUserId != "") {
+                console.log(QarzUserId)
 
+                const UDetailss = await Axios.get(`/users/detail/${QarzUserId}`, auth)
 
+                const totalBal = UDetailss.data.userDetail.TotalBals
 
-                // setTimeout(async () => {
-                const response = await Axios.post('/cars/', FormDataCar, {
-
-                    header: {
-
-                        'Content-Type': 'multipart/form-data',
-
-
-                        'Authorization': `Bearer ${session?.data?.Token}`
-
-                    }
-
-                }
-
-
+                await Axios.post('/cars/', FormDataCar, auth
 
                 ).then(async (response) => {
-                    try {
 
-                        await Axios.post(`/qarz/`, {
-                            userId: QarzUserId,
-                            carId: response.data.Id
-                        }, {
-                            headers: {
-                                "Content-Type": "application/json",
-                                'Authorization': `Bearer ${session?.data?.Token}`
-                            }
-                        },)
+                    const one = `/qarz/`
+                    const two = `/bal/`
+                    const thre = `/users/${QarzUserId}`
 
-                        toast.success("Rent Car Successfully")
+                    const qarz = Axios.post(one, {
+                        userId: QarzUserId,
+                        carId: response.data.Id,
+                        isPaid: false,
+
+                    }, auth)
+
+                    const bal = Axios.post(two, {
+                        amount: TotalCosts,
+                        action: "Rent",
+                        carId: response.data.Id,
+                        userId: QarzUserId,
+                        note: Note,
+                        isPaid: false,
+                    }, auth)
+
+                    const users = Axios.patch(thre, { TotalBals: totalBal + TotalCosts }, auth)
+
+                    await axios.all([qarz, bal, users]).then(axios.spread(() => {
+                        toast.success(l.adddata);
+                    })).catch(errors => { toast.error('something went to wrong *') })
 
 
-                    } catch (err) {
-
-                        toast.error("Error from user balance *")
-
-                    }
-                    toast.success(l.adddata);
-
-                }).catch(error => {
-
+                }).catch(() => {
                     toast.error("error to save car *")
-
-
                 })
-                // }, 100);
-
-
-
-
 
             }
 
@@ -990,10 +875,7 @@ const NewCars = ({ SessionID }) => {
 
                     const data = res.data
                     setUserQarz(data)
-                } catch {
-
-                }
-
+                } catch { }
             }
             handeleUserQarz()
         }
@@ -1012,24 +894,23 @@ const NewCars = ({ SessionID }) => {
 
             </Head>
 
-            < >
+            <>
 
-                {/* <div className=" px-6 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl  "> onSubmit={handleSubmit(postCarsId)}*/}
                 <ToastContainer
                     rtl={l.yes === "Yes" ? false : true}
                     draggablePercent={40}
                     limit={2}
                     autoClose={5000}
                     className="w-64 text-sm m-auto mt-20  ltr:mr-0 md:w-64 "
-                    position={toast.POSITION.TOP_RIGHT}
-                />
+                    position={toast.POSITION.TOP_RIGHT} />
+
 
                 <div className={`${page != 1 ? "hidden" : ""} `} >
                     <div className=" px-6 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl  ">
 
                         <div className=" space-y-20 text-center py-32">
 
-                            <div >
+                            <div>
                                 <h1 className="py-2">{l.seletkcar}</h1>
                                 <select name='Tocar' required onChange={(e) => { HandleAddCars(e) }} className="select select-info w-full max-w-xs">
                                     <option>Sedan</option>
@@ -1040,36 +921,18 @@ const NewCars = ({ SessionID }) => {
 
                             <div><h1 className="py-2">{l.seletkbalance}</h1>
                                 <select name='Tobalance' defaultValue={"select"} required onChange={(e) => { HandleAddCars(e), setQarzUserId("") }} className="select select-info w-full max-w-xs">
-                                    <option disabled value={"select"} >{l.selectone} </option>
+                                    <option disabled value={"select"} >{l.select} </option>
                                     <option value="Cash"> {l.cash} </option>
-                                    <option value="Loan" > {l.loan} </option>
                                     <option value="Rent" > {l.rent} </option>
                                 </select>
                             </div>
 
-                            {Data.Tobalance == "Loan" &&
-                                <div><h1 className="py-2">{l.lakeqarzkrdwa}</h1>
-                                    <select name='UserQarz' defaultValue={"Select"} onChange={(eve) => {
-                                        setQarzUserId(eve.target.value)
-                                    }}
-                                        className="select select-info w-full max-w-xs">
-
-                                        <option disabled value={"Select"} >{l.selectone}</option>
-                                        {UserQarz.userDetail?.map((item, idx) => {
-
-                                            return <option value={[item._id, item.TotalBals]} key={idx}>{item.userName}</option>
-                                        })}
-                                    </select>
-                                </div>
-                            }
-
-                            {Data.Tobalance == "Rent" &&
+                            {Data.Tobalance == "Rent" && <>
                                 <div><h1 className="py-2">{l.rent}</h1>
                                     <select name='UserQarz' defaultValue={"Select"} onChange={(eve) => {
                                         setQarzUserId(eve.target.value)
                                     }}
                                         className="select select-info w-full max-w-xs">
-
                                         <option disabled value={"Select"} >{l.none}</option>
                                         {UserQarz.userDetail?.map((item, idx) => {
 
@@ -1077,6 +940,9 @@ const NewCars = ({ SessionID }) => {
                                         })}
                                     </select>
                                 </div>
+                                <input type="text" onChange={(e) => { setNote(e.target.value) }} placeholder={l.note} className="input input-bordered input-info w-full max-w-xs" />
+
+                            </>
                             }
 
 
@@ -1087,13 +953,8 @@ const NewCars = ({ SessionID }) => {
 
 
                     <div className="flex  justify-around px-6 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl py-5 my-5  space-x-5 overflow-auto">
-
-
                         <button type='button' className="btn btn-wide " onClick={() => { setPage(2) }}>{l.next}</button>
-
                     </div >
-
-
                 </div>
 
                 <div className={`${page != 2 ? "hidden" : ""} `} >
@@ -1208,12 +1069,18 @@ const NewCars = ({ SessionID }) => {
 
 
                         <h1 className="mt-5 text-center">{l.date}</h1>
-
-
-
-
                         <div className="flex  justify-center">
-                            <input name='Date' onChange={(e) => { HandleAddCars(e) }} type="date" placeholder="YYYY-MM-DD" defaultValue={"2022-1-1"} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input name='Date' onChange={(e) => { HandleAddCars(e) }} type="date" placeholder="YYYY-MM-DD" defaultValue={"2022-01-01"} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                        </div>
+
+
+                        <h1 className="mt-5 text-center">{l.arive}</h1>
+                        <div className="flex  justify-center">
+                            <select name='Arrived' required defaultValue={"Select"} onChange={(e) => { HandleAddCars(e) }} className="select select-info input input-bordered  w-[200%] mt-5 max-w-xl mb-8">
+                                <option disabled vlaue={"Select"}>{l.select}</option>
+                                <option value={true}>{l.yes}</option>
+                                <option value={false}>{l.no}</option>
+                            </select>
                         </div>
 
                     </div>
@@ -1362,7 +1229,7 @@ const NewCars = ({ SessionID }) => {
 
                         <h1 className="mt-5 text-center">{l.note}</h1>
                         <div className="flex  justify-center">
-                            <textarea value={Data.ModeName} name='RaqamAndRepairCostinKurdistannote' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.note} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <textarea value={Data.RaqamAndRepairCostinKurdistannote} name='RaqamAndRepairCostinKurdistannote' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.note} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
                     </div>
@@ -1698,10 +1565,7 @@ const NewCars = ({ SessionID }) => {
 
 
             </ >
-
-
         </div >
-
     );
 
 }

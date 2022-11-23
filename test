@@ -1,0 +1,25 @@
+
+
+
+
+
+
+
+
+
+Reseller 
+		
+		userId ,
+        carId ,
+        action ,
+        note ,
+        isSoled,          required
+
+		
+		Qarz 
+		
+		userId ,
+        carId  or   amoun,
+        action ,
+        note ,
+        isPaid,               required

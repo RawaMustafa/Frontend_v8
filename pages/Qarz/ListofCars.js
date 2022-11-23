@@ -1,65 +1,271 @@
-import useLanguage from '../../../../Component/language';
-import AdminLayout from '../../../../Layouts/AdminLayout';
+import useLanguage from '../../Component/language';
+import QarzLayout from '../../Layouts/QarzLayout';
 import { useEffect, useMemo, useState, useRef, forwardRef } from 'react';
 import Head from 'next/head'
-import { useTable, useSortBy, useGlobalFilter, usePagination, useFilters, useGroupBy, useExpanded, } from 'react-table';
+import Link from 'next/link';
+import axios from 'axios';
+import Axios, { baseURL } from '../api/Axios';
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
-import Axios from "../../../api/Axios"
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faEye, faFileDownload, faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
-import Image from 'next/image';
+import { faEye, faCalendarCheck, faFileDownload, faMoneyCheckDollar, faCar, } from '@fortawesome/free-solid-svg-icons';
+import { useTable, useSortBy, useGlobalFilter, usePagination, useFilters, useGroupBy, useExpanded, } from 'react-table';
+import { useRouter } from "next/router";
 import { getSession, useSession } from "next-auth/react";
-import Link from 'next/link';
 
 
 
 
 
-export const getServerSideProps = async ({ req }) => {
-
+export async function getServerSideProps({ req, query }) {
     const session = await getSession({ req })
-
-
-    if (!session || session?.userRole !== "Admin") {
+    if (!session || session.userRole != "Qarz") {
         return {
             redirect: {
-                destination: '/',
+                destination: '/Login',
                 permanent: false,
-            }
-
+            },
         }
+
     }
 
 
-    let data = 1
+    let data
     try {
-        const res = await Axios.get(`/cars/?search=&page=1&limit=10`, {
+        const res = await Axios.get(`/qarz/amount/${query._id}/?&page=1&limit=1`, {
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': `Bearer ${session?.Token}`
             }
         },)
-        data = await res.data.total
+        data = await res.data.qarzList.map((e) => { return e.id }).length
+
 
     } catch {
-        data = 1
+        data = 4
     }
 
-
+    console.log(data)
 
     return {
         props: {
+            initQuery: session.id,
+            AllQarz: data,
 
-            AllProducts: data,
         }
     }
+
+
+
 }
 
 
-const IndeterminateCheckbox = forwardRef(
 
+
+
+
+
+
+const Qarz = ({ initQuery, AllQarz }) => {
+
+
+    const { data: session, status } = useSession()
+
+    const l = useLanguage();
+    const router = useRouter()
+
+
+
+
+    if (status == "unauthenticated") {
+        router.push('/');
+    }
+
+    if (status == "loading") {
+
+        return (<>
+            <Head>
+                <title >{l.listofcars}</title>
+                <meta name="Dashboard" content="initial-scale=1.0, width=device-width all data " />
+            </Head>
+            <div className="text-center">
+                {l.loading}
+            </div>
+        </>)
+    }
+
+    const COLUMNS =
+        // useMemo(() =>
+        [
+
+
+            {
+                Header: () => {
+                    return (
+
+                        // l.amount
+                        "Name of Car"
+
+                    )
+                },
+
+                disableFilters: true,
+
+                accessor: 'carId',
+
+
+            },
+
+            {
+                Header: () => {
+                    return (
+
+                        // l.amount
+                        "IsSold"
+
+                    )
+                },
+
+                disableFilters: true,
+
+                accessor: 'isSold',
+
+
+            },
+            {
+                Header: () => {
+                    return (
+
+                        // l.amount
+                        "Model"
+
+                    )
+                },
+
+                disableFilters: true,
+
+                accessor: 'model',
+
+
+            },
+            {
+                Header: () => {
+                    return (
+
+                        // l.amount
+                        "Price"
+
+                    )
+                },
+
+                disableFilters: true,
+
+                accessor: 'price',
+
+
+            },
+            {
+                Header: () => {
+                    return (
+
+                        // l.amount
+                        "Type of Car"
+
+                    )
+                },
+
+                disableFilters: true,
+
+                accessor: 'tocar',
+
+
+            },
+
+
+
+
+            {
+                Header: () => {
+                    return (
+
+                        // l.ispaid
+                        "Is Paid"
+                    )
+                },
+
+                accessor: 'isPaid',
+                disableFilters: true,
+
+
+            },
+            {
+                Header: () => {
+
+                    // return l.date;
+                    return "Date";
+                },
+
+                accessor: 'dates',
+                disableFilters: false,
+                // Filter: DateRangeColumnFilter,
+                // filter: dateBetweenFilterFn,
+
+            },
+
+            {
+                Header: () => {
+
+                    // return l.detail;
+                    return "Details";
+                },
+
+                accessor: 'Details',
+                disableFilters: false,
+                // Filter: DateRangeColumnFilter,
+                // filter: dateBetweenFilterFn,
+
+            },
+
+
+
+
+
+
+        ]
+    // )
+    if (status == "authenticated") {
+
+
+
+
+        return (
+
+            <div className="container mx-auto  footer-center pt-10 ">
+
+                <Head>
+                    <title >{l.listofcars}</title>
+                </Head>
+
+                <CarsTable COLUMNS={COLUMNS} initQuery={initQuery} AllProducts={AllQarz} />
+
+            </div >
+        );
+
+    }
+
+}
+
+Qarz.Layout = QarzLayout;
+export default Qarz;
+
+
+
+
+
+
+
+const IndeterminateCheckbox = forwardRef(
     ({ indeterminate, ...rest }, ref) => {
         const defaultRef = useRef()
         const resolvedRef = ref || defaultRef
@@ -80,16 +286,14 @@ const IndeterminateCheckbox = forwardRef(
     }
 )
 IndeterminateCheckbox.displayName = 'IndeterminateCheckbox'
-const Table = ({ COLUMNS, AllProducts }) => {
 
 
 
 
 
-
+const CarsTable = ({ COLUMNS, AllProducts, initQuery }) => {
     const session = useSession()
-    const [ReNewData, setReNewData] = useState(false);
-
+    const router = useRouter()
     const [Search, setSearch] = useState("");
     const [Page, setPage] = useState(1);
     const [Limit, setLimit] = useState(10);
@@ -101,8 +305,8 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
 
 
-    const [StartDate, setStartDate] = useState("2000-01-01");
-    const [EndDate, setEndDate] = useState("2500-01-01");
+    const [StartDate, setStartDate] = useState("2000-1-1");
+    const [EndDate, setEndDate] = useState("2100-1-1");
 
 
 
@@ -112,36 +316,66 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
     const l = useLanguage();
 
+
+
+
     useEffect(() => {
-        const getExpenseData = async () => {
 
-            // &sdate=${StartDate}&edate=${EndDate}
-            try {
+        if (session.status === 'authenticated') {
+            const GetCars = async () => {
 
-                const res = await Axios.get(`/cars/?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2500-01-01"}`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
+                try {
+
+
+                    const Auth = {
+
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+
+                        }
                     }
-                },)
-                const data = await res.data.carDetail
+                    // &sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2200-01-01"}
+                    const one = `/qarz/${initQuery}?search=${Search}&page=${Page}&limit=${Limit}`
 
-                setDataTable(data)
-                console.log(data)
-                setTotalCars(res.data.total)
 
-            } catch {
+                    const response1 = await Axios.get(one, Auth).then((res) => {
+                        return res
+                    }).catch(() => {
 
-                setDataTable([])
-                setPageS(1)
+                    });
+
+
+                    await axios.all([response1]).then(
+
+                        axios.spread((...responses) => {
+                            setDataTable(responses?.[0]?.data.qarzList)
+                            TotalCars(responses?.[0]?.data.total)
+
+                        })).catch(() => {
+
+                            setDataTable([])
+
+
+                        })
+
+
+
+                } catch {
+
+
+                    setDataTable([])
+
+
+                }
+
             }
+
+
+            GetCars()
         }
-        setPageS(Math.ceil(TotalCars / Limit))
-        getExpenseData()
-        setReNewData(false)
-    }, [Search, Page, Limit, StartDate, EndDate, ReNewData])
 
-
+    }, [Search, Page, Limit, initQuery, session.status, StartDate, EndDate])
 
 
 
@@ -149,6 +383,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
     const table_2_pdf = () => {
 
         const table = document.getElementById('table-to-xls')
+
         let TH = []
         const table_th = [...table.rows].map(r => [...r.querySelectorAll('th')].map((th) => (TH.push(th.children?.[0].innerText != "Details" ? th.children?.[0].innerText : ""))))
         const table_td = [...table.rows].map((r) => [...r.querySelectorAll('td')].map(td => td.textContent))
@@ -171,28 +406,14 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
 
 
-
-
     const {
-
-
-
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        footerGroups,
         state,
-        setGlobalFilter,
         allColumns,
         getToggleHideAllColumnsProps,
-        canNextPage,
-        canPreviousPage,
-        pageOptions,
-        gotoPage,
-        pageCount,
         page,
-        nextPage,
-        previousPage,
         setPageSize,
         prepareRow,
 
@@ -210,7 +431,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
     const { pageIndex, pageSize } = state
 
     return (
-        <div className="container mx-auto overflow-auto scrollbar-hide ">
+        <div className="container mx-auto overflow-auto scrollbar-hide  ">
 
 
 
@@ -227,7 +448,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                 <div className="modal" id="my-modal-2">
                     <div className="modal-box m-2">
                         <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} />
-                        <div className="font-bold text-lg overflow-auto max-h-80 scrollbar-hide space-y-2 ">
+                        <div className="font-bold text-lg overflow-auto max-h-52 scrollbar-hide space-y-2 ">
                             {allColumns.map(column => (
                                 <div key={column.id}>
                                     <div className=" w-full  rounded-lg   ">
@@ -237,7 +458,6 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
                                         </label>
                                     </div>
-
 
                                 </div>
                             ))}
@@ -258,7 +478,6 @@ const Table = ({ COLUMNS, AllProducts }) => {
                 <div className="flex justify-end ">
 
                     <div className="dropdown rtl:dropdown-right ltr:dropdown-left">
-                        {/* //TODO -   Fix-------Date*/}
                         <label tabIndex="0" className=" m-1 active:scale-9  ">
                             <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 active:scale-9 " />
                         </label>
@@ -303,7 +522,6 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                 buttonText="XLSX" />  </li>
 
                             <li><button className='btn btn-outline ' onClick={table_2_pdf}>PDF</button> </li>
-                            {/* <li><button className='btn btn-outline' onClick={table_All_pdff}>ALL_PDF</button> </li> */}
                         </ul>
                     </div>
 
@@ -322,12 +540,12 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
                     {headerGroups.map((headerGroups, idx) => (
 
-                        <tr id="th-to-xls" className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
+                        <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
 
                             {headerGroups.headers.map((column, idx) => (
 
-                                <th key={idx} className={`p-4 m-44 ${true && "min-w-[200px]"} `} {...column.getHeaderProps(column.getSortByToggleProps())} >
-                                    <span >{column.render('Header')}</span>
+                                < th key={idx} className={`p-4 m-44 ${true && "min-w-[200px]"} `} {...column.getHeaderProps(column.getSortByToggleProps())} >
+                                    <span>{column.render('Header')}</span>
                                     <span  >
                                         {column.isSorted ? (column.isSortedDesc ? "<" : ">") : ""}
                                     </span>
@@ -352,28 +570,74 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                         <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
 
 
-                                            {cell.render('Cell')}
+                                            {(cell.column.id != 'carId') && cell.render('Cell')}
 
+                                            {cell.column.id === 'carId' && (
 
+                                                <>
+                                                    {/* <Link href={`/Dashboard/Balance/ListofOwe/${router.query._id}/details/${row.original.carId.id}?Qarz=${row.original.id}`}><a>{cell.value?.modeName || cell.value?.VINNumber || cell.value?.id}</a></Link> */}
+                                                </>
 
+                                            )
+                                            }
+                                            {cell.column.id === 'model' && (
+
+                                                <>
+                                                    <span className="">{row.original.carId.model}</span>
+
+                                                </>
+
+                                            )
+                                            }
+                                            {cell.column.id === 'tocar' && (
+
+                                                <>
+                                                    <span className="">{row.original.carId.tocar}</span>
+
+                                                </>
+
+                                            )
+                                            }
+                                            {cell.column.id === 'price' && (
+
+                                                <>
+                                                    <span className="">{row.original.carId.price}</span>
+
+                                                </>
+
+                                            )
+                                            }
                                             {cell.column.id === 'isSold' && (
 
+                                                <div>d</div>
+                                                // row.original.carId.isSold === true ?
+                                                //     <span className="text-green-500">Yes</span>
+                                                //     :
+                                                //     <span className="text-red-500">No</span>
+
+
+                                            )
+                                            }
+
+
+                                            {cell.column.id === 'isPaid' && (
+
                                                 cell.value === true ?
-                                                    // <FontAwesomeIcon icon={faCheck} className="text-green-500" />
                                                     <span className="text-green-500">Yes</span>
                                                     :
-                                                    // <FontAwesomeIcon icon={faTimes} className="text-red-500" />
                                                     <span className="text-red-500">No</span>
 
                                             )}
-
                                             {cell.column.id === "Details" &&
-                                                <Link href={`/Dashboard/ListofCars/AllCars/${row.original._id}`}><a><label htmlFor="my-modal-3" className="m-0" >
-                                                    <FontAwesomeIcon icon={faEye} className="text-2xl cursor-pointer text-blue-700" />
-                                                </label></a></Link>
+
+                                                <Link href={`/Qarz/details/${row.original.carId.id}`}><a  >
+                                                    <label>
+                                                        <FontAwesomeIcon icon={faEye} className="text-2xl cursor-pointer text-blue-800 " />
+                                                    </label>
+                                                </a>
+                                                </Link>
 
                                             }
-
 
 
 
@@ -394,16 +658,11 @@ const Table = ({ COLUMNS, AllProducts }) => {
             </table>
 
             <div className=" flex justify-between container mx-auto items-center rounded-xl p-3  px-1 mb-20  min-w-[700px]">
-
-
                 <div className=" flex   justify-around mx-5 text-lg items-center     ">
-
 
                     <span className="px-3">
                         {l.page}{" " + Page}/{PageS}
                     </span>
-
-
 
 
                     <div>
@@ -480,258 +739,11 @@ const Table = ({ COLUMNS, AllProducts }) => {
             </div>
 
 
-
         </div >
 
     );
 
 
 }
-
-
-
-
-
-
-
-
-const Expense = ({ AllProducts }) => {
-
-
-
-
-
-
-    const COLUMNS =
-        useMemo(() =>
-            [
-
-                {
-                    Header: () => {
-                        return (
-
-                            // l.namecar
-                            "Name of car"
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'modeName',
-
-
-                },
-
-                {
-                    Header: () => {
-                        return (
-
-                            "Price"
-                            // l.price
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'price',
-
-
-                },
-                {
-                    Header: () => {
-                        return (
-
-                            // l.color
-                            "Color"
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'color',
-
-
-                },
-                {
-                    Header: () => {
-                        return (
-
-                            // l.date
-                            "Date"
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'date',
-
-
-                },
-                {
-                    Header: () => {
-                        return (
-
-                            // l.isSold
-                            "Is Sold"
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'isSold',
-
-
-                },
-                {
-                    Header: () => {
-                        return (
-
-                            // l.mileage
-                            "Mileage"
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'mileage',
-
-
-                },
-
-                {
-                    Header: () => {
-                        return (
-
-                            // l.modelyear
-                            "Model"
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'model',
-
-
-                },
-
-
-
-                {
-                    Header: () => {
-                        return (
-
-                            // l.tire
-                            "Tire"
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'tire',
-
-
-                },
-
-                {
-                    Header: () => {
-                        return (
-
-                            // l.tobalance
-                            "Type of Balance"
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'tobalance',
-
-
-                },
-
-
-                {
-                    Header: () => {
-                        return (
-
-                            // l.tocar
-                            "Type of Car"
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'tocar',
-
-
-                },
-
-                {
-                    Header: () => {
-                        return (
-
-                            // l.wheeldrivetype
-                            "Wheel Drive Type"
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'wheelDriveType',
-
-
-                },
-
-
-
-
-
-
-
-
-                {
-                    Header: "Details",
-
-                    disableFilters: true,
-
-
-                },
-
-
-
-            ], [AllProducts]
-        )
-
-
-
-    const l = useLanguage();
-
-    return (
-
-
-        <div className="" >
-            <Head>
-                <title >{l.account}</title>
-            </Head>
-
-            {AllProducts ?
-                <Table COLUMNS={COLUMNS} AllProducts={AllProducts} />
-                :
-                <div className="m-auto top-[50%] -translate-y-[50%] absolute -translate-x-[50%] left-[50%] lg:left-[60%] ">
-                    <Image alt="NoCar" src="/No_Cars.svg" width={400} height={400} quality={'1'} />
-                </div>
-
-            }
-
-
-
-        </div>
-    );
-}
-
-
-
-Expense.Layout = AdminLayout;
-
-export default Expense;
 
 

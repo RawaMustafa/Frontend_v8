@@ -1,30 +1,19 @@
-
-
 import useLanguage from '../../../Component/language';
 import AdminLayout from '../../../Layouts/AdminLayout';
-
 import { useEffect, useMemo, useState, useRef } from 'react';
 import Head from 'next/head'
-
-
-// import { Filter, DefaultColumnFilter, dateBetweenFilterFn, DateRangeColumnFilter } from '../Balance/Filter';
-
-
 import { useTable, useSortBy, useGlobalFilter, usePagination, useFilters, useGroupBy, useExpanded, } from 'react-table';
-// import { GlobalFilter } from '../Balance/GlobalFilter';
-
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
-
-
 import axios from "axios"
 import Axios from "../../api/Axios"
-
 import { ToastContainer, toast, } from 'react-toastify';
-
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
 import { faCalendarPlus, faTrash, faEdit, faSave, faBan, faFileDownload, faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
+import { getSession, useSession } from "next-auth/react";
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 
 
@@ -35,9 +24,6 @@ const date_regex = /^\d{4}-\d{2}-\d{2}$/;
 const action_regex = /^[0-9a-zA-Z=> ]{0,50}$/;
 
 
-import { getSession, useSession } from "next-auth/react";
-import { useRouter } from 'next/router';
-import Link from 'next/link';
 
 export const getServerSideProps = async ({ req }) => {
 
@@ -55,16 +41,22 @@ export const getServerSideProps = async ({ req }) => {
         }
     }
 
-    let data = 1
+    let data=1
 
-    // try {
-    //     const res = await Axios.get(`/users/?search=&page=1&limit=10`)
-    //     data = await res.data.total
-    // } catch {
-    //     data = 1
-    // }
-
-
+    try {
+        const res = await Axios.get(`/bal/?search=&page=1&limit=10`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${session?.Token}`
+                }
+            }
+        )
+console.log(res.data.total[0].total)
+        data = await res.data.total[0].total
+    } catch {
+        data = 1
+    }
 
     return {
         props: {
@@ -85,8 +77,8 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
     const [Page, setPage] = useState(1);
     const [Limit, setLimit] = useState(10);
 
-    const [StartDate, setStartDate] = useState("2000-1-1");
-    const [EndDate, setEndDate] = useState("2100-1-1");
+    const [StartDate, setStartDate] = useState("2000-01-01");
+    const [EndDate, setEndDate] = useState("2500-01-01");
 
     const [PageS, setPageS] = useState(Math.ceil(AllUsers / Limit));
     const [TotalUsers, setTotalUsers] = useState(AllUsers);
@@ -113,7 +105,6 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
     const l = useLanguage();
-
 
 
     const [CFocus, setCFocus] = useState(false);
@@ -212,29 +203,33 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
         if (session.status === "authenticated") {
             const getExpenseData = async () => {
-                // ${StartDate}/${EndDate}?search=${Search}&page=${Page}&limit=${Limit}
 
-                const res = await Axios.get(`/bal/?search=${Search}&page=${Page}&limit=${Limit}`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },
-                )
+                try {
+                    const res = await Axios.get(`/bal/?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate || '2000-01-01'}&edate${EndDate || "2500-01-01"}`, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },
+                    )
+                    console.log(res.data)
+                    const users = await Axios.get(`/users/detail/${SessionID}`, {
+                        headers: {
+                            "Content-Type": "application/json",
 
+                            'Authorization': `Bearer ${session?.data?.Token}`
 
-                const users = await Axios.get(`/users/detail/${SessionID}`, {
-                    headers: {
-                        "Content-Type": "application/json",
-
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
-                setUsersBalance(users.data.userDetail.TotalBals)
-                setDataTable(res.data.History.reverse())
-                setTotalUsers(res.data.total)
-
-
+                        }
+                    },)
+                    setUsersBalance(users.data.userDetail.TotalBals)
+                    setDataTable(res.data.History)
+                    setTotalUsers(res.data.total)
+                    setPageS(Math.ceil(res.data.total / Limit))
+                }
+                catch {
+                    setDataTable([])
+                    setTotalUsers(0)
+                }
             }
             getExpenseData()
             setReNewData(false)
@@ -446,31 +441,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
         doc.save("Table.pdf");
     };
 
-    const table_All_pdff = () => {
 
-
-
-        var obj = JSON.parse(JSON.stringify(DataTable))
-        var res = [];
-        //
-        for (var i in obj)
-            res.push(obj[i]);
-
-
-        const doc = new jsPDF("p", "mm", "a3");
-        doc.text(`Data{ Hawbir }`, 95, 10);
-
-        doc.autoTable({
-            head: [[`Amount`, " User Id", "Action", "Date"]],
-            body: res.map((d) => [d.amount, d.userId, d.action, d.actionDate])
-        });
-        doc.save("ALL(Data).pdf");
-
-
-
-
-
-    };
 
 
 
@@ -580,7 +551,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                     <div className="dropdown rtl:dropdown-right ltr:dropdown-left ">
 
                         {/* //TODO -  fix Date */}
-                        {/* <label tabIndex="0" className=" m-1 active:scale-95 ">
+                        <label tabIndex="0" className=" m-1 active:scale-95 ">
                             <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 active:scale-95 " />
                         </label>
 
@@ -603,7 +574,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                     />
                                 </div>
                             </li>
-                        </ul> */}
+                        </ul>
                     </div>
 
 
@@ -691,10 +662,11 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                                 cell.value >= 0 ? <div className="text-green-500">{cell.value}</div> : <div className="text-red-500">{cell.value}</div>
                                             )}
 
+
+
                                             {cell.column.id === 'userId' && row.original._id !== Idofrow?.[0] && (
                                                 <>
-
-
+                                                    <div>{row.original.userName}</div>
                                                     {cell.value?.userRole == "Qarz" && <Link href={`/Dashboard/Balance/ListofOwe/${cell.value?._id}`}><a className="text-red-300">{cell.value?.userName}</a></Link>}
                                                     {cell.value?.userRole == "Reseller" && <Link href={`/Dashboard/Balance/Reseller/${cell.value?._id}`}><a className="text-violet-300">{cell.value?.userName}</a></Link>}
                                                     {cell.value?.userRole == "Admin" && <a className="text-blue-400 cursor-crosshair">{cell.value?.userName}</a>}
@@ -709,8 +681,8 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                             {cell.column.id === 'carId' && row.original._id !== Idofrow?.[0] && (
                                                 <>
 
-
-                                                    <Link href={`/Dashboard/ListofCars/AllCars/${cell.value?._id}`}><a className="text-orange-200">{cell.value?.modeName || cell.value?.VINNumber || cell.value?.id}</a></Link>
+                                                    <div></div>
+                                                    <Link href={`/Dashboard/ListofCars/AllCars/${row.original.carId}`}><a className="text-orange-200">{row.original.modeName}</a></Link>
                                                 </>
 
                                             )
@@ -733,16 +705,16 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                                             type="number" placeholder={cell.column.id} name='amount' className="input input-bordered input-warning w-full max-w-xs" />}
 
                                                         {cell.column.id == "action" &&
-                                                            <textarea name='action'
+                                                            <input name='action'
                                                                 defaultValue={row.original.action}
                                                                 ref={ACRef}
-                                                                type="textarea"
+                                                                type="text"
                                                                 onChange={(event) => { handleSaveExpenseData(event) }}
                                                                 onClick={(event) => { handleSaveExpenseData(event) }}
                                                                 onFocus={() => { setDEFocus(true) }}
                                                                 onBlur={() => { setDEFocus(false) }}
 
-                                                                className="textarea textarea-warning  w-full max-w-xs" placeholder={cell.column.id}></textarea>}
+                                                                className="input input-warning  w-full max-w-xs" placeholder={cell.column.id}></input>}
                                                         {cell.column.id == "actionDate" && <input disabled
                                                             defaultValue={row.original.actionDate}
                                                             ref={DRef}
@@ -799,24 +771,21 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
             <div className="botom_Of_Table" >
 
-                <div className=" flex justify-between container mx-auto items-center   p-3  px-1 mb-20  min-w-[700px]">
+                <div className=" flex justify-between container mx-auto items-center   p-3  px-1 mb-20  min-w-[700px] ">
 
 
-                    <div className=" flex  space-x-5 mx-5 text-lg items-center     ">
 
-                        <div>
+                    <div className=" flex   justify-around mx-5 text-lg items-center     ">
 
-                            {l.page}{" "}
-                            <span>
-                                {pageIndex + 1}{"/"}{pageOptions.length}
-                            </span>
-                        </div>
+
+                        <span className="px-3">
+                            {l.page}{" " + Page}/{PageS}
+                        </span>
 
                         <div>
-
-                            <select className="select select-info  w-full max-w-xs"
+                            <select className="select select-info  w-full max-w-xs focus:outline-0"
                                 onChange={(e) => {
-                                    setLimit((e.target.value) * 2)
+                                    setLimit((e.target.value))
                                     setPageSize(Number(e.target.value)
                                     )
                                 }}
@@ -835,12 +804,51 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
 
-                    <div className="space-x-2  overflow-auto inline-flex  scrollbar-hide ">
+                    <div className="space-x-3  overflow-auto inline-flex  scrollbar-hide ">
                         <div></div>
-                        <button className="btn w-2 h-2 btn-info   " onClick={() => gotoPage(0)} disabled={!canPreviousPage}>{"<<"} </button>
-                        <button className="btn w-2 h-2 btn-info" onClick={() => previousPage()} disabled={!canPreviousPage}>{"<"} </button>
-                        <button className="btn w-2 h-2 btn-info" onClick={() => nextPage()} disabled={!canNextPage}>{">"} </button>
-                        <button className="btn w-2 h-2 btn-info " onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>{">>"} </button>
+
+
+
+                        <button className="btn w-2 h-2 btn-info border-0  " onClick={() =>
+                            setPage(1)
+                        }
+                            disabled={
+                                Page == 1 ? true : false
+                            }
+                        >{"<<"} </button>
+
+
+                        <button className="btn w-2 h-2 btn-info" onClick={() =>
+                            setPage(Page - 1)
+                        }
+                            disabled={
+                                Page <= 1 ? true : false
+
+                            }
+                        >{"<"}
+                        </button>
+
+
+                        <button className="btn w-2 h-2 btn-info" onClick={() =>
+                            Page >= 1 && setPage(Page + 1)
+                        }
+                            disabled={
+                                Page >= PageS ? true : false
+                            }
+                        >{">"} </button>
+
+
+                        <button className="btn w-2 h-2 btn-info "
+                            onClick={() =>
+                                Page >= 1 && setPage(PageS)
+                            }
+                            disabled={
+                                Page >= PageS ? true : false
+                            }
+                        >{">>"} </button>
+
+
+
                     </div>
 
                 </div>
@@ -874,7 +882,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
 
-const Expense = ({ SessionID }) => {
+const Expense = ({ SessionID, AllUsers }) => {
 
     const session = useSession()
     const router = useRouter()
@@ -1016,7 +1024,7 @@ const Expense = ({ SessionID }) => {
 
 
 
-                <Table COLUMNS={COLUMNS} SessionID={SessionID} />
+                <Table COLUMNS={COLUMNS} SessionID={SessionID} AllUsers={AllUsers} />
 
 
 

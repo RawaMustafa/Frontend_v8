@@ -194,8 +194,14 @@ export const en = {
     loading: "Loading...",
     unauthenticated: "Unauthenticated",
     cpassword: "confirm password",
-    msgupdatei:"sure, you want to update your data",
-    msgupdates:"if you update your data you must Sign In again"
+    msgupdatei: "sure, you want to update your data",
+    msgupdates: "if you update your data you must Sign In again",
+    pay: "Pay",
+    paymsg: "sure, you want to pay for this ",
+    listofcars: "List of Cars",
+    listofloan: "List of Loan",
+    borrowing: "Borrow",
+    borrowmsg: "sure, you want to Borrow this"
 
 
 

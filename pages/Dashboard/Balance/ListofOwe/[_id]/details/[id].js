@@ -36,6 +36,7 @@ export const getServerSideProps = async (context) => {
             'Authorization': `Bearer ${session?.Token}`
         }
     },)
+    console.log(response.data)
     const data = await response.data
     return {
         props: { cars: data, ID: Qarz_ID },
@@ -53,7 +54,6 @@ const Detail = ({ cars, ID }) => {
     const session = useSession()
     const l = useLanguage();
 
-
     const handleDeleteCar = async () => {
 
 
@@ -68,6 +68,67 @@ const Detail = ({ cars, ID }) => {
             router.back()
         } catch (err) {
             toast.error("Car not deleted")
+        }
+
+    }
+
+
+    const handlePayCar = async () => {
+        const auth = {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${session?.data?.Token}`
+            }
+        }
+        try {
+
+            const car = await Axios.get(`/cars/${router.query.id}`, auth)
+            const users = await Axios.get(`/users/detail/${session?.data?.id}`, auth)
+
+            const Data = car.data.carDetail.carCost
+            const myBalance = users.data.userDetail.TotalBals
+
+
+            let TotalCosts =
+                Data.pricePaidbid +
+                Data.coCCost +
+                Data.feesinAmericaStoragefee +
+                Data.feesinAmericaCopartorIAAfee +
+                Data.feesAndRepaidCostDubairepairCost +
+                Data.feesAndRepaidCostDubaiFees +
+                Data.feesAndRepaidCostDubaiothers +
+                Data.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost +
+                Data.transportationCostFromAmericaLocationtoDubaiGCostTranscost +
+                Data.dubaiToIraqGCostTranscost +
+                Data.dubaiToIraqGCostgumrgCost +
+                Data.raqamAndRepairCostinKurdistanrepairCost +
+                Data.raqamAndRepairCostinKurdistanothers
+
+
+            if (myBalance >= TotalCosts) {
+
+                const users = await Axios.patch(`/users/${session?.data?.id}`,
+                    {
+                        TotalBals: myBalance - TotalCosts
+
+                    }, auth)
+                toast.success("Amount Paid")
+                const bal = await Axios.post(`/bal/`, {
+                    userId: session?.data?.id,
+                    action: "Repayment",
+                    carId: router.query.id,
+                    amount: TotalCosts,
+                }, auth)
+
+                toast.success("l.balance" + "=" + myBalance - TotalCosts)
+                await Axios.patch(`/qarz/${ID}`, {
+                    carId: router?.query.id,
+                    isPaid: 1,
+                }, auth)
+            }
+            router.reload()
+        } catch (err) {
+            toast.error("not Pay")
         }
 
     }
@@ -151,20 +212,37 @@ const Detail = ({ cars, ID }) => {
                     draggablePercent={60}
                 />
 
-                <div className="flex  w-full h-full p-4 justify-end">
-
-                    <Link rel="noopener noreferrer" href={`/Dashboard/ListofCars/AllCars/${router.query.id}`}><a target="_blank" className="btn btn-info mx-10">{l.detail}</a></Link>
-                    <label htmlFor="my-modal-3" className="btn btn-error modal-button">{l.retrieve}</label>
+                <div className="flex  w-full h-full p-4 justify-end  ">
+                    <div className="flex justify-between  w-[500px] overflow-auto" >
+                        <Link rel="noopener noreferrer" href={`/Dashboard/ListofCars/AllCars/${router.query.id}`}><a target="_blank" className="btn btn-info ">{l.detail}</a></Link>
+                        <label htmlFor="my-modal-3" className="btn btn-error modal-button">{l.retrieve}</label>
+                        <label htmlFor="Pay-modal-1" className="btn btn-accent modal-button ">{l.pay}</label>
+                    </div>
 
                     <input type="checkbox" id="my-modal-3" className="modal-toggle btn btn-error " />
                     <div className="modal  ">
                         <div className="modal-box relative ">
                             <label htmlFor="my-modal-3" className="btn btn-sm btn-circle absolute right-2 top-2 ">✕</label>
                             <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faTrashAlt} className="text-5xl text-red-700 " />  </h3>
-                            <p className="py-4 ">{l.deletemsg}</p>
+                            <p className="py-4 ">{l.retrievemsg}</p>
                             <div className="space-x-10 ">
-                                <label className="btn btn-error " onClick={handleDeleteCar}>{l.yes}</label>
-                                <label htmlFor="my-modal-3" className="btn btn-accent ">{l.no}</label>
+                                <label className="btn btn-accent " onClick={handleDeleteCar}>{l.yes}</label>
+                                <label htmlFor="my-modal-3" className="btn btn-error ">{l.no}</label>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <input type="checkbox" id="Pay-modal-1" className="modal-toggle btn btn-error " />
+                    <div className="modal  ">
+                        <div className="modal-box relative ">
+                            <label htmlFor="Pay-modal-1" className="btn btn-sm btn-circle absolute right-2 top-2 ">✕</label>
+                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faTrashAlt} className="text-5xl text-red-700 " />  </h3>
+                            <p className="py-4 ">{l.paymsg}</p>
+                            <div className="space-x-10 ">
+                                <label className="btn btn-accent " onClick={handlePayCar}>{l.yes}</label>
+                                <label htmlFor="Pay-modal-1" className="btn btn-error ">{l.no}</label>
                             </div>
                         </div>
                     </div>
@@ -216,6 +294,14 @@ const Detail = ({ cars, ID }) => {
                                     <tr className="">
                                         <td>{l.namecar} :</td>
                                         <td>{cars.carDetail.modeName}</td>
+                                    </tr>
+                                    <tr className="">
+                                        <td>{l.wheeldrivetype} :</td>
+                                        <td>{cars.carDetail.wheelDriveType}</td>
+                                    </tr>
+                                    <tr className="">
+                                        <td>{l.isSold} :</td>
+                                        {cars.carDetail.isSold ? <td className="text-green-700">{l.yes}</td> : <td className="text-red-700">{l.no}</td>}
                                     </tr>
                                     <tr className="">
                                         <td>{l.modelyear} :</td>

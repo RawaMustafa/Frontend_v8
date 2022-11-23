@@ -41,7 +41,7 @@ export const getServerSideProps = async (context) => {
     const response = await Axios.get('/cars/' + _id, {
         headers: {
             "Content-Type": "application/json",
-            'Authorization': `Bearer ${session?.data?.Token}`
+            'Authorization': `Bearer ${session?.Token}`
         }
     },)
     const data = await response.data
@@ -70,10 +70,10 @@ const Detail = ({ carss, SessionID }) => {
     const [User, setUser] = useState([]);
     const [ChooseUser, setChooseUser] = useState("");
     const [UserID, setUserID] = useState(null);
+    const [Note, setNote] = useState('');
     const [detpage, setDetpage] = useState(1);
 
     const l = useLanguage();
-
 
 
     const V_B_N = (e) => {
@@ -161,8 +161,8 @@ const Detail = ({ carss, SessionID }) => {
                         await Axios.post("/bal/",
                             {
                                 amount: TotalCurrentCosts,
-                                action: "DeletedCar",
-                                // carId: cars.carDetail.modeName,
+                                action: "DeleteCar",
+                                note: cars.carDetail.modeName,
                                 userId: SessionID
 
                             }, {
@@ -309,7 +309,12 @@ const Detail = ({ carss, SessionID }) => {
 
             try {
                 //FIXME -  change Email to Id of user
-                const UDetails = await Axios.get(`/users/detail/${SessionID}`)
+                const UDetails = await Axios.get(`/users/detail/${SessionID}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
 
                 const DataBalance = Math.floor(UDetails.data.userDetail.TotalBals)
 
@@ -382,7 +387,12 @@ const Detail = ({ carss, SessionID }) => {
 
             try {
                 //FIXME -  change Email to Id of user
-                const UDetails = await Axios.get(`/users/detail/${SessionID}`)
+                const UDetails = await Axios.get(`/users/detail/${SessionID}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${session?.data?.Token}`
+                    }
+                },)
 
                 const DataBalance = UDetails.data.userDetail.TotalBals
                 const DonePrice = DoneBalance - (updatePrice - CurrentPrice)
@@ -525,69 +535,47 @@ const Detail = ({ carss, SessionID }) => {
 
     const handleSoldCars = async (bool) => {
 
-
+        const auth = {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${session?.data?.Token}`
+            }
+        }
         if (cars.carDetail.carCost.isSold == true) {
 
 
             try {
 
-                const UDetails = await Axios.get(`/users/detail/${SessionID}`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
+                const UDetails = await Axios.get(`/users/detail/${SessionID}`, auth,)
                 const DataBalance = UDetails.data.userDetail.TotalBals
 
                 if (cars.carDetail.carCost.price <= DataBalance) {
                     try {
+                        const id = router.query._id
 
-                        await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - cars.carDetail.carCost.price }, {
-                            headers: {
-                                "Content-Type": "application/json",
-                                'Authorization': `Bearer ${session?.data?.Token}`
-                            }
-                        },)
+                        const res1 = await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - cars.carDetail.carCost.price }, auth,)
+                        const res2 = await Axios.patch(`/cars/${id}`, {
+                            "IsSold": bool
+                        }, auth,)
+                        const res3 = await Axios.post("/bal/", {
+                            amount: -cars.carDetail.carCost.price,
+                            action: "Retrieved",
+                            carId: cars.carDetail._id,
+                            userId: SessionID,
 
-                        toast.success("Your Balance Now= " + (DataBalance - cars.carDetail.carCost.price) + " $");
+                        }, auth,)
 
-
-                        try {
-                            const id = router.query._id
-
-                            await Axios.patch(`/cars/${id}`,
-                                {
-                                    "IsSold": bool
-                                }, {
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    'Authorization': `Bearer ${session?.data?.Token}`
-                                }
-                            },)
-
-                            await Axios.post("/bal/",
-                                {
-                                    amount: -cars.carDetail.carCost.price,
-                                    action: "Retrieved",
-                                    carId: cars.carDetail._id,
-                                    userId: SessionID
-                                }, {
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    'Authorization': `Bearer ${session?.data?.Token}`
-                                }
-                            },)
-
+                        await axios.all([res1, res2, res3]).then(() => {
+                            toast.success("Your Balance Now= " + (DataBalance - cars.carDetail.carCost.price) + " $");
                             toast.success("Car Retrieved")
                             router.reload()
+                        }).catch(() => {
+                            toast.error("something went to wrong *")
 
-                        } catch (err) {
-
-                            // (err.response.status == 404 || err.response.status == 400 || err.response.status == 500 || err.response.status == 401 || err.response.status == 403 || err.response.status == 409) &&
-                            toast.error("error to Retrieved*")
+                        })
 
 
-                        }
+
 
                     }
                     catch (err) {
@@ -611,25 +599,14 @@ const Detail = ({ carss, SessionID }) => {
         if (cars.carDetail.carCost.isSold == false) {
 
             try {
-                //FIXME -  change Email to Id of user
-                const UDetails = await Axios.get(`/users/detail/${SessionID}`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
+                const UDetails = await Axios.get(`/users/detail/${SessionID}`, auth,)
 
                 const DataBalance = UDetails.data.userDetail.TotalBals
 
 
                 try {
 
-                    await Axios.patch(`/users/${SessionID}`, { "TotalBals": DataBalance + cars.carDetail.carCost.price }, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': `Bearer ${session?.data?.Token}`
-                        }
-                    },)
+                    await Axios.patch(`/users/${SessionID}`, { "TotalBals": DataBalance + cars.carDetail.carCost.price }, auth,)
 
                     toast.success("Your Balance Now= " + (DataBalance + cars.carDetail.carCost.price) + " $");
 
@@ -639,12 +616,7 @@ const Detail = ({ carss, SessionID }) => {
                         await Axios.patch(`/cars/${id}`,
                             {
                                 "IsSold": bool
-                            }, {
-                            headers: {
-                                "Content-Type": "application/json",
-                                'Authorization': `Bearer ${session?.data?.Token}`
-                            }
-                        },)
+                            }, auth,)
 
 
                         await Axios.post("/bal/",
@@ -652,20 +624,15 @@ const Detail = ({ carss, SessionID }) => {
                                 amount: cars.carDetail.carCost.price,
                                 action: "Sold",
                                 carId: cars.carDetail._id,
-                                userId: SessionID
-                            }, {
-                            headers: {
-                                "Content-Type": "application/json",
-                                'Authorization': `Bearer ${session?.data?.Token}`
-                            }
-                        },)
+                                userId: SessionID,
+
+                            }, auth,)
 
                         toast.success("Car Sold")
                         router.reload()
 
                     } catch (err) {
 
-                        // (err.response.status == 404 || err.response.status == 400 || err.response.status == 500 || err.response.status == 401 || err.response.status == 403 || err.response.status == 409) &&
                         toast.error("error to sold")
 
 
@@ -695,58 +662,31 @@ const Detail = ({ carss, SessionID }) => {
 
         try {
             const id = router.query._id
-
-
-            await Axios.patch(`reseller/{"userId":"${UserID}", "carId":"${id}"}`, {}, {
+            const auth = {
                 headers: {
                     "Content-Type": "application/json",
                     'Authorization': `Bearer ${session?.data?.Token}`
                 }
-            },)
-            toast.success("Car Geven to Reseller Successfully")
+            }
 
-        }
-        catch (err) {
-
-            toast.error("error to Give Car")
-
-        }
-
-
-
-    }
-    const handleGiveToQarz = async () => {
-
-
-
-        if ("") {
-
-        }
-        try {
-            const id = router.query._id
-
-            await Axios.post(`/qarz/`, {
+            await Axios.patch(`reseller/{"userId":"${UserID}", "carId":"${id}"}`, {}, auth)
+            await Axios.post("/bal/", {
+                amount: TotalCurrentCosts,
+                action: "given",
+                carId: id,
                 userId: UserID,
-                carId: id
-            }, {
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${session?.data?.Token}`
-                }
-            },)
+                isSoled: cars.carDetail.isSold,
+                note: Note
 
+            }, auth)
 
-
-            toast.success("Car Geven to Qarz Successfully")
+            toast.success("Car given to Reseller Successfully")
 
         }
         catch (err) {
-
-            (err.response.status == 404 || err.response.status == 400 || err.response.status == 500 || err.response.status == 401 || err.response.status == 403 || err.response.status == 409) &&
-
-                toast.error("error to Give Car to Qarz")
-
+            toast.error("error to Give Car")
         }
+
 
 
     }
@@ -950,50 +890,19 @@ const Detail = ({ carss, SessionID }) => {
 
 
 
-                            <div className="space-x-10">{
-
-                            }
+                            <div className="space-x-10">
                                 <div className="text-center m-5 space-y-5 ">
                                     <select onChange={(e) => {
                                         setUserID(null)
                                         setChooseUser(e.target.value)
                                     }} type='select' defaultValue={"Select"} className="select select-info w-full max-w-xs">
-                                        <option value="Select" >{l.select}</option>
+                                        <option disabled value="Select" >{l.select}</option>
                                         {/* <option value="Qarz_1" >{l.loan}</option> */}
                                         <option value="Reseller_2" >{l.reseler}</option>
 
                                     </select>
-                                    {(ChooseUser == "Qarz_1" && ChooseUser !== "") &&
 
-                                        <>
-                                            {cars.carDetail.tobalance == "Loan" &&
-                                                //FIXME -  how i can give car to qarz account if Tobalance is Loan
-                                                <div className=" flex justify-center ">
-                                                    <div className="alert alert-warning shadow-lg w-80 text-start  ">
-                                                        <FontAwesomeIcon icon={faTriangleExclamation} className="text-xl " />
-                                                        <span className="text-start ">{l.loanmsg}</span>
-                                                    </div>
-                                                </div>
-
-                                            }
-
-                                            <select disabled={cars.carDetail.tobalance == "Loan" ? true : false} defaultValue={"Select"} onChange={(event) => { setUserID(event.target.value) }} className="select select-info w-full max-w-xs">
-                                                <option disabled value="Select">{l.select}</option>
-                                                {User?.map((item, index) => {
-                                                    if (item.userRole == "Reseller") {
-                                                        return null;
-                                                    }
-                                                    if (item.userRole == "Qarz") {
-                                                        return (<option key={index} value={item._id} >{item.userName}</option>
-                                                        )
-                                                    }
-                                                })}
-                                            </select>
-                                        </>
-                                    }
-
-
-                                    {(ChooseUser == "Reseller_2" && ChooseUser !== "") &&
+                                    {(ChooseUser == "Reseller_2" && ChooseUser !== "") && <>
                                         <select defaultValue={"Select"} onChange={(event) => { setUserID(event.target.value) }} className="select select-info w-full max-w-xs">
                                             <option disabled value="Select">{l.select}</option>
                                             {User?.map((item, index) => {
@@ -1008,6 +917,9 @@ const Detail = ({ carss, SessionID }) => {
 
                                             })}
                                         </select>
+
+                                        <input type="text" onChange={(e) => { setNote(e.target.value) }} placeholder={l.note} className="input input-bordered input-info w-full max-w-xs" />
+                                    </>
                                     }
 
 
@@ -1017,7 +929,7 @@ const Detail = ({ carss, SessionID }) => {
 
                                 </div>
                                 <div className="flex  justify-end">
-                                    <label htmlFor="give-modal-3" className="btn btn-accent" disabled={(UserID != null && ChooseUser != '') ? false : true} onClick={
+                                    <label htmlFor="give-modal-3" className="btn btn-accent" disabled={(UserID != null && ChooseUser != '' && UserID != 'Select') ? false : true} onClick={
                                         ChooseUser == "Qarz_1" ? handleGiveToQarz : handleGiveToReseller
 
                                     }>{l.send}</label>
@@ -1266,8 +1178,8 @@ const Detail = ({ carss, SessionID }) => {
                                     <tr className="">
                                         <td>{l.namecar} :</td>
                                         <td>
-                                            {console.log(V_B_N("Color"))}
-                                            <input value={'hh'} name="ModeName" type="text" placeholder={l.namecar} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.modeName} />
+
+                                            <input name="ModeName" type="text" placeholder={l.namecar} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.modeName} />
                                         </td>
                                     </tr>
                                     <tr className="">
