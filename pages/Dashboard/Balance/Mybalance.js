@@ -52,7 +52,7 @@ export const getServerSideProps = async ({ req }) => {
                 }
             }
         )
-console.log(res.data.total[0].total)
+
         data = await res.data.total[0].total
     } catch {
         data = 1
@@ -212,7 +212,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                         }
                     },
                     )
-                    console.log(res.data)
+
                     const users = await Axios.get(`/users/detail/${SessionID}`, {
                         headers: {
                             "Content-Type": "application/json",

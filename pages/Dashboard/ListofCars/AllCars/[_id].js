@@ -751,13 +751,13 @@ const Detail = ({ carss, SessionID }) => {
         const doc = new jsPDF("p", "mm", "a4");
 
         cars?.carDetail?.carDamage.length > 0 ?
-            doc.addImage(`${baseURL}/${cars?.carDetail?.carDamage?.[0]?.filename}`, 'PNG', -12, -89, 226, 149 + 12, null, null, 270)
+            doc.addImage(`${baseURL}/${cars?.carDetail?.carDamage?.[0]?.filename}`, 'png', -12, -89, 226, 149 + 12, null, null, 270)
             :
-            doc.addImage('/Sedan.png', 'PNG', -12, -89, 226, 149 + 12, null, null, 270)
+            doc.addImage('/Sedan.png', 'png', -12, -89, 226, 149 + 12, null, null, 270)
 
-        doc.addImage('/Detaile_Car_Damage.png', 'PNG', 1, 1, 210, 70)
+        doc.addImage('/Detaile_Car_Damage.png', 'png', 1, 1, 210, 70)
 
-        doc.addImage('/Detail_Taible_Damage.png', 'PNG', 148, 70, 0, 226)
+        doc.addImage('/Detail_Taible_Damage.png', 'png', 148, 70, 0, 226)
 
         doc.save("Car_Damage.pdf");
     }
@@ -832,7 +832,7 @@ const Detail = ({ carss, SessionID }) => {
 
 
 
-    // console.log(V_B_N("Tocar"))
+
 
 
 

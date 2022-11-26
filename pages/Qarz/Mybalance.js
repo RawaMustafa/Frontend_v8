@@ -108,7 +108,7 @@ const TableQarz = ({ COLUMNS, AllBal }) => {
                     },)
 
 
-                    console.log(res.data)
+
 
                     setDataTable(res.data.History)
                     setPageS(Math.ceil(res.data.total / Limit))

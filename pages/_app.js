@@ -4,7 +4,6 @@ import { SessionProvider } from 'next-auth/react';
 import { useState } from 'react';
 import RefreshTokenHandler from './refreshTokenHandler';
 import { useRouter } from 'next/router';
-import Cookies from 'js-cookie'
 import { useEffect } from 'react';
 
 if (typeof document !== "undefined") {

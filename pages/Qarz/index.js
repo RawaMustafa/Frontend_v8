@@ -46,7 +46,7 @@ export async function getServerSideProps({ req, query }) {
         data = 4
     }
 
-    console.log(data)
+
 
     return {
         props: {
@@ -113,7 +113,7 @@ const Qarz = ({ initQuery, AllQarz }) => {
 
 
 
-                    console.log(res2.data)
+
 
                     // const dataQarzList = await res2.data
 

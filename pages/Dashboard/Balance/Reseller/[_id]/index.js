@@ -595,7 +595,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
         if (session.status === "authenticated") {
             const getExpenseData = async () => {
-                console.log(router.query._id)
+
 
                 try {
                     const res = await Axios.get(`/bal/${router.query._id}/?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate || '2000-01-01'}&edate${EndDate || "2222-01-01"}`, {
@@ -616,7 +616,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                     setUsersBalance(users.data.userDetail.TotalBals)
                     setDataTable(res.data.History.reverse())
                     setTotalUsers(res.data.total?.[0].total)
-                    console.log(res.data.total?.[0].total)
+
                     setPageS(Math.ceil(res.data.total?.[0].total / Limit))
                 }
                 catch {

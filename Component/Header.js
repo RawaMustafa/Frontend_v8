@@ -12,7 +12,6 @@ import { faAlignLeft, faMoon, faSun, faYinYang, faGlobe } from '@fortawesome/fre
 import { useRouter } from "next/router";
 
 import { useSession } from "next-auth/react";
-import Cookies from 'js-cookie'
 
 
 

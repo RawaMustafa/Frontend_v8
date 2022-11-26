@@ -46,7 +46,7 @@ export async function getServerSideProps({ req, query }) {
         data = 4
     }
 
-    console.log(data)
+
 
     return {
         props: {

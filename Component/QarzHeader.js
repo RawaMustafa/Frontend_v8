@@ -1,18 +1,11 @@
-// import Link from "next/link";
 import Image from "next/image";
-
 import { useTheme } from 'next-themes';
 import { useEffect, useState, useRef } from "react";
 import useLanguage from "./language";
-
-
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
 import { faAlignLeft, faMoon, faSun, faYinYang, faGlobe } from '@fortawesome/free-solid-svg-icons';
-
 import { useRouter } from "next/router";
-
 import { useSession } from "next-auth/react";
-import Cookies from 'js-cookie'
 
 
 

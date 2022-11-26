@@ -744,7 +744,7 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
 
 
     const handlePay = async (Pay) => {
-        console.log('handlePay', Paystate, Pay);
+
         const auth = {
             headers: {
                 "Content-Type": "application/json",
@@ -1330,7 +1330,7 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
 
                 setPageS(1)
 
-                console.log(res.data)
+
             }
             getQarzData()
             setReNewData(false)
@@ -1339,7 +1339,7 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
 
     }, [Search, Page, Limit, StartDate, EndDate, ID, ReNewData, session?.data?.Token])
 
-    // console.log(PageS)
+
 
 
 
@@ -2339,7 +2339,7 @@ const TableBal = ({ COLUMNS, AllBal }) => {
                     },)
 
 
-                    console.log(res.data)
+
 
                     setDataTable(res.data.History)
                     setPageS(Math.ceil(res.data.total / Limit))
@@ -2537,7 +2537,7 @@ const TableBal = ({ COLUMNS, AllBal }) => {
 
                                         <td key={idx} className="  text-center   py-3 overflow-auto" {...cell.getCellProps()}>
 
-                                            {console.log(cell.column.id)}
+
 
                                             {cell.column.id === 'amount' && (
                                                 <>

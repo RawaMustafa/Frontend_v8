@@ -19,7 +19,6 @@ export async function getServerSideProps({ req, query }) {
 
 
 
-
     if (!session || session?.userRole !== "Admin") {
         return {
             redirect: {
@@ -41,8 +40,6 @@ export async function getServerSideProps({ req, query }) {
     }
 }
 
-
-// import kurdish from "../../../Component/fonts/kurdish-normal";
 
 
 
@@ -227,7 +224,6 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
     useEffect(() => {
-
 
 
         URef.current?.value?.match(userName_regex) == null || URef.current.value?.match(userName_regex)[0] != URef.current.value ? setUValid(false) : setUValid(true);
@@ -544,17 +540,21 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                 } finally {
                     setIdofrow(null);
                     setDeletestate(null);
-                    setData({
-                        userName: "",
-                        email: "",
-                        password: "",
-                        userRole: "",
-                        TotalBals: "",
-                    });
+                    // setData({
+                    //     userName: "",
+                    //     email: "",
+                    //     password: "",
+                    //     userRole: "",
+                    //     TotalBals: "",
+                    // });
                     setReNewData(true)
                 }
 
 
+            }
+            else {
+
+                toast.error("you dont have enough balance ")
             }
         }
 
@@ -648,10 +648,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
         else if (Data.userRole == "Qarz") {
 
             const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, auth,)
-
-
             const DataBalance = UDetails.data.userDetail.TotalBals
-
 
             if (Data.TotalBals <= DataBalance) {
 
@@ -663,22 +660,13 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
                     const res1 = Axios.post(one, Data, auth)
-
-
-
-                    const res2 = Axios.patch(two + SessionID, { "TotalBals": DataBalance + Data.TotalBals }, auth,)
-
-
-
-                    const res3 = Axios.post(thre,
-                        {
-                            userId: session?.data?.id,
-                            amount: Data.TotalBals,
-                            action: "Tooken",
-                            note: Data.userName,
-
-                        }, auth,)
-
+                    const res2 = Axios.patch(two, { "TotalBals": DataBalance + Data.TotalBals }, auth,)
+                    const res3 = Axios.post(thre, {
+                        userId: session?.data?.id,
+                        amount: Data.TotalBals,
+                        action: "Tooken",
+                        note: Data.userName,
+                    }, auth,)
 
                     await axios.all([res1, res2, res3]).then((...res) => {
                         toast.success("Your Balance Now= " + (DataBalance + Data.TotalBals) + " $");
@@ -688,12 +676,11 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                     })
 
 
-
                 } catch (error) {
                     error.request.status === 409 ? toast.error("User Already Exist") :
                         toast.error("User Not Added *");
                 }
-                setReNewData(true)
+                // setReNewData(true)
             }
             else {
                 toast.error("balance not enough")
@@ -1183,7 +1170,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                                                 {cell.column.id == "userRole" &&
                                                                     <select
                                                                         ref={RRef}
-
+                                                                        disabled
                                                                         onChange={(event) => { handleSaveUser(event) }}
                                                                         onClick={(event) => { handleSaveUser(event) }}
                                                                         onFocus={() => { setRFocus(true) }}

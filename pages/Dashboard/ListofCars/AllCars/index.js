@@ -127,7 +127,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                 const data = await res.data.carDetail
 
                 setDataTable(data)
-                console.log(data)
+
                 setTotalCars(res.data.total)
 
             } catch {

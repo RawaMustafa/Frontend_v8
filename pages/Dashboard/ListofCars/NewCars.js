@@ -61,7 +61,6 @@ const NewCars = ({ SessionID }) => {
 
     const [page, setPage] = useState(1)
     const [UserQarz, setUserQarz] = useState({})
-    const [UserQarzRent, setUserQarzRent] = useState({})
     const [pictureandvideorepair, setPictureandvideorepair] = useState([])
     const [pictureandvideodamage, setPictureandvideodamage] = useState([])
     const [CarDamage, setCarDamage] = useState([])
@@ -154,7 +153,7 @@ const NewCars = ({ SessionID }) => {
         canvass.height = canvass.width / 1.6;
 
         const image = new Image()
-        image.src = `/${Data.Tocar}.PNG`;
+        image.src = `/${Data.Tocar}.png`;
 
 
 
@@ -476,7 +475,7 @@ const NewCars = ({ SessionID }) => {
     var restore = (function () {
 
         const image = new Image()
-        image.src = `/${Data.Tocar}.PNG`;
+        image.src = `/${Data.Tocar}.png`;
 
 
         contextRef.current.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
@@ -517,7 +516,7 @@ const NewCars = ({ SessionID }) => {
     var undo = (function () {
 
         const image = new Image()
-        image.src = `/${Data.Tocar}.PNG`;
+        image.src = `/${Data.Tocar}.png`;
 
 
         if (canData.length > 0) {
@@ -589,7 +588,7 @@ const NewCars = ({ SessionID }) => {
         }
 
         const image = new Image()
-        image.src = `/${Data.Tocar}.PNG`;
+        image.src = `/${Data.Tocar}.png`;
 
 
         contextRef.current?.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
@@ -731,7 +730,7 @@ const NewCars = ({ SessionID }) => {
             // save image from canvas
             if (typeof document != "undefined") {
                 var canvas = document.getElementById("canvas");
-                let imageBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/PNG'));
+                let imageBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
                 setCarDamage(imageBlob)
             }
 
@@ -800,7 +799,7 @@ const NewCars = ({ SessionID }) => {
             }
 
             else if (Data.Tobalance == "Rent" && QarzUserId != "") {
-                console.log(QarzUserId)
+
 
                 const UDetailss = await Axios.get(`/users/detail/${QarzUserId}`, auth)
 
@@ -1077,7 +1076,7 @@ const NewCars = ({ SessionID }) => {
                         <h1 className="mt-5 text-center">{l.arive}</h1>
                         <div className="flex  justify-center">
                             <select name='Arrived' required defaultValue={"Select"} onChange={(e) => { HandleAddCars(e) }} className="select select-info input input-bordered  w-[200%] mt-5 max-w-xl mb-8">
-                                <option disabled vlaue={"Select"}>{l.select}</option>
+                                <option disabled value={"Select"}>{l.select}</option>
                                 <option value={true}>{l.yes}</option>
                                 <option value={false}>{l.no}</option>
                             </select>
@@ -1540,7 +1539,7 @@ const NewCars = ({ SessionID }) => {
                                     </div >
 
                                     <div>
-                                        <img ref={image} width={1920} height={1080} className="hidden" id='ImageDrowing' name="ImageDrowing" src={`/${Data.Tocar}.PNG`} alt="Tocar" />
+                                        <img ref={image} width={1920} height={1080} className="hidden" id='ImageDrowing' name="ImageDrowing" src={`/${Data.Tocar}.png`} alt="Tocar" />
 
                                     </div>
 

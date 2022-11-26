@@ -13,7 +13,6 @@ module.exports = {
     "./Layouts/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-
     extend: {
       colors: {
         'blue': '#1fb6ff',
@@ -27,8 +26,6 @@ module.exports = {
         'gray-light': '#d3dce6',
       },
     },
-
-
     extend: {
       screens: {
         '3xl': '1575px',
@@ -36,8 +33,6 @@ module.exports = {
         'xs': "550px"
       },
     },
-
-
 
   },
   plugins: [

@@ -1,13 +1,8 @@
-
 import axios from 'axios';
 import Axios from '../Axios'
-
 import dayjs from "dayjs"
-
-
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { createNoSubstitutionTemplateLiteral } from 'typescript';
 
 // export default NextAuth(() => {
 
@@ -20,33 +15,20 @@ const nextAuthOptions = (req, res) => {
                 name: 'credentials',
                 async authorize(credentials) {
 
-
                     try {
                         const user = await Axios.post('/users/login',
                             {
                                 email: credentials.email,
                                 password: credentials.password
                             },
-
                         )
 
-
                         if (user) {
-
-                            // const cookies = user.headers['set-cookie']
-
-                            // res.setHeader("set-cookie", `RefreshToken=${user.data.refreshToken}; path=/; samesite=lax; httponly;`)
-
-
                             return { status: 'success', data: user.data }
-
                         }
-
 
                     } catch (e) {
                         const errorMessage = e
-
-                        // Redirecting to the login page with error message          in the URL
                         throw new Error(errorMessage + '     &email=    ' + credentials.email + '     &password=    ' + credentials.password)
                     }
                 }
@@ -82,14 +64,9 @@ const nextAuthOptions = (req, res) => {
 
                 async function refreshAccessToken(tokenObject, req, res) {
 
-
-                    // await res.setHeader("set-cookie", `Token=${tokenObject.token}; path=/; samesite=lax; httponly;`)
                     try {
-
                         const tokenResponse = await Axios.post("/users/reLogin", {
-
                             patata: tokenObject.refreshToken
-
                         });
 
 
@@ -116,8 +93,6 @@ const nextAuthOptions = (req, res) => {
 
 
             session({ session, token }) {
-
-
                 if (token) {
                     session.userRole = token.userRole
                     session.error = token.error
@@ -126,13 +101,9 @@ const nextAuthOptions = (req, res) => {
                     session.accessTokenExpiry = token.accessTokenExpiry
                     axios.defaults.headers.common['Authorization'] = `Bearer ${token.accessToken}`;
                     req.headers.Authorization = `Bearer ${token.accessToken}`;
-
                 }
-
                 return session;
-
             },
-
         },
 
         pages: {

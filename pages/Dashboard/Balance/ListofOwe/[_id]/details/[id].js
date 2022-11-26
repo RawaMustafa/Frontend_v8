@@ -36,7 +36,7 @@ export const getServerSideProps = async (context) => {
             'Authorization': `Bearer ${session?.Token}`
         }
     },)
-    console.log(response.data)
+
     const data = await response.data
     return {
         props: { cars: data, ID: Qarz_ID },
