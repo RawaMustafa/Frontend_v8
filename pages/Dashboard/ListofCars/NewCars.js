@@ -693,8 +693,7 @@ const NewCars = ({ SessionID }) => {
     }
 
     const postCarsId = async () => {
-
-
+        const id = toast.loading(l.loading)
         let TotalCosts =
             Data.PricePaidbid +
             Data.CoCCost +
@@ -762,6 +761,7 @@ const NewCars = ({ SessionID }) => {
 
             if (Data.Tobalance == "Cash") {
 
+
                 if (TotalCosts <= DataBalance) {
 
 
@@ -781,24 +781,27 @@ const NewCars = ({ SessionID }) => {
                         }, auth)
 
                         await axios.all([users, bal]).then(axios.spread(() => {
-                            toast.success(l.adddata);
-                        })).catch(errors => { toast.error('something went to wrong *') })
+                            toast.update(id, { render: l.adddata, type: "success", isLoading: false, autoClose: 2000 });
+                        })).catch(errors => {
+                            toast.update(id, { render: "something went to wrong *", type: "error", isLoading: false, autoClose: 2000 });
+                        })
 
 
                     }).catch(error => {
+                        toast.update(id, { render: "error to save car *", type: "error", isLoading: false, autoClose: 2000 });
 
-                        toast.error("error to save car *")
 
                     })
 
                 }
                 else {
-                    toast.warn("You don't have enough balance");
+                    toast.update(id, { render: "You don't have enough balance", type: "warn", isLoading: false, autoClose: 2000 });
 
                 }
             }
 
             else if (Data.Tobalance == "Rent" && QarzUserId != "") {
+
 
 
                 const UDetailss = await Axios.get(`/users/detail/${QarzUserId}`, auth)
@@ -829,26 +832,34 @@ const NewCars = ({ SessionID }) => {
                         isPaid: false,
                     }, auth)
 
-                    const users = Axios.patch(thre, { TotalBals: totalBal + TotalCosts }, auth)
+                    // const users = Axios.patch(thre, { TotalBals: totalBal + TotalCosts }, auth)
 
-                    await axios.all([qarz, bal, users]).then(axios.spread(() => {
-                        toast.success(l.adddata);
-                    })).catch(errors => { toast.error('something went to wrong *') })
+                    await axios.all([qarz, bal]).then(axios.spread(() => {
+                        toast.update(id, { render: l.adddata, type: "success", isLoading: false, autoClose: 2000 });
+
+                    })).catch(errors => {
+                        toast.update(id, { render: 'something went to wrong *', type: "error", isLoading: false, autoClose: 2000 });
+
+                    })
 
 
                 }).catch(() => {
-                    toast.error("error to save car *")
+                    toast.update(id, { render: "error to save car *", type: "error", isLoading: false, autoClose: 2000 });
+
                 })
 
             }
 
             else if (Data.Tobalance == "" || QarzUserId == "") {
-                toast.warn("Please Select type of Balance");
+
+                toast.update(id, { render: "Please Select type of Balance", type: "warning", isLoading: false, autoClose: 2000 });
+
             }
 
 
         } catch (e) {
-            toast.error("error to get user balance *");
+            toast.update(id, { render: "error to get user balance *", type: "error", isLoading: false, autoClose: 2000 });
+
 
         }
 
@@ -899,7 +910,7 @@ const NewCars = ({ SessionID }) => {
                     rtl={l.yes === "Yes" ? false : true}
                     draggablePercent={40}
                     limit={2}
-                    autoClose={5000}
+                    autoClose={2000}
                     className="w-64 text-sm m-auto mt-20  ltr:mr-0 md:w-64 "
                     position={toast.POSITION.TOP_RIGHT} />
 
@@ -1554,7 +1565,12 @@ const NewCars = ({ SessionID }) => {
 
 
                         <button type='button' className="btn lg:btn-wide " onClick={() => { setPage(2) }}>{l.back}</button>
-                        <button type="submit" disabled={IsCanvasChanged == 0 ? false : true} className="btn lg:btn-wide " onClick={postCarsId} title={l.next}>{l.don}</button>
+                        <button type="submit" disabled={IsCanvasChanged == 0 ? false : true} className="btn lg:btn-wide " onClick={() => {
+                            postCarsId()
+                            setPage(1)
+
+                        }
+                        } title={l.next}>{l.don}</button>
 
                     </div >
 

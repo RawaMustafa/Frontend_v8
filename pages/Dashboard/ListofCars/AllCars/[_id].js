@@ -671,8 +671,8 @@ const Detail = ({ carss, SessionID }) => {
 
             await Axios.patch(`reseller/{"userId":"${UserID}", "carId":"${id}"}`, {}, auth)
             await Axios.post("/bal/", {
-                amount: TotalCurrentCosts,
-                action: "given",
+                // amount: TotalCurrentCosts,
+                action: "gived",
                 carId: id,
                 userId: UserID,
                 isSoled: cars.carDetail.isSold,
@@ -680,7 +680,7 @@ const Detail = ({ carss, SessionID }) => {
 
             }, auth)
 
-            toast.success("Car given to Reseller Successfully")
+            toast.success("Car gived to Reseller Successfully")
 
         }
         catch (err) {
@@ -838,7 +838,7 @@ const Detail = ({ carss, SessionID }) => {
 
 
     return (
-        <>
+        <div className="container mx-auto">
             <Head>
                 <title> Cars Details</title>
             </Head>
@@ -878,8 +878,6 @@ const Detail = ({ carss, SessionID }) => {
 
 
 
-
-
                     <input type="checkbox" id="give-modal-3" className="modal-toggle btn btn-error" />
                     <div className="modal">
                         <div className="modal-box relative">
@@ -887,15 +885,23 @@ const Detail = ({ carss, SessionID }) => {
                             <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faPaperPlane} className="text-5xl " />  </h3>
                             <p className="py-4">{l.givemsg}</p>
 
+                            {cars.carDetail.userGiven?.userName != null && <div className="text-center w-full flex justify-center " >
 
+                                <div className="alert alert-warning shadow-lg">
+                                    <div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                        <span>car already gived to reseller</span>
+                                    </div>
+                                </div>
 
-
+                            </div>}
                             <div className="space-x-10">
                                 <div className="text-center m-5 space-y-5 ">
-                                    <select onChange={(e) => {
-                                        setUserID(null)
-                                        setChooseUser(e.target.value)
-                                    }} type='select' defaultValue={"Select"} className="select select-info w-full max-w-xs">
+                                    <select disabled={cars.carDetail.userGiven?.userName != null ? true : false}
+                                        onChange={(e) => {
+                                            setUserID(null)
+                                            setChooseUser(e.target.value)
+                                        }} type='select' defaultValue={"Select"} className="select select-info w-full max-w-xs">
                                         <option disabled value="Select" >{l.select}</option>
                                         {/* <option value="Qarz_1" >{l.loan}</option> */}
                                         <option value="Reseller_2" >{l.reseler}</option>
@@ -1419,7 +1425,7 @@ const Detail = ({ carss, SessionID }) => {
 
             </>
 
-        </>
+        </div >
     );
 
 }

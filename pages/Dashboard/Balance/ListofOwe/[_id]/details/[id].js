@@ -202,7 +202,7 @@ const Detail = ({ cars, ID }) => {
     })
 
     return (
-        <>
+        <div className="container mx-auto">
             <Head>
                 <title>{l.detail}</title>
             </Head>
@@ -338,7 +338,7 @@ const Detail = ({ cars, ID }) => {
                 </div>
             </>
 
-        </>
+        </div >
     );
 
 }

@@ -96,21 +96,32 @@ const Detail = ({ cars, ID }) => {
 
     }
 
-
     const handleDeleteCar = async () => {
-
+        const auth = {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${session?.data?.Token}`
+            }
+        }
         try {
-            await Axios.delete(`/Reseller/${ID}`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${session?.data?.Token}`
-                }
-            },)
-            router.back()
+            await Axios.delete(`/Reseller/${ID}`, auth)
+
+            await Axios.post("/bal/", {
+                // amount: TotalCurrentCosts,
+                action: "Retrieved",
+                carId: router?.query.id,
+                userId: router?.query._id,
+                isSoled: cars.carDetail.isSold ,
+
+            }, auth)
+
+
+
+            router.push(`/Dashboard/Balance/Reseller/${router?.query._id}`)
 
         } catch (err) {
 
-            toast.error("Car not deleted")
+            toast.error("Car not Retrieved")
         }
 
     }
@@ -148,7 +159,7 @@ const Detail = ({ cars, ID }) => {
     })
 
     return (
-        <>
+        <div className="container mx-auto">
             <Head>
                 <title>{l.detail}</title>
             </Head>
@@ -241,8 +252,6 @@ const Detail = ({ cars, ID }) => {
                                         <td>{cars.carDetail.tire}</td>
                                     </tr>
 
-
-
                                     <tr className="">
                                         <td>{l.vinnumber} :</td>
                                         <td>{cars.carDetail.VINNumber}</td>
@@ -255,7 +264,14 @@ const Detail = ({ cars, ID }) => {
                                         <td>{l.color} :</td>
                                         <td>{cars.carDetail.color}</td>
                                     </tr>
-
+                                    <tr className="">
+                                        <td>{l.wheeldrivetype} :</td>
+                                        <td>{cars.carDetail.wheelDriveType}</td>
+                                    </tr>
+                                    <tr className="">
+                                        <td>{l.isSold} :</td>
+                                        {cars.carDetail?.isSold ? <td>{l.yes}</td> : <td>{l.no}</td>}
+                                    </tr>
 
 
 
@@ -281,7 +297,7 @@ const Detail = ({ cars, ID }) => {
 
             </>
 
-        </>
+        </div>
     );
 
 }

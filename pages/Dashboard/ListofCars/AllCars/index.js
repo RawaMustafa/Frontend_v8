@@ -710,7 +710,7 @@ const Expense = ({ AllProducts }) => {
 
         <div className="" >
             <Head>
-                <title >{l.account}</title>
+                <title >{l.allcars}</title>
             </Head>
 
             {AllProducts ?

@@ -1039,7 +1039,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
                                             {cell.column.id === 'amount' && (
                                                 <>
-                                                    {cell.value >= 0 ? <div className="text-green-500">{cell.value}</div> : <div className="text-red-500">{cell.value}</div>
+                                                    {cell.value * -1 >= 0 ? <div className="text-green-500">{cell.value&&cell.value * -1}</div> : <div className="text-red-500">{cell.value&&cell.value * -1}</div>
                                                     } </>
                                             )}
 

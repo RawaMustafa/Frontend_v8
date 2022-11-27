@@ -11,6 +11,10 @@ import Image from "next/image";
 import ImageGallery from 'react-image-gallery';
 import { useRouter } from "next/router";
 import { useSession, getSession } from "next-auth/react";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDollar } from "@fortawesome/free-solid-svg-icons";
+import { toast, ToastContainer } from "react-toastify";
 
 
 export const getServerSideProps = async (context) => {
@@ -54,15 +58,63 @@ export const getServerSideProps = async (context) => {
 const Detail = ({ cars }) => {
 
     const router = useRouter()
-    const { status } = useSession()
+    const { status, data: session } = useSession()
     if (status == "unauthenticated") {
         router.push('/');
     }
     const l = useLanguage();
 
 
+    const handlesell = async (bool) => {
+
+        const auth = {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${session?.Token}`
+            }
+        }
+
+        const UDetails = await Axios.get(`/users/detail/${session?.id}`, auth)
+
+        const DataBalance = UDetails.data.userDetail.TotalBals
+        if (DataBalance >= cars.carDetail.price || bool) {
+            try {
+                await Axios.patch(`/cars/${router.query._id}`,
+                    {
+                        IsSold: bool
+                    }, auth)
+                await Axios.patch('/users/' + session?.id,
+                    {
+                        "TotalBals": bool ? DataBalance + cars.carDetail.price : DataBalance - cars.carDetail.price
+                    }, auth)
+
+                await Axios.post("/bal/",
+                    {
+                        amount: bool ? cars.carDetail.price : -cars.carDetail.price,
+                        action: bool ? "Sell" : "Retrieved",
+                        userId: session?.id,
+                        carId: cars.carDetail._id,
+                        isSoled: bool
+
+                    }, auth)
+
+                toast.success("Your Balance Now= " + (bool ? DataBalance + cars.carDetail.price : DataBalance - cars.carDetail.price) + " $");
 
 
+                router.reload()
+            }
+            catch {
+
+            }
+        } else {
+
+            toast.error("your balance is not enough")
+
+        }
+
+
+
+    }
 
 
 
@@ -131,19 +183,47 @@ const Detail = ({ cars }) => {
     })
 
     return (
-        <>
+        <div className="container mx-auto">
             <Head>
                 <title>{l.detail}</title>
             </Head>
 
+            <ToastContainer
+                draggablePercent={60}
+            />
             < >
+                <div className="flex  w-full h-full p-4 justify-end    ">
 
+                    {cars.carDetail?.isSold || <label htmlFor="my-modal-3" className="btn btn-accent modal-button">{l.sell}</label>}
+                    {cars.carDetail?.isSold && <label htmlFor="my-modal-3" className="btn btn-error modal-button">{l.retrieve}</label>}
+
+                    <input type="checkbox" id="my-modal-3" className="modal-toggle btn btn-error " />
+                    <div className="modal  ">
+                        <div className="modal-box relative ">
+                            <label htmlFor="my-modal-3" className="btn btn-sm btn-circle absolute right-2 top-2 ">✕</label>
+                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faDollar} className="text-5xl text-green-700 " />  </h3>
+                            {cars.carDetail?.isSold || <p className="py-4 ">{l.sellmsg}</p>}
+                            {cars.carDetail?.isSold && <p className="py-4 ">{l.retrievemsg}</p>}
+                            <div className="  ">
+                                <label className=" btn btn-accent " onClick={() => {
+                                    cars.carDetail?.isSold && handlesell(false)
+                                    cars.carDetail?.isSold || handlesell(true)
+                                }}>{l.yes}</label>
+                                <label htmlFor="my-modal-3" className=" btn btn-error mx-10">{l.no}</label>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
 
                 <div className="grid grid-cols-1  xl:grid-cols-2 gap-3 2xl:gap-20 4xl:gap-32  m-auto container mx-auto">
 
 
                     <ImageGallery
-                        onErrorImageURL="https://picsum.photos/id/1018/1000/600/"
+                        onErrorImageURL="/Video.svg"
                         slideInterval={10000}
                         slideDuration={50}
                         flickThreshold={0.6}
@@ -198,8 +278,6 @@ const Detail = ({ cars }) => {
                                         <td>{cars.carDetail.tire}</td>
                                     </tr>
 
-
-
                                     <tr className="">
                                         <td>{l.vinnumber} :</td>
                                         <td>{cars.carDetail.VINNumber}</td>
@@ -213,7 +291,10 @@ const Detail = ({ cars }) => {
                                         <td>{cars.carDetail.color}</td>
                                     </tr>
 
-
+                                    <tr className="">
+                                        <td>{l.isSold} :</td>
+                                        {cars.carDetail?.isSold ? <td>{l.yes}</td> : <td>{l.no}</td>}
+                                    </tr>
 
 
 
@@ -238,7 +319,7 @@ const Detail = ({ cars }) => {
 
             </>
 
-        </>
+        </div>
     );
 
 }

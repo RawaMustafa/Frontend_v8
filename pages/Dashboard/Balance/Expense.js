@@ -385,8 +385,6 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
 
 
 
-
-
                     try {
 
                         await Axios.post("/ownCost/", {
@@ -409,6 +407,9 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
                     } catch (error) {
                         toast.error("Data Not Added");
                     } finally {
+                        setDEValid(false)
+                        setDValid(false)
+                        setCValid(false)
                         setData({
                             date: "",
                             DESC: "",

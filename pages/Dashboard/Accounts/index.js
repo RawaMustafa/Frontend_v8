@@ -283,7 +283,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                 const res2 = await Axios.patch(`/users/${Idofrow?.[0]}`, DataUpdate, auth)
                 const res3 = await Axios.post("/bal/", {
                     amount: Math.floor(Idofrow?.[1]) + DataUpdate.TotalBals,
-                    action: "Update",
+                    action: "Updated",
                     userId: Idofrow?.[0]
                 }, auth)
 
@@ -353,7 +353,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                     const res3 = await Axios.post("/bal/",
                         {
                             amount: -donebalnace,
-                            action: "Update",
+                            action: "Updated",
                             userId: Idofrow?.[0]
                         }, auth)
 
@@ -409,7 +409,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                     const res3 = await Axios.post("/bal/",
                         {
                             amount: -donebalnace,
-                            action: "Update",
+                            action: "Updated",
                             userId: Idofrow?.[0]
                         }, auth)
 
@@ -450,7 +450,6 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
         }
 
     }
-
     const handledeleteUser = async () => {
         const auth = {
             headers: {
@@ -458,6 +457,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                 'Authorization': `Bearer ${session?.data?.Token}`
             },
         }
+
 
         if (Deletestate?.[3] == "Reseller") {
 
@@ -472,7 +472,8 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                     {
                         userId: session?.data?.id,
                         amount: Math.floor(Deletestate?.[1]),
-                        action: "Tooken",
+                        note: Deletestate?.[2],
+                        action: "Deleted",
                     }, auth)
 
                 await axios.all([res1, res2, res3]).then(() => {
@@ -519,7 +520,8 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                         {
                             userId: session?.data?.id,
                             amount: -Math.floor(Deletestate?.[1]),
-                            action: "Gived",
+                            note: Deletestate?.[2],
+                            action: "Deleted",
                         }, auth)
 
                     await axios.all([res1, res2, res3]).then(() => {
@@ -558,8 +560,6 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
             }
         }
 
-
-
         if (Deletestate?.[3] == "Admin") {
 
 
@@ -576,8 +576,6 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                 setReNewData(true)
             }
         }
-
-
     }
 
 
@@ -596,40 +594,29 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
         if (Data.userRole == "Reseller") {
-
             const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, auth,)
-
-
             const DataBalance = UDetails.data.userDetail.TotalBals
-
-
             if (Data.TotalBals <= DataBalance) {
-
 
                 try {
 
+                    await Axios.post("/users/signup/", Data, auth).then(async (res) => {
+                        const res1 = await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - Data.TotalBals }, auth,)
+                        const res2 = await Axios.post("/bal/", {
+                            amount: - Data.TotalBals,
+                            userId: res?.data.Id,
+                            action: "Gived",
+                            note: Data.userName,
 
+                        }, auth,)
 
-                    await Axios.post("/users/signup/", Data, auth)
+                        await axios.all([res1, res2]).then((...res) => {
+                            toast.success("Your Balance Now= " + (DataBalance - Data.TotalBals) + " $");
+                            toast.success("User added Successfully");
+                        })
+                    }).catch(() => {
 
-
-
-                    await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - Data.TotalBals }, auth,)
-
-                    toast.success("Your Balance Now= " + (DataBalance - Data.TotalBals) + " $");
-
-
-                    await Axios.post("/bal/", {
-                        amount: -Data.TotalBals,
-                        userId: session?.data.id,
-                        action: "Gived",
-                        note: Data.userName,
-
-                    }, auth,)
-
-
-                    toast.success("User added Successfully");
-
+                    })
 
                 } catch (error) {
                     error.request.status === 409 ? toast.error("User Already Exist") :
@@ -651,36 +638,40 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
             const DataBalance = UDetails.data.userDetail.TotalBals
 
             if (Data.TotalBals <= DataBalance) {
-
                 try {
-
                     const one = `/users/signup/`
                     const two = `/users/${SessionID}`
                     const thre = `/bal/`
 
+                    Axios.post(one, Data, auth).then(async (res) => {
 
-                    const res1 = Axios.post(one, Data, auth)
-                    const res2 = Axios.patch(two, { "TotalBals": DataBalance + Data.TotalBals }, auth,)
-                    const res3 = Axios.post(thre, {
-                        userId: session?.data?.id,
-                        amount: Data.TotalBals,
-                        action: "Tooken",
-                        note: Data.userName,
-                    }, auth,)
+                        const res2 = Axios.patch(two, { "TotalBals": DataBalance + Data.TotalBals }, auth,)
+                        const res3 = Axios.post(thre, {
+                            userId: res?.data.Id,
+                            amount: Data.TotalBals,
+                            action: "Received",
+                            note: Data.userName,
+                        }, auth,)
 
-                    await axios.all([res1, res2, res3]).then((...res) => {
-                        toast.success("Your Balance Now= " + (DataBalance + Data.TotalBals) + " $");
-                        toast.success("User added Successfully");
-                    }).catch((err) => {
+                        await axios.all([res2, res3]).then((...res) => {
+                            toast.success("Your Balance Now= " + (DataBalance + Data.TotalBals) + " $");
+                            toast.success("User added Successfully");
+                            setReNewData(true)
+                        }).catch((err) => {
+
+                        })
+
+
 
                     })
+
+
 
 
                 } catch (error) {
                     error.request.status === 409 ? toast.error("User Already Exist") :
                         toast.error("User Not Added *");
                 }
-                // setReNewData(true)
             }
             else {
                 toast.error("balance not enough")
@@ -842,6 +833,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
     }
+
 
 
     const table_2_pdf = () => {

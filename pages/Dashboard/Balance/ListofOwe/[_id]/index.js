@@ -770,7 +770,7 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
 
                 await Axios.post("/bal/",
                     {
-                        amount: -Math.floor(Paystate?.[2]),
+                        amount: Math.floor(Paystate?.[2]),
                         action: "Loan",
                         isPaid: false,
                         note: "Borrow",
@@ -803,7 +803,7 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
 
                     await Axios.post("/bal/",
                         {
-                            amount: Math.floor(Paystate?.[2]),
+                            amount: -Math.floor(Paystate?.[2]),
                             action: "Loan",
                             isPaid: true,
                             note: "Repayment",
@@ -1252,7 +1252,7 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
                 }, auth)
 
                 await Axios.post("/bal/", {
-                    amount: -Data.amount,
+                    amount: Data.amount,
                     action: "Loan",
                     userId: ID,
                     isPaid: true
@@ -1288,7 +1288,7 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
                     }, auth)
 
                     await Axios.post("/bal/", {
-                        amount: Data.amount,
+                        amount: -Data.amount,
                         action: "Loan",
                         userId: ID,
                         isPaid: true
@@ -2340,7 +2340,6 @@ const TableBal = ({ COLUMNS, AllBal }) => {
 
 
 
-
                     setDataTable(res.data.History)
                     setPageS(Math.ceil(res.data.total / Limit))
                 } catch (e) {
@@ -2541,7 +2540,7 @@ const TableBal = ({ COLUMNS, AllBal }) => {
 
                                             {cell.column.id === 'amount' && (
                                                 <>
-                                                    {cell.value >= 0 ? <div className="text-green-700">{cell.value}</div> : <div className="text-red-700">{cell.value}</div>
+                                                    {cell.value * -1 >= 0 ? <div className="text-green-700">{cell.value * -1}</div> : <div className="text-red-700">{cell.value * -1}</div>
                                                     } </>
                                             )}
 
