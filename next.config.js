@@ -19,6 +19,7 @@ module.exports = {
   },
   images: {
 
+    // domains: ['84.46.255.116'],
     domains: ['localhost'],
 
   },

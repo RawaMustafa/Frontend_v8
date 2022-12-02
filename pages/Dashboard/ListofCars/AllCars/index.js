@@ -6,9 +6,10 @@ import { useTable, useSortBy, useGlobalFilter, usePagination, useFilters, useGro
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
-import Axios from "../../../api/Axios"
+import Axios, { baseURL } from "../../../api/Axios"
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faEye, faFileDownload, faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faFileDownload, faCalendarCheck, faFilter, faBars, faChevronLeft, faAnglesLeft, faChevronRight, faAnglesRight, faFilePdf, faFileCsv } from '@fortawesome/free-solid-svg-icons';
+import { faFilePdf as PDF, faCalendarCheck as CALLENDER } from '@fortawesome/free-regular-svg-icons';
 import Image from 'next/image';
 import { getSession, useSession } from "next-auth/react";
 import Link from 'next/link';
@@ -68,11 +69,11 @@ const IndeterminateCheckbox = forwardRef(
             resolvedRef.current.indeterminate = indeterminate
         }, [resolvedRef, indeterminate])
 
-        return <div className="w-full    " >
+        return <div className=" w-full" >
 
-            <label className="cursor-pointer label my-2 ">
+            <label className="label my-2 cursor-pointer">
                 {l.all}
-                <input type="checkbox" className="toggle toggle-accent focus:outline-0  " ref={resolvedRef}  {...rest} />
+                <input type="checkbox" className="toggle toggle-accent focus:outline-0 " ref={resolvedRef}  {...rest} />
 
             </label>
             <hr />
@@ -81,8 +82,6 @@ const IndeterminateCheckbox = forwardRef(
 )
 IndeterminateCheckbox.displayName = 'IndeterminateCheckbox'
 const Table = ({ COLUMNS, AllProducts }) => {
-
-
 
 
 
@@ -99,23 +98,15 @@ const Table = ({ COLUMNS, AllProducts }) => {
     const [DataTable, setDataTable] = useState([]);
     const [TotalCars, setTotalCars] = useState(AllProducts);
 
-
-
     const [StartDate, setStartDate] = useState("2000-01-01");
     const [EndDate, setEndDate] = useState("2500-01-01");
-
-
-
-
-
-
-
     const l = useLanguage();
+
+
 
     useEffect(() => {
         const getExpenseData = async () => {
 
-            // &sdate=${StartDate}&edate=${EndDate}
             try {
 
                 const res = await Axios.get(`/cars/?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2500-01-01"}`, {
@@ -150,7 +141,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
         const table = document.getElementById('table-to-xls')
         let TH = []
-        const table_th = [...table.rows].map(r => [...r.querySelectorAll('th')].map((th) => (TH.push(th.children?.[0].innerText != "Details" ? th.children?.[0].innerText : ""))))
+        const table_th = [...table.rows].map(r => [...r.querySelectorAll('th')].map((th) => (TH.push(th.children?.[0]?.innerText != "Details" ? th.children?.[0]?.innerText : ""))))
         const table_td = [...table.rows].map((r) => [...r.querySelectorAll('td')].map(td => td.textContent))
 
         const doc = new jsPDF("p", "mm", "a2");
@@ -166,7 +157,6 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
         doc.save("Table_Cars.pdf");
     };
-
 
 
 
@@ -200,38 +190,62 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
         columns: COLUMNS,
         data: DataTable,
-        // defaultColumn: { Filter: DefaultColumnFilter },
-
     }, useGlobalFilter, useFilters, useGroupBy, useSortBy, useExpanded, usePagination,
 
     );
 
-    // const { globalFilter } = state;
     const { pageIndex, pageSize } = state
 
     return (
-        <div className="container mx-auto overflow-auto scrollbar-hide ">
+        <div className='mx-3' >
+
+            {/* //?   Header  */}
+            <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-2xl p-5">
+                <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
+
+                    <a href="#my-modal-2" className=" flex  mx-2" ><FontAwesomeIcon className='text-2xl hover:scale-90 mx-1' icon={faBars} /></a>
+                    <input type="search" placeholder={`${l.search} ...`} className="input input-bordered    w-full    focus:outline-0   h-9 "
+                        onChange={e =>
+                            setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
+                        }
+                    />
+                </div>
+                <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8  rtl:mr-8 ">
+                    <label tabIndex="0" className="active:scale-9 m-1  ">
+                        <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="active:scale-90 text-2xl hover:cursor-pointer text-blue-500  " />
+                    </label>
+
+                    <ul tabIndex="0" className="dropdown-content bg-base-100 rounded-box w-52 flex justify-center shadow">
+                        <li className=" py-2">
+
+                            <div className="space-y-1">
+                                <h1>{l.from}</h1><input className="input input-bordered input-info focus:outline-0 "
+                                    onChange={(e) => {
+                                        setStartDate(e.target.value)
+                                    }}
+                                    type="date"
+                                />
+                                <h1>{l.to}</h1>
+                                <input className="input input-bordered input-info focus:outline-0"
+                                    onChange={(e) => {
+                                        setEndDate(e.target.value)
+                                    }}
+                                    type="date"
+                                />
+                            </div>
+                        </li>
+                    </ul>
+                </div>
 
 
-
-            <div className=" flex justify-between  rounded-lg  items-center p-2 min-w-[700px] ">
-
-
-                <input type="search" placeholder={`${l.search} ...`} className="input  input-info  w-full max-w-xs  focus:outline-0"
-                    onChange={e =>
-                        setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
-                    }
-                />
-
-                <a href="#my-modal-2" className="btn btn-outline">{l.filter}</a>
                 <div className="modal" id="my-modal-2">
                     <div className="modal-box m-2">
                         <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} />
-                        <div className="font-bold text-lg overflow-auto max-h-80 scrollbar-hide space-y-2 ">
+                        <div className="max-h-80 scrollbar-hide space-y-2 overflow-auto text-lg font-bold">
                             {allColumns.map(column => (
                                 <div key={column.id}>
-                                    <div className=" w-full  rounded-lg   ">
-                                        <label className="cursor-pointer label">
+                                    <div className=" w-full rounded-lg">
+                                        <label className="label cursor-pointer">
                                             {column.id}
                                             <input type="checkbox" className="toggle toggle-accent focus:outline-0 " {...column.getToggleHiddenProps()} />
 
@@ -251,238 +265,184 @@ const Table = ({ COLUMNS, AllProducts }) => {
                     </div>
                 </div>
 
+            </div>
+            {/* //?   Header  */}
 
 
 
 
-                <div className="flex justify-end ">
+            <div className="overflow-x-auto  bg-white dark:bg-[#181A1B] rounded-b-xl   w-full    "  >
 
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left">
-                        {/* //TODO -   Fix-------Date*/}
-                        <label tabIndex="0" className=" m-1 active:scale-9  ">
-                            <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 active:scale-9 " />
-                        </label>
+                <table id="table-to-xls" className="table w-full my-10  text-xs  " {...getTableProps()}>
 
-                        <ul tabIndex="0" className="dropdown-content  shadow bg-base-100 rounded-box w-52 flex justify-center  ">
-                            <li className="  py-2">
+                    <thead className=" ">
+                        {headerGroups.map((headerGroups, idx) => (
+                            <tr id="th-to-xls" className="text-xs text-center w-96 " key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
+                                <th className='hidden'></th>
+                                {headerGroups.headers.map((column, idx) => (
+                                    <th key={idx} className={`  ${idx == 0 && "w-20  max-w-[100px] "}  `} {...column.getHeaderProps(column.getSortByToggleProps())} >
+                                        <span className='text-xs  font-normal normal-case'>{column.render('Header')}</span>
+                                        <span  >
+                                            {column.isSorted ? (column.isSortedDesc ? "⇅" : "⇵") : ""}
+                                        </span>
+                                    </th>
+                                ))}
+                            </tr>
+                        )
+                        )
+                        }
+                    </thead >
 
-                                <div className="space-y-1">
-                                    <h1>{l.from}</h1><input className="input input-bordered input-info  focus:outline-0 "
-                                        onChange={(e) => {
-                                            setStartDate(e.target.value)
-                                        }}
-                                        type="date"
-                                    />
-                                    <h1>{l.to}</h1>
-                                    <input className="input input-bordered input-info  focus:outline-0"
-                                        onChange={(e) => {
-                                            setEndDate(e.target.value)
-                                        }}
-                                        type="date"
-                                    />
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+                    <tbody {...getTableBodyProps()} >
+
+                        {page.map((row, idx) => {
+
+                            prepareRow(row)
+                            return (
+                                <tr key={idx} className=""   {...row.getRowProps()} >
+                                    <td className='hidden'></td>
+                                    {row.cells.map((cell, idx) => {
+                                        return (
+
+
+                                            <td key={idx} className={`text-center dark:bg-[#161818]  ${idx == 0 && "w-20   p-0"}`} {...cell.getCellProps()}>
+
+
+                                                {cell.render('Cell')}
+                                                {cell.column.id === "image" && (
+                                                    <>
+                                                        <Link href={`/Dashboard/ListofCars/AllCars/${row.original._id}`}><a><Image src={`${baseURL}/${row.original.carDamage?.[0].filename}`} alt="Image" height={100} width={100} /></a></Link>
+
+                                                    </>)
+
+                                                }
+                                                {cell.column.id === 'isSold' && (
+
+                                                    cell.value === true ?
+                                                        <span className="text-green-500">Yes</span>
+                                                        :
+                                                        <span className="text-red-500">No</span>
+
+                                                )}
+
+                                                {cell.column.id === "Details" &&
+                                                    <Link href={`/Dashboard/ListofCars/AllCars/${row.original._id}`}><a><label htmlFor="my-modal-3" className="m-0" >
+                                                        <FontAwesomeIcon icon={faEye} className="text-xl text-blue-500 cursor-pointer" />
+                                                    </label></a></Link>
+
+                                                }
 
 
 
 
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left px-5 ">
-                        <label tabIndex="0" className=" m-1  " >
-                            <FontAwesomeIcon icon={faFileDownload} className="text-3xl m-auto md:mx-5 mx-1 active:scale-9   ease-in-out  transition" />
-                        </label>
+                                            </td>
 
-                        <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 flex justify-center space-y-2 ">
-                            <li>  <ReactHTMLTableToExcel
-                                id="test-table-xls-button"
-                                className="btn btn-outline download-table-xls-button"
+                                        )
+                                    })}
+
+                                </tr>
+                            )
+                        }
+
+                        )}
+
+                    </tbody>
+
+
+                </table>
+
+                {/* //?    botom */}
+                <div className="container text-sm scale-90 ">
+
+                    <div className=" flex justify-between container mx-auto items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
+
+
+                        <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
+
+                            <div></div>
+                            <FontAwesomeIcon icon={faAnglesLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
+                                onClick={() => Page > 1 && setPage(1)}
+                                disabled={Page == 1 ? true : false} />
+
+                            <FontAwesomeIcon icon={faChevronLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page > 1 && setPage(Page - 1)}
+                                disabled={Page == 1 ? true : false} />
+
+
+
+                            <span className="px-20 py-2 rounded bg-slate-100 dark:bg-gray-700">
+                                {Page}/{PageS}
+                            </span>
+
+
+
+                            <FontAwesomeIcon icon={faChevronRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(Page + 1))}
+                                disabled={Page >= PageS ? true : false} />
+
+                            <FontAwesomeIcon icon={faAnglesRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(PageS))}
+                                disabled={Page >= PageS ? true : false} />
+
+
+                            <div>
+                                <select className="select  select-sm w-20 focus:outline-0 input-sm dark:bg-gray-700   max-w-xs text-sm"
+                                    onChange={(e) => {
+                                        setLimit((e.target.value))
+                                        setPageSize(Number(e.target.value)
+                                        )
+                                    }}
+
+                                    value={pageSize}>
+                                    {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
+                                        <option className='text-end' key={idx} value={pageSize}>
+                                            {(pageSize !== 100000) ? pageSize : l.all}
+                                        </option>))
+                                    }
+
+                                </select>
+                            </div>
+
+                            <FontAwesomeIcon icon={PDF} onClick={table_2_pdf} className="md:mx-5 px-10 text-blue-400 active:scale-9 m-auto mx-10 text-2xl transition ease-in-out hover:cursor-pointer" />
+
+                            <ReactHTMLTableToExcel
+                                id="test-table-xls-button "
+                                className="text-2xl active:scale-90"
                                 table="table-to-xls"
                                 filename="tablexls"
                                 sheet="tablexls"
-                                buttonText="XLSX" />  </li>
+                                buttonText="📋"
+                                icon={PDF}
+                            />
 
-                            <li><button className='btn btn-outline ' onClick={table_2_pdf}>PDF</button> </li>
-                            {/* <li><button className='btn btn-outline' onClick={table_All_pdff}>ALL_PDF</button> </li> */}
-                        </ul>
+
+
+                        </div>
+
+
+
+                        <div className="scrollbar-hide inline-flex space-x-3 overflow-auto">
+                            <div></div>
+
+
+
+                        </div>
+
+
+
                     </div>
 
-                </div>
+
+
+                </div >
+
+                {/* //?    botom */}
 
 
             </div>
-
-
-
-
-            <table id="table-to-xls" className="ml-1 my-10   " {...getTableProps()}>
-
-
-                <thead className="  ">
-
-                    {headerGroups.map((headerGroups, idx) => (
-
-                        <tr id="th-to-xls" className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
-
-                            {headerGroups.headers.map((column, idx) => (
-
-                                <th key={idx} className={`p-4 m-44 ${true && "min-w-[200px]"} `} {...column.getHeaderProps(column.getSortByToggleProps())} >
-                                    <span >{column.render('Header')}</span>
-                                    <span  >
-                                        {column.isSorted ? (column.isSortedDesc ? "<" : ">") : ""}
-                                    </span>
-                                </th>
-                            ))}
-                        </tr>
-                    )
-                    )
-                    }
-                </thead >
-                <tbody {...getTableBodyProps()}>
-
-                    {page.map((row, idx) => {
-
-                        prepareRow(row)
-                        return (
-                            <tr key={idx}   {...row.getRowProps()} >
-                                {row.cells.map((cell, idx) => {
-                                    return (
-
-
-                                        <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
-
-
-                                            {cell.render('Cell')}
-
-
-
-                                            {cell.column.id === 'isSold' && (
-
-                                                cell.value === true ?
-                                                    // <FontAwesomeIcon icon={faCheck} className="text-green-500" />
-                                                    <span className="text-green-500">Yes</span>
-                                                    :
-                                                    // <FontAwesomeIcon icon={faTimes} className="text-red-500" />
-                                                    <span className="text-red-500">No</span>
-
-                                            )}
-
-                                            {cell.column.id === "Details" &&
-                                                <Link href={`/Dashboard/ListofCars/AllCars/${row.original._id}`}><a><label htmlFor="my-modal-3" className="m-0" >
-                                                    <FontAwesomeIcon icon={faEye} className="text-2xl cursor-pointer text-blue-700" />
-                                                </label></a></Link>
-
-                                            }
-
-
-
-
-                                        </td>
-
-                                    )
-                                })}
-
-                            </tr>
-                        )
-                    }
-
-                    )}
-
-                </tbody>
-
-
-            </table>
-
-            <div className=" flex justify-between container mx-auto items-center rounded-xl p-3  px-1 mb-20  min-w-[700px]">
-
-
-                <div className=" flex   justify-around mx-5 text-lg items-center     ">
-
-
-                    <span className="px-3">
-                        {l.page}{" " + Page}/{PageS}
-                    </span>
-
-
-
-
-                    <div>
-                        <select className="select select-info  w-full max-w-xs focus:outline-0"
-                            onChange={(e) => {
-                                setLimit((e.target.value))
-                                setPageSize(Number(e.target.value)
-                                )
-                            }}
-
-                            value={pageSize}>
-                            {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
-                                <option key={idx} value={pageSize}>
-                                    {l.show} ({(pageSize !== 100000) ? pageSize : l.all})
-                                </option>))
-                            }
-
-                        </select>
-                    </div>
-                </div>
-
-
-
-
-                <div className="space-x-3  overflow-auto inline-flex  scrollbar-hide ">
-                    <div></div>
-
-
-
-                    <button className="btn w-2 h-2 btn-info border-0  " onClick={() =>
-                        setPage(1)
-                    }
-                        disabled={
-                            Page == 1 ? true : false
-                        }
-                    >{"<<"} </button>
-
-
-                    <button className="btn w-2 h-2 btn-info" onClick={() =>
-                        setPage(Page - 1)
-                    }
-                        disabled={
-                            Page <= 1 ? true : false
-
-                        }
-                    >{"<"}
-                    </button>
-
-
-                    <button className="btn w-2 h-2 btn-info" onClick={() =>
-                        Page >= 1 && setPage(Page + 1)
-                    }
-                        disabled={
-                            Page >= PageS ? true : false
-                        }
-                    >{">"} </button>
-
-
-                    <button className="btn w-2 h-2 btn-info "
-                        onClick={() =>
-                            Page >= 1 && setPage(PageS)
-                        }
-                        disabled={
-                            Page >= PageS ? true : false
-                        }
-                    >{">>"} </button>
-
-
-
-                </div>
-
-
-
-            </div>
-
 
 
         </div >
-
     );
 
 
@@ -501,7 +461,6 @@ const Expense = ({ AllProducts }) => {
 
 
 
-
     const COLUMNS =
         useMemo(() =>
             [
@@ -510,7 +469,17 @@ const Expense = ({ AllProducts }) => {
                     Header: () => {
                         return (
 
-                            // l.namecar
+                            "Image"
+                        )
+                    },
+
+                    disableFilters: true,
+                    accessor: 'image',
+
+                },
+                {
+                    Header: () => {
+                        return (
                             "Name of car"
                         )
                     },
@@ -525,9 +494,7 @@ const Expense = ({ AllProducts }) => {
                 {
                     Header: () => {
                         return (
-
                             "Price"
-                            // l.price
                         )
                     },
 
@@ -540,8 +507,6 @@ const Expense = ({ AllProducts }) => {
                 {
                     Header: () => {
                         return (
-
-                            // l.color
                             "Color"
                         )
                     },
@@ -555,8 +520,6 @@ const Expense = ({ AllProducts }) => {
                 {
                     Header: () => {
                         return (
-
-                            // l.date
                             "Date"
                         )
                     },
@@ -570,8 +533,6 @@ const Expense = ({ AllProducts }) => {
                 {
                     Header: () => {
                         return (
-
-                            // l.isSold
                             "Is Sold"
                         )
                     },
@@ -585,8 +546,6 @@ const Expense = ({ AllProducts }) => {
                 {
                     Header: () => {
                         return (
-
-                            // l.mileage
                             "Mileage"
                         )
                     },
@@ -601,8 +560,6 @@ const Expense = ({ AllProducts }) => {
                 {
                     Header: () => {
                         return (
-
-                            // l.modelyear
                             "Model"
                         )
                     },
@@ -616,27 +573,23 @@ const Expense = ({ AllProducts }) => {
 
 
 
-                {
-                    Header: () => {
-                        return (
+                // {
+                //     Header: () => {
+                //         return (
+                //             "Tire"
+                //         )
+                //     },
 
-                            // l.tire
-                            "Tire"
-                        )
-                    },
+                //     disableFilters: true,
 
-                    disableFilters: true,
-
-                    accessor: 'tire',
+                //     accessor: 'tire',
 
 
-                },
+                // },
 
                 {
                     Header: () => {
                         return (
-
-                            // l.tobalance
                             "Type of Balance"
                         )
                     },
@@ -652,8 +605,6 @@ const Expense = ({ AllProducts }) => {
                 {
                     Header: () => {
                         return (
-
-                            // l.tocar
                             "Type of Car"
                         )
                     },
@@ -668,8 +619,6 @@ const Expense = ({ AllProducts }) => {
                 {
                     Header: () => {
                         return (
-
-                            // l.wheeldrivetype
                             "Wheel Drive Type"
                         )
                     },
@@ -681,20 +630,12 @@ const Expense = ({ AllProducts }) => {
 
                 },
 
+                // {
+                //     Header: "Details",
 
+                //     disableFilters: true,
 
-
-
-
-
-
-                {
-                    Header: "Details",
-
-                    disableFilters: true,
-
-
-                },
+                // },
 
 
 

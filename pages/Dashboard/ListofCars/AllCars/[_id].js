@@ -768,7 +768,6 @@ const Detail = ({ carss, SessionID }) => {
 
         return (
             <div>
-
                 {item.taramash != "false" ?
                     <div className='video-wrapper flex text-center items-center justify-center   '>
                         <video width="1600" height="1040" controls
@@ -799,6 +798,38 @@ const Detail = ({ carss, SessionID }) => {
     }
 
 
+    const renderThumbInner = (item) => {
+
+        return (
+            <div>
+                {item.taramash != "false" ?
+                    <div className='video-wrapper flex text-center items-center justify-center   '>
+                        <video width="60" height="100" controls={false}
+                            className="h-auto max-w-full flex text-center items-center justify-center  ">
+                            <source
+                                src={`${baseURL}${item.taramash}`} type="video/mp4" />
+                        </video >
+                    </div >
+                    :
+                    <div className='play-button w-full h-full relative  '>
+                        <Image width={1920} height={1080}
+                            alt='SliderImage'
+                            quality={'1'}
+                            className='image-gallery-image  '
+                            crossOrigin="anonymous"
+                            src={item.thumbnail}
+                        />
+
+                    </div>
+                }
+
+            </div >
+        );
+
+    }
+
+
+
     const dataa = []
 
     cars.carDetail?.pictureandvideorepair?.map((img, index) => {
@@ -806,7 +837,9 @@ const Detail = ({ carss, SessionID }) => {
             "original": `${baseURL}${img.filename}`,
             "thumbnail": `${baseURL}${img.filename}`,
             "taramash": `${img.mimetype == "video/mp4" && img.filename}`,
-            "renderItem": renderVideo
+            "renderItem": renderVideo,
+            "renderThumbInner": renderThumbInner,
+
 
         })
 
@@ -816,7 +849,9 @@ const Detail = ({ carss, SessionID }) => {
             "original": `${baseURL}${img.filename}`,
             "thumbnail": `${baseURL}${img.filename}`,
             "taramash": `${img.mimetype == "video/mp4" && img.filename}`,
-            "renderItem": renderVideo
+            "renderItem": renderVideo,
+            "renderThumbInner": renderThumbInner,
+
 
         })
     })
@@ -825,7 +860,8 @@ const Detail = ({ carss, SessionID }) => {
             "original": `${baseURL}${img.filename}`,
             "thumbnail": `${baseURL}${img.filename}`,
             "taramash": `${img.mimetype == "video/mp4" && img.filename}`,
-            "renderItem": renderVideo
+            "renderItem": renderVideo,
+            "renderThumbInner": renderThumbInner,
 
         })
     })
@@ -838,13 +874,14 @@ const Detail = ({ carss, SessionID }) => {
 
 
     return (
-        <div className="container mx-auto">
+        <div className="container mx-auto ">
             <Head>
-                <title> Cars Details</title>
+                <title>{l.detail}</title>
             </Head>
 
             < >
                 <ToastContainer
+
                     draggablePercent={60}
                 />
 
@@ -984,7 +1021,7 @@ const Detail = ({ carss, SessionID }) => {
                 </div>
 
 
-                <div className="grid grid-cols-1  xl:grid-cols-2 gap-3 2xl:gap-20 4xl:gap-32  m-auto z-50 ">
+                <div className="grid grid-cols-1  2xl:grid-cols-3 xl:grid-cols-2 gap-2    m-auto z-50 mb-40 ">
 
 
                     <ImageGallery
@@ -996,152 +1033,149 @@ const Detail = ({ carss, SessionID }) => {
                         lazyLoad={true}
                         showThumbnails={true}
                         items={dataa}
-                        additionalClass="z-50"
-                        classNmae="z-50"
+                        additionalClass="z-50   "
+                        className="z-50      "
                         useBrowserFullscreen={true}
-
+                    // showPlayButton={false}
                     />
 
+                    <div className="  p-2  ">
+                        <div className="">
+                            <button className={`cursor-pointer h-[39px] w-[250px%] ltr:rounded-tl-lg rtl:rounded-tr-lg   border-[1px] border-[#1254ff] ${detpage == 1 ? "bg-[#1254ff] text-white" : "bg-white text-[#1254ff]"}  text-md  w-[50%] z-0`} onClick={() => { setDetpage(1) }}>{l.info}</button>
+                            <button className={`cursor-pointer h-[39px] w-[250px%] ltr:rounded-tr-lg rtl:rounded-tl-lg   border-[1px] border-[#1254ff] ${detpage == 2 ? "bg-[#1254ff] text-white" : "bg-white text-[#1254ff]"}  text-md  w-[50%] z-0`} onClick={() => { setDetpage(2) }}>{l.note}</button>
+                        </div>
+                        <div className="overflow-auto  max-w-5xl px-5  border border-t-0 border-gray-300 dark:border-gray-800 rounded-b-lg bg-white dark:bg-[#181A1B]">
 
-
-                    <div className="  mb-40 mx-2  ">
-
-
-                        <div className="overflow-x-auto max-w-5xl z-0">
-                            {/* <form onSubmit={HandleAddCars}   > */}
-                            <table className="table table-zebra w-full text-center z-0 ">
-                                <thead>
-                                    <tr className=" z-0">
-                                        <th className="active:scale-95 cursor-pointer w-[50%] z-0" onClick={() => { setDetpage(1) }}>{l.info}</th>
-                                        <th className="active:scale-95 cursor-pointer w-[50%] z-0" onClick={() => { setDetpage(2) }}>{l.note}</th>
+                            <table className="table table-compact w-full text-xs bg-whit dark:bg-[#181A1B] ">
+                                <thead className="     ">
+                                    <tr>
+                                        <th className="hidden"></th>
                                     </tr>
                                 </thead>
-                                <tbody className={`${detpage !== 1 ? "hidden" : ""} `}>
-                                    <tr className="">
-                                        <td>{l.tocar} :</td>
-                                        <td>{cars.carDetail.tocar}</td>
+
+                                <tbody className={` ${detpage !== 1 ? "hidden" : ""}`}>
+                                    <tr className="   ">
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]     ">{l.tocar} :</td>
+                                        <td className="text-end bg-white dark:bg-[#181A1B] ">{cars.carDetail.tocar}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.tire} :</td>
-                                        <td>{cars.carDetail.tire}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.tire} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.tire}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.date} :</td>
-                                        <td>{cars.carDetail.date}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.date} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.date}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.namecar} :</td>
-                                        <td>{cars.carDetail.modeName}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.namecar} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.modeName}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.modelyear} :</td>
-                                        <td>{cars.carDetail.model}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.modelyear} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.model}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.vinnumber} :</td>
-                                        <td>{cars.carDetail.VINNumber}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.vinnumber} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.VINNumber}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.mileage} :</td>
-                                        <td>{cars.carDetail.mileage}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.mileage} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.mileage}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.color} :</td>
-                                        <td>{cars.carDetail.color}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.color} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.color}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.arived}:</td>
-                                        {cars.carDetail.arrived ? <td className="">Yes</td> :
-                                            <td className="">No</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.arived}:</td>
+                                        {cars.carDetail.arrived ? <td className=" text-start bg-white dark:bg-[#181A1B]"  >Yes</td> :
+                                            <td className=" text-end bg-white dark:bg-[#181A1B]" >No</td>
                                         }
                                     </tr>
                                     <tr className="">
-                                        <td>{l.wheeldrivetype} :</td>
-                                        <td>{cars.carDetail.wheelDriveType}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.wheeldrivetype} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.wheelDriveType}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.price} :</td>
-                                        <td>{cars.carDetail.carCost.price}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.price} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.carCost.price}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.isSold} :</td>
-                                        {/* <td>{cars.carDetail.carCost.isSold?.toString()}</td> */}
-                                        {cars.carDetail.carCost.isSold ? <td className="">Yes</td> :
-                                            <td className="">No</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.isSold} :</td>
+                                        {cars.carDetail.carCost.isSold ? <td className=" text-start bg-white dark:bg-[#181A1B]" >Yes</td> :
+                                            <td className=" text-end bg-white dark:bg-[#181A1B]"  >No</td>
                                         }
                                     </tr>
                                     <tr className="">
-                                        <td>{l.tobalance} :</td>
-                                        <td>{cars.carDetail.tobalance}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.tobalance} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.tobalance}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.pricepaidorcaratbid}:</td>
-                                        <td>{cars.carDetail.carCost.pricePaidbid}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.pricepaidorcaratbid}:</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.carCost.pricePaidbid}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.storagefee} :</td>
-                                        <td>{cars.carDetail.carCost.feesinAmericaStoragefee}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.storagefee} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.carCost.feesinAmericaStoragefee}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.copartoriaafee} :</td>
-                                        <td>{cars.carDetail.carCost.feesinAmericaCopartorIAAfee}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.copartoriaafee} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.carCost.feesinAmericaCopartorIAAfee}</td>
                                     </tr>
                                     <tr className="">
-                                        <td> {l.dubairepaircost} :</td>
-                                        <td>{cars.carDetail.carCost.feesAndRepaidCostDubairepairCost}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]"> {l.dubairepaircost} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.carCost.feesAndRepaidCostDubairepairCost}</td>
                                     </tr>
                                     <tr className="">
-                                        <td> {l.feesinadubai} :</td>
-                                        <td>{cars.carDetail.carCost.feesAndRepaidCostDubaiFees}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]"> {l.feesinadubai} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.carCost.feesAndRepaidCostDubaiFees}</td>
                                     </tr>
                                     <tr className="">
-                                        <td> {l.feesAndRepaidCostDubaiothers} :</td>
-                                        <td>{cars.carDetail.carCost.feesAndRepaidCostDubaiothers}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]"> {l.feesAndRepaidCostDubaiothers} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.carCost.feesAndRepaidCostDubaiothers}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.coccost} :</td>
-                                        <td>{cars.carDetail.carCost.coCCost}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.coccost} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.carCost.coCCost}</td>
                                     </tr>
                                     <tr className="">
-                                        <td> {l.uslocation} :</td>
-                                        <td>{cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostLocation}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]"> {l.uslocation} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostLocation}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.fromamericatodubaicost} :</td>
-                                        <td>{cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.fromamericatodubaicost} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.fromamericatodubaigumrg} :</td>
-                                        <td>{cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost}</td>
-
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.fromamericatodubaigumrg} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost}</td>
                                     </tr>
-
 
                                     <tr className="">
-                                        <td>{l.fromdubaitokurdistancosts} :</td>
-                                        <td>{cars.carDetail.carCost.dubaiToIraqGCostTranscost}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]" >{l.fromdubaitokurdistancosts} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.carCost.dubaiToIraqGCostTranscost}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.fromdubaitokurdistangumrg} :</td>
-                                        <td>{cars.carDetail.carCost.dubaiToIraqGCostgumrgCost}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.fromdubaitokurdistangumrg} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.carCost.dubaiToIraqGCostgumrgCost}</td>
                                     </tr>
 
 
 
 
                                     <tr className="">
-                                        <td>{l.numberinkurdistan} :</td>
-                                        <td>{cars.carDetail.carCost.raqamAndRepairCostinKurdistanRaqam}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.numberinkurdistan} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.carCost.raqamAndRepairCostinKurdistanRaqam}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.repaircostinkurdistan} :</td>
-                                        <td>{cars.carDetail.carCost.raqamAndRepairCostinKurdistanrepairCost}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.repaircostinkurdistan} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.carCost.raqamAndRepairCostinKurdistanrepairCost}</td>
                                     </tr>
 
 
                                     <tr className="">
-                                        <td>{l.fromdubaitokurdistanothers} :</td>
-                                        <td>{cars.carDetail.carCost.raqamAndRepairCostinKurdistanothers}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.fromdubaitokurdistanothers} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.carCost.raqamAndRepairCostinKurdistanothers}</td>
                                     </tr>
 
 
@@ -1155,7 +1189,7 @@ const Detail = ({ carss, SessionID }) => {
                                     <tr className="">
                                         <td>{l.tocar} :</td>
                                         <td>
-                                            <select disabled name="Tocar" defaultValue={cars.carDetail.tocar} className="select select-info w-full max-w-xs">
+                                            <select disabled name="Tocar" defaultValue={cars.carDetail.tocar} className="select select-info w-full max-w-xs select-sm">
                                                 <option value="Sedan">Sedan</option>
                                                 <option value="SUV">SUV</option>
                                                 <option value="PickUp">PickUp</option>
@@ -1170,7 +1204,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.tire} :</td>
                                         <td>
 
-                                            <input name="Tire" type="text" placeholder={l.tire} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.tire} />
+                                            <input name="Tire" type="text" placeholder={l.tire} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.tire} />
 
                                         </td>
                                     </tr>
@@ -1178,48 +1212,48 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.date} :</td>
                                         <td>
 
-                                            <input name="Date" type="Date" placeholder="Type here" className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.date} />
+                                            <input name="Date" type="Date" placeholder="Type here" className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.date} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.namecar} :</td>
                                         <td>
 
-                                            <input name="ModeName" type="text" placeholder={l.namecar} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.modeName} />
+                                            <input name="ModeName" type="text" placeholder={l.namecar} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.modeName} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.modelyear} :</td>
                                         <td>
 
-                                            <input name="Model" type="number" placeholder={l.modelyear} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.model} />
+                                            <input name="Model" type="number" placeholder={l.modelyear} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.model} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.vinnumber} :</td>
                                         <td>
 
-                                            <input name="VINNumber" type="text" placeholder={l.vinnumber} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.VINNumber} />
+                                            <input name="VINNumber" type="text" placeholder={l.vinnumber} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.VINNumber} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.mileage} :</td>
                                         <td>
 
-                                            <input name="Mileage" type="text" placeholder={l.mileage} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.mileage} />
+                                            <input name="Mileage" type="text" placeholder={l.mileage} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.mileage} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.color} :</td>
                                         <td>
 
-                                            <input name="Color" type="text" placeholder={l.color} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.color} />
+                                            <input name="Color" type="text" placeholder={l.color} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.color} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.arived}:</td>
                                         <td className="">
-                                            <select name="Arrived" defaultValue={cars.carDetail.arrived} className="select select-info w-full max-w-xs">
+                                            <select name="Arrived" defaultValue={cars.carDetail.arrived} className="select select-info w-full max-w-xs select-sm">
                                                 <option value={true} >Yes</option>
                                                 <option value={false}>No</option>
                                             </select>
@@ -1229,21 +1263,21 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.wheeldrivetype} :</td>
                                         <td>
 
-                                            <input name="WheelDriveType" type="text" placeholder={l.wheeldrivetype} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.wheelDriveType} />
+                                            <input name="WheelDriveType" type="text" placeholder={l.wheeldrivetype} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.wheelDriveType} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.price} :</td>
                                         <td>
 
-                                            <input name="Price" type="number" placeholder={l.price} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.price} />
+                                            <input name="Price" type="number" placeholder={l.price} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.carCost.price} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.isSold} :</td>
                                         <td>
 
-                                            <select disabled name="IsSold" defaultValue={cars.carDetail.carCost.isSold} className="select select-info w-full max-w-xs">
+                                            <select disabled name="IsSold" defaultValue={cars.carDetail.carCost.isSold} className="select select-info w-full max-w-xs select-sm">
                                                 <option value={true} >Yes</option>
                                                 <option value={false}>No</option>
                                             </select>
@@ -1252,7 +1286,7 @@ const Detail = ({ carss, SessionID }) => {
                                     <tr className="">
                                         <td>{l.tobalance} :</td>
                                         <td>
-                                            <select disabled name="Tobalance" defaultValue={cars.carDetail.tobalance} className="select select-info w-full max-w-xs">
+                                            <select disabled name="Tobalance" defaultValue={cars.carDetail.tobalance} className="select select-info w-full max-w-xs select-sm">
                                                 <option value="Cash"> {l.cash} </option>
                                                 <option value="Loan" > {l.loan} </option>
                                                 <option value="Rent" > {l.rent} </option>
@@ -1265,7 +1299,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.pricepaidorcaratbid}:</td>
                                         <td>
 
-                                            <input name="PricePaidbid" type="number" placeholder={l.pricepaidorcaratbid} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.pricePaidbid}
+                                            <input name="PricePaidbid" type="number" placeholder={l.pricepaidorcaratbid} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.carCost.pricePaidbid}
 
                                             />
                                         </td>
@@ -1274,7 +1308,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.storagefee} :</td>
                                         <td>
 
-                                            <input name="FeesinAmericaStoragefee" type="number" placeholder={l.storagefee} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesinAmericaStoragefee}
+                                            <input name="FeesinAmericaStoragefee" type="number" placeholder={l.storagefee} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.carCost.feesinAmericaStoragefee}
                                             />
                                         </td>
                                     </tr>
@@ -1282,7 +1316,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.copartoriaafee} :</td>
                                         <td>
 
-                                            <input name="FeesinAmericaCopartorIAAfee" type="number" placeholder={l.copartoriaafee} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesinAmericaCopartorIAAfee}
+                                            <input name="FeesinAmericaCopartorIAAfee" type="number" placeholder={l.copartoriaafee} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.carCost.feesinAmericaCopartorIAAfee}
                                             />
                                         </td>
                                     </tr>
@@ -1290,7 +1324,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td> {l.dubairepaircost} :</td>
                                         <td>
 
-                                            <input name="FeesAndRepaidCostDubairepairCost" type="number" placeholder={l.dubairepaircost} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubairepairCost}
+                                            <input name="FeesAndRepaidCostDubairepairCost" type="number" placeholder={l.dubairepaircost} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubairepairCost}
                                             />
                                         </td>
                                     </tr>
@@ -1298,7 +1332,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td> {l.feesinadubai} :</td>
                                         <td>
 
-                                            <input name="FeesAndRepaidCostDubaiFees" type="number" placeholder={l.feesinadubai} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubaiFees}
+                                            <input name="FeesAndRepaidCostDubaiFees" type="number" placeholder={l.feesinadubai} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubaiFees}
                                             />
                                         </td>
                                     </tr>
@@ -1306,7 +1340,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td> {l.feesAndRepaidCostDubaiothers} :</td>
                                         <td>
 
-                                            <input name="FeesAndRepaidCostDubaiothers" type="number" placeholder={l.feesAndRepaidCostDubaiothers} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubaiothers}
+                                            <input name="FeesAndRepaidCostDubaiothers" type="number" placeholder={l.feesAndRepaidCostDubaiothers} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubaiothers}
                                             />
                                         </td>
                                     </tr>
@@ -1314,7 +1348,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.coccost} :</td>
                                         <td>
 
-                                            <input name="CoCCost" type="number" placeholder={l.coccost} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.coCCost}
+                                            <input name="CoCCost" type="number" placeholder={l.coccost} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.carCost.coCCost}
                                             />
                                         </td>
                                     </tr>
@@ -1322,20 +1356,20 @@ const Detail = ({ carss, SessionID }) => {
                                         <td> {l.uslocation} :</td>
                                         <td>
 
-                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostLocation" type="text" placeholder={l.uslocation} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostLocation} />
+                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostLocation" type="text" placeholder={l.uslocation} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostLocation} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.fromamericatodubaicost} :</td>
                                         <td>
-                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostTranscost" type="number" placeholder={l.fromamericatodubaicost} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost}
+                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostTranscost" type="number" placeholder={l.fromamericatodubaicost} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost}
                                             />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.fromamericatodubaigumrg} :</td>
                                         <td>
-                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost" type="number" placeholder={l.fromamericatodubaigumrg} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost}
+                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost" type="number" placeholder={l.fromamericatodubaigumrg} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost}
                                             />
                                         </td>
                                     </tr>
@@ -1343,7 +1377,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.fromdubaitokurdistancosts} :</td>
                                         <td>
 
-                                            <input name="DubaiToIraqGCostTranscost" type="number" placeholder={l.fromdubaitokurdistancosts} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.dubaiToIraqGCostTranscost}
+                                            <input name="DubaiToIraqGCostTranscost" type="number" placeholder={l.fromdubaitokurdistancosts} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.carCost.dubaiToIraqGCostTranscost}
                                             />
                                         </td>
                                     </tr>
@@ -1351,7 +1385,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.fromdubaitokurdistangumrg} :</td>
                                         <td>
 
-                                            <input name="DubaiToIraqGCostgumrgCost" type="number" placeholder={l.fromdubaitokurdistangumrg} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.dubaiToIraqGCostgumrgCost}
+                                            <input name="DubaiToIraqGCostgumrgCost" type="number" placeholder={l.fromdubaitokurdistangumrg} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.carCost.dubaiToIraqGCostgumrgCost}
                                             />
                                         </td>
                                     </tr>
@@ -1359,14 +1393,14 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.numberinkurdistan} :</td>
                                         <td>
 
-                                            <input name="RaqamAndRepairCostinKurdistanRaqam" type="number" placeholder={l.numberinkurdistan} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanRaqam} />
+                                            <input name="RaqamAndRepairCostinKurdistanRaqam" type="number" placeholder={l.numberinkurdistan} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanRaqam} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td>{l.repaircostinkurdistan} :</td>
                                         <td>
 
-                                            <input name="RaqamAndRepairCostinKurdistanrepairCost" type="number" placeholder={l.repaircostinkurdistan} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanrepairCost}
+                                            <input name="RaqamAndRepairCostinKurdistanrepairCost" type="number" placeholder={l.repaircostinkurdistan} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanrepairCost}
                                             />
                                         </td>
                                     </tr>
@@ -1375,7 +1409,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td>{l.fromdubaitokurdistanothers} :</td>
                                         <td>
 
-                                            <input name="RaqamAndRepairCostinKurdistanothers" type="number" placeholder={l.fromdubaitokurdistanothers} className="input input-info w-full max-w-xs" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanothers}
+                                            <input name="RaqamAndRepairCostinKurdistanothers" type="number" placeholder={l.fromdubaitokurdistanothers} className="input input-info w-full max-w-xs input-sm" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanothers}
                                             />
                                         </td>
                                     </tr>
@@ -1390,15 +1424,14 @@ const Detail = ({ carss, SessionID }) => {
                                                 handleUpdateCars
                                             } >{l.update}</button>
                                         </td>
-                                        {/*   */}
                                     </tr>
 
 
 
                                 </tbody>
                             </table>
-                            {/* </form> */}
-                            <div className={`${detpage !== 2 ? "hidden" : ""} overflow-hidden p-3 space-y-8  pb-20 [line-break: auto] dark:bg-[#242933]  bg-[#F2F2F2] border-t-2 `}>
+
+                            <div className={`${detpage !== 2 ? "hidden" : ""} overflow-hidden p-3 space-y-8  pb-20 [line-break: auto] bg-white dark:bg-[#181A1B]  `}>
                                 <div className=" text-xl link-accent"> {l.USANote} : </div>
                                 <div>{cars.carDetail.carCost.feesAndRepaidCostDubainote}</div>
                                 <div className="mt-3 text-xl link-accent"> {l.DubaiNote} : </div>
@@ -1408,12 +1441,55 @@ const Detail = ({ carss, SessionID }) => {
 
 
                             </div>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-12">
+                        <div className=" h-[100px] min-w-[200px max-w-[420px] shadow mx-2 mt-1">
+
+                            <div className=" bg-[#1254ff] rounded-t-lg h-[40px] text-white ">
+                                <div className="flex h-full items-center px-6 ">{l.price}</div>
+
+                            </div>
+                            <div className="w-full h-full  border border-t-0 border-gray-300 dark:border-gray-800  rounded-b-lg  bg-white dark:bg-[#181A1B] px-5 ">
+                                <div className="divide-y ">
+
+                                    <div className="flex justify-between  text-start ">
+                                        <dir className="text-start  p-0 flex items-center">{l.price}</dir>
+                                        <dir className=" text-2xl p-0">{cars.carDetail.price}$</dir>
+
+                                    </div>
 
 
+                                </div>
+
+
+                            </div>
                         </div>
 
+                        <div className=" h-[100px] min-w-[200px max-w-[420px] shadow mx-2 mt-1">
 
+                            <div className=" bg-[#1254ff] rounded-t-lg h-[40px] text-white ">
+                                <div className="flex h-full items-center px-6 ">{l.price}</div>
+
+                            </div>
+                            <div className="w-full h-full  border border-t-0 border-gray-300 dark:border-gray-800  rounded-b-lg  bg-white dark:bg-[#181A1B] px-5 ">
+                                <div className="divide-y ">
+
+                                    <div className="flex justify-between  text-start ">
+                                        <dir className="text-start  p-0 flex items-center">{l.price}</dir>
+                                        <dir className=" text-2xl p-0">{cars.carDetail.price}$</dir>
+
+                                    </div>
+
+
+                                </div>
+
+
+                            </div>
+                        </div>
                     </div>
+
 
                 </div>
 

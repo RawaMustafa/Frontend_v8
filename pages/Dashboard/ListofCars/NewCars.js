@@ -155,8 +155,6 @@ const NewCars = ({ SessionID }) => {
         const image = new Image()
         image.src = `/${Data.Tocar}.png`;
 
-
-
         contextt.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
 
 
@@ -1508,8 +1506,6 @@ const NewCars = ({ SessionID }) => {
                                                 onMouseDown={startDrawing}
                                                 onMouseUp={endDrawing}
                                                 onMouseMove={draw}
-
-
                                                 onTouchStart={startTuch}
                                                 onTouchEnd={endTuch}
 

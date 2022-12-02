@@ -30,7 +30,7 @@ export const en = {
     wheeldrivetype: "Wheel Drive Type",
     pictureandvideoofcardamage: "Picture and Video of Car Damage",
     pictureandvideoofcarafterrepair: "Picture and Video of Car After Repair",
-    pricepaidorcaratbid: "Price Paid or Carat Bid",
+    pricepaidorcaratbid: "Price Paid ",
     feesinamerica: "Fees in America",
     storagefee: "Storage Fee",
     copartoriaafee: "Copart  IAA Fee",
