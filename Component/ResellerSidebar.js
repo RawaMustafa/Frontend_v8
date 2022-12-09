@@ -2,7 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import useLanguage from "./language";
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faCartPlus, faCar, faCircleUser, faChartLine, faMoneyCheckDollar, faUserTag, faArrowRightFromBracket, faHandHoldingDollar, faCommentsDollar } from '@fortawesome/free-solid-svg-icons';
+import { faCartPlus, faCar, faCircleUser, faChartLine, faMoneyCheckDollar, faUserTag, faArrowRightFromBracket, faHandHoldingDollar, faCommentsDollar, faCarSide } from '@fortawesome/free-solid-svg-icons';
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -77,7 +77,8 @@ const Sidebar = () => {
                     <li><Link href="/Reseller/Mybalance"><a className=" my-custom-style"><span className="px-2"><FontAwesomeIcon icon={faMoneyCheckDollar} className="text-xl" /> </span><span> {l.mybalance}</span></a></Link></li>
                     <li className="mt-5 mb-3"><h1>{l.listofcars}</h1> </li>
 
-                    <li><Link href="/Reseller/Cars"><a className=" my-custom-style"><span className="px-2"><FontAwesomeIcon icon={faCar} className="text-xl" /> </span><span> {l.allcars}</span></a></Link></li>
+                    <li><Link href="/Reseller/Cars"><a className=" my-custom-style"><span className="px-2"><FontAwesomeIcon icon={faCar} className="text-xl" /> </span><span> {l.mycars}</span></a></Link></li>
+                    <li><Link href="/Reseller/AllCars"><a className=" my-custom-style"><span className="px-2"><FontAwesomeIcon icon={faCarSide} className="text-xl" /> </span><span> {l.allcars}</span></a></Link></li>
 
 
 

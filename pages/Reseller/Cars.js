@@ -11,9 +11,9 @@ import { useTable, useSortBy, useGlobalFilter, usePagination, useFilters, useGro
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
-
+import { faFilePdf as PDF, faCalendarCheck as CALLENDER } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faEye, faFileDownload, faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faFileDownload, faCalendarCheck, faAnglesLeft, faChevronRight, faAnglesRight, faChevronLeft, faBars } from '@fortawesome/free-solid-svg-icons';
 
 
 
@@ -192,125 +192,89 @@ const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
     return (
 
 
-        <div className="w-full    " >
+        <div className="  container mx-auto  " >
 
+            {/* //?   Header  */}
+            <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-xl p-5">
 
-            <div className="container mx-auto overflow-auto scrollbar-hide ">
+                <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
 
-
-
-                <div className=" flex justify-between  rounded-lg  items-center p-2 min-w-[700px] ">
-
-
-                    <input type="search" placeholder={`${l.search} ...`} className="input  input-info  w-full max-w-xs  focus:outline-0"
+                    <a href="#my-modal-2" className=" flex  mx-2" ><FontAwesomeIcon className='text-2xl hover:scale-90 mx-1' icon={faBars} /></a>
+                    <input type="search" placeholder={`${l.search} ...`} className="input input-bordered    w-full    focus:outline-0   h-9 "
                         onChange={e =>
                             setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
                         }
                     />
+                </div>
+                <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8  rtl:mr-8 ">
+                    <label tabIndex="0" className="active:scale-9 m-1  ">
+                        <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="active:scale-90 text-2xl hover:cursor-pointer text-blue-500  " />
+                    </label>
 
-                    <a href="#my-modal-2" className="btn btn-outline">{l.filter}</a>
-                    <div className="modal" id="my-modal-2">
-                        <div className="modal-box m-2">
-                            <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} />
-                            <div className="font-bold text-lg overflow-auto max-h-52 scrollbar-hide space-y-2 ">
-                                {allColumns.map(column => (
-                                    <div key={column.id}>
-                                        <div className=" w-full  rounded-lg   ">
-                                            <label className="cursor-pointer label">
-                                                {column.id}
-                                                <input type="checkbox" className="toggle toggle-accent focus:outline-0 " {...column.getToggleHiddenProps()} />
+                    <ul tabIndex="0" className="dropdown-content bg-base-100 rounded-box w-52 flex justify-center shadow">
+                        <li className=" py-2">
 
-                                            </label>
-                                        </div>
-                                        {/* <input type="checkbox" {...column.getToggleHiddenProps()} />{' '} */}
-
-
-                                    </div>
-                                ))}
-
-
+                            <div className="space-y-1">
+                                <h1>{l.from}</h1><input className="input input-bordered input-info focus:outline-0 "
+                                    onChange={(e) => {
+                                        setStartDate(e.target.value)
+                                    }}
+                                    type="date"
+                                />
+                                <h1>{l.to}</h1>
+                                <input className="input input-bordered input-info focus:outline-0"
+                                    onChange={(e) => {
+                                        setEndDate(e.target.value)
+                                    }}
+                                    type="date"
+                                />
                             </div>
-
-                            <div className="modal-action">
-                                <a href="#" className="btn">{l.don}</a>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-
-
-                    <div className="flex justify-end ">
-
-                        {/* <div className="dropdown rtl:dropdown-right ltr:dropdown-left">
-                            <label tabIndex="0" className=" m-1 active:scale-9  ">
-                                <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 active:scale-9 " />
-                            </label>
-
-                            <ul tabIndex="0" className="dropdown-content  shadow bg-base-100 rounded-box w-52 flex justify-center  ">
-                                <li className="  py-2">
-
-                                    <div className="space-y-1">
-                                        <h1>{l.from}</h1><input className="input input-bordered input-info  focus:outline-0 "
-                                            onChange={(e) => {
-                                                setStartDate(e.target.value)
-                                            }}
-                                            type="date"
-                                        />
-                                        <h1>{l.to}</h1>
-                                        <input className="input input-bordered input-info  focus:outline-0"
-                                            onChange={(e) => {
-                                                setEndDate(e.target.value)
-                                            }}
-                                            type="date"
-                                        />
-                                    </div>
-                                </li>
-                            </ul>
-                        </div> */}
-
-
-
-
-                        <div className="dropdown rtl:dropdown-right ltr:dropdown-left px-5 ">
-                            <label tabIndex="0" className=" m-1  " >
-                                <FontAwesomeIcon icon={faFileDownload} className="text-3xl m-auto md:mx-5 mx-1 active:scale-9   ease-in-out  transition" />
-                            </label>
-
-                            <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 flex justify-center space-y-2 ">
-                                <li>  <ReactHTMLTableToExcel
-                                    id="test-table-xls-button"
-                                    className="btn btn-outline download-table-xls-button"
-                                    table="table-to-xls"
-                                    filename="tablexls"
-                                    sheet="tablexls"
-                                    buttonText="XLSX" />  </li>
-
-                                <li><button className='btn btn-outline ' onClick={table_2_pdf}>PDF</button> </li>
-                            </ul>
-                        </div>
-
-                    </div>
-
-
+                        </li>
+                    </ul>
                 </div>
 
 
+                <div className="modal" id="my-modal-2">
+                    <div className="modal-box m-2">
+                        <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} />
+                        <div className="max-h-80 scrollbar-hide space-y-2 overflow-auto text-lg font-bold">
+                            {allColumns.map(column => (
+                                <div key={column.id}>
+                                    <div className=" w-full rounded-lg">
+                                        <label className="label cursor-pointer">
+                                            {column.id}
+                                            <input type="checkbox" className="toggle toggle-accent focus:outline-0 " {...column.getToggleHiddenProps()} />
+
+                                        </label>
+                                    </div>
 
 
-                <table id="table-to-xls" className="ml-1 my-10   " {...getTableProps()}>
+                                </div>
+                            ))}
 
+
+                        </div>
+
+                        <div className="modal-action">
+                            <a href="#" className="btn">{l.don}</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            {/* //?   Header  */}
+
+            <div className=" overflow-auto  bg-white dark:bg-[#181A1B] rounded-b-xl shadow-xl ">
+                <table id="table-to-xls" className="table table-compact    my-10   " {...getTableProps()}>
 
                     <thead className="  ">
-
                         {headerGroups.map((headerGroups, idx) => (
 
                             <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
-
+                                <th className='hidden'></th>
                                 {headerGroups.headers.map((column, idx) => (
 
-                                    < th key={idx} className={`p-4 m-44 ${true && "min-w-[200px]"}`} {...column.getHeaderProps(column.getSortByToggleProps())} >
+                                    < th key={idx} className={`py-3 text-center font-normal normal-case ${true && "min-w-[200px]"}`} {...column.getHeaderProps(column.getSortByToggleProps())} >
                                         <span  >{column.render('Header')} </span>
                                         <span  >
                                             {column.isSorted ? (column.isSortedDesc ? "<" : ">") : ""}
@@ -329,11 +293,13 @@ const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
                             prepareRow(row)
                             return (
                                 <tr key={idx}   {...row.getRowProps()} >
+                                    <td className='hidden'></td>
+
                                     {row.cells.map((cell, idx) => {
                                         return (
 
 
-                                            <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
+                                            <td key={idx} className="dark:bg-[#181A1B] text-center py-2" {...cell.getCellProps()}>
 
 
                                                 {cell.render('Cell')}
@@ -378,86 +344,83 @@ const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
 
 
                 </table>
-                {/* </div > */}
+
+                {/* //?    botom */}
+                <div className="container text-sm  scale-90  ">
+
+                    <div className=" flex justify-between container mx-auto items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
 
 
-                <div className=" flex justify-between container mx-auto items-center rounded-xl p-3  px-1 mb-20  min-w-[700px]">
+                        <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
+
+                            <div></div>
+                            <FontAwesomeIcon icon={faAnglesLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
+                                onClick={() => Page > 1 && setPage(1)}
+                                disabled={Page == 1 ? true : false} />
+
+                            <FontAwesomeIcon icon={faChevronLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page > 1 && setPage(Page - 1)}
+                                disabled={Page == 1 ? true : false} />
 
 
-                    <div className=" flex   justify-around mx-5 text-lg items-center     ">
 
-
-                        <span className="px-3">
-                            {l.page}{" " + Page}/{PageS}
-                        </span>
-
+                            <span className="px-20 py-2 rounded bg-slate-100 dark:bg-gray-700">
+                                {Page}/{PageS}
+                            </span>
 
 
 
-                        <div>
-                            <select className="select select-info  w-full max-w-xs focus:outline-0"
-                                onChange={(e) => {
-                                    setLimit((e.target.value))
-                                    setPageSize(Number(e.target.value)
-                                    )
-                                }}
+                            <FontAwesomeIcon icon={faChevronRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(Page + 1))}
+                                disabled={Page >= PageS ? true : false} />
 
-                                value={pageSize}>
-                                {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
-                                    <option key={idx} value={pageSize}>
-                                        {l.show} ({(pageSize !== 100000) ? pageSize : l.all})
-                                    </option>))
-                                }
+                            <FontAwesomeIcon icon={faAnglesRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(PageS))}
+                                disabled={Page >= PageS ? true : false} />
 
-                            </select>
+
+                            <div>
+                                <select className="select  select-sm w-20 focus:outline-0 input-sm dark:bg-gray-700   max-w-xs text-sm"
+                                    onChange={(e) => {
+                                        setLimit((e.target.value))
+                                        setPageSize(Number(e.target.value)
+                                        )
+                                    }}
+
+                                    value={pageSize}>
+                                    {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
+                                        <option className='text-end' key={idx} value={pageSize}>
+                                            {(pageSize !== 100000) ? pageSize : l.all}
+                                        </option>))
+                                    }
+
+                                </select>
+                            </div>
+
+                            <FontAwesomeIcon icon={PDF} onClick={table_2_pdf} className="md:mx-5 px-10 text-blue-400 active:scale-9 m-auto mx-10 text-2xl transition ease-in-out hover:cursor-pointer" />
+
+                            <ReactHTMLTableToExcel
+                                id="test-table-xls-button "
+                                className="text-2xl active:scale-90"
+                                table="table-to-xls"
+                                filename="tablexls"
+                                sheet="tablexls"
+                                buttonText="📋"
+                                icon={PDF}
+                            />
+
+
+
                         </div>
-                    </div>
 
 
 
-
-                    <div className="space-x-3  overflow-auto inline-flex  scrollbar-hide ">
-                        <div></div>
-
+                        <div className="scrollbar-hide inline-flex space-x-3 overflow-auto">
+                            <div></div>
 
 
-                        <button className="btn w-2 h-2 btn-info border-0  " onClick={() =>
-                            setPage(1)
-                        }
-                            disabled={
-                                Page == 1 ? true : false
-                            }
-                        >{"<<"} </button>
 
-
-                        <button className="btn w-2 h-2 btn-info" onClick={() =>
-                            setPage(Page - 1)
-                        }
-                            disabled={
-                                Page <= 1 ? true : false
-
-                            }
-                        >{"<"}
-                        </button>
-
-
-                        <button className="btn w-2 h-2 btn-info" onClick={() =>
-                            Page >= 1 && setPage(Page + 1)
-                        }
-                            disabled={
-                                Page >= PageS ? true : false
-                            }
-                        >{">"} </button>
-
-
-                        <button className="btn w-2 h-2 btn-info "
-                            onClick={() =>
-                                Page >= 1 && setPage(PageS)
-                            }
-                            disabled={
-                                Page >= PageS ? true : false
-                            }
-                        >{">>"} </button>
+                        </div>
 
 
 
@@ -465,7 +428,8 @@ const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
 
 
 
-                </div>
+                </div >
+                {/* //?    botom */}
 
             </div >
         </div >

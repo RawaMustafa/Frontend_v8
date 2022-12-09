@@ -1,29 +1,17 @@
 import useLanguage from '../../../Component/language';
 import AdminLayout from '../../../Layouts/AdminLayout';
-
 import { useEffect, useMemo, useState, useRef } from 'react';
 import Head from 'next/head'
-
-
-// import { dateBetweenFilterFn, DateRangeColumnFilter } from '../Balance/Filter';
-// Filter, DefaultColumnFilter, 
-
 import { useTable, useSortBy, useGlobalFilter, usePagination, useFilters, useGroupBy, useExpanded, } from 'react-table';
-// import { GlobalFilter } from '../Balance/GlobalFilter';
-
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
-
-
 import axios from "axios"
 import Axios from "../../api/Axios"
-
 import { ToastContainer, toast, } from 'react-toastify';
-
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faCalendarPlus, faTrash, faEdit, faSave, faBan, faFileDownload, faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
-
+import { faCalendarPlus, faTrash, faEdit, faSave, faBan, faFileDownload, faCalendarCheck, faAnglesLeft, faChevronLeft, faChevronRight, faAnglesRight, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faFilePdf as PDF, faCalendarCheck as CALLENDER } from '@fortawesome/free-regular-svg-icons';
 
 
 
@@ -497,11 +485,8 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
         prepareRow,
 
     } = useTable({
-
         columns: COLUMNS,
         data: DataTable,
-        // defaultColumn: { Filter: DefaultColumnFilter },
-
     }, useGlobalFilter, useFilters, useGroupBy, useSortBy, useExpanded, usePagination,
 
     );
@@ -511,385 +496,337 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
 
 
     return (
-        <div className="container mx-auto overflow-auto ">
+        <div className="  ">
 
 
+            {/* //?   Header  */}
+            <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-2xl p-5">
+                <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
 
-            <div className=" flex justify-between   items-center p-2  min-w-[700px] ">
-
-                <div>
-
-                    <label htmlFor="my-modal" className="btn modal-button flex justify-center items-center ">
+                    <label htmlFor="my-modal" className=" p-2 px-3 flex justify-center items-center hover:cursor-pointer ">
                         <FontAwesomeIcon icon={faCalendarPlus} className="text-xl  " />
                     </label>
-
-                    <input type="checkbox" id="my-modal" className="modal-toggle" />
-                    <div className="modal">
-                        <div className="modal-box space-y-12">
-
-                            <div>{l.expense}</div>
-                            <div>
-                                <input
-                                    required name='cost' type="number" placeholder={l.amount}
-                                    onClick={(event) => { handleSaveExpenseData(event) }}
-                                    onChange={(event) => { handleSaveExpenseData(event) }}
-                                    onFocus={() => { setCFocus(true) }}
-                                    onBlur={() => { setCFocus(false) }}
-
-                                    className="input input-bordered input-info w-full max-w-xl mt-5 dark:placeholder:text-white dark:color-white"
-                                />
-                                <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!CValid && !CFocus && Data.cost != "" ? "block" : "hidden"}`}>
-                                    {l.incorrect}
-                                    <br />
-                                    {l.number7}
-
-
-                                </p>
-
-                            </div>
-                            <div>
-                                <textarea name='DESC'
-                                    onChange={(event) => { handleSaveExpenseData(event) }}
-                                    onClick={(event) => { handleSaveExpenseData(event) }}
-                                    onFocus={() => { setDEFocus(true) }}
-                                    onBlur={() => { setDEFocus(false) }}
-
-                                    className="textarea textarea-info w-full max-w-xl mt-5 dark:placeholder:text-white dark:color-white" placeholder="Bio"></textarea>
-                                <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!DEValid && !DEFocus && Data.DESC != "" ? "block" : "hidden"}`}>
-                                    {l.incorrect}
-                                    <br />
-                                    {l.charecter416}
-
-
-                                </p>
-
-                            </div>
-
-                            <div>
-                                <input name='date' type="date" placeholder={l.date}
-                                    onClick={(event) => { handleSaveExpenseData(event) }}
-                                    onChange={(event) => { handleSaveExpenseData(event) }}
-                                    onFocus={() => { setDFocus(true) }}
-                                    onBlur={() => { setDFocus(false) }}
-                                    className="input input-bordered input-info w-full max-w-xl  dark:placeholder:text-white dark:color-white" />
-                                <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!DValid && !DFocus && Data.date != "" ? "block" : "hidden"}`}>
-                                    {l.incorrect}
-                                    <br />
-
-
-                                </p>
-
-                            </div>
-
-
-                            <div className="modal-action">
-                                <div></div>
-                                <label htmlFor="my-modal" className="btn btn-error"  >{l.cancel}</label>
-                                <label htmlFor="my-modal" onSubmit={(e) => { e.click() }}   >
-                                    <input type="submit" className="btn btn-success" disabled={DValid && CValid ? false : true} onClick={addExpense} value={l.add} />
-                                </label>
-
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-
-                <div className="flex justify-center items-center lg:space-x-4 ">
-                    <input type="search" placeholder={`${l.search} ...`} className="input   input-info  w-full max-w-xs mx-5"
+                    <input type="search" placeholder={`${l.search} ...`} className="input input-bordered    w-full    focus:outline-0   h-9 "
                         onChange={e =>
                             setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
                         }
                     />
+                </div>
+                <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8  rtl:mr-8 ">
+                    <label tabIndex="0" className="active:scale-9 m-1  ">
+                        <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="active:scale-90 text-2xl hover:cursor-pointer text-blue-500  " />
+                    </label>
 
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left ">
+                    <ul tabIndex="0" className="dropdown-content bg-base-100 rounded-box w-52 flex justify-center shadow">
+                        <li className=" py-2">
 
-                        <label tabIndex="0" className=" m-1 ">
-                            <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 " />
-                        </label>
+                            <div className="space-y-1">
+                                <h1>{l.from}</h1><input className="input input-bordered input-info focus:outline-0 "
+                                    onChange={(e) => {
+                                        setStartDate(e.target.value)
+                                    }}
+                                    type="date"
+                                />
+                                <h1>{l.to}</h1>
+                                <input className="input input-bordered input-info focus:outline-0"
+                                    onChange={(e) => {
+                                        setEndDate(e.target.value)
+                                    }}
+                                    type="date"
+                                />
+                            </div>
+                        </li>
+                    </ul>
+                </div>
 
-                        <ul tabIndex="0" className="dropdown-content  shadow bg-base-100 rounded-box w-52 flex justify-center   ">
-                            <li className="  py-2">
 
-                                <div className="space-y-1">
-                                    <h1>{l.from}</h1><input className="input input-bordered input-info "
-                                        onChange={(e) => {
-                                            setStartDate(e.target.value)
-                                        }}
-                                        type="date"
-                                    />
-                                    <h1>{l.to}</h1>
-                                    <input className="input input-bordered input-info "
-                                        onChange={(e) => {
-                                            setEndDate(e.target.value)
-                                        }}
-                                        type="date"
-                                    />
-                                </div>
-                            </li>
-                        </ul>
+                <input type="checkbox" id="my-modal" className="modal-toggle" />
+                <div className="modal">
+                    <div className="modal-box space-y-12">
+
+                        <div>{l.expense}</div>
+                        <div>
+                            <input
+                                required name='cost' type="number" placeholder={l.amount}
+                                onClick={(event) => { handleSaveExpenseData(event) }}
+                                onChange={(event) => { handleSaveExpenseData(event) }}
+                                onFocus={() => { setCFocus(true) }}
+                                onBlur={() => { setCFocus(false) }}
+
+                                className="input input-bordered input-info w-full max-w-xl mt-5 dark:placeholder:text-white dark:color-white"
+                            />
+                            <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!CValid && !CFocus && Data.cost != "" ? "block" : "hidden"}`}>
+                                {l.incorrect}
+                                <br />
+                                {l.number7}
+
+
+                            </p>
+
+                        </div>
+                        <div>
+                            <textarea name='DESC'
+                                onChange={(event) => { handleSaveExpenseData(event) }}
+                                onClick={(event) => { handleSaveExpenseData(event) }}
+                                onFocus={() => { setDEFocus(true) }}
+                                onBlur={() => { setDEFocus(false) }}
+
+                                className="textarea textarea-info w-full max-w-xl mt-5 dark:placeholder:text-white dark:color-white" placeholder="Bio"></textarea>
+                            <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!DEValid && !DEFocus && Data.DESC != "" ? "block" : "hidden"}`}>
+                                {l.incorrect}
+                                <br />
+                                {l.charecter416}
+
+
+                            </p>
+
+                        </div>
+
+                        <div>
+                            <input name='date' type="date" placeholder={l.date}
+                                onClick={(event) => { handleSaveExpenseData(event) }}
+                                onChange={(event) => { handleSaveExpenseData(event) }}
+                                onFocus={() => { setDFocus(true) }}
+                                onBlur={() => { setDFocus(false) }}
+                                className="input input-bordered input-info w-full max-w-xl  dark:placeholder:text-white dark:color-white" />
+                            <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!DValid && !DFocus && Data.date != "" ? "block" : "hidden"}`}>
+                                {l.incorrect}
+                                <br />
+
+
+                            </p>
+
+                        </div>
+
+
+                        <div className="modal-action">
+                            <div></div>
+                            <label htmlFor="my-modal" className="btn btn-error"  >{l.cancel}</label>
+                            <label htmlFor="my-modal" onSubmit={(e) => { e.click() }}   >
+                                <input type="submit" className="btn btn-success" disabled={DValid && CValid ? false : true} onClick={addExpense} value={l.add} />
+                            </label>
+
+                        </div>
+
                     </div>
+                </div>
 
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left ">
-                        <label tabIndex="0" className=" m-1  " >
-                            <FontAwesomeIcon icon={faFileDownload} className="text-3xl m-auto md:mx-5 mx-1 active:scale-90   ease-in-out  transition" />
-                        </label>
 
-                        <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 flex justify-center space-y-2 ">
-                            <li>  <ReactHTMLTableToExcel
-                                id="test-table-xls-button"
-                                className="btn btn-outline download-table-xls-button"
+
+
+            </div>
+            {/* //?   Header  */}
+
+
+
+            <div className="overflow-x-auto  bg-white dark:bg-[#181A1B] rounded-b-xl w-full    "  >
+
+                <table id="table-to-xls" className="table w-full my-10   min-w-[650px]   text-sm  " {...getTableProps()}>
+                    <thead className="">
+
+                        {headerGroups.map((headerGroups, idx) => (
+                            <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
+                                <th className='hidden'></th>
+                                {headerGroups.headers.map((column, idx) => (
+
+                                    <th key={idx} className="  py-3    font-normal normal-case text-center " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
+                                        <span>
+                                            {column.isSorted ? (column.isSortedDesc ? " ↑ " : " 🡓 ") : ""}
+                                        </span>
+                                    </th>
+                                ))}
+                            </tr>
+
+                        )
+                        )
+
+
+                        }
+
+                    </thead >
+
+
+                    <tbody className="  " {...getTableBodyProps()}>
+                        {page.map((row, idx) => {
+                            prepareRow(row)
+                            return (
+                                <tr key={idx}  {...row.getRowProps()} >
+                                    <td className='hidden'></td>
+                                    {row.cells.map((cell, idx) => {
+                                        return (
+                                            <td key={idx} className="  text-center py-2  dark:bg-[#181a1b]" {...cell.getCellProps()}>
+                                                {
+                                                    cell.column.id !== "Delete" &&
+                                                        cell.column.id !== "Edit" &&
+                                                        row.original._id == Idofrow?.[0] ?
+                                                        <>
+                                                            {cell.column.id == "OtherCost" && <input defaultValue={row.original.OtherCost}
+                                                                ref={CRef}
+                                                                onChange={(event) => { handleSaveExpenseData(event) }}
+                                                                onClick={(event) => { handleSaveExpenseData(event) }}
+                                                                onFocus={() => { setCFocus(true) }}
+                                                                onBlur={() => { setCFocus(false) }}
+
+                                                                type="number" placeholder={cell.column.id} name='cost' className="input input-bordered input-warning w-full max-w-xs" />}
+
+                                                            {cell.column.id == "DescCost" &&
+                                                                <textarea name='DESC'
+                                                                    defaultValue={row.original.DescCost}
+                                                                    ref={DERef}
+                                                                    type="textarea"
+                                                                    onChange={(event) => { handleSaveExpenseData(event) }}
+                                                                    onClick={(event) => { handleSaveExpenseData(event) }}
+                                                                    onFocus={() => { setDEFocus(true) }}
+                                                                    onBlur={() => { setDEFocus(false) }}
+
+                                                                    className="textarea textarea-warning  w-full max-w-xs" placeholder={cell.column.id}></textarea>}
+                                                            {cell.column.id == "actionDate" && <input
+                                                                defaultValue={row.original.actionDate}
+                                                                ref={DRef}
+                                                                onChange={(event) => { handleSaveExpenseData(event) }}
+                                                                onClick={(event) => { handleSaveExpenseData(event) }}
+                                                                onFocus={() => { setDFocus(true) }}
+                                                                onBlur={() => { setDFocus(false) }}
+
+                                                                name='date' type="date" placeholder={l.date} className="input input-warning   w-full max-w-xl  " />}
+
+                                                        </>
+
+                                                        :
+                                                        cell.render('Cell')
+
+                                                }
+
+
+
+                                                {row.original._id !== Idofrow?.[0] ?
+                                                    cell.column.id === "Edit" &&
+                                                    <button ref={inputRef} onClick={() => { setIdofrow([row.original._id, row.original.OtherCost, row.original.DescCost]) }} aria-label="upload picture"   ><FontAwesomeIcon icon={faEdit} className="text-xl cursor-pointer text-blue-500" /></button>
+
+                                                    :
+                                                    <div className=" space-x-3">
+                                                        {cell.column.id === "Edit" && <button type='submit' className="btn btn-accent" disabled={CValid && DEValid && DValid ? false : true} onClick={handleUpdatExpense} > <FontAwesomeIcon icon={faSave} className="text-xl" /></button>}
+                                                        {cell.column.id === "Edit" && <button onClick={() => { setIdofrow(null) }} className="btn  btn-error"><FontAwesomeIcon icon={faBan} className="text-xl" /></button>}
+
+                                                    </div>
+
+                                                }
+                                                {cell.column.id === "Delete" && <label htmlFor="my-modal-3" className="m-0" onClick={() => setDeletestate([row.original._id, row.original.OtherCost, row.original.DescCost])}><FontAwesomeIcon icon={faTrash} className="text-xl cursor-pointer text-red-700" /></label>}
+                                            </td>
+                                        )
+                                    })}
+                                </tr>
+                            )
+                        }
+                        )}
+
+                    </tbody>
+
+
+                </table>
+
+                {/* //?    botom */}
+                <div className="container text-sm  scale-90  ">
+
+                    <div className=" flex justify-between container mx-auto items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
+
+
+                        <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
+
+                            <div></div>
+                            <FontAwesomeIcon icon={faAnglesLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
+                                onClick={() => Page > 1 && setPage(1)}
+                                disabled={Page == 1 ? true : false} />
+
+                            <FontAwesomeIcon icon={faChevronLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page > 1 && setPage(Page - 1)}
+                                disabled={Page == 1 ? true : false} />
+
+
+
+                            <span className="px-20 py-2 rounded bg-slate-100 dark:bg-gray-700">
+                                {Page}/{PageS}
+                            </span>
+
+
+
+                            <FontAwesomeIcon icon={faChevronRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(Page + 1))}
+                                disabled={Page >= PageS ? true : false} />
+
+                            <FontAwesomeIcon icon={faAnglesRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(PageS))}
+                                disabled={Page >= PageS ? true : false} />
+
+
+                            <div>
+                                <select className="select  select-sm w-20 focus:outline-0 input-sm dark:bg-gray-700   max-w-xs text-sm"
+                                    onChange={(e) => {
+                                        setLimit((e.target.value))
+                                        setPageSize(Number(e.target.value)
+                                        )
+                                    }}
+
+                                    value={pageSize}>
+                                    {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
+                                        <option className='text-end' key={idx} value={pageSize}>
+                                            {(pageSize !== 100000) ? pageSize : l.all}
+                                        </option>))
+                                    }
+
+                                </select>
+                            </div>
+
+                            <FontAwesomeIcon icon={PDF} onClick={table_2_pdf} className="md:mx-5 px-10 text-blue-400 active:scale-9 m-auto mx-10 text-2xl transition ease-in-out hover:cursor-pointer" />
+
+                            <ReactHTMLTableToExcel
+                                id="test-table-xls-button "
+                                className="text-2xl active:scale-90"
                                 table="table-to-xls"
                                 filename="tablexls"
                                 sheet="tablexls"
-                                buttonText="XLSX" />  </li>
+                                buttonText="📋"
+                                icon={PDF}
+                            />
 
-                            <li><button className='btn btn-outline ' onClick={table_2_pdf}>PDF</button> </li>
-                            {/* <li><button className='btn btn-outline' onClick={table_All_pdff}>ALL_PDF</button> </li> */}
-                        </ul>
+
+
+                        </div>
+
+
+
+                        <div className="scrollbar-hide inline-flex space-x-3 overflow-auto">
+                            <div></div>
+
+
+
+                        </div>
+
+
+
                     </div>
 
 
-                </div>
 
-
-            </div>
-
-
-
-            {/* <div className="xl:flex justify-center  py-2 overflow-auto   "> */}
-
-
-
-
-            <table id="table-to-xls" className=" my-10 justify-center    min-w-[1000px]  " {...getTableProps()}>
-
-
-                <thead className="">
-
-                    {headerGroups.map((headerGroups, idx) => (
-
-                        <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
-
-                            {headerGroups.headers.map((column, idx) => (
-
-                                <th key={idx} className="p-4 m-44 w-[380px]   " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
-
-                                    <span>
-                                        {column.isSorted ? (column.isSortedDesc ? " ↑ " : " 🡓 ") : ""}
-                                    </span>
-
-
-
-                                </th>
-
-
-
-                            ))}
-
-                        </tr>
-
-                    )
-                    )
-
-
-                    }
-
-                </thead >
-
-
-                <tbody className="  " {...getTableBodyProps()}>
-
-                    {page.map((row, idx) => {
-
-                        prepareRow(row)
-                        return (
-                            <tr key={idx}  {...row.getRowProps()} >
-                                {row.cells.map((cell, idx) => {
-                                    return (
-
-
-                                        <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
-
-
-                                            {
-                                                cell.column.id !== "Delete" &&
-                                                    cell.column.id !== "Edit" &&
-                                                    row.original._id == Idofrow?.[0] ?
-                                                    <>
-
-                                                        {cell.column.id == "OtherCost" && <input defaultValue={row.original.OtherCost}
-                                                            ref={CRef}
-                                                            onChange={(event) => { handleSaveExpenseData(event) }}
-                                                            onClick={(event) => { handleSaveExpenseData(event) }}
-                                                            onFocus={() => { setCFocus(true) }}
-                                                            onBlur={() => { setCFocus(false) }}
-
-                                                            type="number" placeholder={cell.column.id} name='cost' className="input input-bordered input-warning w-full max-w-xs" />}
-
-                                                        {cell.column.id == "DescCost" &&
-                                                            <textarea name='DESC'
-                                                                defaultValue={row.original.DescCost}
-                                                                ref={DERef}
-                                                                type="textarea"
-                                                                onChange={(event) => { handleSaveExpenseData(event) }}
-                                                                onClick={(event) => { handleSaveExpenseData(event) }}
-                                                                onFocus={() => { setDEFocus(true) }}
-                                                                onBlur={() => { setDEFocus(false) }}
-
-                                                                className="textarea textarea-warning  w-full max-w-xs" placeholder={cell.column.id}></textarea>}
-                                                        {cell.column.id == "actionDate" && <input
-                                                            defaultValue={row.original.actionDate}
-                                                            ref={DRef}
-                                                            onChange={(event) => { handleSaveExpenseData(event) }}
-                                                            onClick={(event) => { handleSaveExpenseData(event) }}
-                                                            onFocus={() => { setDFocus(true) }}
-                                                            onBlur={() => { setDFocus(false) }}
-
-                                                            name='date' type="date" placeholder={l.date} className="input input-warning   w-full max-w-xl  " />}
-
-
-                                                    </>
-
-                                                    :
-                                                    cell.render('Cell')
-
-                                            }
-
-
-
-                                            {row.original._id !== Idofrow?.[0] ?
-                                                cell.column.id === "Edit" &&
-                                                <button ref={inputRef} onClick={() => { setIdofrow([row.original._id, row.original.OtherCost, row.original.DescCost]) }} aria-label="upload picture"   ><FontAwesomeIcon icon={faEdit} className="text-2xl cursor-pointer text-blue-500" /></button>
-
-                                                :
-                                                <div className=" space-x-3">
-                                                    {cell.column.id === "Edit" && <button type='submit' className="btn btn-accent" disabled={CValid && DEValid && DValid ? false : true} onClick={handleUpdatExpense} > <FontAwesomeIcon icon={faSave} className="text-2xl" /></button>}
-                                                    {cell.column.id === "Edit" && <button onClick={() => { setIdofrow(null) }} className="btn  btn-error"><FontAwesomeIcon icon={faBan} className="text-2xl" /></button>}
-
-                                                </div>
-
-
-                                            }
-                                            {cell.column.id === "Delete" && <label htmlFor="my-modal-3" className="m-0" onClick={() => setDeletestate([row.original._id, row.original.OtherCost, row.original.DescCost])}><FontAwesomeIcon icon={faTrash} className="text-2xl cursor-pointer text-red-700" /></label>}
-
-
-                                        </td>
-
-                                    )
-                                })}
-
-                            </tr>
-                        )
-                    }
-
-                    )}
-
-                </tbody>
-
-
-            </table>
-            {/* </div > */}
-
-            <div className="botom_Of_Table" >
-
-                <div className=" flex justify-between container mx-auto items-center   p-3  px-1 mb-20  min-w-[700px] ">
-
-
-
-                    <div className=" flex   justify-around mx-5 text-lg items-center     ">
-
-
-                        <span className="px-3">
-                            {l.page}{" " + Page}/{PageS}
-                        </span>
-
-                        <div>
-                            <select className="select select-info  w-full max-w-xs focus:outline-0"
-                                onChange={(e) => {
-                                    setLimit((e.target.value))
-                                    setPageSize(Number(e.target.value)
-                                    )
-                                }}
-
-                                value={pageSize}>
-                                {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
-                                    <option key={idx} value={pageSize}>
-                                        {l.show} ({(pageSize !== 100000) ? pageSize : l.all})
-                                    </option>))
-                                }
-
-                            </select>
+                </div >
+                {/* //?    botom */}
+
+
+                <input name="error_btn" type="checkbox" id="my-modal-3" className="modal-toggle btn btn-error " />
+                <div className="modal  ">
+                    <div className="modal-box relative ">
+                        <label htmlFor="my-modal-3" className="btn btn-sm btn-circle absolute right-2 top-2 ">✕</label>
+                        <div className="text-lg font-bold text-center"><FontAwesomeIcon icon={faBan} className="text-7xl text-red-700  " /> </div>
+                        <p className="py-4 ">{l.deletemsg}</p>
+                        <div className="space-x-10 ">
+                            <label htmlFor="my-modal-3" className="btn btn-error " onClick={handledeleteExpenseData}>{l.yes}</label>
+                            <label htmlFor="my-modal-3" className="btn btn-accent " onClick={() => { setDeletestate(null) }} >{l.no}</label>
                         </div>
                     </div>
-
-
-
-
-                    <div className="space-x-3  overflow-auto inline-flex  scrollbar-hide ">
-                        <div></div>
-
-
-
-                        <button className="btn w-2 h-2 btn-info border-0  " onClick={() =>
-                            setPage(1)
-                        }
-                            disabled={
-                                Page == 1 ? true : false
-                            }
-                        >{"<<"} </button>
-
-
-                        <button className="btn w-2 h-2 btn-info" onClick={() =>
-                            setPage(Page - 1)
-                        }
-                            disabled={
-                                Page <= 1 ? true : false
-
-                            }
-                        >{"<"}
-                        </button>
-
-
-                        <button className="btn w-2 h-2 btn-info" onClick={() =>
-                            Page >= 1 && setPage(Page + 1)
-                        }
-                            disabled={
-                                Page >= PageS ? true : false
-                            }
-                        >{">"} </button>
-
-
-                        <button className="btn w-2 h-2 btn-info "
-                            onClick={() =>
-                                Page >= 1 && setPage(PageS)
-                            }
-                            disabled={
-                                Page >= PageS ? true : false
-                            }
-                        >{">>"} </button>
-
-
-
-                    </div>
-
                 </div>
 
-            </div>
+            </div >
 
-            <input name="error_btn" type="checkbox" id="my-modal-3" className="modal-toggle btn btn-error " />
-            <div className="modal  ">
-                <div className="modal-box relative ">
-                    <label htmlFor="my-modal-3" className="btn btn-sm btn-circle absolute right-2 top-2 ">✕</label>
-                    <div className="text-lg font-bold text-center"><FontAwesomeIcon icon={faBan} className="text-7xl text-red-700  " /> </div>
-                    <p className="py-4 ">{l.deletemsg}</p>
-                    <div className="space-x-10 ">
-                        <label htmlFor="my-modal-3" className="btn btn-error " onClick={handledeleteExpenseData}>{l.yes}</label>
-                        <label htmlFor="my-modal-3" className="btn btn-accent " onClick={() => { setDeletestate(null) }} >{l.no}</label>
-                    </div>
-                </div>
-            </div>
 
         </div >
 

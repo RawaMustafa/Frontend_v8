@@ -8,7 +8,7 @@ import "jspdf-autotable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import Axios, { baseURL } from "../../../api/Axios"
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faEye, faFileDownload, faCalendarCheck, faFilter, faBars, faChevronLeft, faAnglesLeft, faChevronRight, faAnglesRight, faFilePdf, faFileCsv } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faBars, faChevronLeft, faAnglesLeft, faChevronRight, faAnglesRight, } from '@fortawesome/free-solid-svg-icons';
 import { faFilePdf as PDF, faCalendarCheck as CALLENDER } from '@fortawesome/free-regular-svg-icons';
 import Image from 'next/image';
 import { getSession, useSession } from "next-auth/react";
@@ -170,19 +170,10 @@ const Table = ({ COLUMNS, AllProducts }) => {
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        footerGroups,
         state,
-        setGlobalFilter,
         allColumns,
         getToggleHideAllColumnsProps,
-        canNextPage,
-        canPreviousPage,
-        pageOptions,
-        gotoPage,
-        pageCount,
         page,
-        nextPage,
-        previousPage,
         setPageSize,
         prepareRow,
 
@@ -193,9 +184,8 @@ const Table = ({ COLUMNS, AllProducts }) => {
     }, useGlobalFilter, useFilters, useGroupBy, useSortBy, useExpanded, usePagination,
 
     );
-
+    let img = []
     const { pageIndex, pageSize } = state
-
     return (
         <div className='mx-3' >
 
@@ -311,7 +301,11 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                                 {cell.render('Cell')}
                                                 {cell.column.id === "image" && (
                                                     <>
-                                                        <Link href={`/Dashboard/ListofCars/AllCars/${row.original._id}`}><a><Image src={`${baseURL}/${row.original.carDamage?.[0].filename}`} alt="Image" height={100} width={100} /></a></Link>
+
+
+                                                        {/* {console.log(row.original.pictureandvideodamage?.[0]?.filename)} */}
+                                                        {/* {console.log(row.original.pictureandvideodamage?.[0].mimetype !== 'video/mp4' ? row.original.pictureandvideodamage?.[0].filename : '')} */}
+                                                        <Link href={`/Dashboard/ListofCars/AllCars/${row.original._id}`}><a><Image src={`${baseURL}/${row.original.carDamage?.[0]?.filename}`} alt="Image" height={100} width={120} /></a></Link>
 
                                                     </>)
 
@@ -331,6 +325,62 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                                     </label></a></Link>
 
                                                 }
+
+                                                {/* 1 */}
+
+
+                                                {cell.column.id === "Feestokurdistan" && (<>
+
+                                                    {console.log(row.original.carCost)}
+
+                                                    {row.original.carCost.coCCost + row.original.carCost.dubaiToIraqGCostgumrgCost + row.original.carCost.dubaiToIraqGCostTranscost} $
+                                                </>)}
+
+                                                {/* 2 */}
+                                                {cell.column.id === "DubaiCosts" && (<>
+
+
+                                                    {row.original.carCost.feesAndRepaidCostDubaiFees + row.original.carCost.feesAndRepaidCostDubaiothers + row.original.carCost.feesAndRepaidCostDubairepairCost} $
+                                                </>)}
+
+                                                {/* 3 */}
+                                                {cell.column.id === "USACosts" && (<>
+
+
+                                                    {row.original.carCost.feesinAmericaCopartorIAAfee + row.original.carCost.feesinAmericaStoragefee + row.original.carCost.pricePaidbid} $
+                                                </>)}
+
+
+                                                {/* 4 */}
+                                                {cell.column.id === "USALocation" && (<>
+
+                                                    {row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostLocation}
+                                                </>)}
+                                                {/* 5 */}
+                                                {cell.column.id === "KurdistanNumber" && (<>
+
+                                                    {row.original.carCost.raqamAndRepairCostinKurdistanRaqam}
+                                                </>)}
+
+
+                                                {/* 6 */}
+                                                {cell.column.id === "FeestoDubai" && (<>
+
+
+                                                    {row.original.carCost.raqamAndRepairCostinKurdistanothers + row.original.carCost.raqamAndRepairCostinKurdistanrepairCost} $
+                                                </>)}
+
+
+                                                {/* 7 */}
+                                                {cell.column.id === "CostsKurdistan" && (<>
+
+
+                                                    {row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost + row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost} $
+                                                </>)}
+
+
+
+
 
 
 
@@ -352,7 +402,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                 </table>
 
                 {/* //?    botom */}
-                <div className="container text-sm scale-90 ">
+                <div className="container text-sm  scale-90  ">
 
                     <div className=" flex justify-between container mx-auto items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
 
@@ -435,7 +485,6 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
 
                 </div >
-
                 {/* //?    botom */}
 
 
@@ -629,13 +678,111 @@ const Expense = ({ AllProducts }) => {
 
 
                 },
+                // ^ -----1
+                {
+                    Header: () => {
+                        return (
+                            "Fees to kurdistan"
+                        )
+                    },
 
-                // {
-                //     Header: "Details",
+                    disableFilters: true,
 
-                //     disableFilters: true,
+                    accessor: 'Feestokurdistan',
 
-                // },
+
+                },
+
+                // ^ -----2
+                {
+                    Header: () => {
+                        return (
+                            "Dubai Costs "
+                        )
+                    },
+
+                    disableFilters: true,
+
+                    accessor: 'DubaiCosts',
+
+
+                },
+                // ^ -----3
+                {
+                    Header: () => {
+                        return (
+                            "USA Costs "
+                        )
+                    },
+
+                    disableFilters: true,
+
+                    accessor: 'USACosts',
+
+
+                },
+                // ^ -----4
+                {
+                    Header: () => {
+                        return (
+                            "USA Location"
+                        )
+                    },
+
+                    disableFilters: true,
+
+                    accessor: 'USALocation',
+
+
+                },
+                // ^ -----5
+                {
+                    Header: () => {
+                        return (
+                            "Kurdistan Number"
+                        )
+                    },
+
+                    disableFilters: true,
+
+                    accessor: 'KurdistanNumber',
+
+
+                },
+                // ^ -----6
+                {
+                    Header: () => {
+                        return (
+                            "Costs Kurdistan"
+                        )
+                    },
+
+                    disableFilters: true,
+
+                    accessor: 'CostsKurdistan',
+
+
+                },
+                // ^ -----7
+                {
+                    Header: () => {
+                        return (
+                            "Fees to Dubai"
+                        )
+                    },
+
+                    disableFilters: true,
+
+                    accessor: 'FeestoDubai',
+
+
+                },
+                {
+                    Header: "Details",
+
+                    disableFilters: true,
+
+                },
 
 
 
@@ -657,9 +804,10 @@ const Expense = ({ AllProducts }) => {
             {AllProducts ?
                 <Table COLUMNS={COLUMNS} AllProducts={AllProducts} />
                 :
-                <div className="m-auto top-[50%] -translate-y-[50%] absolute -translate-x-[50%] left-[50%] lg:left-[60%] ">
+                <div className=" top-[50%] -translate-y-[50%] m-auto absolute -translate-x-[50%] left-[50%] lg:left-[60%]    ">
                     <Image alt="NoCar" src="/No_Cars.svg" width={400} height={400} quality={'1'} />
                 </div>
+
 
             }
 

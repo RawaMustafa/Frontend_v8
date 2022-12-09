@@ -2,16 +2,16 @@ import useLanguage from '../../Component/language';
 import QarzLayout from '../../Layouts/QarzLayout';
 import { useEffect, useMemo, useState, } from 'react';
 import Head from 'next/head'
-
 import Axios, { baseURL } from '../api/Axios';
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faEye, faCalendarCheck, faFileDownload, } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faCalendarCheck, faFileDownload, faAnglesRight, faChevronRight, faChevronLeft, faAnglesLeft, } from '@fortawesome/free-solid-svg-icons';
 import { useTable, useSortBy, useGlobalFilter, usePagination, useFilters, useGroupBy, useExpanded, } from 'react-table';
 import { useRouter } from "next/router";
 import { getSession, useSession } from "next-auth/react";
+import { faFilePdf as PDF, faCalendarCheck as CALLENDER } from '@fortawesome/free-regular-svg-icons';
 
 
 
@@ -169,7 +169,7 @@ export default Qarz;
 
 
 
-const TableQarz = ({ COLUMNS, ID,AllQarz }) => {
+const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
 
     const session = useSession();
     const router = useRouter();
@@ -177,6 +177,7 @@ const TableQarz = ({ COLUMNS, ID,AllQarz }) => {
     const [Search, setSearch] = useState("");
     const [Page, setPage] = useState(1);
     const [Limit, setLimit] = useState(10);
+    const [PageS, setPageS] = useState(Math.ceil(AllQarz / Limit));
 
     const [StartDate, setStartDate] = useState("2000-10-10");
     const [EndDate, setEndDate] = useState("3000-10-10");
@@ -253,14 +254,7 @@ const TableQarz = ({ COLUMNS, ID,AllQarz }) => {
         getTableBodyProps,
         headerGroups,
         state,
-        canNextPage,
-        canPreviousPage,
-        pageOptions,
-        gotoPage,
-        pageCount,
         page,
-        nextPage,
-        previousPage,
         setPageSize,
         prepareRow,
 
@@ -279,68 +273,57 @@ const TableQarz = ({ COLUMNS, ID,AllQarz }) => {
 
 
     return (
-        <>
-            <div className=" flex justify-end     p-2   ">
+        <div className=' container mx-auto'>
 
-                <div className='flex z-[500]   '>
+            {/* //?   Header  */}
+            <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-xl p-5">
+                <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
 
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left mx-5 lg:mx-5  ">
+                    <input type="search" placeholder={`${l.search} ...`} className="input input-bordered    w-full    focus:outline-0   h-9 "
+                        onChange={e =>
+                            setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
+                        }
+                    />
+                </div>
+                <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8  rtl:mr-8 ">
+                    <label tabIndex="0" className="active:scale-9 m-1  ">
+                        <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="active:scale-90 text-2xl hover:cursor-pointer text-blue-500  " />
+                    </label>
 
-                        <label tabIndex="0" className=" m-1   ">
-                            <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="text-3xl  m-auto md:mx-5 active:scale-90   ease-in-out" />
-                        </label>
+                    <ul tabIndex="0" className="dropdown-content bg-base-100 rounded-box w-52 flex justify-center shadow">
+                        <li className=" py-2">
 
-                        <ul tabIndex="0" className="dropdown-content  shadow bg-base-100 rounded-box w-52 flex justify-center   ">
-                            <li className="  py-2">
-
-                                <div className="space-y-1">
-                                    <h1>{l.from}</h1><input className="input input-bordered input-info "
-                                        onChange={(e) => {
-                                            setStartDate(e.target.value)
-                                        }}
-                                        type="date"
-                                    />
-                                    <h1>{l.to}</h1>
-                                    <input className="input input-bordered input-info "
-                                        onChange={(e) => {
-                                            setEndDate(e.target.value)
-                                        }}
-                                        type="date"
-                                    />
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-
-
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left mx-2 lg:mx-10">
-                        <label tabIndex="0" className=" m-1  " >
-                            <FontAwesomeIcon icon={faFileDownload} className="text-3xl m-auto md:mx-5 mx-1 active:scale-90   ease-in-out  " />
-                        </label>
-
-                        <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 flex justify-center space-y-2 ">
-                            <li>  <ReactHTMLTableToExcel
-                                id="test-table-xls-button"
-                                className="btn btn-outline download-table-xls-button"
-                                table="table-to-xls"
-                                filename="tablexls"
-                                sheet="tablexls"
-                                buttonText="XLSX" />  </li>
-
-                            <li><button className='btn btn-outline ' onClick={table_2_pdf}>PDF</button> </li>
-                        </ul>
-                    </div>
-
+                            <div className="space-y-1">
+                                <h1>{l.from}</h1><input className="input input-bordered input-info focus:outline-0 "
+                                    onChange={(e) => {
+                                        setStartDate(e.target.value)
+                                    }}
+                                    type="date"
+                                />
+                                <h1>{l.to}</h1>
+                                <input className="input input-bordered input-info focus:outline-0"
+                                    onChange={(e) => {
+                                        setEndDate(e.target.value)
+                                    }}
+                                    type="date"
+                                />
+                            </div>
+                        </li>
+                    </ul>
                 </div>
 
 
+
+
             </div>
+            {/* //?   Header  */}
 
 
-            <div className="  container mx-auto overflow-auto">
+
+            <div className="  overflow-auto  bg-white dark:bg-[#181A1B] rounded-b-xl shadow-xl">
 
 
-                <table id="table-to-xls" className=" my-10  inline-block min-w-[1000px]  " {...getTableProps()}>
+                <table id="table-to-xls" className=" my-10  table table-compact w-full text-center font-normal  " {...getTableProps()}>
 
 
                     <thead className="  ">
@@ -348,11 +331,10 @@ const TableQarz = ({ COLUMNS, ID,AllQarz }) => {
                         {headerGroups.map((headerGroups, idx) => (
 
                             <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
-
+                                <th className='hidden'></th>
                                 {headerGroups.headers.map((column, idx) => (
 
-                                    <th key={idx} className="p-4 m-44      w-[380px]  " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
-
+                                    <th key={idx} className="p-4 m-44  normal-case min-w-[220px] py-3 " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
                                         <span>
                                             {column.isSorted ? (column.isSortedDesc ? " ↑ " : " 🡓 ") : ""}
                                         </span>
@@ -383,11 +365,13 @@ const TableQarz = ({ COLUMNS, ID,AllQarz }) => {
                             prepareRow(row)
                             return (
                                 <tr key={idx}  {...row.getRowProps()} >
+                                    <td className='hidden'></td>
+
                                     {row.cells.map((cell, idx) => {
                                         return (
 
 
-                                            <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
+                                            <td key={idx} className="  text-center dark:bg-[#181A1B]  py-2" {...cell.getCellProps()}>
 
 
                                                 {cell.column.id === 'isPaid' && (
@@ -420,61 +404,95 @@ const TableQarz = ({ COLUMNS, ID,AllQarz }) => {
 
                 </table>
 
-                <div className="botom_Of_Table" >
+                {/* //?    botom */}
+                <div className="container text-sm  scale-90  ">
 
-                    <div className=" flex justify-between container mx-auto items-center    px-1 mb-20  min-w-[700px] ">
+                    <div className=" flex justify-between container mx-auto items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
+
+
+                        <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
+
+                            <div></div>
+                            <FontAwesomeIcon icon={faAnglesLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
+                                onClick={() => Page > 1 && setPage(1)}
+                                disabled={Page == 1 ? true : false} />
+
+                            <FontAwesomeIcon icon={faChevronLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page > 1 && setPage(Page - 1)}
+                                disabled={Page == 1 ? true : false} />
 
 
 
-                        <div className=" flex  space-x-5 mx-5 text-lg items-center     ">
+                            <span className="px-20 py-2 rounded bg-slate-100 dark:bg-gray-700">
+                                {Page}/{PageS}
+                            </span>
+
+
+
+                            <FontAwesomeIcon icon={faChevronRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(Page + 1))}
+                                disabled={Page >= PageS ? true : false} />
+
+                            <FontAwesomeIcon icon={faAnglesRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(PageS))}
+                                disabled={Page >= PageS ? true : false} />
+
 
                             <div>
-
-                                {l.page}
-                                <span>
-                                    {""}{pageIndex + 1}/{pageOptions.length}{""}
-                                </span>
-                            </div>
-
-                            <div>
-
-                                <select className="select select-info  w-full max-w-xs"
+                                <select className="select  select-sm w-20 focus:outline-0 input-sm dark:bg-gray-700   max-w-xs text-sm"
                                     onChange={(e) => {
-                                        setLimit((e.target.value) * 2)
+                                        setLimit((e.target.value))
                                         setPageSize(Number(e.target.value)
                                         )
                                     }}
 
                                     value={pageSize}>
                                     {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
-                                        <option key={idx} value={pageSize}>
-                                            {l.show} ({(pageSize !== 100000) ? pageSize : l.all})
+                                        <option className='text-end' key={idx} value={pageSize}>
+                                            {(pageSize !== 100000) ? pageSize : l.all}
                                         </option>))
                                     }
 
                                 </select>
                             </div>
+
+                            <FontAwesomeIcon icon={PDF} onClick={table_2_pdf} className="md:mx-5 px-10 text-blue-400 active:scale-9 m-auto mx-10 text-2xl transition ease-in-out hover:cursor-pointer" />
+
+                            <ReactHTMLTableToExcel
+                                id="test-table-xls-button "
+                                className="text-2xl active:scale-90"
+                                table="table-to-xls"
+                                filename="tablexls"
+                                sheet="tablexls"
+                                buttonText="📋"
+                                icon={PDF}
+                            />
+
+
+
                         </div>
 
 
 
-
-                        <div className="space-x-2  overflow-auto inline-flex  scrollbar-hide ">
+                        <div className="scrollbar-hide inline-flex space-x-3 overflow-auto">
                             <div></div>
-                            <button className="btn w-2 h-2 btn-info   " onClick={() => gotoPage(0)} disabled={!canPreviousPage}>{"<<"} </button>
-                            <button className="btn w-2 h-2 btn-info" onClick={() => previousPage()} disabled={!canPreviousPage}>{"<"} </button>
-                            <button className="btn w-2 h-2 btn-info" onClick={() => nextPage()} disabled={!canNextPage}>{">"} </button>
-                            <button className="btn w-2 h-2 btn-info " onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>{">>"} </button>
+
+
+
                         </div>
+
+
 
                     </div>
 
-                </div>
 
+
+                </div >
+                {/* //?    botom */}
 
 
             </div >
-        </>
+        </div>
     );
 
 

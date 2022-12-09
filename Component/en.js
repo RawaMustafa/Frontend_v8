@@ -201,7 +201,9 @@ export const en = {
     listofcars: "List of Cars",
     listofloan: "List of Loan",
     borrowing: "Borrow",
-    borrowmsg: "sure, you want to Borrow this"
+    borrowmsg: "sure, you want to Borrow this",
+    transfer: "Transfer",
+    mycars: "My Cars"
 
 
 

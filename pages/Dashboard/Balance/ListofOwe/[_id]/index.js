@@ -11,11 +11,12 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faCalendarPlus, faTrash, faEdit, faCalendarCheck, faFileDownload, faBan, faSave, faCheck, faTimes, faMoneyCheckDollar, faCar, faSearch, faEye, faHandHoldingDollar } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarPlus, faTrash, faEdit, faCalendarCheck, faFileDownload, faBan, faSave, faCheck, faTimes, faMoneyCheckDollar, faCar, faSearch, faEye, faHandHoldingDollar, faAnglesLeft, faChevronLeft, faChevronRight, faAnglesRight, faBars } from '@fortawesome/free-solid-svg-icons';
 import { faAmazonPay } from "@fortawesome/free-brands-svg-icons"
 import { useTable, useSortBy, useGlobalFilter, usePagination, useFilters, useGroupBy, useExpanded, } from 'react-table';
 import { useEffect, useMemo, useRef, forwardRef, useState } from 'react';
 import { getSession, useSession } from "next-auth/react";
+import { faFilePdf as PDF, faCalendarCheck as CALLENDER } from '@fortawesome/free-regular-svg-icons';
 
 
 const Amount_regex = /^[0-9]{0,12}/;
@@ -511,78 +512,7 @@ const Details = ({ initQuery, AllQarz }) => {
                         <option value={3}>{l.mybalance}</option>
                     </select>
                 </div>
-                {/* <div className="pt-5  mb-32 grid grid-cols-3  gap-5 px-2 ">
 
-
-                    <div onClick={() => {
-                        PageQarz == 1 && setPageQarz(2)
-                        PageQarz == 2 && setPageQarz(1)
-                    }}
-                        className="p-5 cursor-pointer scale-75 xl:scale-100 justify-self-end border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg w-32  sm:w-64 z-30    ">
-                        <div className="flex items-center  justify-around  ">
-
-                            <div>
-                                <div className="">{l.owee}</div>
-                                <div className="text-2xl font-bold ">{AllQarzAmount}</div>
-                            </div>
-                            <div className="hidden sm:block">
-                                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500 ">
-
-                                    {PageQarz == 2 && <FontAwesomeIcon icon={faMoneyCheckDollar} className="text-2xl" />}
-                                    {PageQarz == 1 && <FontAwesomeIcon icon={faCar} className="text-2xl" />}
-
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div onClick={() => {
-                        PageQarz == 1 && setPageQarz(2)
-                        PageQarz == 2 && setPageQarz(1)
-                    }}
-                        className="p-5 cursor-pointer scale-75 xl:scale-100 justify-self-end border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg w-32  sm:w-64    z-30    ">
-                        <div className="flex items-center  justify-around  ">
-
-                            <div>
-                                <div className="">{l.owee}</div>
-                                <div className="text-2xl font-bold ">{AllQarzAmount}</div>
-                            </div>
-                            <div className="hidden sm:block">
-                                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500 ">
-
-                                    {PageQarz == 2 && <FontAwesomeIcon icon={faMoneyCheckDollar} className="text-2xl" />}
-                                    {PageQarz == 1 && <FontAwesomeIcon icon={faCar} className="text-2xl" />}
-
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div onClick={() => {
-                        PageQarz == 1 && setPageQarz(2)
-                        PageQarz == 2 && setPageQarz(1)
-                    }}
-                        className="p-5 cursor-pointer scale-75 xl:scale-100 justify-self-end border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg  w-32  sm:w-64      z-30    ">
-                        <div className="flex items-center  justify-around  ">
-
-                            <div>
-                                <div className="">{l.owee}</div>
-                                <div className="text-2xl font-bold ">{AllQarzAmount}</div>
-                            </div>
-                            <div className="hidden sm:block">
-                                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500 ">
-
-                                    {PageQarz == 2 && <FontAwesomeIcon icon={faMoneyCheckDollar} className="text-2xl" />}
-                                    {PageQarz == 1 && <FontAwesomeIcon icon={faCar} className="text-2xl" />}
-
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div> */}
 
 
                 {PageQarz == 1 &&
@@ -1361,7 +1291,7 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
         doc.autoTable({
 
 
-            head: [[`Amount`, " pay for", "Date"]],
+            head: [["", `Amount`, " pay for", "Date"]],
             body: table_td
         });
 
@@ -1372,23 +1302,11 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
 
 
     const {
-
-
-
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        footerGroups,
         state,
-        setGlobalFilter,
-        canNextPage,
-        canPreviousPage,
-        pageOptions,
-        gotoPage,
-        pageCount,
         page,
-        nextPage,
-        previousPage,
         setPageSize,
         prepareRow,
 
@@ -1396,7 +1314,6 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
 
         columns: COLUMNS,
         data: DataTable,
-        // defaultColumn: {Filter: DefaultColumnFilter },
 
     }, useGlobalFilter, useFilters, useGroupBy, useSortBy, useExpanded, usePagination,
 
@@ -1407,435 +1324,389 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
 
 
     return (
-        <div className="text-center  container mx-auto overflow-auto  scrollbar-hide ">
+        <div className=" ">
 
 
 
-            <div className=" flex justify-between   container mx-auto items-center p-2  min-w-[700px] ">
+            {/* //?    Heade */}
+            <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-2xl p-5">
+                <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
 
-                <div>
-
-                    <label htmlFor="my-modal" className="btn modal-button flex justify-center items-center ">
-                        <FontAwesomeIcon icon={faCalendarPlus} className="text-xl  " />
+                    <label htmlFor="my-modal" className="p-2 px-3 flex justify-center items-center hover:cursor-pointer ">
+                        <FontAwesomeIcon icon={faCalendarPlus} className="text-2xl active:scale-90 " />
+                    </label>
+                    <input type="search" placeholder={`${l.search} ...`} className="input input-bordered    w-full    focus:outline-0   h-9 "
+                        onChange={e =>
+                            setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
+                        }
+                    />
+                </div>
+                <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8  rtl:mr-8 ">
+                    <label tabIndex="0" className="active:scale-9 m-1  ">
+                        <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="active:scale-90 text-2xl hover:cursor-pointer text-blue-500  " />
                     </label>
 
-                    <input type="checkbox" id="my-modal" className="modal-toggle" />
-                    <div className="modal">
-                        <div className="modal-box space-y-12">
+                    <ul tabIndex="0" className="dropdown-content bg-base-100 rounded-box w-52 flex justify-center shadow">
+                        <li className=" py-2">
 
-                            <div>{l.owee}</div>
-                            <div>
-                                <label htmlFor="date">{l.amount}</label>
-
-                                <input
-                                    required name='amount' type="number" placeholder={l.amount}
-                                    onClick={(event) => { handleSaveQarzData(event) }}
-                                    onChange={(event) => { handleSaveQarzData(event) }}
-                                    onFocus={() => { setAFocus(true) }}
-                                    onBlur={() => { setAFocus(false) }}
-
-                                    className="input input-bordered input-info w-full max-w-xl mt-5 dark:placeholder:text-white dark:color-white"
+                            <div className="space-y-1">
+                                <h1>{l.from}</h1><input className="input input-bordered input-info focus:outline-0 "
+                                    onChange={(e) => {
+                                        setStartDate(e.target.value)
+                                    }}
+                                    type="date"
                                 />
-                                <p id="password-error" className={`bg-rose-700 rounded m-1 text-sm p-2 text-black  ${!AValid && !AFocus && Data.amount != "" ? "block" : "hidden"}`}>
-                                    {l.incorrect}
-                                    <br />
-                                    {l.number7}
-
-
-                                </p>
-
+                                <h1>{l.to}</h1>
+                                <input className="input input-bordered input-info focus:outline-0"
+                                    onChange={(e) => {
+                                        setEndDate(e.target.value)
+                                    }}
+                                    type="date"
+                                />
                             </div>
-                            <div>
-                                <label htmlFor="ispaid">{l.ispaid}</label>
-                                <select
-                                    id="ispaid"
-                                    onChange={(event) => { handleSaveQarzData(event) }}
-                                    onClick={(event) => { handleSaveQarzData(event) }}
-                                    onFocus={() => { setAFocus(true) }}
-                                    onBlur={() => { setAFocus(false) }}
-                                    name='isPaid' className="input input-bordered input-info  w-full max-w-xl " >
-                                    <option value="true">Yes</option>
-                                    <option value="false">No</option>
-                                </select>
-
-                                <p id="password-error" className={`bg-rose-700 rounded m-1 text-sm p-2 text-black  ${!IPValid && !IPFocus && Data.isPaid != "" ? "block" : "hidden"}`}>
-                                    {l.incorrect}
-                                    <br />
-                                    {l.charecter416}
-
-
-                                </p>
-
-                            </div>
-
-                            {/*
-                            <div>
-                                <label htmlFor="date">{l.date}</label>
-                                <input name='date' type="date" placeholder={l.date}
-                                    id="date"
-                                    onClick={(event) => { handleSaveQarzData(event) }}
-                                    onChange={(event) => { handleSaveQarzData(event) }}
-                                    onFocus={() => { setIPFocus(true) }}
-                                    onBlur={() => { setIPFocus(false) }}
-                                    className="input input-bordered input-info w-full max-w-xl  dark:placeholder:text-white dark:color-white" />
-                                <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!IPValid && !IPFocus && Data.date != "" ? "block" : "hidden"}`}>
-                                    {l.incorrect}
-                                    <br />
-                                </p>
-                            </div> */}
-
-
-                            <div className="modal-action">
-                                <div></div>
-                                <label htmlFor="my-modal" className="btn btn-error"  >{l.cancel}</label>
-                                <label htmlFor="my-modal" onSubmit={(e) => { e.click() }}   >
-                                    <input type="submit" className="btn btn-success" disabled={IPValid && AValid ? false : true} onClick={addQarz} value={l.add} />
-                                </label>
-
-                            </div>
-
-                        </div>
-                    </div>
+                        </li>
+                    </ul>
                 </div>
 
 
-                <div className="flex justify-center items-center lg:space-x-4">
-
-
-
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left">
-
-                        <label tabIndex="0" className=" m-1">
-                            <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 " />
-                        </label>
-
-                        <ul tabIndex="0" className="dropdown-content  shadow bg-base-100 rounded-box w-52 flex justify-center   ">
-                            <li className="  py-2">
-
-                                <div className="space-y-1">
-                                    <h1>{l.from}</h1><input className="input input-bordered input-info "
-                                        onChange={(e) => {
-                                            setStartDate(e.target.value)
-                                        }}
-                                        type="date"
-                                    />
-                                    <h1>{l.to}</h1>
-                                    <input className="input input-bordered input-info "
-                                        onChange={(e) => {
-                                            setEndDate(e.target.value)
-                                        }}
-                                        type="date"
-                                    />
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-
-
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left ">
-                        <label tabIndex="0" className=" m-1  " >
-                            <FontAwesomeIcon icon={faFileDownload} className="text-3xl m-auto md:mx-5 mx-1 active:scale-90 active:rotate-180 ease-in-out  transition" />
-                        </label>
-
-                        <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 flex justify-center space-y-2 ">
-                            <li>  <ReactHTMLTableToExcel
-                                id="test-table-xls-button"
-                                className="btn btn-outline download-table-xls-button"
-                                table="table-to-xls"
-                                filename="tablexls"
-                                sheet="tablexls"
-                                buttonText="XLSX" />  </li>
-
-                            <li><button className='btn btn-outline ' onClick={table_2_pdf}>PDF</button> </li>
-                            {/* <li><button className='btn btn-outline' onClick={table_All_pdff}>ALL_PDF</button> </li> */}
-                        </ul>
-                    </div>
-
-
-                </div>
 
 
             </div>
+            <div>
 
 
+                <input type="checkbox" id="my-modal" className="modal-toggle" />
+                <div className="modal">
+                    <div className="modal-box space-y-12">
 
-            {/* <div className="xl:flex justify-center overflow-auto  py-2    "> */}
+                        <div>{l.owee}</div>
+                        <div>
+                            <label htmlFor="date">{l.amount}</label>
 
+                            <input
+                                required name='amount' type="number" placeholder={l.amount}
+                                onClick={(event) => { handleSaveQarzData(event) }}
+                                onChange={(event) => { handleSaveQarzData(event) }}
+                                onFocus={() => { setAFocus(true) }}
+                                onBlur={() => { setAFocus(false) }}
 
-
-
-            <table id="table-to-xls" className=" my-10  inline-block min-w-[1000px]  " {...getTableProps()}>
-
-
-                <thead className="  ">
-
-                    {headerGroups.map((headerGroups, idx) => (
-
-                        <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
-
-                            {headerGroups.headers.map((column, idx) => (
-
-                                <th key={idx} className="p-4 m-44  w-[380px]  " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
-
-                                    <span>
-                                        {column.isSorted ? (column.isSortedDesc ? " ↑ " : " 🡓 ") : ""}
-                                    </span>
-
+                                className="input input-bordered input-info w-full max-w-xl mt-5 dark:placeholder:text-white dark:color-white"
+                            />
+                            <p id="password-error" className={`bg-rose-700 rounded m-1 text-sm p-2 text-black  ${!AValid && !AFocus && Data.amount != "" ? "block" : "hidden"}`}>
+                                {l.incorrect}
+                                <br />
+                                {l.number7}
 
 
-                                </th>
+                            </p>
+
+                        </div>
+                        <div>
+                            <label htmlFor="ispaid">{l.ispaid}</label>
+                            <select
+                                id="ispaid"
+                                onChange={(event) => { handleSaveQarzData(event) }}
+                                onClick={(event) => { handleSaveQarzData(event) }}
+                                onFocus={() => { setAFocus(true) }}
+                                onBlur={() => { setAFocus(false) }}
+                                name='isPaid' className="input input-bordered input-info  w-full max-w-xl " >
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+
+                            <p id="password-error" className={`bg-rose-700 rounded m-1 text-sm p-2 text-black  ${!IPValid && !IPFocus && Data.isPaid != "" ? "block" : "hidden"}`}>
+                                {l.incorrect}
+                                <br />
+                                {l.charecter416}
 
 
+                            </p>
 
-                            ))}
-
-                        </tr>
-
-                    )
-                    )
+                        </div>
 
 
-                    }
+                        <div className="modal-action">
+                            <div></div>
+                            <label htmlFor="my-modal" className="btn btn-error"  >{l.cancel}</label>
+                            <label htmlFor="my-modal" onSubmit={(e) => { e.click() }}   >
+                                <input type="submit" className="btn btn-success" disabled={IPValid && AValid ? false : true} onClick={addQarz} value={l.add} />
+                            </label>
 
-                </thead >
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            {/* //?    Heade */}
+
+            <div className="text-center  container mx-auto overflow-auto  scrollbar-hide  bg-white dark:bg-[#181A1B] rounded-b-xl shadow-xl">
+
+                <table id="table-to-xls" className="table table-compact text-center font-normal my-10    min-w-[650px]  " {...getTableProps()}>
+
+                    <thead className="  ">
+                        {headerGroups.map((headerGroups, idx) => (
+                            <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
+                                <th className='hidden'></th>
+                                {headerGroups.headers.map((column, idx) => (
+
+                                    <th key={idx} className="p-4 m-44  w-[380px] py-3 font-normal  normal-case " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
+
+                                        <span>
+                                            {column.isSorted ? (column.isSortedDesc ? " ↑ " : " 🡓 ") : ""}
+                                        </span>
+                                    </th>
+                                ))}
+                            </tr>
+                        )
+                        )
+                        }
+                    </thead >
+                    <tbody {...getTableBodyProps()}>
+                        {page.map((row, idx) => {
+
+                            prepareRow(row)
+                            return (
+                                <tr key={idx}  {...row.getRowProps()} >
+                                    <td className='hidden'></td>
+
+                                    {row.cells.map((cell, idx) => {
+                                        return (
 
 
-                <tbody {...getTableBodyProps()}>
-
-                    {page.map((row, idx) => {
-
-                        prepareRow(row)
-                        return (
-                            <tr key={idx}  {...row.getRowProps()} >
-                                {row.cells.map((cell, idx) => {
-                                    return (
+                                            <td key={idx} className="  text-center   py-2" {...cell.getCellProps()}>
 
 
-                                        <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
+                                                {cell.column.id === 'isPaid' && row.original._id !== Idofrow?.[0] && (
+
+                                                    cell.value === true ? <div className="text-green-700" >Yes</div> : <div className="text-red-700" >No</div>
+                                                )}
+                                                {cell.column.id === 'Pay' && row.original._id !== Idofrow?.[0] && (
+
+                                                    row.original.isPaid ? <label htmlFor="Borrow-Mod" className="btn btn-error p-2" onClick={() => { setPaystate([row.original._id, row.original.isPaid, row.original.qarAmount]) }}>{l.borrowing}
+                                                    </label> : <label htmlFor="Pay-Mod" className="btn btn-accent p-2" onClick={() => { setPaystate([row.original._id, row.original.isPaid, row.original.qarAmount]) }}>{l.pay}
+                                                    </label>
+                                                )
+                                                }
 
 
-                                            {cell.column.id === 'isPaid' && row.original._id !== Idofrow?.[0] && (
+                                                {
+                                                    cell.column.id !== "Delete" &&
+                                                        cell.column.id !== "Edit" &&
+                                                        row.original._id == Idofrow?.[0] ?
+                                                        <>
 
-                                                cell.value === true ? <div className="text-green-700" >Yes</div> : <div className="text-red-700" >No</div>
-                                            )}
-                                            {cell.column.id === 'Pay' && row.original._id !== Idofrow?.[0] && (
-
-                                                row.original.isPaid ? <label htmlFor="Borrow-Mod" className="btn btn-error p-2" onClick={() => { setPaystate([row.original._id, row.original.isPaid, row.original.qarAmount]) }}>{l.borrowing}
-                                                </label> : <label htmlFor="Pay-Mod" className="btn btn-accent p-2" onClick={() => { setPaystate([row.original._id, row.original.isPaid, row.original.qarAmount]) }}>{l.pay}
-                                                </label>
-                                            )
-                                            }
-
-
-                                            {
-                                                cell.column.id !== "Delete" &&
-                                                    cell.column.id !== "Edit" &&
-                                                    row.original._id == Idofrow?.[0] ?
-                                                    <>
-
-                                                        {cell.column.id == "qarAmount" && <input defaultValue={row.original.qarAmount}
-                                                            ref={ARef}
-                                                            onChange={(event) => { handleSaveQarzData(event) }}
-                                                            onClick={(event) => { handleSaveQarzData(event) }}
-                                                            onFocus={() => { setAFocus(true) }}
-                                                            onBlur={() => { setAFocus(false) }}
-
-                                                            type="number" placeholder={cell.column.id} name='cost' className="input input-bordered input-warning w-full max-w-xs" />}
-
-                                                        {cell.column.id == "isPaid" &&
-                                                            <select defaultValue={row.original.isPaid}
-                                                                ref={IPRef}
+                                                            {cell.column.id == "qarAmount" && <input defaultValue={row.original.qarAmount}
+                                                                ref={ARef}
                                                                 onChange={(event) => { handleSaveQarzData(event) }}
                                                                 onClick={(event) => { handleSaveQarzData(event) }}
                                                                 onFocus={() => { setAFocus(true) }}
                                                                 onBlur={() => { setAFocus(false) }}
-                                                                name='isPaid' className="input input-bordered input-warning w-full max-w-xs" >
-                                                                <option value="true">Yes</option>
-                                                                <option value="false">No</option>
-                                                            </select>}
-                                                        {cell.column.id == "dates" && <input
-                                                            disabled
-                                                            defaultValue={row.original.dates}
-                                                            onChange={(event) => { handleSaveQarzData(event) }}
-                                                            onClick={(event) => { handleSaveQarzData(event) }}
-                                                            onFocus={() => { setIPFocus(true) }}
-                                                            onBlur={() => { setIPFocus(false) }}
 
-                                                            name='date' type="date" placeholder={l.date} className="input input-warning   w-full max-w-xl  " />}
+                                                                type="number" placeholder={cell.column.id} name='cost' className="input input-bordered input-warning w-full max-w-xs" />}
 
+                                                            {cell.column.id == "isPaid" &&
+                                                                <select defaultValue={row.original.isPaid}
+                                                                    ref={IPRef}
+                                                                    onChange={(event) => { handleSaveQarzData(event) }}
+                                                                    onClick={(event) => { handleSaveQarzData(event) }}
+                                                                    onFocus={() => { setAFocus(true) }}
+                                                                    onBlur={() => { setAFocus(false) }}
+                                                                    name='isPaid' className="input input-bordered input-warning w-full max-w-xs" >
+                                                                    <option value="true">Yes</option>
+                                                                    <option value="false">No</option>
+                                                                </select>}
+                                                            {cell.column.id == "dates" && <input
+                                                                disabled
+                                                                defaultValue={row.original.dates}
+                                                                onChange={(event) => { handleSaveQarzData(event) }}
+                                                                onClick={(event) => { handleSaveQarzData(event) }}
+                                                                onFocus={() => { setIPFocus(true) }}
+                                                                onBlur={() => { setIPFocus(false) }}
 
-                                                    </>
-
-                                                    :
-                                                    cell.render('Cell')
-
-                                            }
-
-
-
-                                            {
-                                                row.original._id !== Idofrow?.[0] ?
-                                                    cell.column.id === "Edit" &&
-                                                    <button ref={inputRef} onClick={() => { setIdofrow([row.original._id, row.original.isPaid, row.original.qarAmount]) }} aria-label="upload picture"   ><FontAwesomeIcon icon={faEdit} className="text-2xl cursor-pointer text-blue-500" /></button>
-
-                                                    :
-                                                    <div className=" space-x-3">
-                                                        {cell.column.id === "Edit" && <button type='submit' className="btn btn-accent" disabled={AValid && IPValid ? false : true} onClick={handleUpdatQarz} > <FontAwesomeIcon icon={faSave} className="text-2xl" /></button>}
-                                                        {cell.column.id === "Edit" && <button onClick={() => { setIdofrow(null) }} className="btn  btn-error"><FontAwesomeIcon icon={faBan} className="text-2xl" /></button>}
-
-                                                    </div>
+                                                                name='date' type="date" placeholder={l.date} className="input input-warning   w-full max-w-xl  " />}
 
 
-                                            }
-                                            {cell.column.id === "Delete" && <label htmlFor="my-modal-3" className="m-0" onClick={() => { setDeletestate([row.original._id, row.original.isPaid, row.original.qarAmount]) }}><FontAwesomeIcon icon={faTrash} className="text-2xl cursor-pointer text-red-700" /></label>}
+                                                        </>
 
+                                                        :
+                                                        cell.render('Cell')
 
-                                        </td>
-
-                                    )
-                                })}
-
-                            </tr>
-                        )
-                    }
-
-                    )}
-
-                </tbody>
-
-
-            </table>
-            {/* </div > */}
-
-            <div className="botom_Of_Table" >
-
-                <div className=" flex justify-between container mx-auto items-center   p-3  px-1 mb-20  min-w-[700px] ">
+                                                }
 
 
 
-                    <div className=" flex   justify-around mx-5 text-lg items-center     ">
+                                                {
+                                                    row.original._id !== Idofrow?.[0] ?
+                                                        cell.column.id === "Edit" &&
+                                                        <button ref={inputRef} onClick={() => { setIdofrow([row.original._id, row.original.isPaid, row.original.qarAmount]) }} aria-label="upload picture"   ><FontAwesomeIcon icon={faEdit} className="text-2xl cursor-pointer text-blue-500" /></button>
+
+                                                        :
+                                                        <div className=" space-x-3">
+                                                            {cell.column.id === "Edit" && <button type='submit' className="btn btn-accent" disabled={AValid && IPValid ? false : true} onClick={handleUpdatQarz} > <FontAwesomeIcon icon={faSave} className="text-2xl" /></button>}
+                                                            {cell.column.id === "Edit" && <button onClick={() => { setIdofrow(null) }} className="btn  btn-error"><FontAwesomeIcon icon={faBan} className="text-2xl" /></button>}
+
+                                                        </div>
 
 
-                        <span className="px-3">
-                            {l.page}{" " + Page}/{PageS}
-                        </span>
+                                                }
+                                                {cell.column.id === "Delete" && <label htmlFor="my-modal-3" className="m-0" onClick={() => { setDeletestate([row.original._id, row.original.isPaid, row.original.qarAmount]) }}><FontAwesomeIcon icon={faTrash} className="text-2xl cursor-pointer text-red-700" /></label>}
 
-                        <div>
-                            <select className="select select-info  w-full max-w-xs focus:outline-0"
-                                onChange={(e) => {
-                                    setLimit((e.target.value))
-                                    setPageSize(Number(e.target.value)
-                                    )
-                                }}
 
-                                value={pageSize}>
-                                {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
-                                    <option key={idx} value={pageSize}>
-                                        {l.show} ({(pageSize !== 100000) ? pageSize : l.all})
-                                    </option>))
-                                }
+                                            </td>
 
-                            </select>
+                                        )
+                                    })}
+
+                                </tr>
+                            )
+                        }
+
+                        )}
+
+                    </tbody>
+
+
+                </table>
+
+                {/* //?    botom */}
+                <div className="container text-sm  scale-90  ">
+
+                    <div className=" flex justify-between container mx-auto items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
+
+
+                        <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
+
+                            <div></div>
+                            <FontAwesomeIcon icon={faAnglesLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
+                                onClick={() => Page > 1 && setPage(1)}
+                                disabled={Page == 1 ? true : false} />
+
+                            <FontAwesomeIcon icon={faChevronLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page > 1 && setPage(Page - 1)}
+                                disabled={Page == 1 ? true : false} />
+
+
+
+                            <span className="px-20 py-2 rounded bg-slate-100 dark:bg-gray-700">
+                                {Page}/{PageS}
+                            </span>
+
+
+
+                            <FontAwesomeIcon icon={faChevronRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(Page + 1))}
+                                disabled={Page >= PageS ? true : false} />
+
+                            <FontAwesomeIcon icon={faAnglesRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(PageS))}
+                                disabled={Page >= PageS ? true : false} />
+
+
+                            <div>
+                                <select className="select  select-sm w-20 focus:outline-0 input-sm dark:bg-gray-700   max-w-xs text-sm"
+                                    onChange={(e) => {
+                                        setLimit((e.target.value))
+                                        setPageSize(Number(e.target.value)
+                                        )
+                                    }}
+
+                                    value={pageSize}>
+                                    {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
+                                        <option className='text-end' key={idx} value={pageSize}>
+                                            {(pageSize !== 100000) ? pageSize : l.all}
+                                        </option>))
+                                    }
+
+                                </select>
+                            </div>
+
+                            <FontAwesomeIcon icon={PDF} onClick={table_2_pdf} className="md:mx-5 px-10 text-blue-400 active:scale-9 m-auto mx-10 text-2xl transition ease-in-out hover:cursor-pointer" />
+
+                            <ReactHTMLTableToExcel
+                                id="test-table-xls-button "
+                                className="text-2xl active:scale-90"
+                                table="table-to-xls"
+                                filename="tablexls"
+                                sheet="tablexls"
+                                buttonText="📋"
+                                icon={PDF}
+                            />
+
+
+
+                        </div>
+
+
+
+                        <div className="scrollbar-hide inline-flex space-x-3 overflow-auto">
+                            <div></div>
+
+
+
+                        </div>
+
+
+
+                    </div>
+
+
+
+                </div >
+                {/* //?    botom */}
+
+
+
+                {/* //?    modal */}
+
+                <div>
+
+                    <input name="error_btn" type="checkbox" id="my-modal-3" className="modal-toggle btn btn-error " />
+                    <div className="modal  ">
+                        <div className="modal-box relative ">
+                            <label htmlFor="my-modal-3" className="btn btn-sm btn-circle absolute right-2 top-2 ">✕</label>
+                            <div className="text-lg font-bold text-center"><FontAwesomeIcon icon={faBan} className="text-7xl text-red-700  " /> </div>
+                            <p className="py-10 text-start">{l.deletemsg}</p>
+                            <div className="space-x-10 ">
+                                <label htmlFor="my-modal-3" className="btn btn-error " onClick={handledeleteQarzData}>{l.yes}</label>
+                                <label htmlFor="my-modal-3" className="btn btn-accent " onClick={() => { setDeletestate(null) }} >{l.no}</label>
+                            </div>
                         </div>
                     </div>
 
 
-
-
-                    <div className="space-x-3  overflow-auto inline-flex  scrollbar-hide ">
-                        <div></div>
-
-
-
-                        <button className="btn w-2 h-2 btn-info border-0  " onClick={() =>
-                            setPage(1)
-                        }
-                            disabled={
-                                Page == 1 ? true : false
-                            }
-                        >{"<<"} </button>
-
-
-                        <button className="btn w-2 h-2 btn-info" onClick={() =>
-                            setPage(Page - 1)
-                        }
-                            disabled={
-                                Page <= 1 ? true : false
-
-                            }
-                        >{"<"}
-                        </button>
-
-
-                        <button className="btn w-2 h-2 btn-info" onClick={() =>
-                            Page >= 1 && setPage(Page + 1)
-                        }
-                            disabled={
-                                Page >= PageS ? true : false
-                            }
-                        >{">"} </button>
-
-
-                        <button className="btn w-2 h-2 btn-info "
-                            onClick={() =>
-                                Page >= 1 && setPage(PageS)
-                            }
-                            disabled={
-                                Page >= PageS ? true : false
-                            }
-                        >{">>"} </button>
-
-
-
+                    <input name="error_btn" type="checkbox" id="Pay-Mod" className="modal-toggle btn btn-error " />
+                    <div className="modal  ">
+                        <div className="modal-box relative ">
+                            <label htmlFor="Pay-Mod" className="btn btn-sm btn-circle absolute right-2 top-2 ">✕</label>
+                            <div className="text-lg font-bold text-center"><FontAwesomeIcon icon={faAmazonPay} className="text-7xl text-green-700  " /> </div>
+                            <p className="py-10 text-start">{l.paymsg}</p>
+                            <div className="text-end">
+                                <label htmlFor="Pay-Mod" className="btn  btn-accent mx-10" onClick={() => handlePay(true)}>{l.yes}</label>
+                                <label htmlFor="Pay-Mod" className="btn btn-error " onClick={() => { setPaystate(null) }} >{l.no}</label>
+                            </div>
+                        </div>
                     </div>
 
-                </div>
-
-            </div>
-
-            <input name="error_btn" type="checkbox" id="my-modal-3" className="modal-toggle btn btn-error " />
-            <div className="modal  ">
-                <div className="modal-box relative ">
-                    <label htmlFor="my-modal-3" className="btn btn-sm btn-circle absolute right-2 top-2 ">✕</label>
-                    <div className="text-lg font-bold text-center"><FontAwesomeIcon icon={faBan} className="text-7xl text-red-700  " /> </div>
-                    <p className="py-10 text-start">{l.deletemsg}</p>
-                    <div className="space-x-10 ">
-                        <label htmlFor="my-modal-3" className="btn btn-error " onClick={handledeleteQarzData}>{l.yes}</label>
-                        <label htmlFor="my-modal-3" className="btn btn-accent " onClick={() => { setDeletestate(null) }} >{l.no}</label>
+                    <input name="error_btn" type="checkbox" id="Borrow-Mod" className="modal-toggle btn btn-error " />
+                    <div className="modal  ">
+                        <div className="modal-box relative ">
+                            <label htmlFor="Borrow-Mod" className="btn btn-sm btn-circle absolute right-2 top-2 ">✕</label>
+                            <div className="text-lg font-bold text-center"><FontAwesomeIcon icon={faHandHoldingDollar} className="text-7xl text-red-700  " /> </div>
+                            <p className="py-10 text-start ">{l.borrowmsg}</p>
+                            <div className="text-end">
+                                <label htmlFor="Borrow-Mod" className="btn  btn-accent mx-10" onClick={() => handlePay(false)}>{l.yes}</label>
+                                <label htmlFor="Borrow-Mod" className="btn btn-error " onClick={() => { setPaystate(null) }} >{l.no}</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
 
-            <input name="error_btn" type="checkbox" id="Pay-Mod" className="modal-toggle btn btn-error " />
-            <div className="modal  ">
-                <div className="modal-box relative ">
-                    <label htmlFor="Pay-Mod" className="btn btn-sm btn-circle absolute right-2 top-2 ">✕</label>
-                    <div className="text-lg font-bold text-center"><FontAwesomeIcon icon={faAmazonPay} className="text-7xl text-green-700  " /> </div>
-                    <p className="py-10 text-start">{l.paymsg}</p>
-                    <div className="text-end">
-                        <label htmlFor="Pay-Mod" className="btn  btn-accent mx-10" onClick={() => handlePay(true)}>{l.yes}</label>
-                        <label htmlFor="Pay-Mod" className="btn btn-error " onClick={() => { setPaystate(null) }} >{l.no}</label>
-                    </div>
-                </div>
-            </div>
 
-            <input name="error_btn" type="checkbox" id="Borrow-Mod" className="modal-toggle btn btn-error " />
-            <div className="modal  ">
-                <div className="modal-box relative ">
-                    <label htmlFor="Borrow-Mod" className="btn btn-sm btn-circle absolute right-2 top-2 ">✕</label>
-                    <div className="text-lg font-bold text-center"><FontAwesomeIcon icon={faHandHoldingDollar} className="text-7xl text-red-700  " /> </div>
-                    <p className="py-10 text-start ">{l.borrowmsg}</p>
-                    <div className="text-end">
-                        <label htmlFor="Borrow-Mod" className="btn  btn-accent mx-10" onClick={() => handlePay(false)}>{l.yes}</label>
-                        <label htmlFor="Borrow-Mod" className="btn btn-error " onClick={() => { setPaystate(null) }} >{l.no}</label>
-                    </div>
-                </div>
-            </div>
-
-            <ToastContainer
-                draggablePercent={60}
-            />
+                <ToastContainer
+                    draggablePercent={60}
+                />
+            </div >
         </div >
 
     );
@@ -1990,33 +1861,61 @@ const CarsTable = ({ COLUMNS, AllProducts, initQuery }) => {
     const { pageIndex, pageSize } = state
 
     return (
-        <div className="container mx-auto overflow-auto scrollbar-hide  ">
+        <div className="  ">
+
+            {/* //?   Header  */}
+            <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-xl p-5">
+                <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
+
+                    <a href="#my-modal-2" className=" flex  mx-2" ><FontAwesomeIcon className='text-2xl hover:scale-90 mx-1' icon={faBars} /></a>
+                    <input type="search" placeholder={`${l.search} ...`} className="input input-bordered    w-full    focus:outline-0   h-9 "
+                        onChange={e =>
+                            setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
+                        }
+                    />
+                </div>
+                <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8  rtl:mr-8 ">
+                    <label tabIndex="0" className="active:scale-9 m-1  ">
+                        <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="active:scale-90 text-2xl hover:cursor-pointer text-blue-500  " />
+                    </label>
+
+                    <ul tabIndex="0" className="dropdown-content bg-base-100 rounded-box w-52 flex justify-center shadow">
+                        <li className=" py-2">
+
+                            <div className="space-y-1">
+                                <h1>{l.from}</h1><input className="input input-bordered input-info focus:outline-0 "
+                                    onChange={(e) => {
+                                        setStartDate(e.target.value)
+                                    }}
+                                    type="date"
+                                />
+                                <h1>{l.to}</h1>
+                                <input className="input input-bordered input-info focus:outline-0"
+                                    onChange={(e) => {
+                                        setEndDate(e.target.value)
+                                    }}
+                                    type="date"
+                                />
+                            </div>
+                        </li>
+                    </ul>
+                </div>
 
 
-
-            <div className=" flex justify-between  rounded-lg  items-center p-2 min-w-[700px] ">
-
-
-                <input type="search" placeholder={`${l.search} ...`} className="input  input-info  w-full max-w-xs  focus:outline-0"
-                    onChange={e =>
-                        setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
-                    }
-                />
-
-                <a href="#my-modal-2" className="btn btn-outline">{l.filter}</a>
                 <div className="modal" id="my-modal-2">
                     <div className="modal-box m-2">
                         <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} />
-                        <div className="font-bold text-lg overflow-auto max-h-52 scrollbar-hide space-y-2 ">
+                        <div className="max-h-80 scrollbar-hide space-y-2 overflow-auto text-lg font-bold">
                             {allColumns.map(column => (
                                 <div key={column.id}>
-                                    <div className=" w-full  rounded-lg   ">
-                                        <label className="cursor-pointer label">
+                                    <div className=" w-full rounded-lg">
+                                        <label className="label cursor-pointer">
                                             {column.id}
                                             <input type="checkbox" className="toggle toggle-accent focus:outline-0 " {...column.getToggleHiddenProps()} />
 
                                         </label>
                                     </div>
+
 
                                 </div>
                             ))}
@@ -2030,274 +1929,230 @@ const CarsTable = ({ COLUMNS, AllProducts, initQuery }) => {
                     </div>
                 </div>
 
+            </div>
+            {/* //?   Header  */}
+
+
+            <div className=" overflow-auto bg-white dark:bg-[#181A1B] rounded-b-xl shadow-xl ">
 
 
 
-
-                <div className="flex justify-end ">
-
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left">
-                        <label tabIndex="0" className=" m-1 active:scale-9  ">
-                            <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 active:scale-9 " />
-                        </label>
-
-                        <ul tabIndex="0" className="dropdown-content  shadow bg-base-100 rounded-box w-52 flex justify-center  ">
-                            <li className="  py-2">
-
-                                <div className="space-y-1">
-                                    <h1>{l.from}</h1><input className="input input-bordered input-info  focus:outline-0 "
-                                        onChange={(e) => {
-                                            setStartDate(e.target.value)
-                                        }}
-                                        type="date"
-                                    />
-                                    <h1>{l.to}</h1>
-                                    <input className="input input-bordered input-info  focus:outline-0"
-                                        onChange={(e) => {
-                                            setEndDate(e.target.value)
-                                        }}
-                                        type="date"
-                                    />
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+                <table id="table-to-xls" className="table w-full    my-10 text-center font-normal normal-case  " {...getTableProps()}>
 
 
+                    <thead className="  ">
+
+                        {headerGroups.map((headerGroups, idx) => (
+
+                            <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
+                                <th className='hidden'></th>
+
+                                {headerGroups.headers.map((column, idx) => (
+
+                                    <th key={idx} className={` ${true && "min-w-[100px]"} `} {...column.getHeaderProps(column.getSortByToggleProps())} >
+                                        <span className='normal-case   '>{column.render('Header')}</span>
+                                        <span  >
+                                            {column.isSorted ? (column.isSortedDesc ? "<" : ">") : ""}
+                                        </span>
+                                    </th>
+                                ))}
+                            </tr>
+                        )
+                        )
+                        }
+                    </thead >
+                    <tbody {...getTableBodyProps()}>
+
+                        {page.map((row, idx) => {
+
+                            prepareRow(row)
+                            return (
+                                <tr key={idx}   {...row.getRowProps()} >
+                                    <td className='hidden'></td>
+                                    {row.cells.map((cell, idx) => {
+                                        return (
 
 
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left px-5 ">
-                        <label tabIndex="0" className=" m-1  " >
-                            <FontAwesomeIcon icon={faFileDownload} className="text-3xl m-auto md:mx-5 mx-1 active:scale-9   ease-in-out  transition" />
-                        </label>
+                                            <td key={idx} className=" text-center  py-2 dark:bg-[#181A1B] " {...cell.getCellProps()}>
 
-                        <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 flex justify-center space-y-2 ">
-                            <li>  <ReactHTMLTableToExcel
-                                id="test-table-xls-button"
-                                className="btn btn-outline download-table-xls-button"
+
+                                                {(cell.column.id != 'carId') && cell.render('Cell')}
+
+                                                {cell.column.id === 'carId' && (
+
+                                                    <>
+                                                        <Link href={`/Dashboard/Balance/ListofOwe/${router.query._id}/details/${row.original?.carId?.id}?Qarz=${row.original.id}`}><a>{cell.value?.modeName || cell.value?.VINNumber || cell.value?.id}</a></Link>
+                                                    </>
+
+                                                )
+                                                }
+                                                {cell.column.id === 'model' && (
+
+                                                    <>
+                                                        <span className="">{row.original.carId?.model}</span>
+
+                                                    </>
+
+                                                )
+                                                }
+                                                {cell.column.id === 'tocar' && (
+
+                                                    <>
+                                                        <span className="">{row.original.carId?.tocar}</span>
+
+                                                    </>
+
+                                                )
+                                                }
+                                                {cell.column.id === 'price' && (
+
+                                                    <>
+                                                        <span className="">{row.original.carId?.price}</span>
+
+                                                    </>
+
+                                                )
+                                                }
+                                                {cell.column.id === 'isSold' && (
+
+
+                                                    row.original.carId?.isSold === true ?
+                                                        <span className="text-green-700">Yes</span>
+                                                        :
+                                                        <span className="text-red-700">No</span>
+
+
+                                                )
+                                                }
+
+
+                                                {cell.column.id === 'isPaid' && (
+
+                                                    cell.value === true ?
+                                                        <span className="text-green-700">Yes</span>
+                                                        :
+                                                        <span className="text-red-700">No</span>
+
+                                                )}
+                                                {cell.column.id === "Details" &&
+
+                                                    <Link href={`/Dashboard/Balance/ListofOwe/${router.query._id}/details/${row.original?.carId?.id}?Qarz=${row.original?.id}`}><a  >
+                                                        <label>
+                                                            <FontAwesomeIcon icon={faEye} className="text-2xl cursor-pointer text-blue-800 " />
+                                                        </label>
+                                                    </a>
+                                                    </Link>
+
+                                                }
+
+
+
+                                            </td>
+
+                                        )
+                                    })}
+
+                                </tr>
+                            )
+                        }
+
+                        )}
+
+                    </tbody>
+
+
+                </table>
+
+
+                {/* //?    botom */}
+                <div className="text-sm  scale-90  ">
+
+                    <div className=" flex justify-between container mx-auto items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
+
+
+                        <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
+
+                            <div></div>
+                            <FontAwesomeIcon icon={faAnglesLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
+                                onClick={() => Page > 1 && setPage(1)}
+                                disabled={Page == 1 ? true : false} />
+
+                            <FontAwesomeIcon icon={faChevronLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page > 1 && setPage(Page - 1)}
+                                disabled={Page == 1 ? true : false} />
+
+
+
+                            <span className="px-20 py-2 rounded bg-slate-100 dark:bg-gray-700">
+                                {Page}/{PageS}
+                            </span>
+
+
+
+                            <FontAwesomeIcon icon={faChevronRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(Page + 1))}
+                                disabled={Page >= PageS ? true : false} />
+
+                            <FontAwesomeIcon icon={faAnglesRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(PageS))}
+                                disabled={Page >= PageS ? true : false} />
+
+
+                            <div>
+                                <select className="select  select-sm w-20 focus:outline-0 input-sm dark:bg-gray-700   max-w-xs text-sm"
+                                    onChange={(e) => {
+                                        setLimit((e.target.value))
+                                        setPageSize(Number(e.target.value)
+                                        )
+                                    }}
+
+                                    value={pageSize}>
+                                    {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
+                                        <option className='text-end' key={idx} value={pageSize}>
+                                            {(pageSize !== 100000) ? pageSize : l.all}
+                                        </option>))
+                                    }
+
+                                </select>
+                            </div>
+
+                            <FontAwesomeIcon icon={PDF} onClick={table_2_pdf} className="md:mx-5 px-10 text-blue-400 active:scale-9 m-auto mx-10 text-2xl transition ease-in-out hover:cursor-pointer" />
+
+                            <ReactHTMLTableToExcel
+                                id="test-table-xls-button "
+                                className="text-2xl active:scale-90"
                                 table="table-to-xls"
                                 filename="tablexls"
                                 sheet="tablexls"
-                                buttonText="XLSX" />  </li>
+                                buttonText="📋"
+                                icon={PDF}
+                            />
 
-                            <li><button className='btn btn-outline ' onClick={table_2_pdf}>PDF</button> </li>
-                        </ul>
+
+
+                        </div>
+
+
+
+                        <div className="scrollbar-hide inline-flex space-x-3 overflow-auto">
+                            <div></div>
+
+
+
+                        </div>
+
+
+
                     </div>
 
-                </div>
 
 
-            </div>
+                </div >
+                {/* //?    botom */}
 
 
 
-
-            <table id="table-to-xls" className="ml-1 my-10   " {...getTableProps()}>
-
-
-                <thead className="  ">
-
-                    {headerGroups.map((headerGroups, idx) => (
-
-                        <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
-
-                            {headerGroups.headers.map((column, idx) => (
-
-                                < th key={idx} className={`p-4 m-44 ${true && "min-w-[200px]"} `} {...column.getHeaderProps(column.getSortByToggleProps())} >
-                                    <span>{column.render('Header')}</span>
-                                    <span  >
-                                        {column.isSorted ? (column.isSortedDesc ? "<" : ">") : ""}
-                                    </span>
-                                </th>
-                            ))}
-                        </tr>
-                    )
-                    )
-                    }
-                </thead >
-                <tbody {...getTableBodyProps()}>
-
-                    {page.map((row, idx) => {
-
-                        prepareRow(row)
-                        return (
-                            <tr key={idx}   {...row.getRowProps()} >
-                                {row.cells.map((cell, idx) => {
-                                    return (
-
-
-                                        <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
-
-
-                                            {(cell.column.id != 'carId') && cell.render('Cell')}
-
-                                            {cell.column.id === 'carId' && (
-
-                                                <>
-                                                    <Link href={`/Dashboard/Balance/ListofOwe/${router.query._id}/details/${row.original?.carId?.id}?Qarz=${row.original.id}`}><a>{cell.value?.modeName || cell.value?.VINNumber || cell.value?.id}</a></Link>
-                                                </>
-
-                                            )
-                                            }
-                                            {cell.column.id === 'model' && (
-
-                                                <>
-                                                    <span className="">{row.original.carId?.model}</span>
-
-                                                </>
-
-                                            )
-                                            }
-                                            {cell.column.id === 'tocar' && (
-
-                                                <>
-                                                    <span className="">{row.original.carId?.tocar}</span>
-
-                                                </>
-
-                                            )
-                                            }
-                                            {cell.column.id === 'price' && (
-
-                                                <>
-                                                    <span className="">{row.original.carId?.price}</span>
-
-                                                </>
-
-                                            )
-                                            }
-                                            {cell.column.id === 'isSold' && (
-
-
-                                                row.original.carId?.isSold === true ?
-                                                    <span className="text-green-700">Yes</span>
-                                                    :
-                                                    <span className="text-red-700">No</span>
-
-
-                                            )
-                                            }
-
-
-                                            {cell.column.id === 'isPaid' && (
-
-                                                cell.value === true ?
-                                                    <span className="text-green-700">Yes</span>
-                                                    :
-                                                    <span className="text-red-700">No</span>
-
-                                            )}
-                                            {cell.column.id === "Details" &&
-
-                                                <Link href={`/Dashboard/Balance/ListofOwe/${router.query._id}/details/${row.original?.carId?.id}?Qarz=${row.original?.id}`}><a  >
-                                                    <label>
-                                                        <FontAwesomeIcon icon={faEye} className="text-2xl cursor-pointer text-blue-800 " />
-                                                    </label>
-                                                </a>
-                                                </Link>
-
-                                            }
-
-
-
-                                        </td>
-
-                                    )
-                                })}
-
-                            </tr>
-                        )
-                    }
-
-                    )}
-
-                </tbody>
-
-
-            </table>
-
-            <div className=" flex justify-between container mx-auto items-center rounded-xl p-3  px-1 mb-20  min-w-[700px]">
-                <div className=" flex   justify-around mx-5 text-lg items-center     ">
-
-                    <span className="px-3">
-                        {l.page}{" " + Page}/{PageS}
-                    </span>
-
-
-                    <div>
-                        <select className="select select-info  w-full max-w-xs focus:outline-0"
-                            onChange={(e) => {
-                                setLimit((e.target.value))
-                                setPageSize(Number(e.target.value)
-                                )
-                            }}
-
-                            value={pageSize}>
-                            {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
-                                <option key={idx} value={pageSize}>
-                                    {l.show} ({(pageSize !== 100000) ? pageSize : l.all})
-                                </option>))
-                            }
-
-                        </select>
-                    </div>
-                </div>
-
-
-
-
-                <div className="space-x-3  overflow-auto inline-flex  scrollbar-hide ">
-                    <div></div>
-
-
-
-                    <button className="btn w-2 h-2 btn-info border-0  " onClick={() =>
-                        setPage(1)
-                    }
-                        disabled={
-                            Page == 1 ? true : false
-                        }
-                    >{"<<"} </button>
-
-
-                    <button className="btn w-2 h-2 btn-info" onClick={() =>
-                        setPage(Page - 1)
-                    }
-                        disabled={
-                            Page <= 1 ? true : false
-
-                        }
-                    >{"<"}
-                    </button>
-
-
-                    <button className="btn w-2 h-2 btn-info" onClick={() =>
-                        Page >= 1 && setPage(Page + 1)
-                    }
-                        disabled={
-                            Page >= PageS ? true : false
-                        }
-                    >{">"} </button>
-
-
-                    <button className="btn w-2 h-2 btn-info "
-                        onClick={() =>
-                            Page >= 1 && setPage(PageS)
-                        }
-                        disabled={
-                            Page >= PageS ? true : false
-                        }
-                    >{">>"} </button>
-
-
-
-                </div>
-
-
-
-            </div>
-
-
+            </div >
         </div >
 
     );
@@ -2372,7 +2227,7 @@ const TableBal = ({ COLUMNS, AllBal }) => {
         doc.autoTable({
 
 
-            head: [[`Amount`, " User Id", "Action", "Note", "Date"]],
+            head: [["", `Amount`, " User Id", "Action", "Note", "Date"]],
             body: table_td
         });
 
@@ -2410,271 +2265,237 @@ const TableBal = ({ COLUMNS, AllBal }) => {
 
 
     return (
-        <div className=" container mx-auto  overflow-auto ">
+        <div className=" ">
+            {/* //?   Header  */}
+            <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-xl p-5">
+                <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
 
-
-
-            <div className=" flex justify-between   container mx-auto items-center p-2 min-w-[700px] ">
-
-
-                <div className="flex">
-
-                    <input type="search" placeholder={`${l.search} ...`} className="input   input-info  w-full max-w-xs mx-5 focus:outline-0"
+                    <input type="search" placeholder={`${l.search} ...`} className="input input-bordered    w-full    focus:outline-0   h-9 "
                         onChange={e =>
                             setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
                         }
                     />
                 </div>
+                <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8  rtl:mr-8 ">
+                    <label tabIndex="0" className="active:scale-9 m-1  ">
+                        <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="active:scale-90 text-2xl hover:cursor-pointer text-blue-500  " />
+                    </label>
+
+                    <ul tabIndex="0" className="dropdown-content bg-base-100 rounded-box w-52 flex justify-center shadow">
+                        <li className=" py-2">
+
+                            <div className="space-y-1">
+                                <h1>{l.from}</h1><input className="input input-bordered input-info focus:outline-0 "
+                                    onChange={(e) => {
+                                        setStartDate(e.target.value)
+                                    }}
+                                    type="date"
+                                />
+                                <h1>{l.to}</h1>
+                                <input className="input input-bordered input-info focus:outline-0"
+                                    onChange={(e) => {
+                                        setEndDate(e.target.value)
+                                    }}
+                                    type="date"
+                                />
+                            </div>
+                        </li>
+                    </ul>
+                </div>
 
 
-                <div className="flex justify-center items-center lg:space-x-4 ">
+            </div>
+            {/* //?   Header  */}
 
 
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left ">
+            <div className="overflow-auto bg-white  dark:bg-[#181A1B] rounded-b-xl shadow-xl  ">
 
-                        {/* //TODO -  fix Date */}
-                        <label tabIndex="0" className=" m-1 active:scale-95 ">
-                            <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 active:scale-95 " />
-                        </label>
+                <table id="table-to-xls" className="table w-full my-10 text-sm text-center font-normal  " {...getTableProps()}>
+                    <thead className="  ">
+                        {headerGroups.map((headerGroups, idx) => (
+                            <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
+                                <th className='hidden'></th>
+                                {headerGroups.headers.map((column, idx) => (
 
-                        <ul tabIndex="0" className="dropdown-content  shadow bg-base-100 rounded-box w-52 flex justify-center   ">
-                            <li className="  py-2">
+                                    <th key={idx} className=" min-w-[120px] normal-case py-2 " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
 
-                                <div className="space-y-1">
-                                    <h1>{l.from}</h1><input className="input input-bordered input-info "
-                                        onChange={(e) => {
-                                            setStartDate(e.target.value)
-                                        }}
-                                        type="date"
-                                    />
-                                    <h1>{l.to}</h1>
-                                    <input className="input input-bordered input-info "
-                                        onChange={(e) => {
-                                            setEndDate(e.target.value)
-                                        }}
-                                        type="date"
-                                    />
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+                                        <span>
+                                            {column.isSorted ? (column.isSortedDesc ? " ↑ " : " 🡓 ") : ""}
+
+                                        </span>
 
 
 
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left ">
-                        <label tabIndex="0" className=" m-1  " >
-                            <FontAwesomeIcon icon={faFileDownload} className="text-3xl m-auto md:mx-5 mx-1 active:scale-90   ease-in-out  transition" />
-                        </label>
+                                    </th>
 
-                        <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 flex justify-center space-y-2 ">
-                            <li>  <ReactHTMLTableToExcel
-                                id="test-table-xls-button"
-                                className="btn btn-outline download-table-xls-button"
+
+
+                                ))}
+
+                            </tr>
+
+                        )
+                        )
+
+
+                        }
+
+                    </thead >
+
+
+                    <tbody {...getTableBodyProps()}>
+
+                        {page.map((row, idx) => {
+                            prepareRow(row)
+                            return (
+                                <tr key={idx}   {...row.getRowProps()} >
+                                    <td className='hidden'></td>
+
+                                    {row.cells.map((cell, idx) => {
+                                        return (
+
+                                            <td key={idx} className="  text-center   py-3 overflow-auto" {...cell.getCellProps()}>
+
+
+
+                                                {cell.column.id === 'amount' && (
+                                                    <>
+                                                        {cell.value * -1 >= 0 ? <div className="text-green-700">{cell.value * -1}</div> : <div className="text-red-700">{cell.value * -1}</div>
+                                                        } </>
+                                                )}
+
+                                                {cell.column.id === 'isPaid' && (
+                                                    <>
+
+
+                                                        {cell.value == true ?
+                                                            <div className="text-green-700">Yes</div> : cell.value == false ? <div className="text-red-700">No</div> : null}
+
+
+
+
+                                                    </>
+
+                                                )}
+
+                                                {cell.column.id === 'carId' && (
+                                                    <>
+
+                                                        <Link href={`/Dashboard/Balance/ListofOwe/${router.query._id}`}><a className="text-orange-700">{cell.value?.modeName || cell.value?.VINNumber || cell.value?.id}</a></Link>
+                                                    </>
+
+                                                )
+                                                }
+                                                {
+                                                    (cell.column.id === 'amount' || cell.column.id === 'carId') || cell.render('Cell')
+                                                }
+
+
+                                            </td>
+
+                                        )
+                                    })}
+
+                                </tr>
+                            )
+                        }
+
+                        )}
+
+                    </tbody>
+
+
+                </table>
+
+                {/* //?    botom */}
+                <div className="container text-sm  scale-90  ">
+
+                    <div className=" flex justify-between container mx-auto items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
+
+
+                        <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
+
+                            <div></div>
+                            <FontAwesomeIcon icon={faAnglesLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
+                                onClick={() => Page > 1 && setPage(1)}
+                                disabled={Page == 1 ? true : false} />
+
+                            <FontAwesomeIcon icon={faChevronLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page > 1 && setPage(Page - 1)}
+                                disabled={Page == 1 ? true : false} />
+
+
+
+                            <span className="px-20 py-2 rounded bg-slate-100 dark:bg-gray-700">
+                                {Page}/{PageS}
+                            </span>
+
+
+
+                            <FontAwesomeIcon icon={faChevronRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(Page + 1))}
+                                disabled={Page >= PageS ? true : false} />
+
+                            <FontAwesomeIcon icon={faAnglesRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(PageS))}
+                                disabled={Page >= PageS ? true : false} />
+
+
+                            <div>
+                                <select className="select  select-sm w-20 focus:outline-0 input-sm dark:bg-gray-700   max-w-xs text-sm"
+                                    onChange={(e) => {
+                                        setLimit((e.target.value))
+                                        setPageSize(Number(e.target.value)
+                                        )
+                                    }}
+
+                                    value={pageSize}>
+                                    {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
+                                        <option className='text-end' key={idx} value={pageSize}>
+                                            {(pageSize !== 100000) ? pageSize : l.all}
+                                        </option>))
+                                    }
+
+                                </select>
+                            </div>
+
+                            <FontAwesomeIcon icon={PDF} onClick={table_2_pdf} className="md:mx-5 px-10 text-blue-400 active:scale-9 m-auto mx-10 text-2xl transition ease-in-out hover:cursor-pointer" />
+
+                            <ReactHTMLTableToExcel
+                                id="test-table-xls-button "
+                                className="text-2xl active:scale-90"
                                 table="table-to-xls"
                                 filename="tablexls"
                                 sheet="tablexls"
-                                buttonText="XLSX" />  </li>
-
-                            <li><button className='btn btn-outline ' onClick={table_2_pdf}>PDF</button> </li>
-                            {/* <li><button className='btn btn-outline' onClick={table_All_pdff}>ALL_PDF</button> </li> */}
-                        </ul>
-                    </div>
-
-
-                </div>
-
-
-            </div>
+                                buttonText="📋"
+                                icon={PDF}
+                            />
 
 
 
-            <table id="table-to-xls" className="my-10  inline-block   min-w-[1000px] " {...getTableProps()}>
-
-
-                <thead className="  ">
-
-                    {headerGroups.map((headerGroups, idx) => (
-
-                        <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
-
-                            {headerGroups.headers.map((column, idx) => (
-
-                                <th key={idx} className="p-4 m-44 w-[400px]   " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
-
-                                    <span>
-                                        {column.isSorted ? (column.isSortedDesc ? " ↑ " : " 🡓 ") : ""}
-
-                                    </span>
-
-
-
-                                </th>
-
-
-
-                            ))}
-
-                        </tr>
-
-                    )
-                    )
-
-
-                    }
-
-                </thead >
-
-
-                <tbody {...getTableBodyProps()}>
-
-                    {page.map((row, idx) => {
-                        prepareRow(row)
-                        return (
-                            <tr key={idx}   {...row.getRowProps()} >
-                                {row.cells.map((cell, idx) => {
-                                    return (
-
-                                        <td key={idx} className="  text-center   py-3 overflow-auto" {...cell.getCellProps()}>
-
-
-
-                                            {cell.column.id === 'amount' && (
-                                                <>
-                                                    {cell.value * -1 >= 0 ? <div className="text-green-700">{cell.value * -1}</div> : <div className="text-red-700">{cell.value * -1}</div>
-                                                    } </>
-                                            )}
-
-                                            {cell.column.id === 'isPaid' && (
-                                                <>
-
-
-                                                    {cell.value == true ?
-                                                        <div className="text-green-700">Yes</div> : cell.value == false ? <div className="text-red-700">No</div> : null}
-
-
-
-
-                                                </>
-
-                                            )}
-
-                                            {cell.column.id === 'carId' && (
-                                                <>
-
-                                                    <Link href={`/Dashboard/Balance/ListofOwe/${router.query._id}`}><a className="text-orange-700">{cell.value?.modeName || cell.value?.VINNumber || cell.value?.id}</a></Link>
-                                                </>
-
-                                            )
-                                            }
-                                            {
-                                                (cell.column.id === 'amount' || cell.column.id === 'carId') || cell.render('Cell')
-                                            }
-
-
-                                        </td>
-
-                                    )
-                                })}
-
-                            </tr>
-                        )
-                    }
-
-                    )}
-
-                </tbody>
-
-
-            </table>
-
-            <div className="botom_Of_Table" >
-
-                <div className=" flex justify-between container mx-auto items-center   p-3  px-1 mb-20  min-w-[700px] ">
-
-
-
-                    <div className=" flex   justify-around mx-5 text-lg items-center     ">
-
-
-                        <span className="px-3">
-                            {l.page}{" " + Page}/{PageS}
-                        </span>
-
-                        <div>
-                            <select className="select select-info  w-full max-w-xs focus:outline-0"
-                                onChange={(e) => {
-                                    setLimit((e.target.value))
-                                    setPageSize(Number(e.target.value)
-                                    )
-                                }}
-
-                                value={pageSize}>
-                                {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
-                                    <option key={idx} value={pageSize}>
-                                        {l.show} ({(pageSize !== 100000) ? pageSize : l.all})
-                                    </option>))
-                                }
-
-                            </select>
                         </div>
-                    </div>
 
 
 
-
-                    <div className="space-x-3  overflow-auto inline-flex  scrollbar-hide ">
-                        <div></div>
-
+                        <div className="scrollbar-hide inline-flex space-x-3 overflow-auto">
+                            <div></div>
 
 
-                        <button className="btn w-2 h-2 btn-info border-0  " onClick={() =>
-                            setPage(1)
-                        }
-                            disabled={
-                                Page == 1 ? true : false
-                            }
-                        >{"<<"} </button>
 
-
-                        <button className="btn w-2 h-2 btn-info" onClick={() =>
-                            setPage(Page - 1)
-                        }
-                            disabled={
-                                Page <= 1 ? true : false
-
-                            }
-                        >{"<"}
-                        </button>
-
-
-                        <button className="btn w-2 h-2 btn-info" onClick={() =>
-                            Page >= 1 && setPage(Page + 1)
-                        }
-                            disabled={
-                                Page >= PageS ? true : false
-                            }
-                        >{">"} </button>
-
-
-                        <button className="btn w-2 h-2 btn-info "
-                            onClick={() =>
-                                Page >= 1 && setPage(PageS)
-                            }
-                            disabled={
-                                Page >= PageS ? true : false
-                            }
-                        >{">>"} </button>
+                        </div>
 
 
 
                     </div>
 
-                </div>
-
-            </div>
 
 
+                </div >
+                {/* //?    botom */}
 
+
+
+            </div >
         </div >
 
     );

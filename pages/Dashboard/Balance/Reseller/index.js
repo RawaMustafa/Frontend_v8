@@ -9,6 +9,8 @@ import { InView } from 'react-intersection-observer';
 
 import { getSession, useSession } from "next-auth/react";
 import { useRouter } from 'next/router';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
 export const getServerSideProps = async ({ req }) => {
@@ -105,7 +107,7 @@ const Reseller = () => {
                         <label className="relative block max-w-[150px] lg:max-w-[300px] ">
                             <span className="sr-only">Search</span>
                             <span className="absolute inset-y-0 left-0 flex items-center pl-2">
-                                {/* <FontAwesomeIcon icon={faSearch} /> */}
+                                <FontAwesomeIcon icon={faSearch} />
                             </span>
                             <input
                                 onChange={(s) => { setSearch(s.target.value) }}
@@ -127,11 +129,12 @@ const Reseller = () => {
 
                 }
 
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4  gap-10 ">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4  gap-10 mx-2  ">
                     {Data.map((item, key) => {
+
                         return (
                             <Link key={key} as={`/Dashboard/Balance/Reseller/${item._id}`} href={`/Dashboard/Balance/Reseller/[_id]`}><a>
-                                <div className=" rounded-2xl light:bg-red-600  bg-slate-600 dark:bg-gray-900 bg- text-neutral-content h-56 max:w-96">
+                                <div className=" rounded-2xl light:bg-red-600  bg-white shadow-lg dark:bg-gray-700 bg-  h-56 max:w-96 text-black  dark:text-white">
                                     <div className=" pt-6 text-center  space-y-2">
                                         <Image width={50} height={50} className="inline-block h-12 w-12 rounded-full ring-2 ring-white" src="/logo.png" alt="users" />
 

@@ -227,7 +227,9 @@ export const ku = {
     listofcars: "لیستی سەیارەکان",
     listofloan: "لیستی قەرزەکان",
     borrowing: "قەرزکردن",
-    borrowmsg:"دڵنیای لە قەرزکردن "
+    borrowmsg: "دڵنیای لە قەرزکردن ",
+    transfer: "حەواڵە",
+    mycars: "سەیارەکانم",
 
 
 

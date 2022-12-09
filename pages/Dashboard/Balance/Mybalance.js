@@ -10,18 +10,19 @@ import axios from "axios"
 import Axios from "../../api/Axios"
 import { ToastContainer, toast, } from 'react-toastify';
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faCalendarPlus, faTrash, faEdit, faSave, faBan, faFileDownload, faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarPlus, faTrash, faEdit, faSave, faBan, faFileDownload, faCalendarCheck, faAnglesLeft, faChevronLeft, faChevronRight, faAnglesRight, faBars } from '@fortawesome/free-solid-svg-icons';
 import { getSession, useSession } from "next-auth/react";
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { faFilePdf as PDF, faCalendarCheck as CALLENDER, faCalendarPlus as Plusss } from '@fortawesome/free-regular-svg-icons';
 
 
 
 
 
-const Amount_regex = /^[0-9.]{0,8}$/;
+const Amount_regex = /^[0-9.]{0,12}$/;
 const date_regex = /^\d{4}-\d{2}-\d{2}$/;
-const action_regex = /^[0-9a-zA-Z=> ]{0,50}$/;
+const action_regex = /^[0-9a-zA-Z-+_/ =<>,. ]{0,100}$/;
 
 
 
@@ -41,7 +42,7 @@ export const getServerSideProps = async ({ req }) => {
         }
     }
 
-    let data = 1
+    let data
 
     try {
         const res = await Axios.get(`/bal/?search=&page=1&limit=10`,
@@ -81,7 +82,8 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
     const [EndDate, setEndDate] = useState("2500-01-01");
 
     const [PageS, setPageS] = useState(Math.ceil(AllUsers / Limit));
-    const [TotalUsers, setTotalUsers] = useState(AllUsers);
+    const [TotalUsers, setTotalUsers] = useState([]);
+    const [TransferUser, setTransferUser] = useState(['none']);
 
 
     const [DataTable, setDataTable] = useState([]);
@@ -93,6 +95,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
         Amount: 0,
         action: "",
+        note: ""
 
     });
 
@@ -121,12 +124,10 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
     const ACRef = useRef();
     const inputRef = useRef();
 
-
     const handleSaveExpenseData = (event) => {
         const savename = event.target.getAttribute('name')
         const savevalue = event.target.value;
         const type = event.target.getAttribute('type')
-
 
 
 
@@ -143,10 +144,11 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
         }
 
-        // if (savename == "date") {
-        //     savevalue?.match(date_regex) == null || savevalue.match(date_regex)[0] != savevalue ? setDValid(false) : setDValid(true);
-        //     savevalue = event.target.value.match(date_regex)?.map(String)[0];
-        // }
+        if (savename == "note") {
+            savevalue?.match(action_regex) == null || savevalue.match(action_regex)[0] != savevalue ? setDValid(false) : setDValid(true);
+            savevalue = event.target.value.match(action_regex)?.map(String)[0];
+
+        }
 
 
 
@@ -158,7 +160,6 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
     }
 
 
-    //NOTE - validation for updating table for my Balance
 
     let count = 0
 
@@ -195,40 +196,34 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
     }, [CRef?.current?.value, DRef?.current?.value, ACRef?.current?.value, count])
 
-    //REVIEW -           -
-
 
 
     useEffect(() => {
 
         if (session.status === "authenticated") {
             const getExpenseData = async () => {
+                const auth = {
+                    headers: {
+                        "Content-Type": "application/json",
+
+                        'Authorization': `Bearer ${session?.data?.Token}`
+
+                    }
+                }
 
                 try {
-                    const res = await Axios.get(`/bal/?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate || '2000-01-01'}&edate${EndDate || "2500-01-01"}`, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': `Bearer ${session?.data?.Token}`
-                        }
-                    },
+                    const res = await Axios.get(`/bal/?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate || '2000-01-01'}&edate${EndDate || "2500-01-01"}`, auth
                     )
 
-                    const users = await Axios.get(`/users/detail/${SessionID}`, {
-                        headers: {
-                            "Content-Type": "application/json",
+                    console.log(res.data)
 
-                            'Authorization': `Bearer ${session?.data?.Token}`
-
-                        }
-                    },)
-                    setUsersBalance(users.data.userDetail.TotalBals)
+                    const users = await Axios.get(`/users/Reseller/`, auth)
                     setDataTable(res.data.History)
-                    setTotalUsers(res.data.total)
-                    setPageS(Math.ceil(res.data.total / Limit))
+                    setTotalUsers(users.data.userDetail)
+                    setPageS(Math.ceil(res.data.total[0].total / Limit))
                 }
                 catch {
                     setDataTable([])
-                    setTotalUsers(0)
                 }
             }
             getExpenseData()
@@ -240,177 +235,41 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
 
-    //REVIEW - 
+    const addBalance = async () => {
 
-
-    const handleUpdatExpense = async () => {
-
-        try {
-
-            const UDetails = await Axios.get(`/users/detail/${SessionID}`, {
-                headers: {
-                    "Content-Type": "application/json",
-
-                    'Authorization': `Bearer ${session?.data?.Token}`
-                }
-            },)
-
-            const DataBalance = UDetails.data.userDetail.TotalBals
-
-            let donebalance = Math.floor(DataUpdate.amount) - Math.floor(Idofrow?.[1])
-
-
-            if (-donebalance <= DataBalance) {
-
-
-                await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance + donebalance }, {
-                    headers: {
-                        "Content-Type": "application/json",
-
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
-
-                toast.success("Your Balance Now= " + (DataBalance + donebalance) + " $");
-
-                await Axios.patch(`/bal/${Idofrow?.[0]}`, DataUpdate, {
-                    headers: {
-                        "Content-Type": "application/json",
-
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
-
-
-                toast.success("Data Updated Successfully")
-            }
-
-        } catch (error) {
-
-
-            toast.error("Something Went Wrong *")
-        } finally {
-
-            setIdofrow(null);
-            setDeletestate(null);
-            setData({
-                amount: 0,
-                action: "",
-            });
-            setReNewData(true)
-
-        }
-
-
-
-    }
-
-    const handledeleteExpenseData = async () => {
-
-
-        const UDetails = await Axios.get(`/users/detail/${SessionID}`, {
+        const auth = {
             headers: {
                 "Content-Type": "application/json",
 
                 'Authorization': `Bearer ${session?.data?.Token}`
+
             }
-        },)
-
-        const DataBalance = UDetails.data.userDetail.TotalBals
-
-        try {
-            await Axios.delete(`/bal/${Deletestate?.[0]}`, {
-                headers: {
-                    "Content-Type": "application/json",
-
-                    'Authorization': `Bearer ${session?.data?.Token}`
-                }
-            },)
-
-            await Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - Deletestate?.[1] }, {
-                headers: {
-                    "Content-Type": "application/json",
-
-                    'Authorization': `Bearer ${session?.data?.Token}`
-                }
-            },)
-
-            toast.success("Your Balance Now = " + (DataBalance - Deletestate?.[1]) + " $");
-
-            toast.warn("Data Deleted Successfully")
-
-        } catch (error) {
-
-            toast.error("Something Went Wrong *")
-
-        } finally {
-
-            setIdofrow(null);
-            setDeletestate(null);
-            setData({
-                amount: 0,
-                action: "",
-            });
-            // getExpenseData()
-            setReNewData(true)
-
         }
 
+        console.log("Data= ", Data)
+        const users = await Axios.get(`/users/detail/${SessionID}`, auth,)
 
-
-    }
-
-
-
-
-
-
-
-
-
-
-    const addBalance = async () => {
-
+        const UsersBalance = users.data.userDetail.TotalBals
         try {
 
             await Axios.patch("/users/" + SessionID, {
                 TotalBals: UsersBalance + Data.Amount
-            }, {
-                headers: {
-                    "Content-Type": "application/json",
-
-                    'Authorization': `Bearer ${session?.data?.Token}`
-                }
-            },)
+            }, auth,)
 
             await Axios.post("/bal/", {
                 amount: Data.Amount,
-                action: "Balance",
-                userId: SessionID
+                action: TransferUser == "none" ? "Balance" : "Transfer",
+                userId: TransferUser == "none" ? SessionID : TransferUser?.[0],
+                "note": Data.note,
+                isSoled: false
 
-            }, {
-                headers: {
-                    "Content-Type": "application/json",
-
-                    'Authorization': `Bearer ${session?.data?.Token}`
-                }
-            },)
+            }, auth,)
             setReNewData(true)
-
             toast.success("Balance Adeed Successfully");
 
         } catch (error) {
-            // error.request.status === 409 || error.request.status === 403 || error.request.status === 404 || error.request.status === 401 &&
             toast.error("Balance Not Added *");
-            // 
         } finally {
-
-            // setData({
-            //     date: "",
-            //     DESC: "",
-            //     Amount: 0,
-            // });
-            // getExpenseData()
             setReNewData(true)
         }
 
@@ -433,10 +292,9 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
         doc.autoTable({
 
 
-            head: [[`Amount`, " User Id", "Action", "Date"]],
+            head: [[`Amount`, "Action", " Cars", " User", " Note", "Date"]],
             body: table_td
         });
-
 
         doc.save("Table.pdf");
     };
@@ -446,407 +304,343 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
     const {
-
-
-
         getTableProps,
         getTableBodyProps,
         headerGroups,
-
         state,
-
         page,
-
         setPageSize,
         prepareRow,
-
     } = useTable({
-
         columns: COLUMNS,
         data: DataTable,
-        // defaultColumn: { Filter: DefaultColumnFilter },
-
     }, useGlobalFilter, useFilters, useGroupBy, useSortBy, useExpanded, usePagination,
 
     );
-
-    // const { globalFilter } = state;
     const { pageIndex, pageSize } = state
 
-
     return (
-        <div className="container mx-auto overflow-auto ">
+        <div className="container mx-auto shadow  my-10">
+            {/* //?   Header  */}
+            <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-2xl p-5">
+                <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
 
-
-
-            <div className=" flex justify-between   container mx-auto items-center p-2 min-w-[700px] ">
-
-                <div>
-
-
-                    <label htmlFor="my-modal" className="flex items-center justify-center btn modal-button ">
-                        <FontAwesomeIcon icon={faCalendarPlus} className="text-xl " />
+                    <label htmlFor="my-modal" className="flex items-center justify-center p-2 px-3  active:scale-90  hover:cursor-pointer">
+                        <FontAwesomeIcon icon={Plusss} className="text-2xl " />
                     </label>
 
-                    <input type="checkbox" id="my-modal" className="modal-toggle" />
-                    <div className="modal">
-                        <div className="space-y-12 modal-box">
 
-                            <div>{l.add} {l.balance}</div>
-                            <div>
-
-
-                                <input
-                                    required name='Amount' type="number" placeholder={l.amount}
-                                    onClick={(event) => { handleSaveExpenseData(event) }}
-                                    onChange={(event) => { handleSaveExpenseData(event) }}
-                                    onFocus={() => { setCFocus(true) }}
-                                    onBlur={() => { setCFocus(false) }}
-
-                                    className="w-full max-w-xl mt-5 input input-bordered input-info dark:placeholder:text-white dark:color-white"
-                                />
-                                <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!CValid && !CFocus && Data.Amount != "" ? "block" : "hidden"}`}>
-                                    {l.incorrect}
-                                    <br />
-                                    {l.number7}
-
-
-                                </p>
-
-                            </div>
-
-
-                            <div className="modal-action">
-                                <div></div>
-                                <label htmlFor="my-modal" className="btn btn-error"  >{l.cancel}</label>
-                                <label htmlFor="my-modal" onSubmit={(e) => { e.click() }}   >
-                                    <input type="submit" className="btn btn-success" disabled={CValid ? false : true} onClick={addBalance} value={l.add} />
-                                </label>
-
-                            </div>
-
-                        </div>
-                    </div>
-
-                </div>
-                <div className="flex">
-
-                    <input type="search" placeholder={`${l.search} ...`} className="w-full max-w-xs mx-5 input input-info focus:outline-0"
+                    <input type="search" placeholder={`${l.search} ...`} className="input input-bordered    w-full    focus:outline-0   h-9 "
                         onChange={e =>
                             setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
                         }
                     />
                 </div>
+                <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8  rtl:mr-8 ">
+                    <label tabIndex="0" className="active:scale-9 m-1  ">
+                        <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="active:scale-90 text-2xl hover:cursor-pointer text-blue-500  " />
+                    </label>
+
+                    <ul tabIndex="0" className="dropdown-content bg-base-100 rounded-box w-52 flex justify-center shadow">
+                        <li className=" py-2">
+
+                            <div className="space-y-1">
+                                <h1>{l.from}</h1><input className="input input-bordered input-info focus:outline-0 "
+                                    onChange={(e) => {
+                                        setStartDate(e.target.value)
+                                    }}
+                                    type="date"
+                                />
+                                <h1>{l.to}</h1>
+                                <input className="input input-bordered input-info focus:outline-0"
+                                    onChange={(e) => {
+                                        setEndDate(e.target.value)
+                                    }}
+                                    type="date"
+                                />
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            {/* //?   Modal  */}
+            <div>
+                <input type="checkbox" id="my-modal" className="modal-toggle" />
+                <div className="modal">
+                    <div className="space-y-12 modal-box">
+
+                        <div>{l.add} {l.balance}</div>
+                        <div>
+                            <label htmlFor="Amount">{l.amount}</label>
+                            <input
+                                id='Amount'
+                                required name='Amount' type="number" placeholder={l.amount}
+                                onClick={(event) => { handleSaveExpenseData(event) }}
+                                onChange={(event) => { handleSaveExpenseData(event) }}
+                                onFocus={() => { setCFocus(true) }}
+                                onBlur={() => { setCFocus(false) }}
+                                className="w-full max-w-xl input input-bordered input-info dark:placeholder:text-white dark:color-white focus:outline-0"
+                            />
+
+                            <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!CValid && !CFocus && Data.Amount != "" ? "block" : "hidden"}`}>
+                                {l.incorrect}
+                                <br />
+                                {l.number7}
+                            </p>
+                            <div className=' mt-5   '>
+                                <label htmlFor="User" >{l.transfer}</label>
+                                <select id='User'
+                                    onChange={(event) => {
+                                        setTransferUser(event.target.value)
+                                    }}
+                                    onClick={(event) => { setTransferUser(event.target.value) }}
+
+                                    defaultValue="none"
+                                    className="w-full max-w-xl input input-bordered input-info dark:placeholder:text-white dark:color-white focus:outline-0">
+                                    <option value="none">{l.none}</option>
+                                    {TotalUsers?.map((user, idx) => (
+                                        <option key={idx} value={[user._id, user.userName]}>{user.userName}</option>
+                                    ))}
+                                </select >
+                            </div>
+                            <div className=' mt-5   '>
+                                <label htmlFor="note" >{l.note}</label>
+                                <input
+                                    id='note'
+                                    required name='note' type="text" placeholder={l.note}
+                                    onClick={(event) => { handleSaveExpenseData(event) }}
+                                    onChange={(event) => { handleSaveExpenseData(event) }}
+                                    onFocus={() => { setCFocus(true) }}
+                                    onBlur={() => { setCFocus(false) }}
+                                    className="w-full max-w-xl input input-bordered input-info dark:placeholder:text-white dark:color-white focus:outline-0"
+                                />
+                            </div>
 
 
-                <div className="flex items-center justify-center lg:space-x-4 ">
 
 
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left ">
+                        </div>
 
-                        {/* //TODO -  fix Date */}
-                        <label tabIndex="0" className="m-1 active:scale-95">
-                            <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 active:scale-95 " />
-                        </label>
 
-                        <ul tabIndex="0" className="flex justify-center shadow dropdown-content bg-base-100 rounded-box w-52 ">
-                            <li className="py-2 ">
+                        <div className="modal-action">
+                            <div></div>
+                            <label htmlFor="my-modal" className="btn btn-error"  >{l.cancel}</label>
+                            <label htmlFor="my-modal" onSubmit={(e) => { e.click() }}   >
+                                <input type="submit" className="btn btn-success" disabled={CValid ? false : true} onClick={addBalance} value={l.add} />
+                            </label>
 
-                                <div className="space-y-1">
-                                    <h1>{l.from}</h1><input className="input input-bordered input-info "
-                                        onChange={(e) => {
-                                            setStartDate(e.target.value)
-                                        }}
-                                        type="date"
-                                    />
-                                    <h1>{l.to}</h1>
-                                    <input className="input input-bordered input-info "
-                                        onChange={(e) => {
-                                            setEndDate(e.target.value)
-                                        }}
-                                        type="date"
-                                    />
-                                </div>
-                            </li>
-                        </ul>
+                        </div>
+
                     </div>
+                </div>
+
+            </div>
+            {/* //?   Modal  */}
+
+
+            <div className="container mx-auto overflow-auto bg-white dark:bg-[#181a1b]  ">
+                {/* //?    Table      */}
+                <table id="table-to-xls" className="my-10 table w-full  min-w-[650px]  text-xs" {...getTableProps()}>
+
+                    <thead className="text-center">
+                        {headerGroups.map((headerGroups, idx) => (
+                            <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
+                                <th key={idx} className='hidden'></th>
+                                {headerGroups.headers.map((column, idx) => (
+                                    <th key={idx} className=" text-xs font-normal normal-case " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
+                                        <span>
+                                            {column.isSorted ? (column.isSortedDesc ? "⇅" : "⇵") : ""}
+                                        </span>
+                                    </th>
+                                ))}
+                            </tr>
+                        ))}
+                    </thead >
+                    <tbody {...getTableBodyProps()}>
+
+                        {page.map((row, idx) => {
+                            prepareRow(row)
+                            return (
+                                <tr key={idx}   {...row.getRowProps()} >
+                                    <th key={idx} className='hidden'></th>
+
+                                    {row.cells.map((cell, idx) => {
+                                        return (
+                                            <td key={idx} className="py-3 text-center dark:bg-[#181a1b] " {...cell.getCellProps()}>
 
 
 
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left ">
-                        <label tabIndex="0" className="m-1 " >
-                            <FontAwesomeIcon icon={faFileDownload} className="m-auto mx-1 text-3xl transition ease-in-out md:mx-5 active:scale-90" />
-                        </label>
+                                                {cell.column.id === 'amount' && row.original._id !== Idofrow?.[0] && (
+                                                    cell.value >= 0 ? <div className="text-green-500">{cell.value}</div> : <div className="text-red-500">{cell.value}</div>
+                                                )}
 
-                        <ul tabIndex="0" className="flex justify-center p-2 space-y-2 shadow dropdown-content menu bg-base-100 rounded-box w-52 ">
-                            <li>  <ReactHTMLTableToExcel
-                                id="test-table-xls-button"
-                                className="btn btn-outline download-table-xls-button"
+                                                {cell.column.id === 'userId' && row.original._id !== Idofrow?.[0] && (
+                                                    <>
+                                                        <div>{row.original.userName}</div>
+                                                        {cell.value?.userRole == "Qarz" && <Link href={`/Dashboard/Balance/ListofOwe/${cell.value?._id}`}><a className="text-red-300">{cell.value?.userName}</a></Link>}
+                                                        {cell.value?.userRole == "Reseller" && <Link href={`/Dashboard/Balance/Reseller/${cell.value?._id}`}><a className="text-violet-300">{cell.value?.userName}</a></Link>}
+                                                        {cell.value?.userRole == "Admin" && <a className="text-blue-400 cursor-crosshair">{cell.value?.userName}</a>}
+                                                    </>
+
+                                                )}
+
+
+
+                                                {cell.column.id === 'carId' && row.original._id !== Idofrow?.[0] && (
+                                                    <>
+                                                        <div></div>
+                                                        <Link href={`/Dashboard/ListofCars/AllCars/${row.original.carId}`}><a className="text-orange-600">{row.original.modeName}</a></Link>
+                                                    </>
+                                                )}
+
+                                                {
+                                                    cell.column.id !== "Delete" &&
+                                                        cell.column.id !== "Edit" &&
+                                                        row.original._id == Idofrow?.[0] ?
+                                                        <>
+                                                            {cell.column.id == "amount" && <input defaultValue={row.original.amount}
+                                                                ref={CRef}
+                                                                onChange={(event) => { handleSaveExpenseData(event) }}
+                                                                onClick={(event) => { handleSaveExpenseData(event) }}
+                                                                onFocus={() => { setCFocus(true) }}
+                                                                onBlur={() => { setCFocus(false) }}
+
+                                                                type="number" placeholder={cell.column.id} name='amount' className="w-full max-w-xs input input-bordered input-warning" />}
+
+                                                            {cell.column.id == "action" &&
+                                                                <input name='action'
+                                                                    defaultValue={row.original.action}
+                                                                    ref={ACRef}
+                                                                    type="text"
+                                                                    onChange={(event) => { handleSaveExpenseData(event) }}
+                                                                    onClick={(event) => { handleSaveExpenseData(event) }}
+                                                                    onFocus={() => { setDEFocus(true) }}
+                                                                    onBlur={() => { setDEFocus(false) }}
+
+                                                                    className="w-full max-w-xs input input-warning" placeholder={cell.column.id}></input>}
+                                                            {cell.column.id == "actionDate" && <input disabled
+                                                                defaultValue={row.original.actionDate}
+                                                                ref={DRef}
+                                                                onChange={(event) => { handleSaveExpenseData(event) }}
+                                                                onClick={(event) => { handleSaveExpenseData(event) }}
+                                                                onFocus={() => { setDFocus(true) }}
+                                                                onBlur={() => { setDFocus(false) }}
+
+                                                                name='actionDate' type="date" placeholder={l.date} className="w-full max-w-xl input input-warning " />}
+                                                        </>
+                                                        :
+                                                        (cell.column.id != 'userId' && cell.column.id != 'amount' && cell.column.id != 'carId') && cell.render('Cell')
+
+
+                                                }
+
+                                            </td>
+
+                                        )
+                                    })}
+                                </tr>
+                            )
+                        }
+
+                        )}
+
+                    </tbody>
+                </table>
+                {/* //?    Table      */}
+
+
+
+
+                {/* //?    botom */}
+                <div className="container text-sm  scale-90  ">
+
+                    <div className=" flex justify-between container mx-auto items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
+
+
+                        <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
+
+                            <div></div>
+                            <FontAwesomeIcon icon={faAnglesLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
+                                onClick={() => Page > 1 && setPage(1)}
+                                disabled={Page == 1 ? true : false} />
+
+                            <FontAwesomeIcon icon={faChevronLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page > 1 && setPage(Page - 1)}
+                                disabled={Page == 1 ? true : false} />
+
+
+
+                            <span className="px-20 py-2 rounded bg-slate-100 dark:bg-gray-700">
+                                {Page}/{PageS}
+                            </span>
+
+
+
+                            <FontAwesomeIcon icon={faChevronRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(Page + 1))}
+                                disabled={Page >= PageS ? true : false} />
+
+                            <FontAwesomeIcon icon={faAnglesRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(PageS))}
+                                disabled={Page >= PageS ? true : false} />
+
+
+                            <div>
+                                <select className="select  select-sm w-20 focus:outline-0 input-sm dark:bg-gray-700   max-w-xs text-sm"
+                                    onChange={(e) => {
+                                        setLimit((e.target.value))
+                                        setPageSize(Number(e.target.value)
+                                        )
+                                    }}
+
+                                    value={pageSize}>
+                                    {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
+                                        <option className='text-end' key={idx} value={pageSize}>
+                                            {(pageSize !== 100000) ? pageSize : l.all}
+                                        </option>))
+                                    }
+
+                                </select>
+                            </div>
+
+                            <FontAwesomeIcon icon={PDF} onClick={table_2_pdf} className="md:mx-5 px-10 text-blue-400 active:scale-9 m-auto mx-10 text-2xl transition ease-in-out hover:cursor-pointer" />
+
+                            <ReactHTMLTableToExcel
+                                id="test-table-xls-button "
+                                className="text-2xl active:scale-90"
                                 table="table-to-xls"
                                 filename="tablexls"
                                 sheet="tablexls"
-                                buttonText="XLSX" />  </li>
+                                buttonText="📋"
+                                icon={PDF}
+                            />
 
-                            <li><button className='btn btn-outline ' onClick={table_2_pdf}>PDF</button> </li>
-                            {/* <li><button className='btn btn-outline' onClick={table_All_pdff}>ALL_PDF</button> </li> */}
-                        </ul>
-                    </div>
 
 
-                </div>
-
-
-            </div>
-
-
-
-            <table id="table-to-xls" className="my-10 table w-full     min-w-[1000px] " {...getTableProps()}>
-
-
-                <thead className="text-center">
-
-                    {headerGroups.map((headerGroups, idx) => (
-
-                        <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
-                            <th></th>
-                            {headerGroups.headers.map((column, idx) => (
-
-                                <th key={idx} className="p-4 m-44 w-[400px]   " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
-
-                                    <span>
-                                        {column.isSorted ? (column.isSortedDesc ? " ↑ " : " 🡓 ") : ""}
-
-                                    </span>
-
-
-
-                                </th>
-
-
-
-                            ))}
-
-                        </tr>
-
-                    )
-                    )
-
-
-                    }
-
-                </thead >
-
-
-                <tbody {...getTableBodyProps()}>
-
-                    {page.map((row, idx) => {
-                        prepareRow(row)
-                        return (
-                            <tr key={idx}   {...row.getRowProps()} >
-                                {row.cells.map((cell, idx) => {
-                                    return (
-
-
-                                        <td key={idx} className="py-3 text-center " {...cell.getCellProps()}>
-
-
-
-                                            {cell.column.id === 'amount' && row.original._id !== Idofrow?.[0] && (
-
-                                                cell.value >= 0 ? <div className="text-green-500">{cell.value}</div> : <div className="text-red-500">{cell.value}</div>
-                                            )}
-
-
-
-                                            {cell.column.id === 'userId' && row.original._id !== Idofrow?.[0] && (
-                                                <>
-                                                    <div>{row.original.userName}</div>
-                                                    {cell.value?.userRole == "Qarz" && <Link href={`/Dashboard/Balance/ListofOwe/${cell.value?._id}`}><a className="text-red-300">{cell.value?.userName}</a></Link>}
-                                                    {cell.value?.userRole == "Reseller" && <Link href={`/Dashboard/Balance/Reseller/${cell.value?._id}`}><a className="text-violet-300">{cell.value?.userName}</a></Link>}
-                                                    {cell.value?.userRole == "Admin" && <a className="text-blue-400 cursor-crosshair">{cell.value?.userName}</a>}
-
-
-
-
-                                                </>
-
-                                            )}
-
-                                            {cell.column.id === 'carId' && row.original._id !== Idofrow?.[0] && (
-                                                <>
-
-                                                    <div></div>
-                                                    <Link href={`/Dashboard/ListofCars/AllCars/${row.original.carId}`}><a className="text-orange-200">{row.original.modeName}</a></Link>
-                                                </>
-
-                                            )
-                                            }
-
-
-                                            {
-                                                cell.column.id !== "Delete" &&
-                                                    cell.column.id !== "Edit" &&
-                                                    row.original._id == Idofrow?.[0] ?
-                                                    <>
-
-                                                        {cell.column.id == "amount" && <input defaultValue={row.original.amount}
-                                                            ref={CRef}
-                                                            onChange={(event) => { handleSaveExpenseData(event) }}
-                                                            onClick={(event) => { handleSaveExpenseData(event) }}
-                                                            onFocus={() => { setCFocus(true) }}
-                                                            onBlur={() => { setCFocus(false) }}
-
-                                                            type="number" placeholder={cell.column.id} name='amount' className="w-full max-w-xs input input-bordered input-warning" />}
-
-                                                        {cell.column.id == "action" &&
-                                                            <input name='action'
-                                                                defaultValue={row.original.action}
-                                                                ref={ACRef}
-                                                                type="text"
-                                                                onChange={(event) => { handleSaveExpenseData(event) }}
-                                                                onClick={(event) => { handleSaveExpenseData(event) }}
-                                                                onFocus={() => { setDEFocus(true) }}
-                                                                onBlur={() => { setDEFocus(false) }}
-
-                                                                className="w-full max-w-xs input input-warning" placeholder={cell.column.id}></input>}
-                                                        {cell.column.id == "actionDate" && <input disabled
-                                                            defaultValue={row.original.actionDate}
-                                                            ref={DRef}
-                                                            onChange={(event) => { handleSaveExpenseData(event) }}
-                                                            onClick={(event) => { handleSaveExpenseData(event) }}
-                                                            onFocus={() => { setDFocus(true) }}
-                                                            onBlur={() => { setDFocus(false) }}
-
-                                                            name='actionDate' type="date" placeholder={l.date} className="w-full max-w-xl input input-warning " />}
-
-
-                                                    </>
-
-                                                    :
-                                                    (cell.column.id != 'userId' && cell.column.id != 'amount' && cell.column.id != 'carId') && cell.render('Cell')
-
-                                            }
-
-
-
-
-
-                                        </td>
-
-                                    )
-                                })}
-
-                            </tr>
-                        )
-                    }
-
-                    )}
-
-                </tbody>
-
-
-            </table>
-            {/* </div > */}
-
-            <div className="botom_Of_Table" >
-
-                <div className=" flex justify-between container mx-auto items-center   p-3  px-1 mb-20  min-w-[700px] ">
-
-
-
-                    <div className="flex items-center justify-around mx-5 text-lg ">
-
-
-                        <span className="px-3">
-                            {l.page}{" " + Page}/{PageS}
-                        </span>
-
-                        <div>
-                            <select className="w-full max-w-xs select select-info focus:outline-0"
-                                onChange={(e) => {
-                                    setLimit((e.target.value))
-                                    setPageSize(Number(e.target.value)
-                                    )
-                                }}
-
-                                value={pageSize}>
-                                {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
-                                    <option key={idx} value={pageSize}>
-                                        {l.show} ({(pageSize !== 100000) ? pageSize : l.all})
-                                    </option>))
-                                }
-
-                            </select>
                         </div>
-                    </div>
 
 
 
-
-                    <div className="inline-flex space-x-3 overflow-auto scrollbar-hide ">
-                        <div></div>
-
+                        <div className="scrollbar-hide inline-flex space-x-3 overflow-auto">
+                            <div></div>
 
 
-                        <button className="w-2 h-2 border-0 btn btn-info " onClick={() =>
-                            setPage(1)
-                        }
-                            disabled={
-                                Page == 1 ? true : false
-                            }
-                        >{"<<"} </button>
 
-
-                        <button className="w-2 h-2 btn btn-info" onClick={() =>
-                            setPage(Page - 1)
-                        }
-                            disabled={
-                                Page <= 1 ? true : false
-
-                            }
-                        >{"<"}
-                        </button>
-
-
-                        <button className="w-2 h-2 btn btn-info" onClick={() =>
-                            Page >= 1 && setPage(Page + 1)
-                        }
-                            disabled={
-                                Page >= PageS ? true : false
-                            }
-                        >{">"} </button>
-
-
-                        <button className="w-2 h-2 btn btn-info "
-                            onClick={() =>
-                                Page >= 1 && setPage(PageS)
-                            }
-                            disabled={
-                                Page >= PageS ? true : false
-                            }
-                        >{">>"} </button>
+                        </div>
 
 
 
                     </div>
 
-                </div>
 
-            </div>
 
-            <input name="error_btn" type="checkbox" id="my-modal-3" className="modal-toggle btn btn-error " />
-            <div className="modal ">
-                <div className="relative modal-box ">
-                    <label htmlFor="my-modal-3" className="absolute btn btn-sm btn-circle right-2 top-2 ">✕</label>
-                    <div className="text-lg font-bold text-center"><FontAwesomeIcon icon={faBan} className="text-red-700 text-7xl " /> </div>
-                    <p className="py-4 ">{l.deletemsg}</p>
-                    <div className="space-x-10 ">
-                        <label htmlFor="my-modal-3" className="btn btn-error " onClick={handledeleteExpenseData}>{l.yes}</label>
-                        <label htmlFor="my-modal-3" className="btn btn-accent " onClick={() => { setDeletestate(null) }} >{l.no}</label>
-                    </div>
-                </div>
-            </div>
+                </div >
+                {/* //?    botom */}
 
+
+
+            </div >
         </div >
 
     );
@@ -865,7 +659,6 @@ const Expense = ({ SessionID, AllUsers }) => {
 
     const session = useSession()
     const router = useRouter()
-
 
 
     const l = useLanguage();
@@ -935,7 +728,7 @@ const Expense = ({ SessionID, AllUsers }) => {
 
 
                 },
-                
+
                 {
                     Header: () => {
 

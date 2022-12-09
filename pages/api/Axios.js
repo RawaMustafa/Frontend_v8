@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getSession, signOut } from 'next-auth/react'
 
-export const baseURL = "http://localhost:4000/uploads/"
+export const baseURL = "http://localhost:4000/_API/uploads/"
 
 const Axios = () => {
 

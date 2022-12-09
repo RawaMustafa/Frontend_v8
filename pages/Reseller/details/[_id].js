@@ -13,8 +13,9 @@ import { useRouter } from "next/router";
 import { useSession, getSession } from "next-auth/react";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDollar } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faChevronRight, faCompress, faDollar, faExpand } from "@fortawesome/free-solid-svg-icons";
 import { toast, ToastContainer } from "react-toastify";
+import { useState } from "react";
 
 
 export const getServerSideProps = async (context) => {
@@ -59,6 +60,7 @@ const Detail = ({ cars }) => {
 
     const router = useRouter()
     const { status, data: session } = useSession()
+    const [FullScreen, setFullScreen] = useState()
     if (status == "unauthenticated") {
         router.push('/');
     }
@@ -119,28 +121,28 @@ const Detail = ({ cars }) => {
 
 
     const renderVideo = (item) => {
+
+
         return (
-            <div>
-
-
-
+            <div className="play-button grow relative w-full h-full overflow-auto bg-cover">
                 {item.taramash != "false" ?
-                    <div className='video-wrapper flex text-center items-center justify-center '>
-
-
-
-                        <video width="1900" height="1000" controls className="h-auto max-w-full flex text-center items-center justify-center">
-                            <source src={`${baseURL}/${item.taramash}`} type="video/mp4" />
-                        </video>
-
-
-                    </div>
-
-
+                    <div className=' flex justify-center'>
+                        <video controls
+                            className="w-full bg-cover ">
+                            <source
+                                src={`${baseURL}${item.taramash}`} type="video/mp4" />
+                        </video >
+                    </div >
                     :
-                    <div className='play-button'>
-                        <Image alt="SliderImage" width={1900} height={1000} className='image-gallery-image' src={item.original} />
-
+                    <div className='play-button grow relative w-full h-full overflow-auto bg-cover'>
+                        <Image width={1920} height={1080}
+                            alt='SliderImage'
+                            sizes="100%"
+                            objectFit="cover"
+                            className='image-gallery-image '
+                            crossOrigin="anonymous"
+                            src={item.original}
+                        />
 
                     </div>
                 }
@@ -151,33 +153,68 @@ const Detail = ({ cars }) => {
     }
 
 
+    const renderThumbInner = (item) => {
+
+        return (
+            <div className="">
+                {item.taramash != "false" ?
+                    <div className=''>
+                        <video controls={false}
+                            className="">
+                            <source
+                                src={`${baseURL}${item.taramash}`} type="video/mp4" />
+                        </video >
+                    </div >
+                    :
+                    <div className=' w-full'>
+                        <Image width={1920} height={1080}
+                            alt='SliderImage'
+                            // sizes="100%"
+                            // objectFit="cover"
+                            className='image-gallery-image '
+                            src={item.thumbnail}
+                        />
+
+                    </div>
+                }
+
+            </div >
+        );
+
+    }
+
+
+
     const dataa = []
 
     cars.carDetail?.pictureandvideorepair?.map((img, index) => {
         dataa.push({
-            "original": `${baseURL}/${img.filename}`,
-            "thumbnail": `${baseURL}/${img.filename}`,
+            "original": `${baseURL}${img.filename}`,
+            "thumbnail": `${baseURL}${img.filename}`,
             "taramash": `${img.mimetype == "video/mp4" && img.filename}`,
-            "renderItem": renderVideo
+            "renderItem": renderVideo,
+            "renderThumbInner": renderThumbInner,
 
         })
 
     })
     cars.carDetail?.pictureandvideodamage?.map((img, index) => {
         dataa.push({
-            "original": `${baseURL}/${img.filename}`,
-            "thumbnail": `${baseURL}/${img.filename}`,
+            "original": `${baseURL}${img.filename}`,
+            "thumbnail": `${baseURL}${img.filename}`,
             "taramash": `${img.mimetype == "video/mp4" && img.filename}`,
-            "renderItem": renderVideo
+            "renderItem": renderVideo,
+            "renderThumbInner": renderThumbInner,
 
         })
     })
     cars.carDetail?.carDamage?.map((img, index) => {
         dataa.push({
-            "original": `${baseURL}/${img.filename}`,
-            "thumbnail": `${baseURL}/${img.filename}`,
+            "original": `${baseURL}${img.filename}`,
+            "thumbnail": `${baseURL}${img.filename}`,
             "taramash": `${img.mimetype == "video/mp4" && img.filename}`,
-            "renderItem": renderVideo
+            "renderItem": renderVideo,
+            "renderThumbInner": renderThumbInner,
 
         })
     })
@@ -223,18 +260,98 @@ const Detail = ({ cars }) => {
 
 
                     <ImageGallery
+                        thumbnails-swipe-vertical
+
                         onErrorImageURL="/Video.svg"
                         slideInterval={10000}
-                        slideDuration={50}
-                        flickThreshold={0.6}
-                        swipeThreshold={40}
-                        slideOnThumbnailOver="true"
+                        autoPlay={true}
+                        showPlayButton={false}
+                        showBullets={true}
+                        // useTranslate3D={true}
                         lazyLoad={true}
-                        showFullscreenButton="true"
-                        showThumbnails={true}
+                        // showThumbnails={FullScreen ? false : true}
                         items={dataa}
-                    // additionalClass="  "
+                        additionalClass={` overflow-auto `}
+                        className=""
+                        useBrowserFullscreen={true}
+                        // onScreenChange={(e) => {
+                        //     setFullScreen(e)
+                        // }}
+                        renderRightNav={(onClick,) => {
+                            if (FullScreen) {
+                                return (
+                                    <button
+                                        className="bg-slate-300 opacity-60 right-5 top-1/2 fixed z-30 items-center w-5 h-10 rounded-full"
+                                        onClick={onClick}
+                                    >
+                                        <FontAwesomeIcon icon={faChevronRight} />
+                                    </button>
+                                );
+                            }
+                            else {
 
+                                return (
+                                    <button
+                                        className="bg-slate-300 opacity-60 right-2 top-1/2 absolute z-30 items-center w-5 h-10 rounded-full"
+                                        onClick={onClick}
+                                    >
+                                        <FontAwesomeIcon icon={faChevronRight} />
+                                    </button>
+                                );
+
+
+                            }
+                        }}
+                        renderLeftNav={(onClick) => {
+                            if (FullScreen) {
+                                return (
+                                    <button
+                                        className="bg-slate-300 opacity-60 left-5 top-1/2 fixed z-30 items-center w-5 h-10 rounded-full"
+                                        onClick={onClick}
+                                    >
+                                        <FontAwesomeIcon icon={faChevronLeft} />
+                                    </button>
+                                );
+                            }
+                            else {
+
+                                return (
+                                    <button
+                                        className="bg-slate-300 opacity-60 left-2 top-1/2 absolute z-30 items-center w-5 h-10 rounded-full"
+                                        onClick={onClick}
+                                    >
+                                        <FontAwesomeIcon icon={faChevronLeft} />
+                                    </button>
+                                );
+
+
+                            }
+                        }}
+
+                        renderFullscreenButton={
+                            (onClick, isFullscreen) => {
+                                // console.log(isFullscreen)
+                                if (isFullscreen) {
+                                    return (
+                                        <button
+                                            className="btn btn-sm btn-circle right-2 top-2 fixed"
+                                            onClick={onClick}
+                                        >
+                                            <FontAwesomeIcon icon={faCompress} />
+                                        </button>
+                                    );
+                                } else {
+                                    return (
+                                        <button
+                                            className="btn btn-sm btn-circle right-2 top-2 absolute"
+                                            onClick={onClick}
+                                        >
+                                            <FontAwesomeIcon icon={faExpand} />
+                                        </button>
+                                    );
+                                }
+                            }
+                        }
                     />
 
 
@@ -244,12 +361,12 @@ const Detail = ({ cars }) => {
 
 
                         <div className="overflow-x-auto max-w-5xl ">
-                            <table className="table table-zebra w-full text-center  ">
+                            <table className="table table-compact w-full text-center  ">
 
                                 <thead className="">
                                     <tr className=" text-center ">
-                                        <td className="  w-[50%] bg-slate-500 text-center " > </td>
-                                        <td className="  w-[50%] bg-slate-500 text-center " > </td>
+                                        <td className="  w-[50%] bg-[#1254ff] py-4 text-center " > </td>
+                                        <td className="  w-[50%] bg-[#1254ff] py-4 text-center " > </td>
 
                                     </tr>
                                 </thead>
@@ -257,43 +374,43 @@ const Detail = ({ cars }) => {
 
 
                                     <tr className="">
-                                        <td>{l.price} :</td>
-                                        <td>{cars.carDetail.price}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]     ">{l.price} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]     ">{cars.carDetail.price}</td>
                                     </tr>
 
                                     <tr className="">
-                                        <td>{l.namecar} :</td>
-                                        <td>{cars.carDetail.modeName}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]     ">{l.namecar} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]     ">{cars.carDetail.modeName}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.modelyear} :</td>
-                                        <td>{cars.carDetail.model}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]     ">{l.modelyear} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]     ">{cars.carDetail.model}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.tocar} :</td>
-                                        <td>{cars.carDetail.tocar}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]     ">{l.tocar} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]     ">{cars.carDetail.tocar}</td>
                                     </tr>
                                     <tr className="">
-                                        <td>{l.tire} :</td>
-                                        <td>{cars.carDetail.tire}</td>
-                                    </tr>
-
-                                    <tr className="">
-                                        <td>{l.vinnumber} :</td>
-                                        <td>{cars.carDetail.VINNumber}</td>
-                                    </tr>
-                                    <tr className="">
-                                        <td>{l.mileage} :</td>
-                                        <td>{cars.carDetail.mileage}</td>
-                                    </tr>
-                                    <tr className="">
-                                        <td>{l.color} :</td>
-                                        <td>{cars.carDetail.color}</td>
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]     ">{l.tire} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]     ">{cars.carDetail.tire}</td>
                                     </tr>
 
                                     <tr className="">
-                                        <td>{l.isSold} :</td>
-                                        {cars.carDetail?.isSold ? <td>{l.yes}</td> : <td>{l.no}</td>}
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]     ">{l.vinnumber} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]     ">{cars.carDetail.VINNumber}</td>
+                                    </tr>
+                                    <tr className="">
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]     ">{l.mileage} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]     ">{cars.carDetail.mileage}</td>
+                                    </tr>
+                                    <tr className="">
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]     ">{l.color} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]     ">{cars.carDetail.color}</td>
+                                    </tr>
+
+                                    <tr className="">
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]     ">{l.isSold} :</td>
+                                        {cars.carDetail?.isSold ? <td className=" text-end bg-white dark:bg-[#181A1B]     ">{l.yes}</td> : <td className=" text-end bg-white dark:bg-[#181A1B]     ">{l.no}</td>}
                                     </tr>
 
 

@@ -9,9 +9,10 @@ import axios from "axios"
 import Axios from "../../api/Axios"
 import { ToastContainer, toast, } from 'react-toastify';
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faUserPlus, faTrash, faEdit, faSave, faBan, faFileDownload, faUsers, faUser, faWrench } from '@fortawesome/free-solid-svg-icons';
+import { faUserPlus, faTrash, faEdit, faSave, faBan, faFileDownload, faUsers, faUser, faWrench, faAnglesLeft, faChevronLeft, faChevronRight, faAnglesRight, faBars } from '@fortawesome/free-solid-svg-icons';
 import { signOut } from 'next-auth/react';
 import { getSession, useSession } from "next-auth/react";
+import { faFilePdf as PDF, faCalendarCheck as CALLENDER } from '@fortawesome/free-regular-svg-icons';
 
 
 export async function getServerSideProps({ req, query }) {
@@ -457,17 +458,22 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                 'Authorization': `Bearer ${session?.data?.Token}`
             },
         }
+        console.log(Deletestate[0])
 
+        const UDetails = await Axios.get(`/users/detail/${Deletestate?.[0]}`, auth)
+        const BalanceUser = UDetails.data.userDetail.TotalBals
+        const Cars = UDetails.data?.Cars
+        console.log(UDetails.data)
 
-        if (Deletestate?.[3] == "Reseller") {
+        if (Deletestate?.[3] == "Reseller" && BalanceUser == 0 && Cars == 0) {
 
             const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, auth)
 
             const DataBalance = UDetails.data.userDetail.TotalBals
 
             try {
-                const res1 = Axios.delete(`/users/${Deletestate?.[0]}`, auth)
-                const res2 = Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance + Deletestate?.[1] }, auth)
+                const res1 = Axios.delete(`/users/${Deletestate[0]}`, auth)
+                const res2 = Axios.patch(`/users/${SessionID}`, { "TotalBals": DataBalance + Deletestate?.[1] }, auth)
                 const res3 = Axios.post("/bal/",
                     {
                         userId: session?.data?.id,
@@ -505,7 +511,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
         }
-        if (Deletestate?.[3] == "Qarz") {
+        else if (Deletestate?.[3] == "Qarz" && BalanceUser == 0 && Cars == 0) {
 
             const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, auth,)
 
@@ -514,7 +520,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
             if (Deletestate?.[1] <= DataBalance) {
                 try {
 
-                    const res1 = Axios.delete(`/users/${Deletestate?.[0]}`, auth)
+                    const res1 = Axios.delete(`/users/${Deletestate[0]}`, auth)
                     const res2 = Axios.patch('/users/' + SessionID, { "TotalBals": DataBalance - Deletestate?.[1] }, auth)
                     const res3 = Axios.post("/bal/",
                         {
@@ -559,8 +565,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                 toast.error("you dont have enough balance ")
             }
         }
-
-        if (Deletestate?.[3] == "Admin") {
+        else if (Deletestate?.[3] == "Admin" && BalanceUser == 0 && BalanceUser == 0) {
 
 
             try {
@@ -576,13 +581,15 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                 setReNewData(true)
             }
         }
+        else {
+            toast.error("you cant delete this user ")
+        }
     }
 
 
     let changeNumber = 0
 
     const addUsers = async () => {
-
 
         (typeof document !== "undefined") && (document.getElementById("my-modal").click())
         const auth = {
@@ -591,7 +598,6 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                 'Authorization': `Bearer ${session?.data?.Token}`
             }
         }
-
 
         if (Data.userRole == "Reseller") {
             const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, auth,)
@@ -850,7 +856,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
         doc.autoTable({
 
 
-            head: [[`User Name`, `Email`, "User Role", "Total Balance"]],
+            head: [['', `User Name`, `Email`, "User Role", "Total Balance"]],
             body: table_td
         });
 
@@ -885,14 +891,16 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
     return (
 
-        <div >
-            <div className="mb-32 flex justify-end    ">
+        <div className='container mx-auto' >
+
+            {/* //^ change user to admin */}
+            <div className="mb-20 flex justify-end    p-2 ">
 
                 <div onClick={() => {
                     PageUser == 1 && setPageUser(2)
                     PageUser == 2 && setPageUser(1)
                 }}
-                    className="p-5 scale-75 lg:scale-100 cursor-pointer  justify-self-end border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg  w-64   z-30  ">
+                    className="p-5  lg:scale-100 cursor-pointer  justify-self-end border bg-white dark:bg-[#1E2021]  rounded-2xl shadow-xl drop-shadow-lg  w-40 h-16  z-30  ">
                     <div className="flex items-center  justify-around   ">
 
                         <div>
@@ -900,7 +908,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                             {PageUser == 2 && <div className="">{DataAdmin?.userName}</div>}
                         </div>
                         <div>
-                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-fuchsia-50 dark:bg-slate-500 ">
+                            <div className="flex items-center justify-center w-5 h-5 rounded-full bg-fuchsia-50 dark:bg-slate-500 ">
 
                                 {PageUser == 2 && <FontAwesomeIcon icon={faUser} className="text-2xl" />}
                                 {PageUser == 1 && <FontAwesomeIcon icon={faUsers} className="text-2xl" />}
@@ -910,184 +918,142 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
                     </div>
                 </div>
-
-
             </div>
 
-            <div className=" container mx-auto overflow-x-auto  scrollbar-hide">
+            {/*//^     search      */}
+
+            {PageUser == 1 && <div className=" flex justify-between items-center bg-white dark:bg-[#181a1b] rounded-t-xl shadow-2xl p-5">
+                <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
+
+                    <label htmlFor="my-modal" className="flex justify-center items-center p-2 "><FontAwesomeIcon className='text-2xl hover:scale-90 mx-1 cursor-pointer' icon={faUserPlus} /> </label>
+                    <input autoComplete={false} autoCorrect={false} autoFocus={false} autoSave={false} type="search" placeholder={`${l.search} ...`} className="input input-bordered w-full    focus:outline-0   h-9 "
+                        onChange={e =>
+                            setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
+                        }
+                    />
+                </div>
+            </div>}
+            <div className=" container mx-auto overflow-x-auto  scrollbar-hide bg-white dark:bg-[#181a1b]  rounded-b-2xl shadow-neutral ">
                 {PageUser == 1 && <div >
 
+                    {/*  //^    Modal    */}
+                    <input type="checkbox" id="my-modal" className="modal-toggle" />
+                    <div className="modal">
+
+                        <div className="modal-box space-y-12">
+
+                            <div>{l.account}</div>
 
 
-                    <div className=" flex justify-between   rounded-lg container mx-auto items-center p-2 min-w-[700px] ">
-
-
-
-                        <div className="flex  gap-10">
                             <div>
-                                <label htmlFor="my-modal" className="btn modal-button flex justify-center items-center ">
-                                    <FontAwesomeIcon icon={faUserPlus} className="text-xl  " />
-                                </label>
+                                <input
+                                    required name='userName' type="name" placeholder={l.userName}
+                                    onChange={(event) => { handleSaveUser(event) }}
+                                    onClick={(event) => { handleSaveUser(event) }}
+                                    onFocus={() => { setUFocus(true) }}
+                                    onBlur={() => { setUFocus(false) }}
+                                    className="input input-bordered input-info w-full max-w-xl mt-5 dark:placeholder:text-white dark:color-white" />
+                                <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!UValid && !UFocus && Data.userName != "" ? "block" : "hidden"}`}>
+                                    {l.userName}{l.incorrect}
+                                    <br />
+                                    {l.charecter416}
 
 
-                                <input type="checkbox" id="my-modal" className="modal-toggle" />
-                                <div className="modal">
-
-                                    <div className="modal-box space-y-12">
-
-                                        <div>{l.account}</div>
-
-
-                                        <div>
-                                            <input
-                                                required name='userName' type="name" placeholder={l.userName}
-                                                onChange={(event) => { handleSaveUser(event) }}
-                                                onClick={(event) => { handleSaveUser(event) }}
-                                                onFocus={() => { setUFocus(true) }}
-                                                onBlur={() => { setUFocus(false) }}
-                                                className="input input-bordered input-info w-full max-w-xl mt-5 dark:placeholder:text-white dark:color-white" />
-                                            <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!UValid && !UFocus && Data.userName != "" ? "block" : "hidden"}`}>
-                                                {l.userName}{l.incorrect}
-                                                <br />
-                                                {l.charecter416}
-
-
-                                            </p>
-
-                                        </div>
-                                        <div>
-                                            <input required name='email' type="email" placeholder={l.email}
-                                                onChange={(event) => { handleSaveUser(event) }}
-                                                onClick={(event) => { handleSaveUser(event) }}
-                                                onFocus={() => { setEFocus(true) }}
-                                                onBlur={() => { setEFocus(false) }}
-                                                className="input input-bordered input-info w-full max-w-xl mt-5 dark:placeholder:text-white dark:color-white" />
-                                            <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!EValid && !EFocus && Data.email != "" ? "block" : "hidden"}`}>
-                                                {l.email}{l.incorrect}
-                                                <br />
-                                                {l.charecter1224}
-
-
-                                            </p>
-
-                                        </div>
-                                        <div>  <input required name='password' type="password" placeholder={l.password}
-                                            onChange={(event) => { handleSaveUser(event) }}
-                                            onClick={(event) => { handleSaveUser(event) }}
-                                            onFocus={() => { setPFocus(true) }}
-                                            onBlur={() => { setPFocus(false) }}
-                                            className="input input-bordered input-info w-full max-w-xl  dark:placeholder:text-white dark:color-white" />
-                                            <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!PValid && !PFocus && Data.password != "" ? "block" : "hidden"}`}>
-                                                {l.password}{l.incorrect}
-
-                                                <br />
-                                                {l.charecter416}
-
-
-                                            </p>
-
-                                        </div>
-                                        <div>   <select name='userRole' defaultValue={l.select}
-                                            onChange={(event) => { handleSaveUser(event) }}
-                                            onClick={(event) => { handleSaveUser(event) }}
-                                            onFocus={() => { setRFocus(true) }}
-                                            onBlur={() => { setRFocus(false) }}
-                                            className="select select-info w-full max-w-xl ">
-
-                                            <option disabled >{l.select}</option>
-                                            <option>Admin</option>
-                                            <option>Reseller</option>
-                                            <option>Qarz</option>
-
-                                        </select>
-                                            <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!RValid && !RFocus && Data.userRole != "" && Data.userRole != "Select" ? "block" : "hidden"}`}>
-                                                {l.userRole}{l.incorrect}
-
-                                                <br />
-                                                {l.plsselectone}
-
-
-                                            </p>
-
-                                        </div>
-                                        <input name='TotalBals' type="number" placeholder={l.TotalBals}
-                                            onClick={(event) => { handleSaveUser(event) }}
-                                            onChange={(event) => { handleSaveUser(event) }}
-                                            className="input input-bordered input-info w-full max-w-xl  dark:placeholder:text-white dark:color-white" />
-
-                                        <div className="modal-action">
-                                            <div></div>
-                                            <label htmlFor="my-modal" className="btn btn-error"  >{l.cancel}</label>
-                                            <label disabled={EValid && PValid && UValid && RValid ? false : true} htmlFor="my-modal" onSubmit={(e) => { e.click() }} >
-                                                <input type="submit" className={`btn btn-success disabled:text-opacity-100 `}
-                                                    disabled={EValid && PValid && UValid && RValid ? false : true}
-                                                    value={l.add}
-                                                    onClick={addUsers}
-                                                />
-                                            </label>
-
-                                        </div>
-
-                                    </div>
-                                </div>
+                                </p>
 
                             </div>
-                            <input type="search" placeholder={`${l.search} ...`} className="input   input-info  w-full max-w-xs focus:outline-0"
-                                onChange={e =>
-                                    setSearch(e.target.value.match(/^[a-zA-Z0-9]*/))
-                                }
-                            />
-                        </div>
+                            <div>
+                                <input required name='email' type="email" placeholder={l.email}
+                                    onChange={(event) => { handleSaveUser(event) }}
+                                    onClick={(event) => { handleSaveUser(event) }}
+                                    onFocus={() => { setEFocus(true) }}
+                                    onBlur={() => { setEFocus(false) }}
+                                    className="input input-bordered input-info w-full max-w-xl mt-5 dark:placeholder:text-white dark:color-white" />
+                                <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!EValid && !EFocus && Data.email != "" ? "block" : "hidden"}`}>
+                                    {l.email}{l.incorrect}
+                                    <br />
+                                    {l.charecter1224}
 
 
-                        <div className="flex justify-center items-center ">
+                                </p>
+
+                            </div>
+                            <div>  <input required name='password' type="password" placeholder={l.password}
+                                onChange={(event) => { handleSaveUser(event) }}
+                                onClick={(event) => { handleSaveUser(event) }}
+                                onFocus={() => { setPFocus(true) }}
+                                onBlur={() => { setPFocus(false) }}
+                                className="input input-bordered input-info w-full max-w-xl  dark:placeholder:text-white dark:color-white" />
+                                <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!PValid && !PFocus && Data.password != "" ? "block" : "hidden"}`}>
+                                    {l.password}{l.incorrect}
+
+                                    <br />
+                                    {l.charecter416}
 
 
+                                </p>
 
-                            <div className="dropdown rtl:dropdown-right ltr:dropdown-left mx-10">
-                                <label tabIndex="0" className=" m-1  " >
-                                    <FontAwesomeIcon icon={faFileDownload} className="text-3xl m-auto md:mx-5 mx-1 active:scale-90 active:rotate-180 ease-in-out  transition" />
+                            </div>
+                            <div>   <select name='userRole' defaultValue={l.select}
+                                onChange={(event) => { handleSaveUser(event) }}
+                                onClick={(event) => { handleSaveUser(event) }}
+                                onFocus={() => { setRFocus(true) }}
+                                onBlur={() => { setRFocus(false) }}
+                                className="select select-info w-full max-w-xl ">
+
+                                <option disabled >{l.select}</option>
+                                <option>Admin</option>
+                                <option>Reseller</option>
+                                <option>Qarz</option>
+
+                            </select>
+                                <p id="password-error" className={`bg-rose-400 rounded m-1 text-sm p-2 text-black  ${!RValid && !RFocus && Data.userRole != "" && Data.userRole != "Select" ? "block" : "hidden"}`}>
+                                    {l.userRole}{l.incorrect}
+
+                                    <br />
+                                    {l.plsselectone}
+
+
+                                </p>
+
+                            </div>
+                            <input name='TotalBals' type="number" placeholder={l.TotalBals}
+                                onClick={(event) => { handleSaveUser(event) }}
+                                onChange={(event) => { handleSaveUser(event) }}
+                                className="input input-bordered input-info w-full max-w-xl  dark:placeholder:text-white dark:color-white" />
+
+                            <div className="modal-action">
+                                <div></div>
+                                <label htmlFor="my-modal" className="btn btn-error"  >{l.cancel}</label>
+                                <label disabled={EValid && PValid && UValid && RValid ? false : true} htmlFor="my-modal" onSubmit={(e) => { e.click() }} >
+                                    <input type="submit" className={`btn btn-success disabled:text-opacity-100 `}
+                                        disabled={EValid && PValid && UValid && RValid ? false : true}
+                                        value={l.add}
+                                        onClick={addUsers}
+                                    />
                                 </label>
 
-                                <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 flex justify-center space-y-2 ">
-                                    <li>  <ReactHTMLTableToExcel
-                                        id="test-table-xls-button"
-                                        className="btn btn-outline download-table-xls-button"
-                                        table="table-to-xls"
-                                        filename="tablexls"
-                                        sheet="tablexls"
-                                        buttonText="XLSX" />  </li>
-                                    <li><button className='btn btn-outline' onClick={table_2_pdf}>PDF</button> </li>
-                                    {/* <li><button className='btn' onClick={table_All_pdff}>ALL_PDF</button> </li> */}
-                                </ul>
                             </div>
 
-
                         </div>
-
                     </div>
 
 
+                    {/*  //^    Table    */}
 
-
-                    {/* <div className="xl:flex justify-center overflow-auto  py-2    "> */}
-
-
-
-
-                    <table id="table-to-xls" className=" my-10 inline-block  min-w-[1000px]  " {...getTableProps()}>
-                        <thead className="  ">
+                    <table id="table-to-xls" className="table w-full my-10  text-xs min-w-[650px] " {...getTableProps()}>
+                        <thead className=" text-center min-w-[96000px]">
 
                             {headerGroups.map((headerGroups, idx) => (
 
-                                <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
-
+                                <tr className="text-xs text-center  min-w-[96000px]" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
+                                    <th className='hidden' ></th>
                                     {headerGroups.headers.map((column, idx) => (
 
-                                        <th key={idx} className="p-4 m-44      w-80   " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
+                                        <th key={idx} className=" font-normal normal-case " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
 
                                             <span>
-                                                {column.isSorted ? (column.isSortedDesc ? "<" : ">") : ""}
+                                                {column.isSorted ? (column.isSortedDesc ? "⇅" : "⇵") : ""}
                                             </span>
 
 
@@ -1116,11 +1082,12 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                 prepareRow(row)
                                 return (
                                     <tr key={idx}  {...row.getRowProps()} >
+                                        <td className='hidden' ></td>
                                         {row.cells.map((cell, idx) => {
                                             return (
 
 
-                                                <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
+                                                <td key={idx} className="text-center py-3 dark:bg-[#181a1b]" {...cell.getCellProps()}>
 
 
                                                     {
@@ -1198,18 +1165,18 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                                         <label onClick={() => {
                                                             setIdofrow([row.original._id, row.original.TotalBals, row.original.userName, row.original.userRole])
                                                             setDataUpdate(""), setEValid(false), setUValid(false), setBValid(false)
-                                                        }} aria-label="upload picture" ><FontAwesomeIcon icon={faEdit} className="text-2xl text-blue-500" /></label>
+                                                        }} aria-label="upload picture" ><FontAwesomeIcon icon={faEdit} className="text-2xl text-blue-500 cursor-pointer" /></label>
 
                                                         :
                                                         <div className=" space-x-3">
-                                                            {cell.column.id === "Edit" && <button disabled={EValid && RValid && BValid && UValid ? false : true} type='submit' onClick={handleUpdateUser} className="btn btn-accent"> <FontAwesomeIcon icon={faSave} className="text-2xl" /></button>}
+                                                            {cell.column.id === "Edit" && <button disabled={EValid && RValid && BValid && UValid ? false : true} type='submit' onClick={handleUpdateUser} className="btn btn-accent "> <FontAwesomeIcon icon={faSave} className="text-2xl" /></button>}
                                                             {cell.column.id === "Edit" && <button onClick={() => { setIdofrow(null), setDataUpdate(null), setEValid(false), setUValid(false), setBValid(false) }} className="btn  btn-error"><FontAwesomeIcon icon={faBan} className="text-2xl" /></button>}
 
                                                         </div>
 
 
                                                     }
-                                                    {cell.column.id === "Delete" && <label htmlFor="my-modal-3" className="m-0" onClick={() => { setDeletestate([row.original._id, row.original.TotalBals, row.original.userName, row.original.userRole]) }}><FontAwesomeIcon icon={faTrash} className="text-2xl text-red-700" /></label>}
+                                                    {cell.column.id === "Delete" && <label htmlFor="my-modal-3" className="m-0 cursor-pointer" onClick={() => { setDeletestate([row.original._id, row.original.TotalBals, row.original.userName, row.original.userRole]) }}><FontAwesomeIcon icon={faTrash} className="text-2xl text-red-700" /></label>}
 
 
                                                 </td>
@@ -1228,26 +1195,44 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
                     </table>
 
-                    {/* </div > */}
 
-                    <div className="botom_Of_Table" >
+                    {/*  //^    Footer    */}
 
-                        <div className=" flex justify-between container mx-auto items-center  rounded-xl p-3  px-1 mb-20 min-w-[700px] ">
+                    <div className="container text-sm  scale-90  ">
 
-
-
-                            <div className=" flex   justify-around mx-5 text-lg items-center     ">
+                        <div className=" flex justify-between container mx-auto items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
 
 
-                                <span className="px-3">
-                                    {l.page}{" " + Page}/{PageS}
+                            <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
+
+                                <div></div>
+                                <FontAwesomeIcon icon={faAnglesLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
+                                    onClick={() => Page > 1 && setPage(1)}
+                                    disabled={Page == 1 ? true : false} />
+
+                                <FontAwesomeIcon icon={faChevronLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                    onClick={() => Page > 1 && setPage(Page - 1)}
+                                    disabled={Page == 1 ? true : false} />
+
+
+
+                                <span className="px-20 py-2 rounded bg-slate-100 dark:bg-gray-700">
+                                    {Page}/{PageS}
                                 </span>
 
 
 
+                                <FontAwesomeIcon icon={faChevronRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                    onClick={() => Page < PageS && (Page >= 1 && setPage(Page + 1))}
+                                    disabled={Page >= PageS ? true : false} />
+
+                                <FontAwesomeIcon icon={faAnglesRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                    onClick={() => Page < PageS && (Page >= 1 && setPage(PageS))}
+                                    disabled={Page >= PageS ? true : false} />
+
 
                                 <div>
-                                    <select className="select select-info  w-full max-w-xs focus:outline-0"
+                                    <select className="select  select-sm w-20 focus:outline-0 input-sm dark:bg-gray-700   max-w-xs text-sm"
                                         onChange={(e) => {
                                             setLimit((e.target.value))
                                             setPageSize(Number(e.target.value)
@@ -1256,69 +1241,49 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
                                         value={pageSize}>
                                         {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
-                                            <option key={idx} value={pageSize}>
-                                                {l.show} ({(pageSize !== 100000) ? pageSize : l.all})
+                                            <option className='text-end' key={idx} value={pageSize}>
+                                                {(pageSize !== 100000) ? pageSize : l.all}
                                             </option>))
                                         }
 
                                     </select>
                                 </div>
+
+                                <FontAwesomeIcon icon={PDF} onClick={table_2_pdf} className="md:mx-5 px-10 text-blue-400 active:scale-9 m-auto mx-10 text-2xl transition ease-in-out hover:cursor-pointer" />
+
+                                <ReactHTMLTableToExcel
+                                    id="test-table-xls-button "
+                                    className="text-2xl active:scale-90"
+                                    table="table-to-xls"
+                                    filename="tablexls"
+                                    sheet="tablexls"
+                                    buttonText="📋"
+                                    icon={PDF}
+                                />
+
+
+
                             </div>
 
 
 
-
-                            <div className="space-x-3  overflow-auto inline-flex  scrollbar-hide ">
+                            <div className="scrollbar-hide inline-flex space-x-3 overflow-auto">
                                 <div></div>
 
 
 
-                                <button className="btn w-2 h-2 btn-info border-0  " onClick={() =>
-                                    setPage(1)
-                                }
-                                    disabled={
-                                        Page == 1 ? true : false
-                                    }
-                                >{"<<"} </button>
-
-
-                                <button className="btn w-2 h-2 btn-info" onClick={() =>
-                                    setPage(Page - 1)
-                                }
-                                    disabled={
-                                        Page <= 1 ? true : false
-
-                                    }
-                                >{"<"}
-                                </button>
-
-
-                                <button className="btn w-2 h-2 btn-info" onClick={() =>
-                                    Page >= 1 && setPage(Page + 1)
-                                }
-                                    disabled={
-                                        Page >= PageS ? true : false
-                                    }
-                                >{">"} </button>
-
-
-                                <button className="btn w-2 h-2 btn-info "
-                                    onClick={() =>
-                                        Page >= 1 && setPage(PageS)
-                                    }
-                                    disabled={
-                                        Page >= PageS ? true : false
-                                    }
-                                >{">>"} </button>
-
-
-
                             </div>
+
+
 
                         </div>
 
-                    </div>
 
+
+                    </div >
+
+
+                    {/* //^  modal */}
                     <input name="error_btn" type="checkbox" id="my-modal-3" className="modal-toggle btn btn-error " />
                     <div className="modal  ">
                         <div className="modal-box relative ">

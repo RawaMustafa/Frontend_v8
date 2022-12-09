@@ -9,7 +9,7 @@ import Image from "next/image";
 import ImageGallery from 'react-image-gallery';
 import { useRouter } from "next/router";
 import { useSession, getSession } from "next-auth/react";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const getServerSideProps = async (context) => {
 
@@ -76,26 +76,28 @@ const Detail = ({ cars }) => {
 
 
     const renderVideo = (item) => {
+
+
         return (
-            <div>
-
+            <div className="play-button grow relative w-full h-full overflow-auto bg-cover">
                 {item.taramash != "false" ?
-                    <div className='video-wrapper flex text-center items-center justify-center '>
-
-
-
-                        <video width="1900" height="1000" controls className="h-auto max-w-full flex text-center items-center justify-center">
-                            <source src={`${baseURL}/${item.taramash}`} type="video/mp4" />
-                        </video>
-
-
-                    </div>
-
-
+                    <div className=' flex justify-center'>
+                        <video controls
+                            className="w-full bg-cover ">
+                            <source
+                                src={`${baseURL}${item.taramash}`} type="video/mp4" />
+                        </video >
+                    </div >
                     :
-                    <div className='play-button'>
-                        <Image alt="SlideImage" width={1900} height={1000} className='image-gallery-image' src={item.original} />
-
+                    <div className='play-button grow relative w-full h-full overflow-auto bg-cover'>
+                        <Image width={1920} height={1080}
+                            alt='SliderImage'
+                            sizes="100%"
+                            objectFit="cover"
+                            className='image-gallery-image '
+                            crossOrigin="anonymous"
+                            src={item.original}
+                        />
 
                     </div>
                 }
@@ -106,33 +108,67 @@ const Detail = ({ cars }) => {
     }
 
 
+    const renderThumbInner = (item) => {
+
+        return (
+            <div className="">
+                {item.taramash != "false" ?
+                    <div className=''>
+                        <video controls={false}
+                            className="">
+                            <source
+                                src={`${baseURL}${item.taramash}`} type="video/mp4" />
+                        </video >
+                    </div >
+                    :
+                    <div className=' w-full'>
+                        <Image width={1920} height={1080}
+                            alt='SliderImage'
+                            // sizes="100%"
+                            // objectFit="cover"
+                            className='image-gallery-image '
+                            src={item.thumbnail}
+                        />
+
+                    </div>
+                }
+
+            </div >
+        );
+
+    }
+
+
+
     const dataa = []
 
     cars.carDetail?.pictureandvideorepair?.map((img, index) => {
         dataa.push({
-            "original": `${baseURL}/${img.filename}`,
-            "thumbnail": `${baseURL}/${img.filename}`,
+            "original": `${baseURL}${img.filename}`,
+            "thumbnail": `${baseURL}${img.filename}`,
             "taramash": `${img.mimetype == "video/mp4" && img.filename}`,
-            "renderItem": renderVideo
+            "renderItem": renderVideo,
+            "renderThumbInner": renderThumbInner,
 
         })
 
     })
     cars.carDetail?.pictureandvideodamage?.map((img, index) => {
         dataa.push({
-            "original": `${baseURL}/${img.filename}`,
-            "thumbnail": `${baseURL}/${img.filename}`,
+            "original": `${baseURL}${img.filename}`,
+            "thumbnail": `${baseURL}${img.filename}`,
             "taramash": `${img.mimetype == "video/mp4" && img.filename}`,
-            "renderItem": renderVideo
-
+            "renderItem": renderVideo,
+            "renderThumbInner": renderThumbInner,
         })
     })
     cars.carDetail?.carDamage?.map((img, index) => {
         dataa.push({
-            "original": `${baseURL}/${img.filename}`,
-            "thumbnail": `${baseURL}/${img.filename}`,
+            "original": `${baseURL}${img.filename}`,
+            "thumbnail": `${baseURL}${img.filename}`,
             "taramash": `${img.mimetype == "video/mp4" && img.filename}`,
-            "renderItem": renderVideo
+            "renderItem": renderVideo,
+            "renderThumbInner": renderThumbInner,
 
         })
     })
@@ -152,18 +188,98 @@ const Detail = ({ cars }) => {
 
 
                         <ImageGallery
-                            onErrorImageURL="https://picsum.photos/id/1018/1000/600/"
-                            slideInterval={10000}
-                            slideDuration={50}
-                            flickThreshold={0.6}
-                            swipeThreshold={40}
-                            slideOnThumbnailOver="true"
-                            lazyLoad={true}
-                            showFullscreenButton="true"
-                            showThumbnails={true}
-                            items={dataa}
-                        // additionalClass="  "
+                            thumbnails-swipe-vertical
 
+                            onErrorImageURL="/Video.svg"
+                            slideInterval={10000}
+                            autoPlay={true}
+                            // showPlayButton={false}
+                            showBullets={true}
+                            // useTranslate3D={true}
+                            lazyLoad={true}
+                            // showThumbnails={FullScreen ? false : true}
+                            items={dataa}
+                            additionalClass={` overflow-auto `}
+                            className=""
+                            useBrowserFullscreen={true}
+                            // onScreenChange={(e) => {
+                            //     setFullScreen(e)
+                            // }}
+                            renderRightNav={(onClick,) => {
+                                if (FullScreen) {
+                                    return (
+                                        <button
+                                            className="bg-slate-300 opacity-60 right-5 top-1/2 fixed z-30 items-center w-5 h-10 rounded-full"
+                                            onClick={onClick}
+                                        >
+                                            <FontAwesomeIcon icon={faChevronRight} />
+                                        </button>
+                                    );
+                                }
+                                else {
+
+                                    return (
+                                        <button
+                                            className="bg-slate-300 opacity-60 right-2 top-1/2 absolute z-30 items-center w-5 h-10 rounded-full"
+                                            onClick={onClick}
+                                        >
+                                            <FontAwesomeIcon icon={faChevronRight} />
+                                        </button>
+                                    );
+
+
+                                }
+                            }}
+                            renderLeftNav={(onClick) => {
+                                if (FullScreen) {
+                                    return (
+                                        <button
+                                            className="bg-slate-300 opacity-60 left-5 top-1/2 fixed z-30 items-center w-5 h-10 rounded-full"
+                                            onClick={onClick}
+                                        >
+                                            <FontAwesomeIcon icon={faChevronLeft} />
+                                        </button>
+                                    );
+                                }
+                                else {
+
+                                    return (
+                                        <button
+                                            className="bg-slate-300 opacity-60 left-2 top-1/2 absolute z-30 items-center w-5 h-10 rounded-full"
+                                            onClick={onClick}
+                                        >
+                                            <FontAwesomeIcon icon={faChevronLeft} />
+                                        </button>
+                                    );
+
+
+                                }
+                            }}
+
+                            renderFullscreenButton={
+                                (onClick, isFullscreen) => {
+                                    // console.log(isFullscreen)
+                                    if (isFullscreen) {
+                                        return (
+                                            <button
+                                                className="btn btn-sm btn-circle right-2 top-2 fixed"
+                                                onClick={onClick}
+                                            >
+                                                <FontAwesomeIcon icon={faCompress} />
+                                            </button>
+                                        );
+                                    } else {
+                                        return (
+                                            <button
+                                                className="btn btn-sm btn-circle right-2 top-2 absolute"
+                                                onClick={onClick}
+                                            >
+                                                <FontAwesomeIcon icon={faExpand} />
+                                            </button>
+                                        );
+                                    }
+                                }
+                            }
                         />
 
 

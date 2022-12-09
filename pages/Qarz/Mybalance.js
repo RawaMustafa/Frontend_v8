@@ -1,33 +1,17 @@
-
-
 import useLanguage from '../../Component/language';
 import QarzLayout from '../../Layouts/QarzLayout';
-
-
-
 import { useEffect, useMemo, useState, useRef } from 'react';
 import Head from 'next/head'
-
-
-// import { Filter, DefaultColumnFilter, dateBetweenFilterFn, DateRangeColumnFilter } from '../Balance/Filter';
-
-
+import { faFilePdf as PDF, faCalendarCheck as CALLENDER } from '@fortawesome/free-regular-svg-icons';
 import { useTable, useSortBy, useGlobalFilter, usePagination, useFilters, useGroupBy, useExpanded, } from 'react-table';
-// import { GlobalFilter } from '../Balance/GlobalFilter';
-
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
-
-
 import axios from "axios"
 import Axios from "../api/Axios"
-
 import { ToastContainer, toast, } from 'react-toastify';
-
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faCalendarPlus, faTrash, faEdit, faSave, faBan, faFileDownload, faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
-
+import { faCalendarPlus, faTrash, faEdit, faSave, faBan, faFileDownload, faCalendarCheck, faAnglesLeft, faChevronLeft, faChevronRight, faAnglesRight } from '@fortawesome/free-solid-svg-icons';
 import { getSession, useSession } from "next-auth/react";
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -180,271 +164,209 @@ const TableQarz = ({ COLUMNS, AllBal }) => {
 
 
     return (
-        <div className=" container mx-auto  overflow-auto ">
+        <div className="container mx-auto  ">
 
+            {/* //?   Header  */}
+            <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-2xl p-5">
+                <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
 
-
-            <div className=" flex justify-between   container mx-auto items-center p-2 min-w-[700px] ">
-
-
-                <div className="flex">
-
-                    <input type="search" placeholder={`${l.search} ...`} className="input   input-info  w-full max-w-xs mx-5 focus:outline-0"
+                    <input type="search" placeholder={`${l.search} ...`} className="input input-bordered    w-full    focus:outline-0   h-9 "
                         onChange={e =>
                             setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
                         }
                     />
                 </div>
+                <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8  rtl:mr-8 ">
+                    <label tabIndex="0" className="active:scale-9 m-1  ">
+                        <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="active:scale-90 text-2xl hover:cursor-pointer text-blue-500  " />
+                    </label>
+
+                    <ul tabIndex="0" className="dropdown-content bg-base-100 rounded-box w-52 flex justify-center shadow">
+                        <li className=" py-2">
+
+                            <div className="space-y-1">
+                                <h1>{l.from}</h1><input className="input input-bordered input-info focus:outline-0 "
+                                    onChange={(e) => {
+                                        setStartDate(e.target.value)
+                                    }}
+                                    type="date"
+                                />
+                                <h1>{l.to}</h1>
+                                <input className="input input-bordered input-info focus:outline-0"
+                                    onChange={(e) => {
+                                        setEndDate(e.target.value)
+                                    }}
+                                    type="date"
+                                />
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+            {/* //?   Header  */}
+            <div className=" overflow-auto bg-white dark:bg-[#181A1B] roundedb-xl shadow-2xl ">
 
 
-                <div className="flex justify-center items-center lg:space-x-4 ">
+                <table id="table-to-xls" className="table table-full my-10  text-center font-normal   min-w-[700px] " {...getTableProps()}>
 
 
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left ">
+                    <thead className="  ">
 
-                        {/* //TODO -  fix Date */}
-                        <label tabIndex="0" className=" m-1 active:scale-95 ">
-                            <FontAwesomeIcon icon={faCalendarCheck} tabIndex="0" className="w-8 h-8 active:scale-95 " />
-                        </label>
+                        {headerGroups.map((headerGroups, idx) => (
 
-                        <ul tabIndex="0" className="dropdown-content  shadow bg-base-100 rounded-box w-52 flex justify-center   ">
-                            <li className="  py-2">
+                            <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
+                                <th className='hidden'></th>
+                                {headerGroups.headers.map((column, idx) => (
+                                    <th key={idx} className="  w-[400px]  normal-case  " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
+                                        <span>
+                                            {column.isSorted ? (column.isSortedDesc ? " ↑ " : " 🡓 ") : ""}
 
-                                <div className="space-y-1">
-                                    <h1>{l.from}</h1><input className="input input-bordered input-info "
-                                        onChange={(e) => {
-                                            setStartDate(e.target.value)
-                                        }}
-                                        type="date"
-                                    />
-                                    <h1>{l.to}</h1>
-                                    <input className="input input-bordered input-info "
-                                        onChange={(e) => {
-                                            setEndDate(e.target.value)
-                                        }}
-                                        type="date"
-                                    />
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+                                        </span>
+                                    </th>
+                                ))}
+                            </tr>
+                        )
+                        )
+                        }
+                    </thead >
 
 
+                    <tbody {...getTableBodyProps()}>
 
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left ">
-                        <label tabIndex="0" className=" m-1  " >
-                            <FontAwesomeIcon icon={faFileDownload} className="text-3xl m-auto md:mx-5 mx-1 active:scale-90   ease-in-out  transition" />
-                        </label>
+                        {page.map((row, idx) => {
+                            prepareRow(row)
+                            return (
+                                <tr key={idx}   {...row.getRowProps()} >
+                                    <td className='hidden'></td>
+                                    {row.cells.map((cell, idx) => {
+                                        return (
 
-                        <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 flex justify-center space-y-2 ">
-                            <li>  <ReactHTMLTableToExcel
-                                id="test-table-xls-button"
-                                className="btn btn-outline download-table-xls-button"
+                                            <td key={idx} className=" dark:bg-[#181a1b] text-center   py-2 " {...cell.getCellProps()}>
+
+
+
+                                                {cell.column.id === 'amount' && (
+                                                    <>
+                                                        {cell.value >= 0 ? <div className="text-green-500">{cell.value}</div> : <div className="text-red-500">{cell.value}</div>
+                                                        } </>
+                                                )}
+                                                {cell.column.id === 'isSoled' && (
+                                                    <>
+                                                        {cell.value == true ?
+                                                            <div className="text-green-200">Yes</div> : cell.value == false ? <div className="text-red-500">No</div> : null}
+                                                    </>
+                                                )}
+                                                {cell.column.id === 'carId' && (
+                                                    <>
+                                                        <Link href={`/Reseller/details/${cell.value?._id}`}><a className="text-orange-500">{cell.value?.modeName || cell.value?.VINNumber || cell.value?.id}</a></Link>
+                                                    </>
+                                                )
+                                                }
+                                                {
+                                                    (cell.column.id === 'amount' || cell.column.id === 'carId') || cell.render('Cell')
+                                                }
+                                            </td>
+                                        )
+                                    })}
+                                </tr>
+                            )
+                        }
+
+                        )}
+                    </tbody>
+                </table>
+
+
+                {/* //?    botom */}
+                <div className="container text-sm  scale-90  ">
+
+                    <div className=" flex justify-between container mx-auto items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
+
+
+                        <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
+
+                            <div></div>
+                            <FontAwesomeIcon icon={faAnglesLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
+                                onClick={() => Page > 1 && setPage(1)}
+                                disabled={Page == 1 ? true : false} />
+
+                            <FontAwesomeIcon icon={faChevronLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page > 1 && setPage(Page - 1)}
+                                disabled={Page == 1 ? true : false} />
+
+
+
+                            <span className="px-20 py-2 rounded bg-slate-100 dark:bg-gray-700">
+                                {Page}/{PageS}
+                            </span>
+
+
+
+                            <FontAwesomeIcon icon={faChevronRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(Page + 1))}
+                                disabled={Page >= PageS ? true : false} />
+
+                            <FontAwesomeIcon icon={faAnglesRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                onClick={() => Page < PageS && (Page >= 1 && setPage(PageS))}
+                                disabled={Page >= PageS ? true : false} />
+
+
+                            <div>
+                                <select className="select  select-sm w-20 focus:outline-0 input-sm dark:bg-gray-700   max-w-xs text-sm"
+                                    onChange={(e) => {
+                                        setLimit((e.target.value))
+                                        setPageSize(Number(e.target.value)
+                                        )
+                                    }}
+
+                                    value={pageSize}>
+                                    {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
+                                        <option className='text-end' key={idx} value={pageSize}>
+                                            {(pageSize !== 100000) ? pageSize : l.all}
+                                        </option>))
+                                    }
+
+                                </select>
+                            </div>
+
+                            <FontAwesomeIcon icon={PDF} onClick={table_2_pdf} className="md:mx-5 px-10 text-blue-400 active:scale-9 m-auto mx-10 text-2xl transition ease-in-out hover:cursor-pointer" />
+
+                            <ReactHTMLTableToExcel
+                                id="test-table-xls-button "
+                                className="text-2xl active:scale-90"
                                 table="table-to-xls"
                                 filename="tablexls"
                                 sheet="tablexls"
-                                buttonText="XLSX" />  </li>
-
-                            <li><button className='btn btn-outline ' onClick={table_2_pdf}>PDF</button> </li>
-                            {/* <li><button className='btn btn-outline' onClick={table_All_pdff}>ALL_PDF</button> </li> */}
-                        </ul>
-                    </div>
-
-
-                </div>
-
-
-            </div>
+                                buttonText="📋"
+                                icon={PDF}
+                            />
 
 
 
-            <table id="table-to-xls" className="my-10  inline-block   min-w-[1000px] " {...getTableProps()}>
-
-
-                <thead className="  ">
-
-                    {headerGroups.map((headerGroups, idx) => (
-
-                        <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
-
-                            {headerGroups.headers.map((column, idx) => (
-
-                                <th key={idx} className="p-4 m-44 w-[400px]   " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
-
-                                    <span>
-                                        {column.isSorted ? (column.isSortedDesc ? " ↑ " : " 🡓 ") : ""}
-
-                                    </span>
-
-
-
-                                </th>
-
-
-
-                            ))}
-
-                        </tr>
-
-                    )
-                    )
-
-
-                    }
-
-                </thead >
-
-
-                <tbody {...getTableBodyProps()}>
-
-                    {page.map((row, idx) => {
-                        prepareRow(row)
-                        return (
-                            <tr key={idx}   {...row.getRowProps()} >
-                                {row.cells.map((cell, idx) => {
-                                    return (
-
-                                        <td key={idx} className="  text-center   py-3 overflow-auto" {...cell.getCellProps()}>
-
-
-
-                                            {cell.column.id === 'amount' && (
-                                                <>
-                                                    {cell.value >= 0 ? <div className="text-green-500">{cell.value}</div> : <div className="text-red-500">{cell.value}</div>
-                                                    } </>
-                                            )}
-
-                                            {cell.column.id === 'isSoled' && (
-                                                <>
-
-
-                                                    {cell.value == true ?
-                                                        <div className="text-green-200">Yes</div> : cell.value == false ? <div className="text-red-500">No</div> : null}
-
-
-
-
-                                                </>
-
-                                            )}
-
-                                            {cell.column.id === 'carId' && (
-                                                <>
-
-                                                    <Link href={`/Reseller/details/${cell.value?._id}`}><a className="text-orange-500">{cell.value?.modeName || cell.value?.VINNumber || cell.value?.id}</a></Link>
-                                                </>
-
-                                            )
-                                            }
-                                            {
-                                                (cell.column.id === 'amount' || cell.column.id === 'carId') || cell.render('Cell')
-                                            }
-
-
-                                        </td>
-
-                                    )
-                                })}
-
-                            </tr>
-                        )
-                    }
-
-                    )}
-
-                </tbody>
-
-
-            </table>
-
-            <div className="botom_Of_Table" >
-
-                <div className=" flex justify-between container mx-auto items-center   p-3  px-1 mb-20  min-w-[700px] ">
-
-
-
-                    <div className=" flex   justify-around mx-5 text-lg items-center     ">
-
-
-                        <span className="px-3">
-                            {l.page}{" " + Page}/{PageS}
-                        </span>
-
-                        <div>
-                            <select className="select select-info  w-full max-w-xs focus:outline-0"
-                                onChange={(e) => {
-                                    setLimit((e.target.value))
-                                    setPageSize(Number(e.target.value)
-                                    )
-                                }}
-
-                                value={pageSize}>
-                                {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
-                                    <option key={idx} value={pageSize}>
-                                        {l.show} ({(pageSize !== 100000) ? pageSize : l.all})
-                                    </option>))
-                                }
-
-                            </select>
                         </div>
-                    </div>
 
 
 
-
-                    <div className="space-x-3  overflow-auto inline-flex  scrollbar-hide ">
-                        <div></div>
-
+                        <div className="scrollbar-hide inline-flex space-x-3 overflow-auto">
+                            <div></div>
 
 
-                        <button className="btn w-2 h-2 btn-info border-0  " onClick={() =>
-                            setPage(1)
-                        }
-                            disabled={
-                                Page == 1 ? true : false
-                            }
-                        >{"<<"} </button>
 
-
-                        <button className="btn w-2 h-2 btn-info" onClick={() =>
-                            setPage(Page - 1)
-                        }
-                            disabled={
-                                Page <= 1 ? true : false
-
-                            }
-                        >{"<"}
-                        </button>
-
-
-                        <button className="btn w-2 h-2 btn-info" onClick={() =>
-                            Page >= 1 && setPage(Page + 1)
-                        }
-                            disabled={
-                                Page >= PageS ? true : false
-                            }
-                        >{">"} </button>
-
-
-                        <button className="btn w-2 h-2 btn-info "
-                            onClick={() =>
-                                Page >= 1 && setPage(PageS)
-                            }
-                            disabled={
-                                Page >= PageS ? true : false
-                            }
-                        >{">>"} </button>
+                        </div>
 
 
 
                     </div>
 
-                </div>
-
-            </div>
 
 
+                </div >
+                {/* //?    botom */}
 
+
+
+            </div >
         </div >
 
     );

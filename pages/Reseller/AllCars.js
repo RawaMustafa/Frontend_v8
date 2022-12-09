@@ -1,114 +1,139 @@
 import useLanguage from '../../Component/language';
 import ResellerLayout from '../../Layouts/ResellerLayout';
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState, forwardRef } from 'react';
 import Head from 'next/head'
+import Link from 'next/link';
+import Axios from '../api/Axios';
+import Image from 'next/image';
+import { useRouter } from "next/router";
+import { getSession, useSession } from "next-auth/react";
 import { useTable, useSortBy, useGlobalFilter, usePagination, useFilters, useGroupBy, useExpanded, } from 'react-table';
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
-import axios from "axios"
-import Axios from "../api/Axios"
 import { faFilePdf as PDF, faCalendarCheck as CALLENDER } from '@fortawesome/free-regular-svg-icons';
-import { ToastContainer, toast, } from 'react-toastify';
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faCalendarPlus, faTrash, faEdit, faSave, faBan, faFileDownload, faCalendarCheck, faAnglesLeft, faChevronLeft, faChevronRight, faAnglesRight, faBars } from '@fortawesome/free-solid-svg-icons';
-import { getSession, useSession } from "next-auth/react";
-import { useRouter } from 'next/router';
-import Link from 'next/link';
+import { faEye, faFileDownload, faCalendarCheck, faAnglesLeft, faChevronRight, faAnglesRight, faChevronLeft, faBars } from '@fortawesome/free-solid-svg-icons';
 
 
 
-
-
-
-export const getServerSideProps = async ({ req }) => {
-
+export async function getServerSideProps({ req }) {
     const session = await getSession({ req })
-
-
-
-    if (!session || session?.userRole !== "Reseller") {
+    if (!session || session.userRole != "Reseller") {
         return {
             redirect: {
-                destination: '/',
+                destination: '/Login',
                 permanent: false,
-            }
-
+            },
         }
+
     }
 
-    let data
+    let data = 1
     try {
-        const res = await Axios.get(`/bal/${session?.id}?page=1&limit=10`,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${session?.Token}`
-                }
-            }
-        )
-        data = await res.data.total
+        const res = await Axios.get(`/reseller/${session.id}/?search=&page=1&limit=10`)
+        data = res.data.total
+
     } catch {
         data = 1
     }
 
+
+
+
     return {
         props: {
 
-            AllBal: data,
+            AllProducts: data,
+            initQuery: session.id
         }
     }
 }
 
+const IndeterminateCheckbox = forwardRef(
+    ({ indeterminate, ...rest }, ref) => {
+        const defaultRef = useRef()
+        const resolvedRef = ref || defaultRef
+        const l = useLanguage();
+        useEffect(() => {
+            resolvedRef.current.indeterminate = indeterminate
+        }, [resolvedRef, indeterminate])
 
-const Table = ({ COLUMNS, AllBal }) => {
+        return <div className="w-full    " >
 
-    
+            <label className="cursor-pointer label my-2 ">
+                {l.all}
+                <input type="checkbox" className="toggle toggle-accent focus:outline-0  " ref={resolvedRef}  {...rest} />
+
+            </label>
+            <hr />
+        </div >
+    }
+)
+IndeterminateCheckbox.displayName = 'IndeterminateCheckbox'
+
+
+
+const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
     const session = useSession()
+
+    const router = useRouter()
     const [ReNewData, setReNewData] = useState(false);
+
     const [Search, setSearch] = useState("");
     const [Page, setPage] = useState(1);
     const [Limit, setLimit] = useState(10);
-    const [StartDate, setStartDate] = useState("2000-01-01");
-    const [EndDate, setEndDate] = useState("2500-01-01");
-    const [PageS, setPageS] = useState(Math.ceil(AllBal / Limit));
+
+    const [PageS, setPageS] = useState(Math.ceil(AllProducts / Limit));
+
     const [DataTable, setDataTable] = useState([]);
+    const [TotalBalsData, setTotalBalsData] = useState([]);
+    const [TotalCars, setTotalCars] = useState(AllProducts);
+
+
+
+    const [StartDate, setStartDate] = useState("2000-01-01");
+    const [EndDate, setEndDate] = useState("2100-01-01");
+
+
+
+
+
 
 
     const l = useLanguage();
 
 
 
-
     useEffect(() => {
-
         if (session.status === "authenticated") {
-            const getExpenseData = async () => {
+            const getResellerData = async () => {
+                //$sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2100-01-01"}
+                ///cars/ ? search =& page=1 & limit=3sdate = 2000 - 02 - 01 & edate=2023 - 11 - 17 & arrKu=1 & arrDu=1 & isSold=0
                 try {
-                    const res = await Axios.get(`/bal/${session?.data.id}/?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate || '2000-01-01'}&edate${EndDate || "2500-01-01"}`, {
+                    const res = await Axios.get(`/cars?search=${Search}&page=${Page}&limit=${Limit}$sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2100-01-01"}&arrKu=&arrDu=&isSold=0`, {
                         headers: {
                             "Content-Type": "application/json",
                             'Authorization': `Bearer ${session?.data?.Token}`
                         }
                     },)
+                    const data = await res.data.carDetail
+                    console.log(res.data.carDetail)
 
+                    setDataTable(data)
+                    setTotalCars(res.data.total)
+                } catch (err) {
 
-
-                    setDataTable(res.data.History)
-                    setPageS(Math.ceil(res.data.total / Limit))
-                } catch (e) {
-
-                    setDataTable([])
+                    err?.response?.status == 404 && setDataTable([])
+                    setPageS(1)
                 }
             }
-            getExpenseData()
+            setPageS(Math.ceil(TotalCars / Limit))
+            getResellerData()
             setReNewData(false)
         }
+
     }, [Search, Page, Limit, StartDate, EndDate, ReNewData, session.status])
-
-
-
-
 
 
 
@@ -116,22 +141,22 @@ const Table = ({ COLUMNS, AllBal }) => {
     const table_2_pdf = () => {
 
         const table = document.getElementById('table-to-xls')
-        // const table_th = [...table.rows].map(r => [...r.querySelectorAll('th')].map((th) => (th.textContent) !== "Edit" && (th.textContent) !== "Delete" ? th.textContent : null))
+        let TH = []
+        const table_th = [...table.rows].map(r => [...r.querySelectorAll('th')].map((th) => (TH.push(th.children?.[0].innerText != "Details" ? th.children?.[0].innerText : ""))))
         const table_td = [...table.rows].map((r) => [...r.querySelectorAll('td')].map(td => td.textContent))
 
-        // }
-        const doc = new jsPDF("p", "mm", "a3");
-        doc.text(`Data{ Hawbir }`, 95, 10);
+        const doc = new jsPDF("p", "mm", "a2");
+
+
 
         doc.autoTable({
+            head: [TH],
+            body: table_td,
+
+        })
 
 
-            head: [[`Amount`, " User Id", "Action", "Note", "Date"]],
-            body: table_td
-        });
-
-
-        doc.save("Table.pdf");
+        doc.save("Table_Cars.pdf");
     };
 
 
@@ -141,10 +166,13 @@ const Table = ({ COLUMNS, AllBal }) => {
     const {
 
 
+
         getTableProps,
         getTableBodyProps,
         headerGroups,
         state,
+        allColumns,
+        getToggleHideAllColumnsProps,
         page,
         setPageSize,
         prepareRow,
@@ -153,17 +181,23 @@ const Table = ({ COLUMNS, AllBal }) => {
 
         columns: COLUMNS,
         data: DataTable,
+        // defaultColumn: { Filter: DefaultColumnFilter },
 
     }, useGlobalFilter, useFilters, useGroupBy, useSortBy, useExpanded, usePagination,
 
     );
+
+    // const { globalFilter } = state;
     const { pageIndex, pageSize } = state
 
-
     return (
-        <div className="container mx-auto">
+
+
+        <div className="  container mx-auto  " >
+
             {/* //?   Header  */}
-            <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-2xl p-5">
+            <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-xl p-5">
+
                 <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
 
                     <a href="#my-modal-2" className=" flex  mx-2" ><FontAwesomeIcon className='text-2xl hover:scale-90 mx-1' icon={faBars} /></a>
@@ -199,22 +233,52 @@ const Table = ({ COLUMNS, AllBal }) => {
                         </li>
                     </ul>
                 </div>
+
+
+                <div className="modal" id="my-modal-2">
+                    <div className="modal-box m-2">
+                        <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} />
+                        <div className="max-h-80 scrollbar-hide space-y-2 overflow-auto text-lg font-bold">
+                            {allColumns.map(column => (
+                                <div key={column.id}>
+                                    <div className=" w-full rounded-lg">
+                                        <label className="label cursor-pointer">
+                                            {column.id}
+                                            <input type="checkbox" className="toggle toggle-accent focus:outline-0 " {...column.getToggleHiddenProps()} />
+
+                                        </label>
+                                    </div>
+
+
+                                </div>
+                            ))}
+
+
+                        </div>
+
+                        <div className="modal-action">
+                            <a href="#" className="btn">{l.don}</a>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             {/* //?   Header  */}
 
+            <div className=" overflow-auto  bg-white dark:bg-[#181A1B] rounded-b-xl shadow-xl ">
+                <table id="table-to-xls" className="table table-compact    my-10   " {...getTableProps()}>
 
-            <div className="overflow-x-auto  bg-white dark:bg-[#181A1B] rounded-b-xl   w-full  ">
-
-                <table id="table-to-xls" className="table table-compactmy-10  text-center text-sm    min-w-[1000px] " {...getTableProps()}>
                     <thead className="  ">
                         {headerGroups.map((headerGroups, idx) => (
+
                             <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
                                 <th className='hidden'></th>
-
                                 {headerGroups.headers.map((column, idx) => (
-                                    <th key={idx} className="p-4 m-44 w-[400px] py-3 font-normal normal-case  " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
-                                        <span>
-                                            {column.isSorted ? (column.isSortedDesc ? " ↑ " : " 🡓 ") : ""}
+
+                                    < th key={idx} className={`py-3 text-center font-normal normal-case ${true && "min-w-[200px]"}`} {...column.getHeaderProps(column.getSortByToggleProps())} >
+                                        <span  >{column.render('Header')} </span>
+                                        <span  >
+                                            {column.isSorted ? (column.isSortedDesc ? "<" : ">") : ""}
                                         </span>
                                     </th>
                                 ))}
@@ -223,48 +287,46 @@ const Table = ({ COLUMNS, AllBal }) => {
                         )
                         }
                     </thead >
-
-
                     <tbody {...getTableBodyProps()}>
+
                         {page.map((row, idx) => {
+
                             prepareRow(row)
                             return (
                                 <tr key={idx}   {...row.getRowProps()} >
                                     <td className='hidden'></td>
+
                                     {row.cells.map((cell, idx) => {
                                         return (
-                                            <td key={idx} className="dark:bg-[#181A1B]  text-center   py-2  " {...cell.getCellProps()}>
-
-                                                {cell.column.id === 'amount' && (
-                                                    <>
-                                                        {cell.value >= 0 ? <div className="text-green-500">{cell.value}</div> : <div className="text-red-500">{cell.value}</div>
-                                                        } </>
-                                                )}
-
-                                                {cell.column.id === 'isSoled' && (
-                                                    <>
 
 
-                                                        {cell.value == true ?
-                                                            <div className="text-green-200">Yes</div> : cell.value == false ? <div className="text-red-500">No</div> : null}
+                                            <td key={idx} className="dark:bg-[#181A1B] text-center py-2" {...cell.getCellProps()}>
+
+
+                                                {cell.render('Cell')}
 
 
 
+                                                {cell.column.id === 'isSold' && (
 
-                                                    </>
+                                                    cell.value === true ?
+                                                        // <FontAwesomeIcon icon={faCheck} className="text-green-500" />
+                                                        <span className="text-green-500">Yes</span>
+                                                        :
+                                                        // <FontAwesomeIcon icon={faTimes} className="text-red-500" />
+                                                        <span className="text-red-500">No</span>
 
                                                 )}
 
-                                                {cell.column.id === 'carId' && (
-                                                    <>
+                                                {cell.column.id === "Details" &&
+                                                    <Link href={`/Reseller/details/${row.original._id}`}><a><label htmlFor="my-modal-3" className="m-0" >
+                                                        <FontAwesomeIcon icon={faEye} className="text-2xl cursor-pointer text-blue-700" />
+                                                    </label></a></Link>
 
-                                                        <Link href={`/Reseller/details/${cell.value?._id}`}><a className="text-orange-500">{cell.value?.modeName || cell.value?.VINNumber || cell.value?.id}</a></Link>
-                                                    </>
-
-                                                )
                                                 }
-                                                {
-                                                    (cell.column.id === 'amount' || cell.column.id === 'carId') || cell.render('Cell')
+
+                                                {cell.column.id === "123" &&
+                                                    <div>{Math.floor(cell.row.id) + 1}</div>
                                                 }
 
 
@@ -370,59 +432,148 @@ const Table = ({ COLUMNS, AllBal }) => {
                 </div >
                 {/* //?    botom */}
 
-
             </div >
         </div >
+
     );
+
+
 }
 
 
 
+const Reseller = ({ AllProducts, initQuery }) => {
 
-const Expense = ({ SessionID, AllBal }) => {
 
     const session = useSession()
-    const router = useRouter()
-
-
-
     const l = useLanguage();
+
 
     const COLUMNS =
         useMemo(() =>
             [
 
 
+                // {
+                //     Header: "123",
+
+                //     disableFilters: true,
+
+
+                // },
                 {
                     Header: () => {
                         return (
 
-                            // l.amount
-                            "Amount"
+                            l.price
                         )
                     },
 
                     disableFilters: true,
 
-                    accessor: 'amount',
+                    accessor: 'price',
+
+
+                },
+                {
+                    Header: () => {
+                        return (
+
+                            l.color
+                        )
+                    },
+
+                    disableFilters: true,
+
+                    accessor: 'color',
+
+
+                },
+                // {
+                //     Header: () => {
+                //         return (
+
+                //             l.date
+                //         )
+                //     },
+
+                //     disableFilters: true,
+
+                //     accessor: 'date',
+
+
+                // },
+                {
+                    Header: () => {
+                        return (
+
+                            l.isSold
+                        )
+                    },
+
+                    disableFilters: true,
+
+                    accessor: 'isSold',
+
+
+                },
+                {
+                    Header: () => {
+                        return (
+
+                            l.mileage
+                        )
+                    },
+
+                    disableFilters: true,
+
+                    accessor: 'mileage',
+
+
+                },
+                {
+                    Header: () => {
+                        return (
+
+                            l.namecar
+                        )
+                    },
+
+                    disableFilters: true,
+
+                    accessor: 'modeName',
+
+
+                },
+                {
+                    Header: () => {
+                        return (
+
+                            l.modelyear
+                        )
+                    },
+
+                    disableFilters: true,
+
+                    accessor: 'model',
 
 
                 },
 
 
 
-
                 {
                     Header: () => {
+                        return (
 
-                        // return l.action;
-                        return "Action"
+                            l.tire
+                        )
                     },
 
-                    accessor: 'action',
-                    disableFilters: false,
-                    // Filter: DateRangeColumnFilter,
-                    // filter: dateBetweenFilterFn,
+                    disableFilters: true,
+
+                    accessor: 'tire',
+
 
                 },
 
@@ -430,12 +581,29 @@ const Expense = ({ SessionID, AllBal }) => {
                     Header: () => {
                         return (
 
-                            "Car "
+                            l.tobalance
                         )
                     },
 
-                    accessor: 'carId',
                     disableFilters: true,
+
+                    accessor: 'tobalance',
+
+
+                },
+
+
+                {
+                    Header: () => {
+                        return (
+
+                            l.tocar
+                        )
+                    },
+
+                    disableFilters: true,
+
+                    accessor: 'tocar',
 
 
                 },
@@ -444,107 +612,90 @@ const Expense = ({ SessionID, AllBal }) => {
                     Header: () => {
                         return (
 
-                            "Is Soled "
+                            l.wheeldrivetype
                         )
                     },
 
-                    accessor: 'isSoled',
+                    disableFilters: true,
+
+                    accessor: 'wheelDriveType',
+
+
+                },
+
+
+
+
+
+
+
+
+                {
+                    Header: "Details",
+
                     disableFilters: true,
 
 
                 },
-                {
-                    Header: () => {
-
-                        // return l.date;
-                        return "Note";
-                    },
-
-                    accessor: 'note',
-                    disableFilters: false,
-                    // Filter: DateRangeColumnFilter,
-                    // filter: dateBetweenFilterFn,
-
-                },
-
-                {
-                    Header: () => {
-
-                        // return l.date;
-                        return "Date";
-                    },
-
-                    accessor: 'actionDate',
-                    disableFilters: false,
-                    // Filter: DateRangeColumnFilter,
-                    // filter: dateBetweenFilterFn,
-
-                },
 
 
 
-
-            ], [SessionID]
+            ], [AllProducts]
         )
 
 
 
+
+
     if (session.status === "loading") {
-        return (<>
+        return <div className="flex justify-center items-center h-screen">
             <Head>
-                <title >{l.mybalance}</title>
-                <meta name="Dashboard" content="initial-scale=1.0, width=device-width all data " />
+                <title >{l.loading}</title>
             </Head>
-            <div className="text-center">
+            <div className="">
                 {l.loading}
             </div>
-        </>)
+        </div>
     }
 
     if (session.status === "unauthenticated") {
-        return router.push("/")
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <Head>
+                    <title >{l.unauthenticated}</title>
+                </Head>
+                <div className="text-2xl text-red-500">Unauthenticated</div>
+            </div>
+        )
     }
 
     if (session.status === "authenticated") {
         return (
 
 
-            < >
+            <div className="" >
                 <Head>
-                    <title >{l.mybalance}</title>
+                    <title >{l.reseler}</title>
                 </Head>
 
+                {AllProducts ?
+                    <ResellerTable COLUMNS={COLUMNS} AllProducts={AllProducts} initQuery={initQuery} />
+
+
+                    : <div className="m-auto top-[50%] -translate-y-[50%] absolute -translate-x-[50%] left-[50%] lg:left-[60%] ">
+                        < Image alt="NoCar" src="/No_Cars.svg" width={400} height={400} quality={'1'} />
+                    </div>
+                }
 
 
 
 
-                <Table COLUMNS={COLUMNS} SessionID={SessionID} AllBal={AllBal} />
-
-
-
-
-
-                <ToastContainer
-                    draggablePercent={60}
-                />
-
-
-            </ >
+            </div>
         );
     }
 }
 
-
-
-Expense.Layout = ResellerLayout;
-
-
-
-
-export default Expense;
-
-
-
-
+Reseller.Layout = ResellerLayout;
+export default Reseller;
 
 

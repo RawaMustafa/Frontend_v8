@@ -63,6 +63,7 @@ const NewCars = ({ SessionID }) => {
     const [UserQarz, setUserQarz] = useState({})
     const [pictureandvideorepair, setPictureandvideorepair] = useState([])
     const [pictureandvideodamage, setPictureandvideodamage] = useState([])
+    const [pictureShow, setPictureShow] = useState([])
     const [CarDamage, setCarDamage] = useState([])
     const [Note, setNote] = useState('')
     const [QarzUserId, setQarzUserId] = useState("")
@@ -741,18 +742,20 @@ const NewCars = ({ SessionID }) => {
 
             for (let i = 0; i < pictureandvideorepair.length; i++) {
 
-                FormDataCar.append("Pictureandvideorepair", pictureandvideorepair[i], `image${i}.JPEG`);
+                FormDataCar.append("Pictureandvideorepair", pictureandvideorepair[i], `image${i}.jpeg`);
 
             }
 
 
             for (let i = 0; i < pictureandvideodamage.length; i++) {
 
-                FormDataCar.append("Pictureandvideodamage", pictureandvideodamage[i], "image.JPEG");
+                FormDataCar.append("Pictureandvideodamage", pictureandvideodamage[i], "image.jpeg");
 
             }
 
             CarDamage != '' && FormDataCar.append("CarDamage", CarDamage, "image.png");
+            // pictureShow != '' && FormDataCar.append("pictureShow", pictureShow, "image.png");
+            // console.log(pictureShow)
 
             //! change  data and Image to FormData ----------------------------------
 
@@ -1018,11 +1021,15 @@ const NewCars = ({ SessionID }) => {
                         </div>
 
 
+                        {/* <h1 className="mt-5 text-center">{l.show}</h1>
+                        <div className="flex  justify-center">
+                            <input name='Pictureandvideodamage' onChange={(e) => { setPictureShow(e.target.files) }} type="file" placeholder={l.pictureandvideoofcardamage} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                        </div> */}
+
                         <h1 className="mt-5 text-center">{l.pictureandvideoofcardamage}</h1>
                         <div className="flex  justify-center">
                             <input multiple name='Pictureandvideodamage' onChange={(e) => { setPictureandvideodamage(e.target.files) }} type="file" placeholder={l.pictureandvideoofcardamage} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
-
 
 
 
@@ -1078,13 +1085,13 @@ const NewCars = ({ SessionID }) => {
 
                         <h1 className="mt-5 text-center">{l.date}</h1>
                         <div className="flex  justify-center">
-                            <input name='Date' onChange={(e) => { HandleAddCars(e) }} type="date" placeholder="YYYY-MM-DD" defaultValue={"2022-01-01"} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input name='Date' onChange={(e) => { HandleAddCars(e) }} type="date" placeholder="YYYY-MM-DD" defaultValue={"2022-01-01"} className="input  input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
                         <h1 className="mt-5 text-center">{l.arive}</h1>
-                        <div className="flex  justify-center">
-                            <select name='Arrived' required defaultValue={"Select"} onChange={(e) => { HandleAddCars(e) }} className="select select-info input input-bordered  w-[200%] mt-5 max-w-xl mb-8">
+                        <div className="flex  justify-center   ">
+                            <select name='Arrived' required defaultValue={"Select"} onChange={(e) => { HandleAddCars(e) }}className="input  select-info w-[200%] mt-5 max-w-xl mb-8">
                                 <option disabled value={"Select"}>{l.select}</option>
                                 <option value={true}>{l.yes}</option>
                                 <option value={false}>{l.no}</option>
