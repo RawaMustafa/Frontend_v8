@@ -118,7 +118,7 @@ const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
                         }
                     },)
                     const data = await res.data.carDetail
-                    console.log(res.data.carDetail)
+
 
                     setDataTable(data)
                     setTotalCars(res.data.total)
@@ -386,6 +386,7 @@ const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
                                         setLimit((e.target.value))
                                         setPageSize(Number(e.target.value)
                                         )
+                                        setPage(1)
                                     }}
 
                                     value={pageSize}>

@@ -12,6 +12,7 @@ import { faAlignLeft, faMoon, faSun, faYinYang, faGlobe } from '@fortawesome/fre
 import { useRouter } from "next/router";
 
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 
 
@@ -28,7 +29,7 @@ const Header = () => {
     const { theme, setTheme } = useTheme(null)
 
 
-    const patata = (lang) => {
+    const ChangeLang = (lang) => {
         router.push(router.asPath, router.asPath, { locale: lang })
     }
 
@@ -100,10 +101,9 @@ const Header = () => {
     return (
 
         //  transition-all duration-300
-        <div className="container  ">
-            <div className="navbar z-[60] flex justify-between lg:justify-end lg:w-[calc(100%-17rem)] max-w-8xl lg:ml-64  rtl:lg:mr-64 mt-2 fixed  bg-opacity-5   backdrop-blur-lg bg-slate-300 rounded-2xl  bg-base-1 ">
-
-
+        <div className=" ">
+            <div className="hidden  standalone:block   bg-base-content  dark:bg-[#181a1b] backdrop:bg-white  w-full h-10 fixed z-50"></div>
+            <div className="navbar z-[60] flex justify-between lg:justify-end lg:w-[calc(100%-17rem)] max-w-8xl lg:ml-64  rtl:lg:mr-64 mt-2 fixed  bg-opacity-5 standalone:mt-10  backdrop-blur-xl bg-blue-900  rounded-2xl  ">
 
 
                 <FontAwesomeIcon icon={faAlignLeft}
@@ -123,25 +123,25 @@ const Header = () => {
 
                 <div className="navbar-end flex ltr:mr-10 rtl:ml-5 ltr:space-x-10   ">
 
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left w-8  ">
+                    <div className="dropdown   rtl:dropdown-right ltr:dropdown-left w-8  " data-dropdown-toggle="dropdownUsers"    >
                         <label tabIndex="0" className="text-3xl  w-20 cursor-pointer active:text-2xl  active:outline-0 ">
                             <FontAwesomeIcon icon={faGlobe} className="active:scale-[.85] text-4xl p-2 hover:bg-slate-300 hover:dark:bg-slate-700 rounded-full hover:duration-300 transition ease-in-out    hover:rotate-90   " />
 
                         </label>
 
-                        <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-44 text-center border">
-                            <li> <a className="" value="ku" onClick={() => {
+                        <ul tabIndex="0" id="Lang" className="dropdown-content on    menu p-2 shadow bg-base-100 rounded-box w-44 text-center border">
+                            <li> <a className="" value="ku" onClick={(e) => {
                                 setLang("ku")
                                 // router.reload()
-                                patata('ku')
+                                ChangeLang('ku')
+                                document.getElementById("Lang").hidden = true
 
                             }}><Image alt="FlaKu" className="active:scale-[.85] text-5xl p-2 hover:bg-slate-300 hover:dark:bg-slate-700  " src="/flag_kurd.png" height={35} width={38} /> كوردی</a> </li>
                             <li> <a className="" value="en" onClick={() => {
                                 setLang("en")
-                                // router.reload()
-                                // Cookies.set('foo', 'ff')
+                                ChangeLang('en')
+                                document.getElementById("Lang").hidden = true
 
-                                patata('en')
                             }}><Image alt="FlaEn" className="active:scale-[.85] text-5xl p-2 hover:bg-slate-300 hover:dark:bg-slate-700 " src="/flag_english.png" height={35} width={35} />English</a></li>
                         </ul>
 
@@ -155,9 +155,9 @@ const Header = () => {
 
                         </label>
 
-                        <ul tabIndex="0" className="dropdown-content   p-2 shadow bg-base-100 rounded-box w-44 text-center m-0">
-                            <div className="  flex items-center justify-around text-2xl cursor-pointer m-1 transition ease-in-out hover:scale-110   duration-300 " viewBox="0 0 24 24" onClick={() => { setTheme('light'); setThemee("light") }} > <FontAwesomeIcon icon={faSun} className=" transition ease-in-out      hover:scale-110   duration-300  text-3xl hover:rotate-45   " />  Light </div>
-                            <div className="  flex items-center justify-around text-2xl cursor-pointer transition ease-in-out  hover:scale-110   duration-300   " viewBox="0 0 24 24" onClick={() => { { setTheme('dark'); setThemee("dark") } }}  ><FontAwesomeIcon icon={faMoon} id="moon" className="transition ease-in-out    hover:scale-110   duration-300  text-3xl hover:rotate-45" />  Dark </div>
+                        <ul id="Mode" tabIndex="0" className="dropdown-content  p-2 shadow bg-base-100 rounded-box w-44 text-center m-0">
+                            <div className="  flex items-center justify-around text-2xl cursor-pointer m-1 transition ease-in-out hover:scale-110   duration-300 " viewBox="0 0 24 24" onClick={() => { setTheme('light'); setThemee("light"); }} > <FontAwesomeIcon icon={faSun} className=" transition ease-in-out      hover:scale-110   duration-300  text-3xl hover:rotate-45   " />  Light </div>
+                            <div className="  flex items-center justify-around text-2xl cursor-pointer transition ease-in-out  hover:scale-110   duration-300   " viewBox="0 0 24 24" onClick={() => { { setTheme('dark'); setThemee("dark") }; }}  ><FontAwesomeIcon icon={faMoon} id="moon" className="transition ease-in-out    hover:scale-110   duration-300  text-3xl hover:rotate-45" />  Dark </div>
 
                         </ul>
 

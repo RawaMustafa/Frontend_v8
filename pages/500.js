@@ -9,7 +9,7 @@ const Error = () => {
 
     setTimeout(() => {
 
-        router.back()
+        router.push("/")
 
     }, 2000)
 

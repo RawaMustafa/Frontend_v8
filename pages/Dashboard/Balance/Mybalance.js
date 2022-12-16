@@ -215,15 +215,15 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                     const res = await Axios.get(`/bal/?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate || '2000-01-01'}&edate${EndDate || "2500-01-01"}`, auth
                     )
 
-                    console.log(res.data)
+                    setDataTable(res.data.History)
+                    setPageS(Math.ceil(res.data.total[0].total / Limit))
+
 
                     const users = await Axios.get(`/users/Reseller/`, auth)
-                    setDataTable(res.data.History)
                     setTotalUsers(users.data.userDetail)
-                    setPageS(Math.ceil(res.data.total[0].total / Limit))
                 }
                 catch {
-                    setDataTable([])
+                    // setDataTable([])
                 }
             }
             getExpenseData()
@@ -246,7 +246,26 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
             }
         }
 
-        console.log("Data= ", Data)
+        if (TransferUser != "none") {
+            const users = await Axios.get(`/users/detail/${TransferUser?.split?.(",")?.[0]}`, auth,)
+            const UsersBalance = users.data.userDetail.TotalBals
+
+            try {
+
+                await Axios.patch("/users/" + TransferUser?.split?.(",")?.[0], {
+                    TotalBals: UsersBalance - Data.Amount
+                }, auth,)
+
+                toast.success("Balance Adeed Successfully");
+
+            }
+            catch {
+                toast.error("Something Went Wrong*");
+            }
+
+        }
+
+
         const users = await Axios.get(`/users/detail/${SessionID}`, auth,)
 
         const UsersBalance = users.data.userDetail.TotalBals
@@ -259,8 +278,8 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
             await Axios.post("/bal/", {
                 amount: Data.Amount,
                 action: TransferUser == "none" ? "Balance" : "Transfer",
-                userId: TransferUser == "none" ? SessionID : TransferUser?.[0],
-                "note": Data.note,
+                userId: TransferUser == "none" ? SessionID : TransferUser.split(",")?.[0],
+                note: Data.note,
                 isSoled: false
 
             }, auth,)
@@ -495,48 +514,10 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                                 )}
 
                                                 {
-                                                    cell.column.id !== "Delete" &&
-                                                        cell.column.id !== "Edit" &&
-                                                        row.original._id == Idofrow?.[0] ?
-                                                        <>
-                                                            {cell.column.id == "amount" && <input defaultValue={row.original.amount}
-                                                                ref={CRef}
-                                                                onChange={(event) => { handleSaveExpenseData(event) }}
-                                                                onClick={(event) => { handleSaveExpenseData(event) }}
-                                                                onFocus={() => { setCFocus(true) }}
-                                                                onBlur={() => { setCFocus(false) }}
-
-                                                                type="number" placeholder={cell.column.id} name='amount' className="w-full max-w-xs input input-bordered input-warning" />}
-
-                                                            {cell.column.id == "action" &&
-                                                                <input name='action'
-                                                                    defaultValue={row.original.action}
-                                                                    ref={ACRef}
-                                                                    type="text"
-                                                                    onChange={(event) => { handleSaveExpenseData(event) }}
-                                                                    onClick={(event) => { handleSaveExpenseData(event) }}
-                                                                    onFocus={() => { setDEFocus(true) }}
-                                                                    onBlur={() => { setDEFocus(false) }}
-
-                                                                    className="w-full max-w-xs input input-warning" placeholder={cell.column.id}></input>}
-                                                            {cell.column.id == "actionDate" && <input disabled
-                                                                defaultValue={row.original.actionDate}
-                                                                ref={DRef}
-                                                                onChange={(event) => { handleSaveExpenseData(event) }}
-                                                                onClick={(event) => { handleSaveExpenseData(event) }}
-                                                                onFocus={() => { setDFocus(true) }}
-                                                                onBlur={() => { setDFocus(false) }}
-
-                                                                name='actionDate' type="date" placeholder={l.date} className="w-full max-w-xl input input-warning " />}
-                                                        </>
-                                                        :
-                                                        (cell.column.id != 'userId' && cell.column.id != 'amount' && cell.column.id != 'carId') && cell.render('Cell')
-
-
+                                                    (cell.column.id != 'userId' && cell.column.id != 'amount' && cell.column.id != 'carId') && cell.render('Cell')
                                                 }
 
                                             </td>
-
                                         )
                                     })}
                                 </tr>
@@ -592,6 +573,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                         setLimit((e.target.value))
                                         setPageSize(Number(e.target.value)
                                         )
+                                        setPage(1)
                                     }}
 
                                     value={pageSize}>

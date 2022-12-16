@@ -77,9 +77,9 @@ export const en = {
     cash: "Cash",
     select: "Select",
     back: "Back",
-    don: "Don",
+    don: "Done",
     none: "None",
-    price: "Price",
+    price: "Sell Price",
     uslocation: "USA Location",
     isSold: "Is Sold",
 
@@ -203,7 +203,12 @@ export const en = {
     borrowing: "Borrow",
     borrowmsg: "sure, you want to Borrow this",
     transfer: "Transfer",
-    mycars: "My Cars"
+    mycars: "My Cars",
+    arivedtoku: "Arrived to Kurdistan",
+    arivedtodu: "Arrived to Dubai",
+    damageimg: "Damaged Image",
+    repairimg: "Repaired Image"
+
 
 
 

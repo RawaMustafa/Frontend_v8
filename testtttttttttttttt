@@ -1,0 +1,1 @@
+npx pwa-asset-generator public/BGImage.jpg public -m public/site.webmanifest --padding "calc(50vh -25%) calc(50vw - 25%)" -b "linear-gradient(135deg, #2FB9E4, #181a1b)" -q 100 -i public/asset-generator-changes.html --favicon

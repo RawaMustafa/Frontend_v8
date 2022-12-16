@@ -7,15 +7,14 @@ const AdminLayout = ({ children }) => {
 
     return (
 
-        < >
+        <div className="">
             <Header />
             <div className="rtl:lg:mr-64   ltr:lg:mr-5  rtl:lg:ml-10 ltr:lg:ml-64  pt-28  scrollbar-hide  ">
-
                 {children}
             </div>
 
             <Sidebar />
-        </>
+        </div>
     );
 }
 export default AdminLayout;

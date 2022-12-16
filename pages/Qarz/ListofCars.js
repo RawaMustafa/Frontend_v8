@@ -339,7 +339,6 @@ const CarsTable = ({ COLUMNS, AllProducts, initQuery }) => {
                     // &sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2200-01-01"}
                     const one = `/qarz/${initQuery}?search=${Search}&page=${Page}&limit=${Limit}`
 
-
                     const response1 = await Axios.get(one, Auth).then((res) => {
                         return res
                     }).catch(() => {
@@ -348,16 +347,12 @@ const CarsTable = ({ COLUMNS, AllProducts, initQuery }) => {
 
 
                     await axios.all([response1]).then(
-
                         axios.spread((...responses) => {
                             setDataTable(responses?.[0]?.data.qarzList)
-                            TotalCars(responses?.[0]?.data.total)
+                            setTotalCars(responses?.[0]?.data.total)
 
                         })).catch(() => {
-
                             setDataTable([])
-
-
                         })
 
 
@@ -545,7 +540,7 @@ const CarsTable = ({ COLUMNS, AllProducts, initQuery }) => {
                                         return (
 
 
-                                            <td key={idx} className="  text-center   py-3" {...cell.getCellProps()}>
+                                            <td key={idx} className="dark:bg-[#181A1B]  text-center   py-3" {...cell.getCellProps()}>
 
 
                                                 {(cell.column.id != 'carId') && cell.render('Cell')}
@@ -553,7 +548,7 @@ const CarsTable = ({ COLUMNS, AllProducts, initQuery }) => {
                                                 {cell.column.id === 'carId' && (
 
                                                     <>
-                                                        {/* <Link href={`/Dashboard/Balance/ListofOwe/${router.query._id}/details/${row.original.carId.id}?Qarz=${row.original.id}`}><a>{cell.value?.modeName || cell.value?.VINNumber || cell.value?.id}</a></Link> */}
+                                                        <Link href={`/Dashboard/Balance/ListofOwe/${router.query._id}/details/${row.original.carId.id}?Qarz=${row.original.id}`}><a>{cell.value?.modeName || cell.value?.VINNumber || cell.value?.id}</a></Link>
                                                     </>
 
                                                 )
@@ -561,6 +556,7 @@ const CarsTable = ({ COLUMNS, AllProducts, initQuery }) => {
                                                 {cell.column.id === 'model' && (
 
                                                     <>
+
                                                         <span className="">{row.original.carId.model}</span>
 
                                                     </>
@@ -587,11 +583,10 @@ const CarsTable = ({ COLUMNS, AllProducts, initQuery }) => {
                                                 }
                                                 {cell.column.id === 'isSold' && (
 
-                                                    <div>d</div>
-                                                    // row.original.carId.isSold === true ?
-                                                    //     <span className="text-green-500">Yes</span>
-                                                    //     :
-                                                    //     <span className="text-red-500">No</span>
+                                                    row.original.carId.isSold === true ?
+                                                        <span className="text-green-500">Yes</span>
+                                                        :
+                                                        <span className="text-red-500">No</span>
 
 
                                                 )
@@ -675,6 +670,7 @@ const CarsTable = ({ COLUMNS, AllProducts, initQuery }) => {
                                         setLimit((e.target.value))
                                         setPageSize(Number(e.target.value)
                                         )
+                                        setPage(1)
                                     }}
 
                                     value={pageSize}>

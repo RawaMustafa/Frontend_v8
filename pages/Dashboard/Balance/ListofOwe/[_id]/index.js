@@ -98,7 +98,6 @@ const Details = ({ initQuery, AllQarz }) => {
                     }
                     const one = `/qarz/${initQuery._id}/?search=${Search}&page=${Page}&limit=${Limit}`
                     const tow = `/qarz/amount/${initQuery._id}`
-
                     const response1 = await Axios.get(one, Auth).then((res) => {
 
                         return res
@@ -107,11 +106,12 @@ const Details = ({ initQuery, AllQarz }) => {
 
                     });
                     const response2 = await Axios.get(tow, Auth).then((res) => {
-
                         return res
+
                     }).catch(() => {
 
                     });
+
 
                     await axios.all([response1, response2]).then(
 
@@ -1473,7 +1473,7 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
                                         return (
 
 
-                                            <td key={idx} className="  text-center   py-2" {...cell.getCellProps()}>
+                                            <td key={idx} className="dark:bg-[#181a1b]  text-center   py-2" {...cell.getCellProps()}>
 
 
                                                 {cell.column.id === 'isPaid' && row.original._id !== Idofrow?.[0] && (
@@ -1608,6 +1608,7 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
                                         setLimit((e.target.value))
                                         setPageSize(Number(e.target.value)
                                         )
+                                        setPage(1)
                                     }}
 
                                     value={pageSize}>
@@ -2104,6 +2105,7 @@ const CarsTable = ({ COLUMNS, AllProducts, initQuery }) => {
                                         setLimit((e.target.value))
                                         setPageSize(Number(e.target.value)
                                         )
+                                        setPage(1)
                                     }}
 
                                     value={pageSize}>
@@ -2354,7 +2356,7 @@ const TableBal = ({ COLUMNS, AllBal }) => {
                                     {row.cells.map((cell, idx) => {
                                         return (
 
-                                            <td key={idx} className="  text-center   py-3 overflow-auto" {...cell.getCellProps()}>
+                                            <td key={idx} className="dark:bg-[#181a1b]  text-center   py-3 overflow-auto" {...cell.getCellProps()}>
 
 
 
@@ -2447,6 +2449,7 @@ const TableBal = ({ COLUMNS, AllBal }) => {
                                         setLimit((e.target.value))
                                         setPageSize(Number(e.target.value)
                                         )
+                                        setPage(1)
                                     }}
 
                                     value={pageSize}>

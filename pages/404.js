@@ -4,12 +4,12 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 const Error = () => {
 
-    const router = useRouter()
     const l = useLanguage();
+    const router = useRouter()
 
     setTimeout(() => {
 
-        router.back()
+        router.push("/")
 
     }, 2000)
 

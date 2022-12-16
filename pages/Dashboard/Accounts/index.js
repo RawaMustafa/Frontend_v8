@@ -458,12 +458,12 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                 'Authorization': `Bearer ${session?.data?.Token}`
             },
         }
-        console.log(Deletestate[0])
+
 
         const UDetails = await Axios.get(`/users/detail/${Deletestate?.[0]}`, auth)
         const BalanceUser = UDetails.data.userDetail.TotalBals
         const Cars = UDetails.data?.Cars
-        console.log(UDetails.data)
+
 
         if (Deletestate?.[3] == "Reseller" && BalanceUser == 0 && Cars == 0) {
 
@@ -789,8 +789,6 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
         setPageS(Math.ceil(TotalUsers / Limit))
         getUsers()
         setReNewData(false)
-
-        console.clear("patata")
 
     }, [Search, Limit, Page, changeNumber, ReNewData, session?.data?.Token]);
 
@@ -1237,6 +1235,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                             setLimit((e.target.value))
                                             setPageSize(Number(e.target.value)
                                             )
+                                            setPage(1)
                                         }}
 
                                         value={pageSize}>
@@ -1605,7 +1604,6 @@ const Accounts = ({ AllUsers, SessionID }) => {
             <>
                 <Head>
                     <title >{l.account}</title>
-                    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
                 </Head>
                 <div className="w-100 h-100 text-center">
                     {l.loading}
@@ -1625,7 +1623,6 @@ const Accounts = ({ AllUsers, SessionID }) => {
             <>
                 <Head>
                     <title >{l.account}</title>
-                    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
                 </Head>
 
                 <Table COLUMNS={COLUMNS} AllUsers={AllUsers} SessionID={SessionID} />

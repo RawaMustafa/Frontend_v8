@@ -1,15 +1,15 @@
 import axios from "axios";
 import { getSession, signOut } from 'next-auth/react'
 
-export const baseURL = "http://84.46.255.116/_API/uploads/"
+export const baseURL = "http://localhost:4000/_API/uploads/"
 
 const Axios = () => {
 
     const Axios = axios.create({
 
-        baseURL: "http://84.46.255.116/_API/",
+        baseURL: "http://localhost:4000/_API/",
         headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
         },
 
     })

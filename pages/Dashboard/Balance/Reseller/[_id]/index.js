@@ -375,6 +375,7 @@ const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
                                         setLimit((e.target.value))
                                         setPageSize(Number(e.target.value)
                                         )
+                                        setPage(1)
                                     }}
 
                                     value={pageSize}>
@@ -457,6 +458,19 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
     //FIXME -  pagenation notworking
+
+
+
+    // const users = await Axios.get(`/users/detail/${SessionID}`, {
+    //     headers: {
+    //         "Content-Type": "application/json",
+
+    //         'Authorization': `Bearer ${session?.data?.Token}`
+
+    //     }
+    // },)
+    // setUsersBalance(users.data.userDetail.TotalBals)
+
     useEffect(() => {
 
         if (session.status === "authenticated") {
@@ -470,29 +484,20 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                         }
                     },
                     )
-                    const users = await Axios.get(`/users/detail/${SessionID}`, {
-                        headers: {
-                            "Content-Type": "application/json",
+                    setDataTable(res.data.History)
 
-                            'Authorization': `Bearer ${session?.data?.Token}`
-
-                        }
-                    },)
-                    setUsersBalance(users.data.userDetail.TotalBals)
-                    setDataTable(res.data.History.reverse())
-                    setTotalUsers(res.data.total?.[0].total)
-
-                    setPageS(Math.ceil(res.data.total?.[0].total / Limit))
+                    setTotalUsers(res.data.total)
+                    setPageS(Math.ceil(res.data.total / Limit))
                 }
                 catch {
-                    // setDataTable([])
+                    setDataTable([])
                     setTotalUsers(0)
                 }
             }
             getExpenseData()
             setReNewData(false)
         }
-    }, [Search, Page, Limit, StartDate, EndDate, ReNewData, session.status])
+    }, [Search, Page, PageS, Limit, StartDate, EndDate, ReNewData, session.status])
 
 
 
@@ -523,7 +528,6 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
     const {
-
 
 
         getTableProps,
@@ -583,10 +587,9 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
                                             {cell.column.id === 'amount' && (
                                                 <>
-                                                    {cell.value * -1 >= 0 ? <div className="text-green-500">{cell.value && cell.value * -1}</div> : <div className="text-red-500">{cell.value && cell.value * -1}</div> | "0"}
+                                                    {cell.value * -1 >= 0 ? <div className="text-green-500">{cell.value && cell.value * -1}</div> : <div className="text-red-500">{cell.value && cell.value * -1}</div>}
                                                 </>
                                             )}
-
                                             {cell.column.id === 'isSoled' && (
                                                 <>
                                                     {cell.value == true ?
@@ -665,6 +668,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                     setLimit((e.target.value))
                                     setPageSize(Number(e.target.value)
                                     )
+                                    setPage(1)
                                 }}
 
                                 value={pageSize}>
@@ -780,21 +784,21 @@ const Reseller = ({ AllProducts, initQuery }) => {
 
 
                 },
-                {
-                    Header: () => {
-                        return (
+                // {
+                //     Header: () => {
+                //         return (
 
-                            // l.date
-                            "Date"
-                        )
-                    },
+                //             // l.date
+                //             "Date"
+                //         )
+                //     },
 
-                    disableFilters: true,
+                //     disableFilters: true,
 
-                    accessor: 'date',
+                //     accessor: 'date',
 
 
-                },
+                // },
                 {
                     Header: () => {
                         return (
@@ -980,19 +984,19 @@ const Reseller = ({ AllProducts, initQuery }) => {
 
                 },
 
-                {
-                    Header: () => {
-                        return (
+                // {
+                //     Header: () => {
+                //         return (
 
-                            "Is Soled "
-                        )
-                    },
+                //             "Is Soled "
+                //         )
+                //     },
 
-                    accessor: 'isSoled',
-                    disableFilters: true,
+                //     accessor: 'isSoled',
+                //     disableFilters: true,
 
 
-                },
+                // },
                 {
                     Header: () => {
 
@@ -1057,7 +1061,6 @@ const Reseller = ({ AllProducts, initQuery }) => {
 
                     <select
                         onChange={(e) => {
-                            console.log(e.target.value)
                             setPage(e.target.value)
                         }}
                         className="select select-info lg:w-80    focus:outline-0  ">

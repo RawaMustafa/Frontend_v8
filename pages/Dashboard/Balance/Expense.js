@@ -221,7 +221,7 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
         getExpenseData()
         setReNewData(false)
 
-    }, [Search, Page, Limit, StartDate, EndDate, ReNewData])
+    }, [Search, Page, Limit, StartDate, EndDate, ReNewData, session?.data?.Token])
 
 
 
@@ -262,8 +262,9 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
                     await Axios.post("/bal/",
                         {
                             amount: -donebalance,
-                            action: DataUpdate.DESC,
-                            userId: SessionID
+                            action: "Updated",
+                            userId: SessionID,
+                            note: DataUpdate.DESC,
 
                         }, auth)
 
@@ -317,8 +318,9 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
                 await Axios.post("/bal/",
                     {
                         amount: Deletestate?.[1],
-                        action: Deletestate?.[2],
-                        userId: SessionID
+                        action: "Deleted",
+                        userId: SessionID,
+                        note: Deletestate?.[2],
                     }, auth)
 
 
@@ -385,8 +387,9 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
                         await Axios.post("/bal/",
                             {
                                 amount: -Data.cost,
-                                action: Data.DESC,
-                                userId: SessionID
+                                action: "Espense",
+                                userId: SessionID,
+                                note: Data.DESC
                             }, auth)
 
                         toast.success("Data Adeed Successfully");
@@ -765,6 +768,7 @@ const Table = ({ COLUMNS, AllExpense, SessionID }) => {
                                         setLimit((e.target.value))
                                         setPageSize(Number(e.target.value)
                                         )
+                                        setPage(1)
                                     }}
 
                                     value={pageSize}>

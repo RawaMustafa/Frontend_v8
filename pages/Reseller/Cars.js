@@ -385,6 +385,7 @@ const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
                                         setLimit((e.target.value))
                                         setPageSize(Number(e.target.value)
                                         )
+                                        setPage(1)
                                     }}
 
                                     value={pageSize}>

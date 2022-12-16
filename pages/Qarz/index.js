@@ -9,8 +9,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faEye, faCalendarCheck, faFileDownload, faMoneyCheckDollar, faCar, } from '@fortawesome/free-solid-svg-icons';
-import { useTable, useSortBy, useGlobalFilter, usePagination, useFilters, useGroupBy, useExpanded, } from 'react-table';
+import {   faMoneyCheckDollar, faCar, } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from "next/router";
 import { getSession, useSession } from "next-auth/react";
 

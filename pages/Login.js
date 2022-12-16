@@ -101,10 +101,10 @@ const Login = () => {
         <title >{l.login}</title>
       </Head>
 
-      <div className=" container mx-auto flex items-center sm:h-screen justify-center    ">
+      <div className=" container mx-auto flex    items-center sm:h-screen justify-center    ">
 
 
-        <div className="max-h-screen overflow-auto scrollbar-hide  sm:bg-gray-200 dark:sm:bg-slate-700 rounded-3xl pt-20 my-10 px-4 sm:px-6 lg:px-8 ">
+        <div className="max-h-screen overflow-auto scrollbar-hide  sm:bg-gray-200 dark:sm:bg-slate-700 rounded-3xl sm:pt-10 my-10 px-4 sm:px-6 lg:px-8 ">
 
           <div className="max-w-md w-full space-y-10  sm:px-16  ">
             <div>

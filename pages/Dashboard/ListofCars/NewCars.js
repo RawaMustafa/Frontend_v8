@@ -63,7 +63,7 @@ const NewCars = ({ SessionID }) => {
     const [UserQarz, setUserQarz] = useState({})
     const [pictureandvideorepair, setPictureandvideorepair] = useState([])
     const [pictureandvideodamage, setPictureandvideodamage] = useState([])
-    const [pictureShow, setPictureShow] = useState([])
+    const [FirstImage, setFirstImage] = useState([])
     const [CarDamage, setCarDamage] = useState([])
     const [Note, setNote] = useState('')
     const [QarzUserId, setQarzUserId] = useState("")
@@ -75,10 +75,10 @@ const NewCars = ({ SessionID }) => {
     const [Data, setData] = useState({
 
         'Tocar': "Sedan",
-        "Price": 0,
-        "IsSold": 0,
+        "Price": "",
+        "IsSold": "",
         "ModeName": "",
-        "Model": 0,
+        "Model": "",
         "Color": "",
         "Mileage": "",
         "VINNumber": "",
@@ -86,32 +86,33 @@ const NewCars = ({ SessionID }) => {
 
 
 
-        "PricePaidbid": 0,
+        "PricePaidbid": "",
         // "UserGiven": "",
         "Tobalance": "",
-        "Tire": "",
+        // "Tire": "",
         "Date": "",
-        "Arrived": 0,
-        "FeesinAmericaStoragefee": 0,
-        "FeesinAmericaCopartorIAAfee": 0,
+        "ArrivedToKurd": "",
+        "ArrivedToDoubai": "",
+        "FeesinAmericaStoragefee": "",
+        "FeesinAmericaCopartorIAAfee": "",
 
-        "FeesAndRepaidCostDubairepairCost": 0,
-        "FeesAndRepaidCostDubaiFees": 0,
-        "FeesAndRepaidCostDubaiothers": 0,
+        "FeesAndRepaidCostDubairepairCost": "",
+        // "FeesAndRepaidCostDubaiFees": "",
+        "FeesAndRepaidCostDubaiothers": "",
         "FeesAndRepaidCostDubainote": "",
 
-        "CoCCost": 0,
+        "CoCCost": "",
 
         "TransportationCostFromAmericaLocationtoDubaiGCostLocation": "",
-        "TransportationCostFromAmericaLocationtoDubaiGCostTranscost": 0,
-        "TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost": 0,
+        "TransportationCostFromAmericaLocationtoDubaiGCostTranscost": "",
+        "TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost": "",
 
-        "DubaiToIraqGCostTranscost": 0,
-        "DubaiToIraqGCostgumrgCost": 0,
+        "DubaiToIraqGCostTranscost": "",
+        "DubaiToIraqGCostgumrgCost": "",
 
-        "RaqamAndRepairCostinKurdistanrepairCost": 0,
-        "RaqamAndRepairCostinKurdistanRaqam": 0,
-        "RaqamAndRepairCostinKurdistanothers": 0,
+        "RaqamAndRepairCostinKurdistanrepairCost": "",
+        "RaqamAndRepairCostinKurdistanRaqam": "",
+        "RaqamAndRepairCostinKurdistanothers": "",
         "RaqamAndRepairCostinKurdistannote": ""
 
     });
@@ -639,7 +640,6 @@ const NewCars = ({ SessionID }) => {
         }
 
 
-
         const newdata = { ...Data }
         newdata[savename] = savevalue;
         setData(newdata);
@@ -662,14 +662,15 @@ const NewCars = ({ SessionID }) => {
         "PricePaidbid": Data.PricePaidbid || 0,
         // //"UserGiven": Data.UserGiven,
         "Tobalance": Data.Tobalance || "Cash",
-        "Tire": Data.Tire || "No Data",
+        // "Tire": Data.Tire || "",
         "Date": Data.Date?.[0] || "2022-01-01",
-        "Arrived": Data.Arrived || false,
+        "ArrivedToKurd": Data.ArrivedToKurd || false,
+        "ArrivedToDoubai": Data.ArrivedToDoubai || false,
         "FeesinAmericaStoragefee": Data.FeesinAmericaStoragefee || 0,
         "FeesinAmericaCopartorIAAfee": Data.FeesinAmericaCopartorIAAfee || 0,
 
         "FeesAndRepaidCostDubairepairCost": Data.FeesAndRepaidCostDubairepairCost || 0,
-        "FeesAndRepaidCostDubaiFees": Data.FeesAndRepaidCostDubaiFees || 0,
+        // "FeesAndRepaidCostDubaiFees": Data.FeesAndRepaidCostDubaiFees || 0,
         "FeesAndRepaidCostDubaiothers": Data.FeesAndRepaidCostDubaiothers || 0,
         "FeesAndRepaidCostDubainote": Data.FeesAndRepaidCostDubainote || "No Data",
 
@@ -691,15 +692,14 @@ const NewCars = ({ SessionID }) => {
 
     }
 
+
+
     const postCarsId = async () => {
         const id = toast.loading(l.loading)
-        let TotalCosts =
-            Data.PricePaidbid +
+        let BalanceCosts =
             Data.CoCCost +
-            Data.FeesinAmericaStoragefee +
-            Data.FeesinAmericaCopartorIAAfee +
             Data.FeesAndRepaidCostDubairepairCost +
-            Data.FeesAndRepaidCostDubaiFees +
+            // Data.FeesAndRepaidCostDubaiFees +
             Data.FeesAndRepaidCostDubaiothers +
             Data.TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost +
             Data.TransportationCostFromAmericaLocationtoDubaiGCostTranscost +
@@ -707,6 +707,19 @@ const NewCars = ({ SessionID }) => {
             Data.DubaiToIraqGCostgumrgCost +
             Data.RaqamAndRepairCostinKurdistanrepairCost +
             Data.RaqamAndRepairCostinKurdistanothers
+
+
+        let RentCost =
+            Data.PricePaidbid +
+            Data.FeesinAmericaStoragefee +
+            Data.FeesinAmericaCopartorIAAfee +
+            Data.TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost +
+            Data.TransportationCostFromAmericaLocationtoDubaiGCostTranscost
+
+
+
+
+
 
 
         try {
@@ -754,14 +767,15 @@ const NewCars = ({ SessionID }) => {
             }
 
             CarDamage != '' && FormDataCar.append("CarDamage", CarDamage, "image.png");
-            // pictureShow != '' && FormDataCar.append("pictureShow", pictureShow, "image.png");
-            // console.log(pictureShow)
+
+
+            FirstImage != '' && FormDataCar.append("FirstImage", FirstImage, "image.png");
 
             //! change  data and Image to FormData ----------------------------------
 
 
             if (Data.Tobalance == "Cash") {
-
+                let TotalCosts = RentCost + BalanceCosts
 
                 if (TotalCosts <= DataBalance) {
 
@@ -803,51 +817,71 @@ const NewCars = ({ SessionID }) => {
 
             else if (Data.Tobalance == "Rent" && QarzUserId != "") {
 
+                if (BalanceCosts <= DataBalance) {
+
+                    const UDetailss = await Axios.get(`/users/detail/${QarzUserId}`, auth)
+
+                    const totalBal = UDetailss.data.userDetail.TotalBals
+
+                    await Axios.post('/cars/', FormDataCar, auth
+
+                    ).then(async (response) => {
+
+                        const one = `/qarz/`
+                        const two = `/bal/`
+                        const thre = `/users/${QarzUserId}`
+                        const forth = `/users/${SessionID}`
 
 
-                const UDetailss = await Axios.get(`/users/detail/${QarzUserId}`, auth)
+                        const qarz = Axios.post(one, {
+                            userId: QarzUserId,
+                            carId: response.data.Id,
+                            isPaid: false,
 
-                const totalBal = UDetailss.data.userDetail.TotalBals
+                        }, auth)
 
-                await Axios.post('/cars/', FormDataCar, auth
+                        const bal = Axios.post(two, {
+                            amount: RentCost || 0,
+                            action: "Rent",
+                            carId: response.data.Id,
+                            userId: QarzUserId,
+                            note: Note,
+                            isPaid: false
+                        }, auth)
 
-                ).then(async (response) => {
+                        const balAdmin = Axios.post(two, {
+                            amount: -BalanceCosts || 0,
+                            action: "Add",
+                            carId: response.data.Id,
+                            userId: SessionID,
+                            note: Note,
+                        }, auth)
 
-                    const one = `/qarz/`
-                    const two = `/bal/`
-                    const thre = `/users/${QarzUserId}`
 
-                    const qarz = Axios.post(one, {
-                        userId: QarzUserId,
-                        carId: response.data.Id,
-                        isPaid: false,
+                        const users = Axios.patch(thre, { TotalBals: totalBal + RentCost }, auth)
+                        const Admin = Axios.patch(forth, { TotalBals: DataBalance - BalanceCosts }, auth)
 
-                    }, auth)
+                        await axios.all([qarz, bal, balAdmin, users, Admin]).then(axios.spread(() => {
+                            toast.update(id, { render: l.adddata, type: "success", isLoading: false, autoClose: 2000 });
 
-                    const bal = Axios.post(two, {
-                        amount: TotalCosts,
-                        action: "Rent",
-                        carId: response.data.Id,
-                        userId: QarzUserId,
-                        note: Note,
-                        isPaid: false,
-                    }, auth)
+                        })).catch(errors => {
+                            toast.update(id, { render: 'something went to wrong *', type: "error", isLoading: false, autoClose: 2000 });
 
-                    // const users = Axios.patch(thre, { TotalBals: totalBal + TotalCosts }, auth)
+                        })
 
-                    await axios.all([qarz, bal]).then(axios.spread(() => {
-                        toast.update(id, { render: l.adddata, type: "success", isLoading: false, autoClose: 2000 });
 
-                    })).catch(errors => {
-                        toast.update(id, { render: 'something went to wrong *', type: "error", isLoading: false, autoClose: 2000 });
+                    }).catch(() => {
+                        toast.update(id, { render: "error to save car *", type: "error", isLoading: false, autoClose: 2000 });
 
                     })
 
 
-                }).catch(() => {
-                    toast.update(id, { render: "error to save car *", type: "error", isLoading: false, autoClose: 2000 });
+                }
 
-                })
+                else {
+
+                    toast.update(id, { render: "You don't have enough balance", type: "warn", isLoading: false, autoClose: 2000 });
+                }
 
             }
 
@@ -921,6 +955,26 @@ const NewCars = ({ SessionID }) => {
 
                         <div className=" space-y-20 text-center py-32">
 
+
+                            {/* <div>
+                                <label for="hs-inline-leading-pricing-select-label" class="block text-sm font-medium mb-2 dark:text-white">Price</label>
+                                <div class="relative">
+                                    <input type="number" id="hs-inline-leading-pricing-select-label" name="inline-add-on" class="py-3 px-4 pl-9 pr-20 block w-full border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400" placeholder="0.00" />
+                                    <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none z-20 pl-4">
+                                        <span class="text-gray-500">$</span>
+                                    </div>
+                                    <div class="absolute inset-y-0 right-0 flex items-center text-gray-500 pr-px">
+                                        <label for="hs-inline-leading-select-currency" class="sr-only">Currency</label>
+                                        <select id="hs-inline-leading-select-currency" name="hs-inline-leading-select-currency" class="block w-full border-transparent rounded-md focus:ring-blue-600 focus:border-blue-600 dark:bg-gray-800">
+                                            <option>USD</option>
+                                            <option>AED</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div> */}
+
+
+
                             <div>
                                 <h1 className="py-2">{l.seletkcar}</h1>
                                 <select name='Tocar' required onChange={(e) => { HandleAddCars(e) }} className="select select-info w-full max-w-xs">
@@ -974,9 +1028,9 @@ const NewCars = ({ SessionID }) => {
                     <div className=" px-6 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl   ">
 
 
-                        <h1 className="mt-5 text-center">{l.amount}</h1>
+                        <h1 className="mt-5 text-center">{l.price}</h1>
                         <div className="flex  justify-center">
-                            <input name='Price' value={Data.Price} onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.amount} className="input input-bordered    input-info w-[200%] mt-5   max-w-xl mb-8" />
+                            <input name='Price' value={Data.Price} onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.price} className="input input-bordered    input-info w-[200%] mt-5   max-w-xl mb-8" />
                         </div>
                         <h1 className="mt-5 text-center">{l.namecar}</h1>
                         <div className="flex  justify-center">
@@ -996,10 +1050,10 @@ const NewCars = ({ SessionID }) => {
                         </div>
 
 
-                        <h1 className="mt-5 text-center">{l.tire}</h1>
+                        {/* <h1 className="mt-5 text-center">{l.tire}</h1>
                         <div className="flex  justify-center">
                             <input value={Data.Tire} name='Tire' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.tire} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
-                        </div>
+                        </div> */}
 
 
 
@@ -1021,10 +1075,12 @@ const NewCars = ({ SessionID }) => {
                         </div>
 
 
-                        {/* <h1 className="mt-5 text-center">{l.show}</h1>
+                        <h1 className="mt-5 text-center">{l.show}</h1>
                         <div className="flex  justify-center">
-                            <input name='Pictureandvideodamage' onChange={(e) => { setPictureShow(e.target.files) }} type="file" placeholder={l.pictureandvideoofcardamage} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
-                        </div> */}
+                            <input name='Pictureandvideodamage' onChange={(e) => {
+                                setFirstImage(e.target.files[0])
+                            }} type="file" placeholder={l.pictureandvideoofcardamage} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                        </div>
 
                         <h1 className="mt-5 text-center">{l.pictureandvideoofcardamage}</h1>
                         <div className="flex  justify-center">
@@ -1035,38 +1091,11 @@ const NewCars = ({ SessionID }) => {
 
 
 
-                        {/* ////////////////////////////////// ? */}
-                        <div className="grid grid-cols-5 gap-1">
-                            {/* {convertturl1.map((image, index) =>
-
-                                    < img key={index} className="" id='gg' src={image} alt="" width="300" height="300" />
-
-                                )} */}
-                        </div>  {/* ////////////////////////////////// */}
-
-
-
-
-
-
-
 
                         <h1 className="mt-5 text-center">{l.pictureandvideoofcarafterrepair}</h1>
                         <div className="flex  justify-center">
                             <input multiple name='Pictureandvideorepair' onChange={(e) => { setPictureandvideorepair(e.target.files) }} type="file" placeholder={l.pictureandvideoofcarafterrepair} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
-
-                        {/* ////////////////////////////////// ?*/}
-                        <div className="grid grid-cols-5 gap-1">
-                            {/* {convertturl2.map((image, index) =>
-                                    < img key={index} className="" id='gg' src={image} alt="" width="300" height="300" />
-
-                                )} */}
-                        </div>
-                        {/* ////////////////////////////////// */}
-
-
-
 
 
 
@@ -1085,13 +1114,23 @@ const NewCars = ({ SessionID }) => {
 
                         <h1 className="mt-5 text-center">{l.date}</h1>
                         <div className="flex  justify-center">
-                            <input name='Date' onChange={(e) => { HandleAddCars(e) }} type="date" placeholder="YYYY-MM-DD" defaultValue={"2022-01-01"} className="input  input-info w-[200%] mt-5 max-w-xl mb-8" />
+                            <input name='Date' onChange={(e) => { HandleAddCars(e) }} type="date" className="input  input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div>
 
 
-                        <h1 className="mt-5 text-center">{l.arive}</h1>
+                        <h1 className="mt-5 text-center">{l.arive} kurdistan</h1>
                         <div className="flex  justify-center   ">
-                            <select name='Arrived' required defaultValue={"Select"} onChange={(e) => { HandleAddCars(e) }}className="input  select-info w-[200%] mt-5 max-w-xl mb-8">
+                            <select name='ArrivedToKurd' required defaultValue={"Select"} onChange={(e) => { HandleAddCars(e) }} className="input  select-info w-[200%] mt-5 max-w-xl mb-8">
+                                <option disabled value={"Select"}>{l.select}</option>
+                                <option value={true}>{l.yes}</option>
+                                <option value={false}>{l.no}</option>
+                            </select>
+                        </div>
+
+
+                        <h1 className="mt-5 text-center">{l.arive} dubai</h1>
+                        <div className="flex  justify-center   ">
+                            <select name='ArrivedToDoubai' required defaultValue={"Select"} onChange={(e) => { HandleAddCars(e) }} className="input  select-info w-[200%] mt-5 max-w-xl mb-8">
                                 <option disabled value={"Select"}>{l.select}</option>
                                 <option value={true}>{l.yes}</option>
                                 <option value={false}>{l.no}</option>
@@ -1122,12 +1161,6 @@ const NewCars = ({ SessionID }) => {
                         </div>
 
 
-                        {/* <h1 className="mt-5 text-center">{l.note}</h1>
-                        <div className="flex  justify-center">
-                            <textarea value={Data.NoteAmerica} name='NoteAmerica' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.note} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
-                        </div> */}
-
-
 
                     </div>
 
@@ -1148,10 +1181,10 @@ const NewCars = ({ SessionID }) => {
                         </div>
 
 
-                        <h1 className="mt-5 text-center">{l.fees}</h1>
+                        {/* <h1 className="mt-5 text-center">{l.fees}</h1>
                         <div className="flex  justify-center">
                             <input value={Data.FeesAndRepaidCostDubaiFees} name='FeesAndRepaidCostDubaiFees' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fees} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
-                        </div>
+                        </div> */}
 
                         <h1 className="mt-5 text-center">{l.feesother}</h1>
                         <div className="flex  justify-center">

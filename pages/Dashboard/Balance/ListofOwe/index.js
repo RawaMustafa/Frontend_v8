@@ -106,7 +106,7 @@ const QarzList = () => {
             <div className="container mx-auto">
                 <Head>
                     <title >{l.owe}</title>
-                    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+                     
                 </Head>
 
                 <div className="pt-5  mb-32">
@@ -142,7 +142,7 @@ const QarzList = () => {
                         <>
 
                             {Data.map((item, key) => {
-                                console.log(item)
+
                                 return (
                                     <Link key={key} as={`/Dashboard/Balance/ListofOwe/${item._id}`} href={`/Dashboard/Balance/ListofOwe/[_id]`}><a>
                                         <div className="rounded-2xl light:bg-red-600  bg-white shadow-lg dark:bg-gray-700 bg-  h-56 max:w-96 text-black  dark:text-white">

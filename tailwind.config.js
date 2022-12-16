@@ -30,10 +30,23 @@ module.exports = {
       screens: {
         '3xl': '1575px',
         '4xl': '1900px',
-        'xs': "550px"
+        'xs': "550px",
+        'xxs': "450px",
+        'xxxs': "350px",
+        'xxxxs': "250px",
+        'xxxxxs': "150px",
+        'xxxxxxs': "50px",
+
+
       },
     },
+    extend: {
+      screens: {
+        standalone: { raw: "(display-mode:standalone)" },
+        
 
+      },
+    },
   },
   plugins: [
 

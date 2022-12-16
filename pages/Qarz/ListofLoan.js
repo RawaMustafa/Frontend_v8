@@ -444,6 +444,7 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
                                         setLimit((e.target.value))
                                         setPageSize(Number(e.target.value)
                                         )
+                                        setPage(1)
                                     }}
 
                                     value={pageSize}>

@@ -2,7 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import useLanguage from "./language";
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faCartPlus, faCar,  faCircleUser, faChartLine,  faMoneyCheckDollar,  faUserTag, faArrowRightFromBracket, faHandHoldingDollar, faCommentsDollar } from '@fortawesome/free-solid-svg-icons';
+import { faCartPlus, faCar, faCircleUser, faChartLine, faMoneyCheckDollar, faUserTag, faArrowRightFromBracket, faHandHoldingDollar, faCommentsDollar } from '@fortawesome/free-solid-svg-icons';
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -49,12 +49,12 @@ const Sidebar = () => {
     }
     return (
 
-        <section id="sidebar" className="rtl:rtlnactive ltr:nactive bg-opacity-100 backdrop-blur-3xl fixed lg:ltr:left-0 lg:rtl:right-0 bottom-0 h-full pt-5 px-4 w-60  duration-300 ease-in-out   overflow-y-auto scrollbar-hide shadow-2xl z-[60]">
+        <section id="sidebar" className="rtl:rtlnactive ltr:nactive standalone:top-10  fixed lg:ltr:left-0 lg:rtl:right-0 bottom-0 h-full pt-5 px-4 w-60 ease-in-out duration-300   backdrop-blur-[200px] backdrop-opacity-100     overflow-y-auto scrollbar-hide shadow-2xl z-[600]">
 
-            <div>
+            <div className=" ">
 
                 <div className="footer-center py-5 cursor-pointer  ">
-                    <Link href="/Dashboard"><a><Image className="active:scale-95  rounded-full" alt="Logo" src="/logo.png" height={55} width={55} /></a></Link>
+                    <Link href="/Dashboard"><a><Image className="active:scale-95  rounded-full" alt="Logo" src="/alwand-blue.jpg" height={55} width={55} /></a></Link>
                 </div>
 
                 <div onClick={async () => {

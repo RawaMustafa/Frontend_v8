@@ -230,7 +230,9 @@ export const ku = {
     borrowmsg: "دڵنیای لە قەرزکردن ",
     transfer: "حەواڵە",
     mycars: "سەیارەکانم",
-
-
+    arivedtoku: "گەیشتوە بە کوردستان",
+    arivedtodu: "گەیشتوە بە دوبەی",
+    damageimg: "وێنەی پێشچاککردنەوە",
+    repairimg: "وێنەی دوای چاککردنەوە"
 
 }

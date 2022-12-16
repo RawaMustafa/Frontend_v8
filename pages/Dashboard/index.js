@@ -66,7 +66,6 @@ const Dashboard = (props) => {
 
 
 
-
     useEffect(() => {
         if (status == "authenticated") {
 
@@ -114,6 +113,7 @@ const Dashboard = (props) => {
                             const dataFertchqarz = responses?.[2]?.data?.QarzTotal[0];
                             const dataFertchownCost = responses?.[1]?.data?.QarzTotal[0];
                             const UserBalance = responses?.[3]?.data.userDetail
+
 
                             setUserInfo(UserBalance)
                             setData(dataFertch)
