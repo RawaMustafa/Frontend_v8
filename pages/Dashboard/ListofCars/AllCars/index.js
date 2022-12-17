@@ -484,12 +484,10 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
 
 
-
-
                 <input type="checkbox" id="PDF-modal" className="modal-toggle" />
                 <div className="modal">
                     <div className="modal-box relative">
-                            <label htmlFor="PDF-modal" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+                        <label htmlFor="PDF-modal" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
                         <div className='text-center my-5'>
                             <FontAwesomeIcon icon={PDF} className=" text-6xl text-blue-400  " />
 
@@ -567,17 +565,17 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                                 {cell.column.id === 'isSold' && (
 
                                                     cell.value === true ?
-                                                        <span className="text-green-500">{l.yes}</span>
+                                                        <span className="text-green-500">Yes</span>
                                                         :
-                                                        <span className="text-red-500">{l.no}</span>
+                                                        <span className="text-red-500">No</span>
 
                                                 )}
                                                 {cell.column.id === 'tire' && (
 
                                                     cell.value === "Public" ?
-                                                        <span className="text-green-500">{l.public}</span>
+                                                        <span className="text-green-500">Public</span>
                                                         :
-                                                        <span className="text-red-500">{l.private}</span>
+                                                        <span className="text-red-500">Private</span>
 
                                                 )}
                                                 {cell.column.id === 'VINNumber' && (
@@ -590,17 +588,17 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                                 {cell.column.id === 'arrivedToKurd' && (
 
                                                     cell.value === true ?
-                                                        <span className="text-green-500">{l.yes}</span>
+                                                        <span className="text-green-500">Yes</span>
                                                         :
-                                                        <span className="text-red-500">{l.no}</span>
+                                                        <span className="text-red-500">No</span>
 
                                                 )}
                                                 {cell.column.id === 'arrivedToDoubai' && (
 
                                                     cell.value === true ?
-                                                        <span className="text-green-500">{l.yes}</span>
+                                                        <span className="text-green-500">Yes</span>
                                                         :
-                                                        <span className="text-red-500">{l.no}</span>
+                                                        <span className="text-red-500">No</span>
 
                                                 )}
 
