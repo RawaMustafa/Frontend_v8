@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const withPWA = require('next-pwa')({
   dest: 'public',
-  disable: process.env.NODE_ENV === 'development',
+  // disable: process.env.NODE_ENV === 'development',
   register: false,
   skipWaiting: false
 })
@@ -29,8 +29,8 @@ module.exports = {
   },
   images: {
 
-    // domains: ['84.46.255.116'],
-    domains: ['localhost'],
+    domains: ['84.46.255.116'],
+    // domains: ['localhost'],
 
   },
 
