@@ -5,7 +5,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import useLanguage from '../../../../Component/language';
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faTrashAlt, faPaperPlane, faHandHoldingUsd, faArrowsRotate, faExpand, faCompress, faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { faTrashAlt, faPaperPlane, faHandHoldingUsd, faArrowsRotate, faExpand, faCompress, faChevronRight, faChevronLeft, faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
 import AdminLayout from '../../../../Layouts/AdminLayout';
 import Image from "next/image";
 import { ToastContainer, toast, } from 'react-toastify';
@@ -136,6 +136,50 @@ const Detail = ({ carss, SessionID }) => {
         Math.floor(cars.carDetail.carCost.dubaiToIraqGCostgumrgCost) +
         Math.floor(cars.carDetail.carCost.raqamAndRepairCostinKurdistanrepairCost) +
         Math.floor(cars.carDetail.carCost.raqamAndRepairCostinKurdistanothers);
+
+
+    const handleVisiblity = async (Visiblity) => {
+
+        const auth = {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${session?.data?.Token}`
+            }
+        }
+
+
+
+        try {
+            const id = router.query._id
+
+            await Axios.post("/bal/",
+                {
+                    // amount: TotalCurrentCosts,
+                    action: Visiblity,
+                    note: "changed to" + Visiblity,
+                    userId: SessionID,
+
+                }, auth,)
+
+            await Axios.patch("/cars/" + id, {
+                Tire: Visiblity
+            }, auth,)
+
+            toast.success("Car Visiblity Changed to " + Visiblity)
+            setRenewPage(true)
+
+        } catch (err) {
+            toast.error("error to Change Visiblity")
+            setRenewPage(true)
+
+        }
+
+
+
+
+    }
+
+
 
     const handleDeleteCars = async () => {
 
@@ -928,6 +972,11 @@ const Detail = ({ carss, SessionID }) => {
                     <label htmlFor="give-modal-3" className="btn btn-info modal-button">{l.give}</label>
                     {(cars.carDetail.carCost.isSold == true) && <label htmlFor="sold-modal-3" className="btn btn-warning modal-button">{l.retrieve}</label>}
                     {cars.carDetail.carCost.isSold == false && <label htmlFor="sell-modal-3" className="btn btn-warning modal-button">{l.sell}</label>}
+
+                    {(cars.carDetail.tire == "Public") ? <label htmlFor="Public-modal-3" className="btn btn-accent modal-button">{l.public}</label>
+                        : <label htmlFor="Private-modal-3" className="btn btn-error modal-button">{l.private}</label>}
+
+
                     <label className="btn btn-outline modal-button" onClick={Doc_2_pdf}>PDF</label>
 
 
@@ -935,6 +984,69 @@ const Detail = ({ carss, SessionID }) => {
                 </div>
                 {/* //^ header */}
                 <div>
+
+
+                    <input type="checkbox" id="Public-modal-3" className="modal-toggle btn btn-error " />
+                    <div className="modal ">
+                        <div className="modal-box relative">
+                            <label htmlFor="Public-modal-3" className="btn btn-sm btn-circle right-2 top-2 absolute">✕</label>
+                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faLock} className=" text-5xl text-red-700" />  </h3>
+
+                            <p className=" py-4">{l.publicmsg}</p>
+
+                            <div className=" space-x-10">
+                                <label htmlFor="Public-modal-3" className="btn   btn-accent" onClick={() => {
+                                    handleVisiblity("Private")
+                                }}
+                                >{l.yes}</label>
+                                <label htmlFor="Public-modal-3" className="btn btn-error">{l.no}</label>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <input type="checkbox" id="Private-modal-3" className="modal-toggle btn btn-error " />
+                    <div className="modal ">
+                        <div className="modal-box relative">
+                            <label htmlFor="Private-modal-3" className="btn btn-sm btn-circle right-2 top-2 absolute">✕</label>
+                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faLockOpen} className=" text-5xl text-green-700" />  </h3>
+
+                            <p className=" py-4">{l.Privatemsg}</p>
+
+                            <div className=" space-x-10">
+                                <label htmlFor="Private-modal-3" className="btn   btn-accent" onClick={() => {
+                                    handleVisiblity("Public")
+                                }}
+                                >{l.yes}</label>
+                                <label htmlFor="Private-modal-3" className="btn btn-error">{l.no}</label>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     <input type="checkbox" id="my-modal-3" className="modal-toggle btn btn-error " />
                     <div className="modal ">
                         <div className="modal-box relative">

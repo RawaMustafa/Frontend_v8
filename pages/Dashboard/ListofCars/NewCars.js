@@ -89,7 +89,7 @@ const NewCars = ({ SessionID }) => {
         "PricePaidbid": "",
         // "UserGiven": "",
         "Tobalance": "",
-        // "Tire": "",
+        "Tire": "",
         "Date": "",
         "ArrivedToKurd": "",
         "ArrivedToDoubai": "",
@@ -662,7 +662,7 @@ const NewCars = ({ SessionID }) => {
         "PricePaidbid": Data.PricePaidbid || 0,
         // //"UserGiven": Data.UserGiven,
         "Tobalance": Data.Tobalance || "Cash",
-        // "Tire": Data.Tire || "",
+        "Tire": Data.Tire || "Public",
         "Date": Data.Date?.[0] || "2022-01-01",
         "ArrivedToKurd": Data.ArrivedToKurd || false,
         "ArrivedToDoubai": Data.ArrivedToDoubai || false,
@@ -981,6 +981,14 @@ const NewCars = ({ SessionID }) => {
                                     <option>Sedan</option>
                                     <option>SUV</option>
                                     <option>PickUp</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <h1 className="py-2">{l.visibility}</h1>
+                                <select name='Tire' defaultValue={"Public"} required onChange={(e) => { HandleAddCars(e) }} className="select select-info w-full max-w-xs">
+                                    <option value={"Public"}>{l.public}</option>
+                                    <option value={"Private"}>{l.private}</option>
                                 </select>
                             </div>
 

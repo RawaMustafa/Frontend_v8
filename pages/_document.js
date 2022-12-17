@@ -38,6 +38,12 @@ export default function Document(props) {
                 <meta name="keywords" content="Alwand" />
                 <meta name="author" content="Alwand" />
 
+
+
+
+
+
+
                 {/* //? full screen mobile */}
                 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
                 {/* //? full screen mobile */}

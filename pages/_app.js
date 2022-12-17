@@ -54,13 +54,11 @@ function MyApp({ Component, pageProps }) {
 
   const router = useRouter()
 
-  const c = 0
-
   useEffect(() => {
+    // localStorage.getItem("language") == "ku" ? (router.locale = 'ku', document.body.dir = "rtl", router.push(router.asPath, router.asPath, { locale: 'ku' })) : (router.locale = 'en', document.body.dir = "ltr", router.push(router.asPath, router.asPath, { locale: 'en' }))
+    localStorage.getItem("language") == "ku" ? (router.locale = 'ku', document.body.dir = "rtl") : (router.locale = 'en', document.body.dir = "ltr")
 
-    localStorage.getItem("language") == "ku" ? (router.locale = 'ku', document.body.dir = "rtl", router.push(router.asPath, router.asPath, { locale: 'ku' })) : (router.locale = 'en', document.body.dir = "ltr", router.push(router.asPath, router.asPath, { locale: 'en' }))
-
-  }, [c])
+  }, [router])
 
 
 
@@ -71,10 +69,7 @@ function MyApp({ Component, pageProps }) {
       <Head>
         <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover' />
 
-
-
       </Head>
-
 
       <SessionProvider session={pageProps.session} refetchInterval={interval}>
         <ThemeProvider   >

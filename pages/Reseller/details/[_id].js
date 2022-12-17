@@ -57,62 +57,14 @@ const Detail = ({ cars }) => {
     const router = useRouter()
     const { status, data: session } = useSession()
     const [FullScreen, setFullScreen] = useState()
+    const [ImagePage, setImagePage] = useState(1);
+
     if (status == "unauthenticated") {
         router.push('/');
     }
     const l = useLanguage();
 
 
-    // const handlesell = async (bool) => {
-
-    //     const auth = {
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             'Authorization': `Bearer ${session?.Token}`
-    //         }
-    //     }
-
-    //     const UDetails = await Axios.get(`/users/detail/${session?.id}`, auth)
-
-    //     const DataBalance = UDetails.data.userDetail.TotalBals
-    //     if (DataBalance >= cars.carDetail.price || bool) {
-    //         try {
-    //             await Axios.patch(`/cars/${router.query._id}`,
-    //                 {
-    //                     IsSold: bool
-    //                 }, auth)
-    //             await Axios.patch('/users/' + session?.id,
-    //                 {
-    //                     "TotalBals": bool ? DataBalance + cars.carDetail.price : DataBalance - cars.carDetail.price
-    //                 }, auth)
-
-    //             await Axios.post("/bal/",
-    //                 {
-    //                     amount: bool ? cars.carDetail.price : -cars.carDetail.price,
-    //                     action: bool ? "Sell" : "Retrieved",
-    //                     userId: session?.id,
-    //                     carId: cars.carDetail._id,
-    //                     isSoled: bool
-
-    //                 }, auth)
-
-    //             toast.success("Your Balance Now= " + (bool ? DataBalance + cars.carDetail.price : DataBalance - cars.carDetail.price) + " $");
-
-
-    //             router.reload()
-    //         }
-    //         catch {
-
-    //         }
-    //     } else {
-
-    //         toast.error("your balance is not enough")
-
-    //     }
-
-
-
-    // }
 
 
 
@@ -260,7 +212,7 @@ const Detail = ({ cars }) => {
                 <div className="grid grid-cols-1  xl:grid-cols-2 gap-3 2xl:gap-20 4xl:gap-32  m-auto container mx-auto">
 
 
-                <div className="pt-2.5">
+                    <div className="pt-2.5">
                         <button className={`cursor-pointer h-[39px] w-[250px%] ltr:rounded-tl-lg rtl:rounded-tr-lg   border-[1px] border-[#1254ff] ${ImagePage == 1 ? "bg-[#1254ff] text-white" : "bg-white text-[#1254ff]"}  text-md  w-[50%] z-0`} onClick={() => { setImagePage(1) }}>{l.damageimg}</button>
                         <button className={`cursor-pointer h-[39px] w-[250px%] ltr:rounded-tr-lg rtl:rounded-tl-lg   border-[1px] border-[#1254ff] ${ImagePage == 2 ? "bg-[#1254ff] text-white" : "bg-white text-[#1254ff]"}  text-md  w-[50%] z-0`} onClick={() => { setImagePage(2) }}>{l.repairimg}</button>
                         <div className="" hidden={ImagePage == 1 ? false : true} >

@@ -5,13 +5,13 @@ import Image from 'next/image';
 const Error = () => {
 
     const l = useLanguage();
-    const router = useRouter()
+    // const router = useRouter()
 
-    setTimeout(() => {
+    // setTimeout(() => {
 
-        router.push("/")
+    //     router.push("/")
 
-    }, 2000)
+    // }, 2000)
 
 
     return (

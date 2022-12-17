@@ -14,7 +14,7 @@ import Image from 'next/image';
 import { getSession, useSession } from "next-auth/react";
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-
+import { useCallback } from 'react';
 
 
 
@@ -101,6 +101,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
     const [ISSold, setISSold] = useState("All");
     const [ARRTKU, setARRTKU] = useState("All");
     const [ARRTDU, setARRTDU] = useState("All");
+    const [Visibility, setVisibility] = useState("All");
 
 
     const [Page, setPage] = useState(1);
@@ -108,6 +109,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
 
     const [DataTable, setDataTable] = useState([]);
+    const [PaperPDF, setPaperPDF] = useState("A1");
     const [Datahidden, setDatahidden] = useState([]);
     const [TotalCars, setTotalCars] = useState(AllProducts);
     const [PageS, setPageS] = useState(Math.ceil(TotalCars / Limit));
@@ -115,19 +117,19 @@ const Table = ({ COLUMNS, AllProducts }) => {
     const [EndDate, setEndDate] = useState("2500-01-01");
     const l = useLanguage();
 
-
     useEffect(() => {
 
         const getExpenseData = async () => {
             setReNewFooter(true)
             try {
-                const res = await Axios.get(`/cars/?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2500-01-01"}&arrKu=${ARRTKU}&arrDu=${ARRTDU}&isSold=${ISSold}&tobalance=${TOBalance}`, {
+                const res = await Axios.get(`/cars/?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2500-01-01"}&arrKu=${ARRTKU}&arrDu=${ARRTDU}&isSold=${ISSold}&tobalance=${TOBalance}&visibility=${Visibility}`, {
                     headers: {
                         "Content-Type": "application/json",
                         'Authorization': `Bearer ${session?.data?.Token}`
                     }
                 },)
                 const data = await res.data.carDetail
+                console.log(data)
                 const total = await res.data.total
                 setDataTable(data)
                 setTotalCars(total)
@@ -143,10 +145,9 @@ const Table = ({ COLUMNS, AllProducts }) => {
         getExpenseData()
         setReNewData(false)
         setReNewFooter(false)
+        setDatahidden(localStorage.getItem("AllCars")?.split(","))
 
-        // setDatahidden(JSON.parse(localStorage.getItem("hiddenColumns")))
-
-    }, [Search, Page, Limit, StartDate, EndDate, ReNewData, ARRTDU, ARRTKU, ISSold, TOBalance])
+    }, [Search, Page, Limit, StartDate, EndDate, ReNewData, ARRTDU, ARRTKU, ISSold, TOBalance, Visibility])
 
 
 
@@ -158,7 +159,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
         const table_th = [...table.rows].map(r => [...r.querySelectorAll('th')].map((th) => (TH.push((th.children?.[0]?.innerText != "Details" && th.children?.[0]?.innerText != "Image") ? th.children?.[0]?.innerText : ""))))
         const table_td = [...table.rows].map((r) => [...r.querySelectorAll('td')].map(td => td.textContent))
 
-        const doc = new jsPDF("p", "mm", "a2");
+        const doc = new jsPDF("p", "mm", PaperPDF);
 
 
 
@@ -171,7 +172,6 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
         doc.save("Table_Cars.pdf");
     };
-
 
 
 
@@ -192,31 +192,25 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
         columns: COLUMNS,
         data: DataTable,
-        // initialState: {
-        //     hiddenColumns: testt
-        // }
+        initialState: {
+            hiddenColumns: Datahidden
+        }
     }, useGlobalFilter, useFilters, useGroupBy, useSortBy, useExpanded, usePagination,
 
     );
 
     const { pageIndex, pageSize } = state
 
-
-    // useEffect(() => {
-
-    //     // console.log(state.hiddenColumns)
-
-    //     localStorage.setItem("hiddenColumns", state.hiddenColumns)
-
-    // }, [state])
+    useEffect(() => {
+        state.hiddenColumns != "" && localStorage.setItem("AllCars", state.hiddenColumns)
+    }, [state.hiddenColumns])
     return (
         <div className='mx-3' >
 
             {/* //?   Header  */}
             <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-2xl p-5">
                 <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
-
-                    <a href="#my-modal-2" className=" flex  mx-2" ><FontAwesomeIcon className='text-2xl hover:scale-90 mx-1' icon={faBars} /></a>
+                    <label htmlFor="my-modal" className=" flex  mx-2 hover:cursor-pointer"><FontAwesomeIcon className='text-2xl hover:scale-90 mx-1' icon={faBars} /></label>
                     <input type="search" placeholder={`${l.search} ...`} className="input input-bordered    w-full    focus:outline-0   h-9 "
                         onChange={e =>
                             setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
@@ -251,6 +245,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                 </div>
 
 
+                <input type="checkbox" id="my-modal" className="modal-toggle" />
                 <div className="modal" id="my-modal-2">
                     <div className="modal-box m-2">
 
@@ -338,6 +333,41 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                     </div>
                                 </div>
                             </form>
+                            <form onChange={(e) => { setVisibility(e.target.value) }} >
+                                <div
+                                    className="grid  min-w-[50px]   grid-cols-4 space-x-2 rounded-xl bg-gray-200 dark:bg-slate-800  dark:text-white  text-black"
+
+                                >
+                                    <h5 className='bg-accent/100  rounded px-1 flex items-center text-white    '
+                                    >{l.visibility}</h5>
+                                    <div>
+                                        <input type="radio" name="option" id="110" className="peer hidden" value="Private" />
+                                        <label
+                                            htmlFor="110"
+                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-error peer-checked:font-bold peer-checked:text-white"
+                                        >{l.private}</label
+                                        >
+                                    </div>
+
+                                    <div>
+                                        <input type="radio" name="option" id="220" className="peer hidden" value="All" defaultChecked />
+                                        <label
+                                            htmlFor="220"
+                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-slate-500 peer-checked:font-bold peer-checked:text-white"
+                                        >{l.all}</label
+                                        >
+                                    </div>
+
+                                    <div>
+                                        <input type="radio" name="option" id="330" className="peer hidden" value="Public" />
+                                        <label
+                                            htmlFor="330"
+                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-accent peer-checked:font-bold peer-checked:text-white "
+                                        >{l.public}</label
+                                        >
+                                    </div>
+                                </div>
+                            </form>
                             <form onChange={(e) => { setARRTKU(e.target.value) }} >
                                 <div
                                     className="grid  min-w-[50px]   grid-cols-4 space-x-2 rounded-xl bg-gray-200 dark:bg-slate-800  dark:text-white  text-black"
@@ -418,20 +448,15 @@ const Table = ({ COLUMNS, AllProducts }) => {
                         <div className={`max-h-80 ${FILTER ? "hidden" : ""}  scrollbar-hide space-y-2 overflow-auto text-lg font-bold`}>
 
                             {allColumns.map(column => (
-                                <div key={column.id}>
+                                <div key={column.id}  >
                                     <div className=" w-full rounded-lg">
                                         <label className="label cursor-pointer"
-                                            onChange={() => {
 
-                                                localStorage.setItem("hiddenColumns", state.hiddenColumns)
-                                            }}
                                         >
                                             {column.id}
                                             <input type="checkbox"
                                                 className="toggle toggle-accent focus:outline-0 "
-
                                                 {...column.getToggleHiddenProps()}
-
                                             />
 
                                         </label>
@@ -444,11 +469,48 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
                         </div>
 
-                        <div className="modal-action">
-                            <a href="#" className="btn">{l.don}</a>
+                        <div className="modal-action flex justify-between">
+                            <label className="btn btn-error"
+                                onClick={() => { localStorage.setItem("AllCars", "") }}
+                            >{l.reset}</label>
+                            <label htmlFor="my-modal" className="btn btn-accent">{l.don}</label>
+
                         </div>
                     </div>
                 </div>
+
+
+
+
+
+
+
+
+                <input type="checkbox" id="PDF-modal" className="modal-toggle" />
+                <div className="modal">
+                    <div className="modal-box relative">
+                            <label htmlFor="PDF-modal" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+                        <div className='text-center my-5'>
+                            <FontAwesomeIcon icon={PDF} className=" text-6xl text-blue-400  " />
+
+                        </div>
+                        <h3 className="font-bold text-lg">{l.papermsg}</h3>
+
+                        <div className='text-center my-5'>
+                            <select onChange={(e) => { setPaperPDF(e.target.value) }} defaultValue={"A1"} className="select select-info w-full max-w-xs">
+                                <option value={"A1"} >A1</option>
+                                <option value={"A2"}>A2</option>
+                                <option value={"A3"}>A3</option>
+                                <option value={"A4"}>A4</option>
+                                <option value={"A5"}>A5</option>
+                            </select>
+                        </div>
+                        <div className="modal-action">
+                            <label htmlFor="PDF-modal" onClick={table_2_pdf} className="btn btn-info">{l.print}</label>
+                        </div>
+                    </div>
+                </div>
+
 
             </div>
             {/* //?   Header  */}
@@ -492,7 +554,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                             <td key={idx} className={`text-center max-w-10 dark:bg-[#161818]  ${idx == 0 && "w-20   p-0"}  ${idx != 0 && "py-2 "}`} {...cell.getCellProps()}>
 
 
-                                                {cell.column.id !== "VINNumber" && cell.render('Cell')}
+                                                {(cell.column.id !== "VINNumber" && cell.column.id !== "tire") && cell.render('Cell')}
                                                 {cell.column.id === "image" && (
                                                     <>
 
@@ -505,9 +567,17 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                                 {cell.column.id === 'isSold' && (
 
                                                     cell.value === true ?
-                                                        <span className="text-green-500">Yes</span>
+                                                        <span className="text-green-500">{l.yes}</span>
                                                         :
-                                                        <span className="text-red-500">No</span>
+                                                        <span className="text-red-500">{l.no}</span>
+
+                                                )}
+                                                {cell.column.id === 'tire' && (
+
+                                                    cell.value === "Public" ?
+                                                        <span className="text-green-500">{l.public}</span>
+                                                        :
+                                                        <span className="text-red-500">{l.private}</span>
 
                                                 )}
                                                 {cell.column.id === 'VINNumber' && (
@@ -520,17 +590,17 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                                 {cell.column.id === 'arrivedToKurd' && (
 
                                                     cell.value === true ?
-                                                        <span className="text-green-500">Yes</span>
+                                                        <span className="text-green-500">{l.yes}</span>
                                                         :
-                                                        <span className="text-red-500">No</span>
+                                                        <span className="text-red-500">{l.no}</span>
 
                                                 )}
                                                 {cell.column.id === 'arrivedToDoubai' && (
 
                                                     cell.value === true ?
-                                                        <span className="text-green-500">Yes</span>
+                                                        <span className="text-green-500">{l.yes}</span>
                                                         :
-                                                        <span className="text-red-500">No</span>
+                                                        <span className="text-red-500">{l.no}</span>
 
                                                 )}
 
@@ -709,11 +779,11 @@ const Table = ({ COLUMNS, AllProducts }) => {
                     </tbody>
 
                     <tfoot>
-                        {footerGroups.map(group => (
-                            <tr {...group.getFooterGroupProps()}>
+                        {footerGroups.map((group, idx) => (
+                            <tr key={idx} {...group.getFooterGroupProps()}>
                                 <td className='hidden'></td>
-                                {group.headers.map(column => (
-                                    <td className='py-3 text-center ' {...column.getFooterProps()}>{column.render('Footer')}</td>
+                                {group.headers.map((column, idx) => (
+                                    <td key={idx} className='py-3 text-center ' {...column.getFooterProps()}>{column.render('Footer')}</td>
                                 ))}
                             </tr>
                         ))}
@@ -772,7 +842,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                 </select>
                             </div>
 
-                            <FontAwesomeIcon icon={PDF} onClick={table_2_pdf} className="md:mx-5 px-10 text-blue-400 active:scale-9 m-auto mx-10 text-2xl transition ease-in-out hover:cursor-pointer" />
+                            <label htmlFor="PDF-modal" className=""><FontAwesomeIcon icon={PDF} className="md:mx-5 px-10 text-blue-400 active:scale-9 m-auto mx-10 text-2xl transition ease-in-out hover:cursor-pointer" /></label>
 
                             <ReactHTMLTableToExcel
                                 id="test-table-xls-button "
@@ -1071,7 +1141,6 @@ const Expense = ({ AllProducts }) => {
                             () => {
                                 let T = 0
                                 info.rows.map((sum, idx) => { T += sum.original.price })
-                                console.log(T)
                                 return T
                             }, [info.rows]
                         )
@@ -1125,6 +1194,18 @@ const Expense = ({ AllProducts }) => {
                     disableFilters: true,
 
                     accessor: 'isSold',
+
+
+                },
+                {
+                    Header: () => {
+                        return (
+                            "Visibility"
+                        )
+                    },
+                    disableFilters: true,
+
+                    accessor: 'tire',
 
 
                 },
@@ -1199,9 +1280,6 @@ const Expense = ({ AllProducts }) => {
 
                 },
 
-
-
-
                 {
                     Header: () => {
                         return (
@@ -1226,6 +1304,27 @@ const Expense = ({ AllProducts }) => {
                     disableFilters: true,
 
                     accessor: 'MayCosts',
+                    Footer: info => {
+                        // Only calculate total visits if rows change
+                        const total = useMemo(
+
+                            () => {
+                                let T = 0
+                                info.rows.map((row, idx) => {
+                                    T += (
+                                        row.original.carCost.raqamAndRepairCostinKurdistanrepairCost +
+                                        row.original.carCost.raqamAndRepairCostinKurdistanothers +
+                                        row.original.carCost.feesAndRepaidCostDubaiothers +
+                                        row.original.carCost.feesAndRepaidCostDubairepairCost
+                                    )
+                                })
+
+                                return T
+                            }, [info.rows]
+                        )
+
+                        return <>{total} $</>
+                    },
 
 
                 },
@@ -1239,7 +1338,26 @@ const Expense = ({ AllProducts }) => {
                     disableFilters: true,
 
                     accessor: 'Feestokurdistan',
+                    Footer: info => {
+                        // Only calculate total visits if rows change
+                        const total = useMemo(
 
+                            () => {
+                                let T = 0
+                                info.rows.map((row, idx) => {
+                                    T += (
+                                        row.original.carCost.coCCost +
+                                        row.original.carCost.dubaiToIraqGCostgumrgCost +
+                                        row.original.carCost.dubaiToIraqGCostTranscost
+                                    )
+                                })
+
+                                return T
+                            }, [info.rows]
+                        )
+
+                        return <>{total} $</>
+                    },
 
                 },
 
@@ -1254,6 +1372,25 @@ const Expense = ({ AllProducts }) => {
                     disableFilters: true,
 
                     accessor: 'DubaiCosts',
+                    Footer: info => {
+                        // Only calculate total visits if rows change
+                        const total = useMemo(
+
+                            () => {
+                                let T = 0
+                                info.rows.map((row, idx) => {
+                                    T += (
+                                        row.original.carCost.feesAndRepaidCostDubaiothers +
+                                        row.original.carCost.feesAndRepaidCostDubairepairCost
+                                    )
+                                })
+
+                                return T
+                            }, [info.rows]
+                        )
+
+                        return <>{total} $</>
+                    },
 
 
                 },
@@ -1268,6 +1405,26 @@ const Expense = ({ AllProducts }) => {
                     disableFilters: true,
 
                     accessor: 'USACosts',
+                    Footer: info => {
+                        // Only calculate total visits if rows change
+                        const total = useMemo(
+
+                            () => {
+                                let T = 0
+                                info.rows.map((row, idx) => {
+                                    T += (
+                                        row.original.carCost.feesinAmericaCopartorIAAfee +
+                                        row.original.carCost.feesinAmericaStoragefee +
+                                        row.original.carCost.pricePaidbid
+                                    )
+                                })
+
+                                return T
+                            }, [info.rows]
+                        )
+
+                        return <>{total} $</>
+                    },
 
 
                 },
@@ -1297,7 +1454,6 @@ const Expense = ({ AllProducts }) => {
 
                     accessor: 'KurdistanNumber',
 
-
                 },
                 // ^ -----6
                 {
@@ -1310,6 +1466,25 @@ const Expense = ({ AllProducts }) => {
                     disableFilters: true,
 
                     accessor: 'CostsKurdistan',
+                    Footer: info => {
+                        // Only calculate total visits if rows change
+                        const total = useMemo(
+
+                            () => {
+                                let T = 0
+                                info.rows.map((row, idx) => {
+                                    T += (
+                                        row.original.carCost.raqamAndRepairCostinKurdistanothers +
+                                        row.original.carCost.raqamAndRepairCostinKurdistanrepairCost
+                                    )
+                                })
+
+                                return T
+                            }, [info.rows]
+                        )
+
+                        return <>{total} $</>
+                    },
 
 
                 },
@@ -1324,6 +1499,25 @@ const Expense = ({ AllProducts }) => {
                     disableFilters: true,
 
                     accessor: 'FeestoDubai',
+                    Footer: info => {
+                        // Only calculate total visits if rows change
+                        const total = useMemo(
+
+                            () => {
+                                let T = 0
+                                info.rows.map((row, idx) => {
+                                    T += (
+                                        row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost +
+                                        row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost
+                                    )
+                                })
+
+                                return T
+                            }, [info.rows]
+                        )
+
+                        return <>{total} $</>
+                    },
 
 
                 },

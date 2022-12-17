@@ -207,7 +207,16 @@ export const en = {
     arivedtoku: "Arrived to Kurdistan",
     arivedtodu: "Arrived to Dubai",
     damageimg: "Damaged Image",
-    repairimg: "Repaired Image"
+    repairimg: "Repaired Image",
+    reset: "Reset",
+    visibility: "Visibility",
+    public: "Public",
+    private: "Private",
+    papermsg: "choose the paper you want to print",
+    print: "Print",
+    publicmsg:"Do you want to change it for Private",
+    Privatemsg:"Do you want to change it for Public"
+
 
 
 

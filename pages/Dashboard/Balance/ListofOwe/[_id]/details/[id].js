@@ -80,7 +80,7 @@ const Detail = ({ cars, ID }) => {
     }
 
 
-    const handlePayCar = async () => {
+    const handlePayCar = async (bool) => {
         const auth = {
             headers: {
                 "Content-Type": "application/json",
@@ -105,9 +105,9 @@ const Detail = ({ cars, ID }) => {
                 Data.transportationCostFromAmericaLocationtoDubaiGCostTranscost
 
 
-            
-            
-            
+
+
+
 
             if (myBalance >= TotalCosts) {
 
@@ -116,6 +116,7 @@ const Detail = ({ cars, ID }) => {
                         TotalBals: myBalance - TotalCosts
 
                     }, auth)
+                
                 toast.success("Amount Paid")
                 const bal = await Axios.post(`/bal/`, {
                     userId: session?.data?.id,
@@ -127,7 +128,7 @@ const Detail = ({ cars, ID }) => {
                 toast.success("l.balance" + "=" + myBalance - TotalCosts)
                 await Axios.patch(`/qarz/${ID}`, {
                     carId: router?.query.id,
-                    isPaid: 1,
+                    isPaid: bool,
                 }, auth)
                 router.reload()
 
@@ -260,7 +261,7 @@ const Detail = ({ cars, ID }) => {
                     <div className="flex justify-between  w-[500px] overflow-auto" >
                         <Link rel="noopener noreferrer" href={`/Dashboard/ListofCars/AllCars/${router.query.id}`}><a target="_blank" className="btn btn-info ">{l.detail}</a></Link>
                         <label htmlFor="my-modal-3" className="btn btn-warning modal-button">{l.retrieve}</label>
-
+                        {console.log(cars.carDetail.isPaid)}
                         {cars.carDetail.isPaid == false && <label htmlFor="Pay-modal-1" className="btn btn-accent modal-button ">{l.pay}</label>}
                         {cars.carDetail.isPaid == true && <label htmlFor="borrowing-modal-1" className="btn btn-error modal-button ">{l.borrowing}</label>}
                     </div>
@@ -315,7 +316,7 @@ const Detail = ({ cars, ID }) => {
 
 
                 <div className="grid grid-cols-1  xl:grid-cols-2 gap-3 2xl:gap-20 4xl:gap-32  m-auto ">
-                <div className="pt-2.5">
+                    <div className="pt-2.5">
                         <button className={`cursor-pointer h-[39px] w-[250px%] ltr:rounded-tl-lg rtl:rounded-tr-lg   border-[1px] border-[#1254ff] ${ImagePage == 1 ? "bg-[#1254ff] text-white" : "bg-white text-[#1254ff]"}  text-md  w-[50%] z-0`} onClick={() => { setImagePage(1) }}>{l.damageimg}</button>
                         <button className={`cursor-pointer h-[39px] w-[250px%] ltr:rounded-tr-lg rtl:rounded-tl-lg   border-[1px] border-[#1254ff] ${ImagePage == 2 ? "bg-[#1254ff] text-white" : "bg-white text-[#1254ff]"}  text-md  w-[50%] z-0`} onClick={() => { setImagePage(2) }}>{l.repairimg}</button>
                         <div className="" hidden={ImagePage == 1 ? false : true} >

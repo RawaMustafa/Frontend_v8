@@ -111,7 +111,7 @@ const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
                 //$sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2100-01-01"}
                 ///cars/ ? search =& page=1 & limit=3sdate = 2000 - 02 - 01 & edate=2023 - 11 - 17 & arrKu=1 & arrDu=1 & isSold=0
                 try {
-                    const res = await Axios.get(`/cars?search=${Search}&page=${Page}&limit=${Limit}$sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2100-01-01"}&arrKu=&arrDu=&isSold=0`, {
+                    const res = await Axios.get(`/cars?search=${Search}&page=${Page}&limit=${Limit}$sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2100-01-01"}&arrKu=&arrDu=&isSold=0&&visibility=Public`, {
                         headers: {
                             "Content-Type": "application/json",
                             'Authorization': `Bearer ${session?.data?.Token}`
@@ -490,20 +490,20 @@ const Reseller = ({ AllProducts, initQuery }) => {
 
 
                 },
-                // {
-                //     Header: () => {
-                //         return (
+                {
+                    Header: () => {
+                        return (
 
-                //             l.date
-                //         )
-                //     },
+                            l.date
+                        )
+                    },
 
-                //     disableFilters: true,
+                    disableFilters: true,
 
-                //     accessor: 'date',
+                    accessor: 'date',
 
 
-                // },
+                },
                 {
                     Header: () => {
                         return (
@@ -562,21 +562,6 @@ const Reseller = ({ AllProducts, initQuery }) => {
                 },
 
 
-
-                {
-                    Header: () => {
-                        return (
-
-                            l.tire
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'tire',
-
-
-                },
 
                 {
                     Header: () => {

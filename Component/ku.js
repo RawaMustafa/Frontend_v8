@@ -233,6 +233,15 @@ export const ku = {
     arivedtoku: "گەیشتوە بە کوردستان",
     arivedtodu: "گەیشتوە بە دوبەی",
     damageimg: "وێنەی پێشچاککردنەوە",
-    repairimg: "وێنەی دوای چاککردنەوە"
+    repairimg: "وێنەی دوای چاککردنەوە",
+    reset: "ڕێکخستنەوە",
+    visibility: "دەرکەوتن",
+    public: "گشتی",
+    private: "تایبەت",
+    papermsg: " جۆری پەرەکەت هەڵبژێرە",
+    print: "جاپکردن",
+    publicmsg: "دەتەوێت بیگۆریت بۆ تایبەت",
+    Privatemsg: " دەتەوێت بیگۆریت بۆ گشتی",
+
 
 }
