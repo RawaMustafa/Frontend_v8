@@ -214,8 +214,12 @@ export const en = {
     private: "Private",
     papermsg: "choose the paper you want to print",
     print: "Print",
-    publicmsg:"Do you want to change it for Private",
-    Privatemsg:"Do you want to change it for Public"
+    publicmsg: "Do you want to change it for Private",
+    Privatemsg: "Do you want to change it for Public",
+    USA: "USA",
+    Dubai: "Dubai",
+    Kurdistan: "Kurdistan",
+    Location:"Location"
 
 
 

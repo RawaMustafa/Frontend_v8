@@ -14,11 +14,9 @@ import Image from 'next/image';
 import { getSession, useSession } from "next-auth/react";
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useCallback } from 'react';
 
 
-
-
+// let initialState
 
 
 export const getServerSideProps = async ({ req }) => {
@@ -61,7 +59,7 @@ export const getServerSideProps = async ({ req }) => {
     }
 }
 
-const testt = typeof window !== 'undefined' ? localStorage.getItem("hiddenColumns") : [""]
+
 
 const IndeterminateCheckbox = forwardRef(
 
@@ -85,11 +83,16 @@ const IndeterminateCheckbox = forwardRef(
     }
 )
 IndeterminateCheckbox.displayName = 'IndeterminateCheckbox'
+
+
+const Datahidden = typeof window != 'undefined' ? localStorage.getItem("AllCars")?.split(",") : ["image"]
+
+
 const Table = ({ COLUMNS, AllProducts }) => {
 
+
+
     const router = useRouter()
-
-
     const session = useSession()
     const [ReNewData, setReNewData] = useState(false);
     const [ReNewFooter, setReNewFooter] = useState(false);
@@ -102,27 +105,29 @@ const Table = ({ COLUMNS, AllProducts }) => {
     const [ARRTKU, setARRTKU] = useState("All");
     const [ARRTDU, setARRTDU] = useState("All");
     const [Visibility, setVisibility] = useState("All");
-
-
+    const [Location, setLocation] = useState("All");
     const [Page, setPage] = useState(1);
     const [Limit, setLimit] = useState(10);
-
-
     const [DataTable, setDataTable] = useState([]);
     const [PaperPDF, setPaperPDF] = useState("A1");
-    const [Datahidden, setDatahidden] = useState([]);
     const [TotalCars, setTotalCars] = useState(AllProducts);
     const [PageS, setPageS] = useState(Math.ceil(TotalCars / Limit));
     const [StartDate, setStartDate] = useState("2000-01-01");
     const [EndDate, setEndDate] = useState("2500-01-01");
+
     const l = useLanguage();
 
+
+
+
+
     useEffect(() => {
+
 
         const getExpenseData = async () => {
             setReNewFooter(true)
             try {
-                const res = await Axios.get(`/cars/?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2500-01-01"}&arrKu=${ARRTKU}&arrDu=${ARRTDU}&isSold=${ISSold}&tobalance=${TOBalance}&visibility=${Visibility}`, {
+                const res = await Axios.get(`/cars/?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2500-01-01"}&arrKu=${ARRTKU}&arrDu=${ARRTDU}&isSold=${ISSold}&tobalance=${TOBalance}&visibility=${Visibility}&Location=${Location}`, {
                     headers: {
                         "Content-Type": "application/json",
                         'Authorization': `Bearer ${session?.data?.Token}`
@@ -145,9 +150,12 @@ const Table = ({ COLUMNS, AllProducts }) => {
         getExpenseData()
         setReNewData(false)
         setReNewFooter(false)
-        setDatahidden(localStorage.getItem("AllCars")?.split(","))
 
-    }, [Search, Page, Limit, StartDate, EndDate, ReNewData, ARRTDU, ARRTKU, ISSold, TOBalance, Visibility])
+
+
+
+    }, [Search, Page, Limit, StartDate, EndDate, ReNewData, ARRTDU, ARRTKU, ISSold, TOBalance, Visibility, Location])
+
 
 
 
@@ -174,7 +182,6 @@ const Table = ({ COLUMNS, AllProducts }) => {
     };
 
 
-
     const {
         getTableProps,
         getTableBodyProps,
@@ -187,28 +194,45 @@ const Table = ({ COLUMNS, AllProducts }) => {
         rows,
         footerGroups,
         prepareRow,
-
+        setHiddenColumns
     } = useTable({
-
         columns: COLUMNS,
         data: DataTable,
-        initialState: {
-            hiddenColumns: Datahidden
-        }
+        // initialState: {
+        //     hiddenColumns: ['']
+        // },
     }, useGlobalFilter, useFilters, useGroupBy, useSortBy, useExpanded, usePagination,
 
     );
 
     const { pageIndex, pageSize } = state
 
+
     useEffect(() => {
-        state.hiddenColumns != "" && localStorage.setItem("AllCars", state.hiddenColumns)
+
+        setHiddenColumns(Datahidden || [''])
+
+    }, [])
+
+    useEffect(() => {
+        state.hiddenColumns != "" &&
+            localStorage.setItem("AllCars", state.hiddenColumns)
     }, [state.hiddenColumns])
+
+
+
+
+
+
+
+
+
     return (
-        <div className='mx-3' >
+        <>
 
             {/* //?   Header  */}
             <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-2xl p-5">
+
                 <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
                     <label htmlFor="my-modal" className=" flex  mx-2 hover:cursor-pointer"><FontAwesomeIcon className='text-2xl hover:scale-90 mx-1' icon={faBars} /></label>
                     <input type="search" placeholder={`${l.search} ...`} className="input input-bordered    w-full    focus:outline-0   h-9 "
@@ -217,6 +241,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                         }
                     />
                 </div>
+
                 <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8  rtl:mr-8 ">
                     <label tabIndex="0" className="active:scale-9 m-1  ">
                         <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="active:scale-90 text-2xl hover:cursor-pointer text-blue-500  " />
@@ -368,7 +393,52 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                     </div>
                                 </div>
                             </form>
-                            <form onChange={(e) => { setARRTKU(e.target.value) }} >
+                            <form onChange={(e) => { setLocation(e.target.value) }} >
+                                <div
+                                    className="grid  min-w-[50px]   grid-cols-5 space-x-2 rounded-xl bg-gray-200 dark:bg-slate-800  dark:text-white  text-black"
+
+                                >
+                                    <div className='bg-accent/100  rounded px-1 flex items-center text-white text-sm'
+                                    >{l.Location}</div>
+                                    <div>
+                                        <input type="radio" name="option" id="1110" className="peer hidden" value="USA" />
+                                        <label
+                                            htmlFor="1110"
+                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-error peer-checked:font-bold peer-checked:text-white"
+                                        >{l.USA}</label
+                                        >
+                                    </div>
+
+
+                                    <div>
+                                        <input type="radio" name="option" id="222" className="peer hidden" value="All" defaultChecked />
+                                        <label
+                                            htmlFor="222"
+                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-slate-500 peer-checked:font-bold peer-checked:text-white"
+                                        >{l.all}</label
+                                        >
+                                    </div>
+
+                                    <div>
+                                        <input type="radio" name="option" id="11101" className="peer hidden" value="Dubai" />
+                                        <label
+                                            htmlFor="11101"
+                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-error peer-checked:font-bold peer-checked:text-white"
+                                        >{l.Dubai}</label
+                                        >
+                                    </div>
+
+                                    <div>
+                                        <input type="radio" name="option" id="3331" className="peer hidden" value="Kurdistan" />
+                                        <label
+                                            htmlFor="3331"
+                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-accent peer-checked:font-bold peer-checked:text-white   max-xs:bg-red-200  w-6 overflow-hidden "
+                                        >{l.Kurdistan}</label
+                                        >
+                                    </div>
+                                </div>
+                            </form>
+                            {/* <form onChange={(e) => { setARRTKU(e.target.value) }} >
                                 <div
                                     className="grid  min-w-[50px]   grid-cols-4 space-x-2 rounded-xl bg-gray-200 dark:bg-slate-800  dark:text-white  text-black"
 
@@ -437,7 +507,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                         >
                                     </div>
                                 </div>
-                            </form>
+                            </form> */}
 
 
                         </div>
@@ -548,11 +618,10 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                     {row.cells.map((cell, idx) => {
                                         return (
 
-
                                             <td key={idx} className={`text-center max-w-10 dark:bg-[#161818]  ${idx == 0 && "w-20   p-0"}  ${idx != 0 && "py-2 "}`} {...cell.getCellProps()}>
 
 
-                                                {(cell.column.id !== "VINNumber" && cell.column.id !== "tire") && cell.render('Cell')}
+                                                {(cell.column.id !== "VINNumber" && cell.column.id !== "price" && cell.column.id !== "tire") && cell.render('Cell')}
                                                 {cell.column.id === "image" && (
                                                     <>
 
@@ -618,7 +687,14 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                                         row.original.carCost.pricePaidbid +
                                                         row.original.carCost.feesinAmericaCopartorIAAfee +
                                                         row.original.carCost.feesinAmericaStoragefee +
-                                                        row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost
+                                                        row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost +
+                                                        row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost
+                                                    } $
+                                                </>)}
+                                                {cell.column.id === "price" && (<>
+                                                    {
+                                                        row.original.carCost.price
+
                                                     } $
                                                 </>)}
 
@@ -626,20 +702,15 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
 
                                                     {
-                                                        row.original.carCost.coCCost +
-                                                        row.original.carCost.dubaiToIraqGCostgumrgCost +
-                                                        row.original.carCost.dubaiToIraqGCostTranscost +
-                                                        row.original.carCost.raqamAndRepairCostinKurdistanrepairCost +
-                                                        row.original.carCost.raqamAndRepairCostinKurdistanothers +
                                                         row.original.carCost.feesAndRepaidCostDubaiothers +
-                                                        row.original.carCost.feesAndRepaidCostDubairepairCost +
-                                                        row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost
+                                                        row.original.carCost.feesAndRepaidCostDubairepairCost
 
                                                     } $
                                                 </>)}
                                                 {cell.column.id === "ShipandFees" && (<>
 
                                                     {
+                                                        row.original.carCost.coCCost +
                                                         row.original.carCost.dubaiToIraqGCostgumrgCost +
                                                         row.original.carCost.dubaiToIraqGCostTranscost
 
@@ -764,7 +835,6 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
 
                                             </td>
-
                                         )
                                     })}
 
@@ -878,19 +948,14 @@ const Table = ({ COLUMNS, AllProducts }) => {
             </div>
 
 
-        </div >
+        </ >
     );
 };
 
 
 
 
-
-
-
-
 const Expense = ({ AllProducts }) => {
-
 
 
 
@@ -995,10 +1060,14 @@ const Expense = ({ AllProducts }) => {
                             () => {
                                 let T = 0
                                 info.rows.map((row, idx) => {
-                                    T += (row.original.carCost.pricePaidbid +
+                                    T += (
+                                        row.original.carCost.pricePaidbid +
                                         row.original.carCost.feesinAmericaCopartorIAAfee +
                                         row.original.carCost.feesinAmericaStoragefee +
-                                        row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost)
+                                        row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost +
+                                        row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost
+
+                                    )
 
                                 })
 
@@ -1029,14 +1098,41 @@ const Expense = ({ AllProducts }) => {
                                 let T = 0
                                 info.rows.map((row, idx) => {
                                     T += (
+                                        row.original.carCost.feesAndRepaidCostDubaiothers +
+                                        row.original.carCost.feesAndRepaidCostDubairepairCost
+                                    )
+                                })
+
+                                return T
+                            }, [info.rows]
+                        )
+
+                        return <>{total} $</>
+                    },
+
+                },
+                // ShipandFees   ......................//^ ------------------------------
+                {
+                    Header: () => {
+                        return (
+                            "Ship and Fees"
+                        )
+                    },
+
+                    disableFilters: true,
+
+                    accessor: 'ShipandFees',
+                    Footer: info => {
+                        // Only calculate total visits if rows change
+                        const total = useMemo(
+
+                            () => {
+                                let T = 0
+                                info.rows.map((row, idx) => {
+                                    T += (
                                         row.original.carCost.coCCost +
                                         row.original.carCost.dubaiToIraqGCostgumrgCost +
-                                        row.original.carCost.dubaiToIraqGCostTranscost +
-                                        row.original.carCost.raqamAndRepairCostinKurdistanrepairCost +
-                                        row.original.carCost.raqamAndRepairCostinKurdistanothers +
-                                        row.original.carCost.feesAndRepaidCostDubaiothers +
-                                        row.original.carCost.feesAndRepaidCostDubairepairCost +
-                                        row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost
+                                        row.original.carCost.dubaiToIraqGCostTranscost
                                     )
                                 })
 
@@ -1090,38 +1186,7 @@ const Expense = ({ AllProducts }) => {
                     },
 
                 },
-                // ShipandFees   ......................//^ ------------------------------
-                {
-                    Header: () => {
-                        return (
-                            "Ship and Fees"
-                        )
-                    },
 
-                    disableFilters: true,
-
-                    accessor: 'ShipandFees',
-                    Footer: info => {
-                        // Only calculate total visits if rows change
-                        const total = useMemo(
-
-                            () => {
-                                let T = 0
-                                info.rows.map((row, idx) => {
-                                    T += (
-                                        row.original.carCost.dubaiToIraqGCostgumrgCost +
-                                        row.original.carCost.dubaiToIraqGCostTranscost
-                                    )
-                                })
-
-                                return T
-                            }, [info.rows]
-                        )
-
-                        return <>{total} $</>
-                    },
-
-                },
 
                 // sell price        .....................//^ ------------------------------
                 {

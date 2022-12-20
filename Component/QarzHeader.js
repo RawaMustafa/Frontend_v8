@@ -95,7 +95,9 @@ const Header = () => {
 
         //  transition-all duration-300
         <div className="container  ">
-            <div className="navbar z-[60] flex justify-between lg:justify-end lg:w-[calc(100%-17rem)] max-w-8xl lg:ml-64  rtl:lg:mr-64 mt-2 fixed  bg-opacity-5   backdrop-blur-lg bg-slate-300 rounded-2xl  bg-base-1 ">
+            <div className="hidden  standalone:block   bg-base-content  dark:bg-[#181a1b] backdrop:bg-white  w-full h-10 fixed z-50"></div>
+
+            <div className="navbar z-[60] flex justify-between lg:justify-end lg:w-[calc(100%-17rem)] max-w-8xl lg:ml-64  rtl:lg:mr-64 mt-2 fixed  bg-opacity-5 standalone:mt-10   backdrop-blur-lg bg-slate-300 rounded-2xl  bg-base-1 ">
 
 
 

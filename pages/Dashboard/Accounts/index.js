@@ -44,7 +44,7 @@ export async function getServerSideProps({ req, query }) {
 
 
 
-const emai_regex = /^[\w-\.]{4,20}@([a-z]{2,6}\.)+[a-z]{2,4}$/;
+const emai_regex = /^[\w-\.-_]{4,20}@([a-z]{2,6}\.)+[a-z]{2,4}$/;
 const password_regex = /^[a-zA-Z0-9\.\-\_]{4,16}$/;
 const userName_regex = /^[a-zA-Z0-9]{4,12}$/;
 const userRole_regex = /^[a-zA-Z0-9\.\-\_]{4,16}$/;
@@ -643,7 +643,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
             const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, auth,)
             const DataBalance = UDetails.data.userDetail.TotalBals
 
-            if (Data.TotalBals <= DataBalance) {
+            if (Data.TotalBals >= DataBalance) {
                 try {
                     const one = `/users/signup/`
                     const two = `/users/${SessionID}`
@@ -924,7 +924,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                 <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
 
                     <label htmlFor="my-modal" className="flex justify-center items-center p-2 "><FontAwesomeIcon className='text-2xl hover:scale-90 mx-1 cursor-pointer' icon={faUserPlus} /> </label>
-                    <input autoComplete={false} autoCorrect={false} autoFocus={false} autoSave={false} type="search" placeholder={`${l.search} ...`} className="input input-bordered w-full    focus:outline-0   h-9 "
+                    <input    type="search" placeholder={`${l.search} ...`} className="input input-bordered w-full    focus:outline-0   h-9 "
                         onChange={e =>
                             setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
                         }

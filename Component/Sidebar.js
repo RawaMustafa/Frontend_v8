@@ -49,7 +49,7 @@ const Sidebar = () => {
     }
     return (
 
-        <section id="sidebar" className="rtl:rtlnactive ltr:nactive standalone:top-10  fixed lg:ltr:left-0 lg:rtl:right-0 bottom-0 h-full pt-5 px-4 w-60 ease-in-out duration-300   backdrop-blur-[200px] backdrop-opacity-100     overflow-y-auto scrollbar-hide shadow-2xl z-[600]">
+        <section id="sidebar" className="rtl:rtlnactive ltr:nactive standalone:top-10  fixed lg:ltr:left-0 lg:rtl:right-0 bottom-0 h-full pt-5 px-4 w-60 ease-in-out duration-100  backdrop-blur-3xl   bg-base-100   overflow-y-auto scrollbar-hide drop-shadow-xl z-[60]">
 
             <div className=" ">
 

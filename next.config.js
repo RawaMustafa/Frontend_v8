@@ -1,12 +1,12 @@
 /** @type {import('next').NextConfig} */
-const withPWA = require('next-pwa')({
-  dest: 'public',
-  // disable: process.env.NODE_ENV === 'development',
-  register: false,
-  skipWaiting: false
-})
+// const withPWA = require('next-pwa')({
+//   dest: 'public',
+//   disable: process.env.NODE_ENV === 'development',
+//   register: true,
+//   skipWaiting: true
+// })
 
-module.exports = withPWA()
+// module.exports = withPWA()
 
 
 const nextConfig = {
@@ -29,8 +29,8 @@ module.exports = {
   },
   images: {
 
-    domains: ['84.46.255.116'],
-    // domains: ['localhost'],
+    // domains: ['84.46.255.116'],
+    domains: ['localhost'],
 
   },
 

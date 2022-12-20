@@ -3,7 +3,6 @@ module.exports = {
 
   darkMode: 'class',
 
-
   content: [
 
     "./Component/**/*.{js,ts,jsx,tsx}",
@@ -12,7 +11,9 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
     "./Layouts/**/*.{js,ts,jsx,tsx}",
   ],
+ 
   theme: {
+
     extend: {
       colors: {
         'blue': '#1fb6ff',
@@ -26,6 +27,7 @@ module.exports = {
         'gray-light': '#d3dce6',
       },
     },
+
     extend: {
       screens: {
         '3xl': '1575px',
@@ -35,19 +37,16 @@ module.exports = {
         'xxxs': "350px",
         'xxxxs': "250px",
         'xxxxxs': "150px",
-        'xxxxxxs': "50px",
-
-
       },
     },
     extend: {
       screens: {
-        standalone: { raw: "(display-mode:standalone)" },
-        
-
+        standalone: { raw: "(display-mode:standalone) " },
       },
     },
+
   },
+
   plugins: [
 
     require("daisyui"),

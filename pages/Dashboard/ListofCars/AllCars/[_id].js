@@ -13,7 +13,7 @@ import ImageGallery from 'react-image-gallery';
 import { getSession, useSession } from "next-auth/react";
 import jsPDF from "jspdf";
 
-
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 
 
@@ -182,7 +182,12 @@ const Detail = ({ carss, SessionID }) => {
 
 
     const handleDeleteCars = async () => {
-
+        const auth = {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${session?.data?.Token}`
+            }
+        }
 
         if (cars.carDetail.carCost.isSold == false) {
 
@@ -265,30 +270,22 @@ const Detail = ({ carss, SessionID }) => {
 
         if (cars.carDetail.carCost.isSold == true) {
 
+            console.log("hello")
             try {
                 const id = router.query._id
 
                 await Axios.post("/bal/",
                     {
-                        amount: TotalCurrentCosts,
+                        // amount: TotalCurrentCosts,
                         action: "Delete",
                         note: cars.carDetail.modeName,
                         userId: SessionID,
-                        note: Note
+                        // note: Note
 
-                    }, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
+                    }, auth,)
+                console.log("hello", id)
 
-                await Axios.delete("/cars/" + id, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
+                await Axios.delete(`/cars/${id}`, auth,)
 
                 toast.error("Car has been Deleted")
                 router.back()
@@ -845,30 +842,70 @@ const Detail = ({ carss, SessionID }) => {
 
 
         return (
-            <div className="play-button grow relative w-full h-full overflow-auto bg-cover">
+
+            <div className="play-button  ">
                 {item.taramash != "false" ?
                     <div className=' flex justify-center'>
-                        <video controls
-                            className="w-full bg-cover ">
-                            <source
-                                src={`${baseURL}${item.taramash}`} type="video/mp4" />
-                        </video >
-                    </div >
-                    :
-                    <div className='play-button grow relative w-full h-full overflow-auto bg-cover'>
-                        <Image width={1920} height={1080}
-                            alt='SliderImage'
-                            sizes="100%"
-                            objectFit="cover"
-                            className='image-gallery-image '
-                            crossOrigin="anonymous"
-                            src={item.original}
-                        />
+                        <TransformWrapper
+                            initialScale={1}
+                            initialPositionX={200}
+                            initialPositionY={100}
+                        >
+                            {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
+                                <>
+                                    <div className="tools ">
+                                        <div></div>
+                                        <button className="fixed text-4xl btn z-50 my-0" onClick={() => zoomIn()}>+</button>
+                                        <button className="fixed text-4xl btn  z-50 my-14 " onClick={() => zoomOut()}>-</button>
+                                        <button className="fixed text-4xl btn z-50 my-28 " onClick={() => resetTransform()}>x</button>
+                                    </div>
+                                    <TransformComponent>
+                                        <video controls
+                                            className="w-[1920px]">
+                                            <source
+                                                src={`${baseURL}${item.taramash}`} type="video/mp4" />
 
+                                        </video >
+                                    </TransformComponent>
+                                </>
+                            )}
+                        </TransformWrapper>
+                    </div >
+
+                    :
+
+                    <div className='play-button grow relative w-full h-full overflow-auto bg-cover flex   justify-center'>
+
+                        <TransformWrapper
+                            initialScale={1}
+                            initialPositionX={200}
+                            initialPositionY={100}
+                        >
+                            {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
+                                <>
+                                    <div className="tools ">
+                                        <button className="fixed text-4xl z-50 top-5" onClick={() => zoomIn()}>+</button>
+                                        <button className="fixed text-4xl  z-50 top-10" onClick={() => zoomOut()}>-</button>
+                                        <button className="fixed text-4xl  z-50 top-20" onClick={() => resetTransform()}>x</button>
+                                    </div>
+                                    <TransformComponent>
+                                        <Image width={1920} height={1080}
+                                            alt='SliderImage'
+                                            objectFit="fill"
+                                            className='image-gallery-image '
+                                            crossOrigin="anonymous"
+                                            src={item.original}
+                                        />
+                                    </TransformComponent>
+                                </>
+                            )}
+                        </TransformWrapper>
                     </div>
+
                 }
 
             </div >
+
         );
 
     }
@@ -1023,22 +1060,6 @@ const Detail = ({ carss, SessionID }) => {
                             </div>
                         </div>
                     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1222,19 +1243,20 @@ const Detail = ({ carss, SessionID }) => {
                         <button className={`cursor-pointer h-[39px] w-[250px%] ltr:rounded-tl-lg rtl:rounded-tr-lg   border-[1px] border-[#1254ff] ${ImagePage == 1 ? "bg-[#1254ff] text-white" : "bg-white text-[#1254ff]"}  text-md  w-[50%] z-0`} onClick={() => { setImagePage(1) }}>{l.damageimg}</button>
                         <button className={`cursor-pointer h-[39px] w-[250px%] ltr:rounded-tr-lg rtl:rounded-tl-lg   border-[1px] border-[#1254ff] ${ImagePage == 2 ? "bg-[#1254ff] text-white" : "bg-white text-[#1254ff]"}  text-md  w-[50%] z-0`} onClick={() => { setImagePage(2) }}>{l.repairimg}</button>
                         <div className="" hidden={ImagePage == 1 ? false : true} >
+
                             <ImageGallery
                                 thumbnails-swipe-vertical
 
                                 onErrorImageURL="/Video.svg"
-                                slideInterval={10000}
-                                autoPlay={true}
-                                // showPlayButton={false}
+                                slideInterval={100}
+                                autoPlay={false}
+                                showPlayButton={false}
                                 showBullets={true}
                                 // useTranslate3D={true}
                                 lazyLoad={true}
-                                // showThumbnails={FullScreen ? false : true}
+                                showThumbnails={true}
                                 items={datadamage}
-                                additionalClass={` overflow-auto `}
+                                additionalClass={`  `}
                                 className=""
                                 useBrowserFullscreen={true}
                                 // onScreenChange={(e) => {
@@ -1323,8 +1345,8 @@ const Detail = ({ carss, SessionID }) => {
 
                                 onErrorImageURL="/Video.svg"
                                 slideInterval={10000}
-                                autoPlay={true}
-                                // showPlayButton={false}
+                                autoPlay={false}
+                                showPlayButton={false}
                                 showBullets={true}
                                 // useTranslate3D={true}
                                 lazyLoad={true}

@@ -88,7 +88,7 @@ const Detail = ({ cars, ID }) => {
             }
         }
 
-
+        console.log(bool)
 
         try {
 
@@ -116,7 +116,7 @@ const Detail = ({ cars, ID }) => {
                         TotalBals: myBalance - TotalCosts
 
                     }, auth)
-                
+
                 toast.success("Amount Paid")
                 const bal = await Axios.post(`/bal/`, {
                     userId: session?.data?.id,
@@ -261,7 +261,7 @@ const Detail = ({ cars, ID }) => {
                     <div className="flex justify-between  w-[500px] overflow-auto" >
                         <Link rel="noopener noreferrer" href={`/Dashboard/ListofCars/AllCars/${router.query.id}`}><a target="_blank" className="btn btn-info ">{l.detail}</a></Link>
                         <label htmlFor="my-modal-3" className="btn btn-warning modal-button">{l.retrieve}</label>
-                        {console.log(cars.carDetail.isPaid)}
+                        {console.log("--------=",cars.carDetail.isPaid)}
                         {cars.carDetail.isPaid == false && <label htmlFor="Pay-modal-1" className="btn btn-accent modal-button ">{l.pay}</label>}
                         {cars.carDetail.isPaid == true && <label htmlFor="borrowing-modal-1" className="btn btn-error modal-button ">{l.borrowing}</label>}
                     </div>
@@ -288,7 +288,9 @@ const Detail = ({ cars, ID }) => {
                             <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faTrashAlt} className="text-5xl text-red-700 " />  </h3>
                             <p className="py-4 ">{l.paymsg}</p>
                             <div className="space-x-10 ">
-                                <label className="btn btn-accent " onClick={() => { handlePayCar(true) }}>{l.yes}</label>
+                                <label htmlFor="Pay-modal-1" className="btn btn-accent " onClick={() => {
+                                    cars.carDetail.isPaid == false && handlePayCar(true)
+                                }}>{l.yes}</label>
                                 <label htmlFor="Pay-modal-1" className="btn btn-error ">{l.no}</label>
                             </div>
                         </div>
@@ -302,7 +304,9 @@ const Detail = ({ cars, ID }) => {
                             <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faTrashAlt} className="text-5xl text-red-700 " />  </h3>
                             <p className="py-4 ">{l.borrowmsg}</p>
                             <div className="space-x-10 ">
-                                <label className="btn btn-accent " onClick={() => { handlePayCar(false) }}>{l.yes}</label>
+                                <label htmlFor="borrowing-modal-1" className="btn btn-accent " onClick={() => {
+                                    cars.carDetail.isPaid == true && handlePayCar(false)
+                                }}>{l.yes}</label>
                                 <label htmlFor="borrowing-modal-1" className="btn btn-error ">{l.no}</label>
                             </div>
                         </div>

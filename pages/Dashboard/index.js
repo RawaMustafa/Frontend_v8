@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import useLanguage from "../../Component/language";
 import Head from 'next/head'
@@ -27,6 +28,12 @@ import { useSession, getSession } from "next-auth/react";
 export const getServerSideProps = async ({ req }) => {
 
     const session = await getSession({ req })
+
+
+
+
+
+
 
 
     if (!session || session?.userRole !== "Admin") {
@@ -62,6 +69,8 @@ const Dashboard = (props) => {
     const [DataQarz, setDataQarz] = useState()
     const [DataownCost, setDataownCost] = useState()
     const [UserInfo, setUserInfo] = useState()
+
+
 
 
 
@@ -222,6 +231,13 @@ const Dashboard = (props) => {
                     <title >{l.dashboard}</title>
                     <meta name="Dashboard" content="initial-scale=1.0, width=device-width all data " />
                 </Head>
+
+
+
+
+
+
+
 
 
                 <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4   gap-5 lg:gap-5 mx-4   text-[#8951fc]   ">

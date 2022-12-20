@@ -242,6 +242,10 @@ export const ku = {
     print: "جاپکردن",
     publicmsg: "دەتەوێت بیگۆریت بۆ تایبەت",
     Privatemsg: " دەتەوێت بیگۆریت بۆ گشتی",
+    USA: "ئەمریکا",
+    Dubai: "دوبەی",
+    Kurdistan: "کوردستان",
+    Location: "شوێن"
 
 
 }
