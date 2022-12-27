@@ -1,5 +1,5 @@
 
-import useLanguage from '../Component/language';
+import useLanguage from './language';
 import AdminLayout from '../Layouts/AdminLayout';
 import Head from 'next/head'
 import { useState, useEffect, useRef } from "react"
@@ -49,9 +49,9 @@ var canData = [],
 let IsTimeToDrawing = ""
 
 
-const NewCars = ({ setDataImage, Tocar }) => {
+const Paint = ({ setDataImage, Tocar, GlobalState, page }) => {
 
-    const [IsCanvasChanged, setIsCanvasChanged] = useState(1)
+    const { IsCanvasChanged, setIsCanvasChanged } = GlobalState
 
 
     const l = useLanguage();
@@ -98,7 +98,7 @@ const NewCars = ({ setDataImage, Tocar }) => {
         hi()
 
 
-    }, [Tocar, canvasRef.current, contextRef.current])
+    }, [Tocar, canvasRef.current, contextRef.current, page])
 
 
 
@@ -843,6 +843,6 @@ const NewCars = ({ setDataImage, Tocar }) => {
     );
 
 }
-NewCars.Layout = AdminLayout;
+Paint.Layout = AdminLayout;
 
-export default NewCars;
+export default Paint;

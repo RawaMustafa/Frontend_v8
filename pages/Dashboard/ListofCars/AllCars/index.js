@@ -85,11 +85,11 @@ const IndeterminateCheckbox = forwardRef(
 IndeterminateCheckbox.displayName = 'IndeterminateCheckbox'
 
 
-const Datahidden = typeof window != 'undefined' ? localStorage.getItem("AllCars")?.split(",") : ["image"]
-
 
 const Table = ({ COLUMNS, AllProducts }) => {
 
+
+    const Datahidden = typeof window != 'undefined' ? localStorage.getItem("AllCars")?.split(",") : ["image"]
 
 
     const router = useRouter()
@@ -151,9 +151,6 @@ const Table = ({ COLUMNS, AllProducts }) => {
         setReNewData(false)
         setReNewFooter(false)
 
-
-
-
     }, [Search, Page, Limit, StartDate, EndDate, ReNewData, ARRTDU, ARRTKU, ISSold, TOBalance, Visibility, Location])
 
 
@@ -191,7 +188,6 @@ const Table = ({ COLUMNS, AllProducts }) => {
         getToggleHideAllColumnsProps,
         page,
         setPageSize,
-        rows,
         footerGroups,
         prepareRow,
         setHiddenColumns
@@ -218,11 +214,6 @@ const Table = ({ COLUMNS, AllProducts }) => {
         state.hiddenColumns != "" &&
             localStorage.setItem("AllCars", state.hiddenColumns)
     }, [state.hiddenColumns])
-
-
-
-
-
 
 
 
@@ -438,76 +429,6 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                     </div>
                                 </div>
                             </form>
-                            {/* <form onChange={(e) => { setARRTKU(e.target.value) }} >
-                                <div
-                                    className="grid  min-w-[50px]   grid-cols-4 space-x-2 rounded-xl bg-gray-200 dark:bg-slate-800  dark:text-white  text-black"
-
-                                >
-                                    <div className='bg-accent/100  rounded px-1 flex items-center text-white text-sm'
-                                    >{l.arivedtoku}</div>
-                                    <div>
-                                        <input type="radio" name="option" id="111" className="peer hidden" value="0" />
-                                        <label
-                                            htmlFor="111"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-error peer-checked:font-bold peer-checked:text-white"
-                                        >{l.no}</label
-                                        >
-                                    </div>
-
-                                    <div>
-                                        <input type="radio" name="option" id="222" className="peer hidden" value="All" defaultChecked />
-                                        <label
-                                            htmlFor="222"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-slate-500 peer-checked:font-bold peer-checked:text-white"
-                                        >{l.all}</label
-                                        >
-                                    </div>
-
-                                    <div>
-                                        <input type="radio" name="option" id="333" className="peer hidden" value="1" />
-                                        <label
-                                            htmlFor="333"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-accent peer-checked:font-bold peer-checked:text-white "
-                                        >{l.yes}</label
-                                        >
-                                    </div>
-                                </div>
-                            </form>
-                            <form onChange={(e) => { setARRTDU(e.target.value) }} >
-                                <div
-                                    className="grid  min-w-[50px]   grid-cols-4 space-x-2 rounded-xl bg-gray-200 dark:bg-slate-800  dark:text-white  text-black"
-
-                                >
-                                    <div className='bg-accent/100  rounded px-1 flex items-center text-white text-sm'
-                                    >{l.arivedtodu}</div>
-                                    <div>
-                                        <input type="radio" name="option" id="1111" className="peer hidden" value="0" />
-                                        <label
-                                            htmlFor="1111"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-error peer-checked:font-bold peer-checked:text-white"
-                                        >{l.no}</label
-                                        >
-                                    </div>
-
-                                    <div>
-                                        <input type="radio" name="option" id="2222" className="peer hidden" value="All" defaultChecked />
-                                        <label
-                                            htmlFor="2222"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-slate-500 peer-checked:font-bold peer-checked:text-white"
-                                        >{l.all}</label
-                                        >
-                                    </div>
-
-                                    <div>
-                                        <input type="radio" name="option" id="3333" className="peer hidden" value="1" />
-                                        <label
-                                            htmlFor="3333"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-accent peer-checked:font-bold peer-checked:text-white "
-                                        >{l.yes}</label
-                                        >
-                                    </div>
-                                </div>
-                            </form> */}
 
 
                         </div>
@@ -594,7 +515,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                             <tr id="th-to-xls" className="text-xs text-center w-96 " key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
                                 <th className='hidden'></th>
                                 {headerGroups.headers.map((column, idx) => (
-                                    <th key={idx} className={`py-3  ${idx == 0 && "w-20  max-w-[100px] "}  `} {...column.getHeaderProps(column.getSortByToggleProps())} >
+                                    <th key={idx} className={`py-3 bg-[#3ea7e1]  text-white ${column.id == "Image" && "w-20  max-w-[100px] "}  `} {...column.getHeaderProps(column.getSortByToggleProps())} >
                                         <span className='text-xs  font-normal normal-case'>{column.render('Header')}</span>
                                         <span  >
                                             {column.isSorted ? (column.isSortedDesc ? "⇅" : "⇵") : ""}
@@ -618,7 +539,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                     {row.cells.map((cell, idx) => {
                                         return (
 
-                                            <td key={idx} className={`text-center max-w-10 dark:bg-[#161818]  ${idx == 0 && "w-20   p-0"}  ${idx != 0 && "py-2 "}`} {...cell.getCellProps()}>
+                                            <td key={idx} className={`text-center max-w-10 dark:bg-[#161818]  ${cell.column.id == "Image" && "w-20   p-0"}  ${idx != 0 && "py-2 "}`} {...cell.getCellProps()}>
 
 
                                                 {(cell.column.id !== "VINNumber" && cell.column.id !== "price" && cell.column.id !== "tire") && cell.render('Cell')}
@@ -771,7 +692,6 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
                                                 {cell.column.id === "Feestokurdistan" && (<>
 
-
                                                     {
                                                         row.original.carCost.coCCost +
                                                         row.original.carCost.dubaiToIraqGCostgumrgCost +
@@ -851,7 +771,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                             <tr key={idx} {...group.getFooterGroupProps()}>
                                 <td className='hidden'></td>
                                 {group.headers.map((column, idx) => (
-                                    <td key={idx} className='py-3 text-center ' {...column.getFooterProps()}>{column.render('Footer')}</td>
+                                    <td key={idx} className='py-3 text-center bg-[#3ea7e1]  text-white ' {...column.getFooterProps()}>{column.render('Footer')}</td>
                                 ))}
                             </tr>
                         ))}
@@ -867,33 +787,33 @@ const Table = ({ COLUMNS, AllProducts }) => {
                         <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
 
                             <div></div>
-                            <FontAwesomeIcon icon={faAnglesLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
+                            <FontAwesomeIcon icon={faAnglesLeft} className=" bg-[#3ea7e1]  text-white px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
                                 onClick={() => Page > 1 && setPage(1)}
                                 disabled={Page == 1 ? true : false} />
 
-                            <FontAwesomeIcon icon={faChevronLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                            <FontAwesomeIcon icon={faChevronLeft} className=" bg-[#3ea7e1]  text-white px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
                                 onClick={() => Page > 1 && setPage(Page - 1)}
                                 disabled={Page == 1 ? true : false} />
 
 
 
-                            <span className="px-20 py-2 rounded bg-slate-100 dark:bg-gray-700">
+                            <span className="px-20 py-2 rounded bg-[#3ea7e1]  text-white">
                                 {Page}/{PageS}
                             </span>
 
 
 
-                            <FontAwesomeIcon icon={faChevronRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                            <FontAwesomeIcon icon={faChevronRight} className=" bg-[#3ea7e1]  text-white px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
                                 onClick={() => Page < PageS && (Page >= 1 && setPage(Page + 1))}
                                 disabled={Page >= PageS ? true : false} />
 
-                            <FontAwesomeIcon icon={faAnglesRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                            <FontAwesomeIcon icon={faAnglesRight} className=" bg-[#3ea7e1]  text-white px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
                                 onClick={() => Page < PageS && (Page >= 1 && setPage(PageS))}
                                 disabled={Page >= PageS ? true : false} />
 
 
                             <div>
-                                <select className="select  select-sm w-20 focus:outline-0 input-sm dark:bg-gray-700   max-w-xs text-sm"
+                                <select className="select  select-sm w-20 focus:outline-0 input-sm bg-[#3ea7e1]  text-white  max-w-xs text-sm"
                                     onChange={(e) => {
                                         setLimit((e.target.value))
                                         setPageSize(Number(e.target.value))

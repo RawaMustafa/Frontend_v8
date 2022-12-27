@@ -12,6 +12,8 @@ import { faChevronLeft, faChevronRight, faCompress, faExpand, faTrashAlt, } from
 import { getSession, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
+import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
+import axios from "axios";
 
 
 export const getServerSideProps = async (context) => {
@@ -69,13 +71,106 @@ const Detail = ({ cars, ID }) => {
                 'Authorization': `Bearer ${session?.data?.Token}`
             }
         }
-        try {
-            await Axios.delete(`/qarz/${ID}`, auth)
+        const id = toast.loading(l.loading)
 
-            router.back()
-        } catch (err) {
-            toast.error("Car not deleted")
-        }
+
+
+        const AdminId = session?.data?.id
+        const UserId = router.query._id
+        const CarId = router.query.id
+
+
+        const Admin = Axios.get(`/users/detail/${AdminId}`, auth).then((res) => {
+            return res
+        }).catch((e) => {
+        })
+        const User = Axios.get(`/users/detail/${UserId}`, auth).then((res) => {
+            return res
+        }).catch((e) => {
+        })
+
+        await axios.all([Admin, User]).then(axios.spread(async (...e) => {
+
+
+            const myBalance = e[0].data.userDetail.TotalBals
+            const UserBalance = e[1].data.userDetail.TotalBals
+
+            let TotalCosts =
+                cars.carDetail.carCost.pricePaidbid +
+                cars.carDetail.carCost.feesinAmericaStoragefee +
+                cars.carDetail.carCost.feesinAmericaCopartorIAAfee +
+                cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost +
+                cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost
+
+
+
+            if (myBalance >= TotalCosts && cars.carDetail.isPaid == false) {
+
+                try {
+
+                    const AdminUpdate = await Axios.patch(`/users/${AdminId}`,
+                        {
+                            TotalBals: myBalance - TotalCosts
+                        }, auth)
+
+
+                    const UserUpdate = await Axios.patch(`/users/${UserId}`,
+                        {
+                            TotalBals: UserBalance - TotalCosts
+                        }, auth)
+
+                    const balUser = await Axios.post(`/bal/`, {
+                        userId: UserId,
+                        action: "Retrieved",
+                        carId: CarId,
+                        amount: -TotalCosts,
+                        note: "car not paid"
+
+                    }, auth)
+
+                    await Axios.delete(`/qarz/${ID}`, auth)
+                    toast.update(id, { render: "Retrieved", type: "success", isLoading: false, autoClose: 2000 });
+
+                    router.back()
+                } catch (err) {
+                    toast.update(id, { render: "Car not Retrieved *", type: "error", isLoading: false, autoClose: 2000 });
+
+                }
+
+            }
+
+
+            if (cars.carDetail.isPaid == true) {
+                try {
+
+                    const balUser = await Axios.post(`/bal/`, {
+                        userId: UserId,
+                        action: "Retrieved",
+                        carId: CarId,
+                        amount: 0,
+                        note: "car is paid"
+                    }, auth)
+
+                    await Axios.delete(`/qarz/${ID}`, auth)
+                    toast.update(id, { render: "Retrieved", type: "success", isLoading: false, autoClose: 2000 });
+
+                    router.back()
+                } catch (err) {
+                    toast.update(id, { render: "Car not Retrieved *", type: "error", isLoading: false, autoClose: 2000 });
+
+                }
+
+            }
+            else {
+                toast.update(id, { render: "You don't have enough balance", type: "error", isLoading: false, autoClose: 2000 });
+
+            }
+
+        }))
+
+
+
+
 
     }
 
@@ -87,89 +182,166 @@ const Detail = ({ cars, ID }) => {
                 'Authorization': `Bearer ${session?.data?.Token}`
             }
         }
+        const id = toast.loading(l.loading)
 
-        console.log(bool)
 
         try {
 
-            const car = await Axios.get(`/cars/${router.query.id}`, auth)
-            const users = await Axios.get(`/users/detail/${session?.data?.id}`, auth)
 
-            const Data = car.data.carDetail.carCost
-            const myBalance = users.data.userDetail.TotalBals
-            let TotalCosts =
-                Data.pricePaidbid +
-                Data.feesinAmericaStoragefee +
-                Data.feesinAmericaCopartorIAAfee +
-                Data.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost +
-                Data.transportationCostFromAmericaLocationtoDubaiGCostTranscost
+            const AdminId = session?.data?.id
+            const UserId = router.query._id
+            const CarId = router.query.id
 
 
+            const Admin = Axios.get(`/users/detail/${AdminId}`, auth).then((res) => {
+                return res
+            }).catch((e) => {
+            })
+            const User = Axios.get(`/users/detail/${UserId}`, auth).then((res) => {
+                return res
+            }).catch((e) => {
+            })
+
+            await axios.all([Admin, User]).then(axios.spread(async (...e) => {
 
 
+                const myBalance = e[0].data.userDetail.TotalBals
+                const UserBalance = e[1].data.userDetail.TotalBals
+
+                let TotalCosts =
+                    cars.carDetail.carCost.pricePaidbid +
+                    cars.carDetail.carCost.feesinAmericaStoragefee +
+                    cars.carDetail.carCost.feesinAmericaCopartorIAAfee +
+                    cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost +
+                    cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost
 
 
-            if (myBalance >= TotalCosts) {
+                if (bool == false) {
 
-                const useraD = await Axios.patch(`/users/${session?.data?.id}`,
-                    {
-                        TotalBals: myBalance - TotalCosts
+                    const AdminUpdate = await Axios.patch(`/users/${AdminId}`,
+                        {
+                            TotalBals: myBalance + TotalCosts
+                        }, auth)
 
+
+                    const UserUpdate = await Axios.patch(`/users/${UserId}`,
+                        {
+                            TotalBals: UserBalance + TotalCosts
+                        }, auth)
+
+                    const balUser = await Axios.post(`/bal/`, {
+                        userId: UserId,
+                        action: bool ? "Repayment" : "Loan",
+                        carId: CarId,
+                        amount: bool ? -TotalCosts : TotalCosts,
                     }, auth)
 
-                toast.success("Amount Paid")
-                const bal = await Axios.post(`/bal/`, {
-                    userId: session?.data?.id,
-                    action: "Repayment",
-                    carId: router.query.id,
-                    amount: TotalCosts,
-                }, auth)
+                    const Qarz = await Axios.patch(`/qarz/${ID}`, {
+                        carId: CarId,
+                        isPaid: bool ? 1 : 0,
+                    }, auth)
 
-                toast.success("l.balance" + "=" + myBalance - TotalCosts)
-                await Axios.patch(`/qarz/${ID}`, {
-                    carId: router?.query.id,
-                    isPaid: bool,
-                }, auth)
-                router.reload()
+                    toast.update(id, { render: "Rent Car", type: "success", isLoading: false, autoClose: 2000 });
 
-            }
+                    router.reload()
+                }
+
+
+                if (bool == true) {
+
+                    if (myBalance >= TotalCosts) {
+
+                        const AdminUpdate = await Axios.patch(`/users/${AdminId}`,
+                            {
+                                TotalBals: myBalance - TotalCosts
+                            }, auth)
+
+
+                        const UserUpdate = await Axios.patch(`/users/${UserId}`,
+                            {
+                                TotalBals: UserBalance - TotalCosts
+                            }, auth)
+
+                        const balUser = await Axios.post(`/bal/`, {
+                            userId: UserId,
+                            action: bool ? "Repayment" : "Loan",
+                            carId: CarId,
+                            amount: bool ? -TotalCosts : TotalCosts,
+                        }, auth)
+
+                        const Qarz = await Axios.patch(`/qarz/${ID}`, {
+                            carId: CarId,
+                            isPaid: bool ? 1 : 0,
+                        }, auth)
+
+                        toast.update(id, { render: "Amount Paid", type: "success", isLoading: false, autoClose: 2000 });
+
+                        router.reload()
+                    }
+
+                    else {
+                        toast.success("you dont have enough balance")
+                    }
+
+                }
+
+
+
+
+            }))
+
+
+
 
         } catch (err) {
-            toast.error("not Pay *")
+            toast.update(id, { render: "error to get  balance *", type: "error", isLoading: false, autoClose: 2000 });
+
         }
 
     }
-
 
 
     const renderVideo = (item) => {
 
 
         return (
-            <div className="play-button grow relative w-full h-full overflow-auto bg-cover">
+
+            <div className="play-button  ">
                 {item.taramash != "false" ?
                     <div className=' flex justify-center'>
-                        <video controls
-                            className="w-full bg-cover ">
-                            <source
-                                src={`${baseURL}${item.taramash}`} type="video/mp4" />
-                        </video >
-                    </div >
-                    :
-                    <div className='play-button grow relative w-full h-full overflow-auto bg-cover'>
-                        <Image width={1920} height={1080}
-                            alt='SliderImage'
-                            sizes="100%"
-                            objectFit="cover"
-                            className='image-gallery-image '
-                            crossOrigin="anonymous"
-                            src={item.original}
-                        />
+                        <TransformWrapper  >
+                            <TransformComponent>
+                                <video controls
+                                    className="w-[1920px]">
+                                    <source
+                                        src={`${baseURL}${item.taramash}`} type="video/mp4" />
 
+                                </video >
+                            </TransformComponent>
+                        </TransformWrapper>
+                    </div >
+
+                    :
+
+                    <div className='play-button grow relative w-full h-full overflow-auto bg-cover flex   justify-center'>
+
+                        <TransformWrapper   >
+                            <TransformComponent>
+                                <Image width={1920} height={1080}
+                                    alt='SliderImage'
+                                    objectFit="fill"
+                                    className='image-gallery-image '
+                                    crossOrigin="anonymous"
+                                    src={item.original}
+                                />
+                            </TransformComponent>
+                        </TransformWrapper>
                     </div>
+
                 }
 
             </div >
+
         );
 
     }
@@ -204,7 +376,6 @@ const Detail = ({ cars, ID }) => {
         );
 
     }
-
 
 
     const datarepaire = []
@@ -259,11 +430,26 @@ const Detail = ({ cars, ID }) => {
 
                 <div className="flex  w-full h-full p-4 justify-end  ">
                     <div className="flex justify-between  w-[500px] overflow-auto" >
+                        {cars.carDetail.isPaid == false && <label htmlFor="Pay-modal" className="btn btn-accent modal-button ">{l.pay}</label>}
                         <Link rel="noopener noreferrer" href={`/Dashboard/ListofCars/AllCars/${router.query.id}`}><a target="_blank" className="btn btn-info ">{l.detail}</a></Link>
                         <label htmlFor="my-modal-3" className="btn btn-warning modal-button">{l.retrieve}</label>
-                        {console.log("--------=",cars.carDetail.isPaid)}
-                        {cars.carDetail.isPaid == false && <label htmlFor="Pay-modal-1" className="btn btn-accent modal-button ">{l.pay}</label>}
                         {cars.carDetail.isPaid == true && <label htmlFor="borrowing-modal-1" className="btn btn-error modal-button ">{l.borrowing}</label>}
+
+                    </div>
+
+                    <input type="checkbox" id="Pay-modal" className="modal-toggle btn btn-error" />
+                    <div className="modal  ">
+                        <div className="modal-box relative ">
+                            <label htmlFor="Pay-modal" className="btn btn-sm btn-circle absolute right-2 top-2 ">✕</label>
+                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faTrashAlt} className="text-5xl text-red-700 " />  </h3>
+                            <p className="py-4 ">{l.paymsg}</p>
+                            <div className="space-x-10 ">
+                                <label htmlFor="Pay-modal" className="btn btn-accent " onClick={() => {
+                                    cars.carDetail.isPaid == false && handlePayCar(true)
+                                }}>{l.yes}</label>
+                                <label htmlFor="Pay-modal" className="btn btn-error ">{l.no}</label>
+                            </div>
+                        </div>
                     </div>
 
                     <input type="checkbox" id="my-modal-3" className="modal-toggle btn btn-error " />
@@ -281,20 +467,7 @@ const Detail = ({ cars, ID }) => {
 
 
 
-                    <input type="checkbox" id="Pay-modal-1" className="modal-toggle btn btn-error " />
-                    <div className="modal  ">
-                        <div className="modal-box relative ">
-                            <label htmlFor="Pay-modal-1" className="btn btn-sm btn-circle absolute right-2 top-2 ">✕</label>
-                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faTrashAlt} className="text-5xl text-red-700 " />  </h3>
-                            <p className="py-4 ">{l.paymsg}</p>
-                            <div className="space-x-10 ">
-                                <label htmlFor="Pay-modal-1" className="btn btn-accent " onClick={() => {
-                                    cars.carDetail.isPaid == false && handlePayCar(true)
-                                }}>{l.yes}</label>
-                                <label htmlFor="Pay-modal-1" className="btn btn-error ">{l.no}</label>
-                            </div>
-                        </div>
-                    </div>
+
 
 
                     <input type="checkbox" id="borrowing-modal-1" className="modal-toggle btn btn-error " />
@@ -531,10 +704,29 @@ const Detail = ({ cars, ID }) => {
                                 </thead>
                                 <tbody  >
 
-
                                     <tr className="">
                                         <td className=" text-start bg-white dark:bg-[#181A1B]" >{l.price} :</td>
-                                        <td className=" text-end bg-white dark:bg-[#181A1B]" >{cars.carDetail.price}</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]" >{cars.carDetail.price} $</td>
+                                    </tr>
+                                    <tr className="">
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]" >{l.pricepaidorcaratbid} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]" >{cars.carDetail.carCost.pricePaidbid} $</td>
+                                    </tr>
+                                    <tr className="">
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]" >{l.copartoriaafee} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]" >{cars.carDetail.carCost.feesinAmericaCopartorIAAfee} $</td>
+                                    </tr>
+                                    <tr className="">
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]" >{l.storagefee} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]" >{cars.carDetail.carCost.feesinAmericaStoragefee} $</td>
+                                    </tr>
+                                    <tr className="">
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]" >{l.fromamericatodubaicost} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]" >{cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost} $</td>
+                                    </tr>
+                                    <tr className="">
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]" >{l.fromamericatodubaigumrg} :</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]" >{cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost} $</td>
                                     </tr>
 
                                     <tr className="">
@@ -548,15 +740,6 @@ const Detail = ({ cars, ID }) => {
                                     <tr className="">
                                         <td className=" text-start bg-white dark:bg-[#181A1B]" >{l.isSold} :</td>
                                         {cars.carDetail.isSold ? <td className="text-green-700 text-end bg-white dark:bg-[#181A1B]">{l.yes}</td> : <td className="text-red-700 text-end bg-white dark:bg-[#181A1B]">{l.no}</td>}
-                                    </tr>
-                                    <tr className="">
-                                        <td className=" text-start bg-white dark:bg-[#181A1B]" >{l.arivedtoku} :</td>
-                                        {cars.carDetail.arrivedToKurd ? <td className="text-green-700 text-end bg-white dark:bg-[#181A1B]">{l.yes}</td> : <td className="text-red-700 text-end bg-white dark:bg-[#181A1B]">{l.no}</td>}
-                                    </tr>
-
-                                    <tr className="">
-                                        <td className=" text-start bg-white dark:bg-[#181A1B]" >{l.arivedtodu} :</td>
-                                        {cars.carDetail.arrivedToDoubai ? <td className="text-green-700 text-end bg-white dark:bg-[#181A1B]">{l.yes}</td> : <td className="text-red-700 text-end bg-white dark:bg-[#181A1B]">{l.no}</td>}
                                     </tr>
                                     <tr className="">
                                         <td className=" text-start bg-white dark:bg-[#181A1B]" >{l.modelyear} :</td>

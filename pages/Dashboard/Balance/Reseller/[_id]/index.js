@@ -254,7 +254,7 @@ const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
 
             </div>
             {/* //?   Header  */}
-            <div className="container mx-auto overflow-auto scrollbar-hide bg-white dark:bg-[#181A1B] rounded-b-xl shadow-xl ">
+            <div className="  overflow-auto scrollbar-hide bg-white dark:bg-[#181A1B] rounded-b-xl shadow-xl ">
 
                 <table id="table-to-xls" className="table w-full my-10 text-sm font-normal normal-case text-center   " {...getTableProps()}>
 
@@ -338,7 +338,7 @@ const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
                 {/* //?    botom */}
                 <div className="container text-sm  scale-90  ">
 
-                    <div className=" flex justify-between container mx-auto items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
+                    <div className=" flex justify-between  items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
 
 
                         <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
@@ -551,7 +551,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
     return (
-        <div className=" container mx-auto  overflow-auto ">
+        <div className=" bg-white dark:bg-[#181A1B]   overflow-auto ">
 
 
 
@@ -631,7 +631,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
             {/* //?    botom */}
             <div className="container text-sm  scale-90  ">
 
-                <div className=" flex justify-between container mx-auto items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
+                <div className=" flex justify-between  items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
 
 
                     <div className=" flex items-center justify-around mx-5 bg-center space-x-2">

@@ -889,7 +889,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
     return (
 
-        <div className='container mx-auto' >
+        <div className='' >
 
             {/* //^ change user to admin */}
             <div className="mb-20 flex justify-end    p-2 ">
@@ -931,7 +931,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                     />
                 </div>
             </div>}
-            <div className=" container mx-auto overflow-x-auto  scrollbar-hide bg-white dark:bg-[#181a1b]  rounded-b-2xl shadow-neutral ">
+            <div className="  overflow-x-auto  scrollbar-hide bg-white dark:bg-[#181a1b]  rounded-b-2xl shadow-neutral ">
                 {PageUser == 1 && <div >
 
                     {/*  //^    Modal    */}
@@ -1048,7 +1048,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                     <th className='hidden' ></th>
                                     {headerGroups.headers.map((column, idx) => (
 
-                                        <th key={idx} className=" font-normal normal-case " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
+                                        <th key={idx} className=" font-normal normal-case bg-[#3ea7e1]  text-white " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
 
                                             <span>
                                                 {column.isSorted ? (column.isSortedDesc ? "⇅" : "⇵") : ""}
@@ -1204,33 +1204,33 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                             <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
 
                                 <div></div>
-                                <FontAwesomeIcon icon={faAnglesLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
+                                <FontAwesomeIcon icon={faAnglesLeft} className=" bg-[#3ea7e1]  text-white px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
                                     onClick={() => Page > 1 && setPage(1)}
                                     disabled={Page == 1 ? true : false} />
 
-                                <FontAwesomeIcon icon={faChevronLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                <FontAwesomeIcon icon={faChevronLeft} className=" bg-[#3ea7e1]  text-white px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
                                     onClick={() => Page > 1 && setPage(Page - 1)}
                                     disabled={Page == 1 ? true : false} />
 
 
 
-                                <span className="px-20 py-2 rounded bg-slate-100 dark:bg-gray-700">
+                                <span className="px-20 py-2 rounded bg-[#3ea7e1]  text-white">
                                     {Page}/{PageS}
                                 </span>
 
 
 
-                                <FontAwesomeIcon icon={faChevronRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                <FontAwesomeIcon icon={faChevronRight} className=" bg-[#3ea7e1]  text-white px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
                                     onClick={() => Page < PageS && (Page >= 1 && setPage(Page + 1))}
                                     disabled={Page >= PageS ? true : false} />
 
-                                <FontAwesomeIcon icon={faAnglesRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                                <FontAwesomeIcon icon={faAnglesRight} className=" bg-[#3ea7e1]  text-white px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
                                     onClick={() => Page < PageS && (Page >= 1 && setPage(PageS))}
                                     disabled={Page >= PageS ? true : false} />
 
 
                                 <div>
-                                    <select className="select  select-sm w-20 focus:outline-0 input-sm dark:bg-gray-700   max-w-xs text-sm"
+                                    <select className="select  select-sm w-20 focus:outline-0 input-sm bg-[#3ea7e1]  text-white   max-w-xs text-sm"
                                         onChange={(e) => {
                                             setLimit((e.target.value))
                                             setPageSize(Number(e.target.value)

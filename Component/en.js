@@ -33,7 +33,7 @@ export const en = {
     pricepaidorcaratbid: "Price Paid ",
     feesinamerica: "Fees in America",
     storagefee: "Storage Fee",
-    copartoriaafee: "Copart  IAA Fee",
+    copartoriaafee: "Copart IAA Fee",
     feesinadubai: "Fees in Dubai",
     repaircost: "Repair Cost",
     dubairepaircost: "Dubai Repair Cost",
@@ -219,7 +219,10 @@ export const en = {
     USA: "USA",
     Dubai: "Dubai",
     Kurdistan: "Kurdistan",
-    Location:"Location"
+    Location: "Location",
+    text: "Text",
+    image: "Image",
+    updatemsg:"what y"
 
 
 

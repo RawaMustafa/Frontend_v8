@@ -9,11 +9,12 @@ const AdminLayout = ({ children }) => {
 
         <div className="">
             <Header />
-            <div className="rtl:lg:mr-64   ltr:lg:mr-5  rtl:lg:ml-10 ltr:lg:ml-64  pt-28  scrollbar-hide  ">
+            <div className="rtl:lg:mr-64 mx-2  ltr:lg:mr-5  rtl:lg:ml-10 ltr:lg:ml-64  pt-28  scrollbar-hide standalone:pt-40 standalone:mb-10 ">
                 {children}
             </div>
 
             <Sidebar />
+            <div className="mb-80"></div>
         </div>
     );
 }

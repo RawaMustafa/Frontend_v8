@@ -245,7 +245,9 @@ export const ku = {
     USA: "ئەمریکا",
     Dubai: "دوبەی",
     Kurdistan: "کوردستان",
-    Location: "شوێن"
+    Location: "شوێن",
+    text: "نوسین",
+    image: "وێنە",
 
 
 }

@@ -119,6 +119,7 @@ const Dashboard = (props) => {
                         axios.spread((...responses) => {
 
                             const dataFertch = responses?.[0]?.data?.TotalList[0];
+                            console.log(dataFertch)
                             const dataFertchqarz = responses?.[2]?.data?.QarzTotal[0];
                             const dataFertchownCost = responses?.[1]?.data?.QarzTotal[0];
                             const UserBalance = responses?.[3]?.data.userDetail
@@ -243,18 +244,18 @@ const Dashboard = (props) => {
                 <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4   gap-5 lg:gap-5 mx-4   text-[#8951fc]   ">
 
 
-                    <Link href="/Dashboard/ListofCars/AllCars"><a><div className="p-5  border  bg-[#afeeee]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%] ">
-                        <div className="flex items-center  justify-around  ">
+                    <Link href="/Dashboard/ListofCars/AllCars"><a><div className="p-5 relative border  bg-[#afeeee]  rounded-2xl shadow-xl drop-shadow-lg  overflow-hidden  active:scale-[98%] hover:scale-[99%] ">
+                        <div className="flex items-center  justify-around    ">
 
                             <div>
                                 <div className="">{l.allcars}</div>
                                 <div className="text-3xl font-bold  ">{Data?.carNumber || " 0"}</div>
                             </div>
                             <div>
-                                <div className="flex items-center justify-center w-12 h-12 rounded-full  ">
+                                <div className="flex items-center justify-center w-12 h-12 rounded-full    ">
 
                                     <FontAwesomeIcon icon={faCar} className="text-4xl " />
-                                    <FontAwesomeIcon icon={faCar} className="text-6xl absolute right-0 opacity-5 " />
+                                    <FontAwesomeIcon icon={faCar} className="text-6xl absolute rtl:left-1 rtl:right-auto   right-1   opacity-5 " />
 
 
                                 </div>
@@ -263,7 +264,7 @@ const Dashboard = (props) => {
 
                         </div>
                     </div></a></Link>
-                    <Link href="/Dashboard/Balance/Mybalance"><a><div className="p-5  border  bg-[#d2df97]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
+                    <Link href="/Dashboard/Balance/Mybalance"><a><div className="p-5 relative border overflow-hidden bg-[#d2df97]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
                         <div className="flex items-center  justify-around  ">
 
                             <div>
@@ -274,7 +275,7 @@ const Dashboard = (props) => {
                                 <div className="flex items-center justify-center w-12 h-12 rounded-full ">
 
                                     <FontAwesomeIcon icon={faDollar} className="text-4xl " />
-                                    <FontAwesomeIcon icon={faDollar} className="text-6xl absolute right-0 opacity-5 " />
+                                    <FontAwesomeIcon icon={faDollar} className="text-6xl absolute rtl:left-1 rtl:right-auto  right-1 opacity-5 " />
 
 
                                 </div>
@@ -283,7 +284,7 @@ const Dashboard = (props) => {
                         </div>
                     </div></a></Link>
 
-                    <Link href="/Dashboard/Balance/Mybalance"><a><div className="p-5 border bg-[#ddc7a8]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
+                    <Link href="/Dashboard/Balance/Mybalance"><a><div className="p-5 relative border bg-[#ddc7a8] overflow-hidden rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
                         <div className="flex items-center  justify-around  ">
 
                             <div>
@@ -294,7 +295,7 @@ const Dashboard = (props) => {
                                 <div className="flex items-center justify-center w-12 h-12 rounded-full  ">
 
                                     <FontAwesomeIcon icon={faMoneyCheckDollar} className="text-4xl" />
-                                    <FontAwesomeIcon icon={faMoneyCheckDollar} className="text-6xl absolute right-0 opacity-5 " />
+                                    <FontAwesomeIcon icon={faMoneyCheckDollar} className="text-6xl absolute rtl:left-1 rtl:right-auto  right-1 opacity-5 " />
 
 
                                 </div>
@@ -305,7 +306,7 @@ const Dashboard = (props) => {
 
 
 
-                    <Link href="/Dashboard/"><a><div className="p-5 border bg-[#e4e6ef]  rounded-2xl shadow-xl  drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
+                    <Link href="/Dashboard/"><a><div className="p-5 relative border bg-[#e4e6ef] overflow-hidden rounded-2xl shadow-xl  drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
                         <div className="flex items-center  justify-around  ">
 
                             <div>
@@ -316,7 +317,7 @@ const Dashboard = (props) => {
                                 <div className="flex items-center justify-center w-12 h-12 rounded-full ">
 
                                     <FontAwesomeIcon icon={faSackDollar} className="text-4xl" />
-                                    <FontAwesomeIcon icon={faSackDollar} className="text-6xl absolute right-0 opacity-5 " />
+                                    <FontAwesomeIcon icon={faSackDollar} className="text-6xl absolute  rtl:left-1 rtl:right-auto  right-1 opacity-5 " />
 
 
                                 </div>

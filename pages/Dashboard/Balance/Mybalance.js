@@ -212,19 +212,26 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                 }
 
                 try {
-                    const res = await Axios.get(`/bal/?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate || '2000-01-01'}&edate${EndDate || "2500-01-01"}`, auth
+                    const res = await Axios.get(`/bal/?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate || '2000-01-01'}&edate=${EndDate || "2500-01-01"}`, auth
                     )
 
                     setDataTable(res.data.History)
                     setPageS(Math.ceil(res.data.total[0].total / Limit))
+                    console.log(res.data)
 
 
-                    const users = await Axios.get(`/users/Reseller/`, auth)
-                    setTotalUsers(users.data.userDetail)
                 }
                 catch {
-                    // setDataTable([])
+                    setDataTable([])
                 }
+
+                try {
+                    const users = await Axios.get(`/users/Reseller/`, auth)
+                    setTotalUsers(users.data.userDetail)
+                } catch {
+                }
+
+
             }
             getExpenseData()
             setReNewData(false)
@@ -339,7 +346,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
     const { pageIndex, pageSize } = state
 
     return (
-        <div className="container mx-auto shadow  my-10">
+        <div className=" shadow  ">
             {/* //?   Header  */}
             <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-2xl p-5">
                 <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
@@ -458,16 +465,16 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
             {/* //?   Modal  */}
 
 
-            <div className="container mx-auto overflow-auto bg-white dark:bg-[#181a1b]  ">
+            <div className=" overflow-auto bg-white dark:bg-[#181a1b]  ">
                 {/* //?    Table      */}
-                <table id="table-to-xls" className="my-10 table w-full  min-w-[650px]  text-xs" {...getTableProps()}>
+                <table id="table-to-xls" className="my-10 table w-full  min-w-[650px]  text-xs " {...getTableProps()}>
 
                     <thead className="text-center">
                         {headerGroups.map((headerGroups, idx) => (
                             <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
                                 <th key={idx} className='hidden'></th>
                                 {headerGroups.headers.map((column, idx) => (
-                                    <th key={idx} className=" text-xs font-normal normal-case " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
+                                    <th key={idx} className=" text-xs font-normal normal-case bg-[#3ea7e1] text-white" {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
                                         <span>
                                             {column.isSorted ? (column.isSortedDesc ? "⇅" : "⇵") : ""}
                                         </span>
@@ -536,39 +543,39 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                 {/* //?    botom */}
                 <div className="container text-sm  scale-90  ">
 
-                    <div className=" flex justify-between container mx-auto items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
+                    <div className=" flex justify-between  items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
 
 
-                        <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
+                        <div className=" flex items-center justify-around mx-5 bg-center space-x-2 text-white">
 
                             <div></div>
-                            <FontAwesomeIcon icon={faAnglesLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
+                            <FontAwesomeIcon icon={faAnglesLeft} className=" bg-[#3ea7e1] px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
                                 onClick={() => Page > 1 && setPage(1)}
                                 disabled={Page == 1 ? true : false} />
 
-                            <FontAwesomeIcon icon={faChevronLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                            <FontAwesomeIcon icon={faChevronLeft} className=" bg-[#3ea7e1] px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
                                 onClick={() => Page > 1 && setPage(Page - 1)}
                                 disabled={Page == 1 ? true : false} />
 
 
 
-                            <span className="px-20 py-2 rounded bg-slate-100 dark:bg-gray-700">
+                            <span className="px-20 py-2 rounded   bg-[#3ea7e1] ">
                                 {Page}/{PageS}
                             </span>
 
 
 
-                            <FontAwesomeIcon icon={faChevronRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                            <FontAwesomeIcon icon={faChevronRight} className=" bg-[#3ea7e1] px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
                                 onClick={() => Page < PageS && (Page >= 1 && setPage(Page + 1))}
                                 disabled={Page >= PageS ? true : false} />
 
-                            <FontAwesomeIcon icon={faAnglesRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                            <FontAwesomeIcon icon={faAnglesRight} className=" bg-[#3ea7e1] px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
                                 onClick={() => Page < PageS && (Page >= 1 && setPage(PageS))}
                                 disabled={Page >= PageS ? true : false} />
 
 
                             <div>
-                                <select className="select  select-sm w-20 focus:outline-0 input-sm dark:bg-gray-700   max-w-xs text-sm"
+                                <select className="select  select-sm w-20 focus:outline-0 input-sm bg-[#3ea7e1]    max-w-xs text-sm"
                                     onChange={(e) => {
                                         setLimit((e.target.value))
                                         setPageSize(Number(e.target.value)
@@ -732,7 +739,7 @@ const Expense = ({ SessionID, AllUsers }) => {
                         return "Date";
                     },
 
-                    accessor: 'actionDate',
+                    accessor: 'actionDate1',
                     disableFilters: false,
                     // Filter: DateRangeColumnFilter,
                     // filter: dateBetweenFilterFn,

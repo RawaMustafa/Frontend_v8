@@ -5,7 +5,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import useLanguage from '../../../../Component/language';
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faTrashAlt, faPaperPlane, faHandHoldingUsd, faArrowsRotate, faExpand, faCompress, faChevronRight, faChevronLeft, faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
+import { faTrashAlt, faPaperPlane, faHandHoldingUsd, faArrowsRotate, faExpand, faCompress, faChevronRight, faChevronLeft, faLock, faLockOpen, faWrench } from '@fortawesome/free-solid-svg-icons';
 import AdminLayout from '../../../../Layouts/AdminLayout';
 import Image from "next/image";
 import { ToastContainer, toast, } from 'react-toastify';
@@ -69,10 +69,16 @@ const Detail = ({ carss, SessionID }) => {
     const [UserID, setUserID] = useState(null);
     const [Note, setNote] = useState('');
     const [detpage, setDetpage] = useState(1);
+    const [ImageUpdatePage, setImageUpdatePage] = useState(1);
     const [ImagePage, setImagePage] = useState(1);
     const [FullScreen, setFullScreen] = useState(false);
     const [ShowPage, setShowPage] = useState(1);
     const [RenewPage, setRenewPage] = useState(false);
+
+
+    const [pictureandvideorepair, setPictureandvideorepair] = useState([])
+    const [pictureandvideodamage, setPictureandvideodamage] = useState([])
+    const [CarDamage, setCarDamage] = useState([])
 
 
     const l = useLanguage();
@@ -764,6 +770,62 @@ const Detail = ({ carss, SessionID }) => {
 
     }
 
+
+
+  const  handleUpdateImage = async () => {
+        const auth = {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${session?.data?.Token}`
+            }
+        }
+
+
+
+        // save image from canvas
+        if (typeof document != "undefined") {
+            var canvas = document.getElementById("canvas");
+            let imageBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+            setCarDamage(imageBlob)
+        }
+
+        //! change  data and Image to FormData ----------------------------------
+
+        let FormDataCar = new FormData();
+
+        for (let key in DataUpload) {
+            FormDataCar.append(key, DataUpload[key]);
+        }
+
+        for (let i = 0; i < pictureandvideorepair.length; i++) {
+
+            FormDataCar.append("Pictureandvideorepair", pictureandvideorepair[i], `image${i}.jpeg`);
+
+        }
+
+
+        for (let i = 0; i < pictureandvideodamage.length; i++) {
+
+            FormDataCar.append("Pictureandvideodamage", pictureandvideodamage[i], "image.jpeg");
+
+        }
+
+        CarDamage != '' && FormDataCar.append("CarDamage", CarDamage, "image.png");
+
+
+
+        Axios.patch(`/cars`, {
+
+
+
+        }, auth)
+
+    }
+
+
+
+
+
     useEffect(() => {
         if (session.status === "authenticated") {
 
@@ -846,29 +908,15 @@ const Detail = ({ carss, SessionID }) => {
             <div className="play-button  ">
                 {item.taramash != "false" ?
                     <div className=' flex justify-center'>
-                        <TransformWrapper
-                            initialScale={1}
-                            initialPositionX={200}
-                            initialPositionY={100}
-                        >
-                            {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
-                                <>
-                                    <div className="tools ">
-                                        <div></div>
-                                        <button className="fixed text-4xl btn z-50 my-0" onClick={() => zoomIn()}>+</button>
-                                        <button className="fixed text-4xl btn  z-50 my-14 " onClick={() => zoomOut()}>-</button>
-                                        <button className="fixed text-4xl btn z-50 my-28 " onClick={() => resetTransform()}>x</button>
-                                    </div>
-                                    <TransformComponent>
-                                        <video controls
-                                            className="w-[1920px]">
-                                            <source
-                                                src={`${baseURL}${item.taramash}`} type="video/mp4" />
+                        <TransformWrapper  >
+                            <TransformComponent>
+                                <video controls
+                                    className="w-[1920px]">
+                                    <source
+                                        src={`${baseURL}${item.taramash}`} type="video/mp4" />
 
-                                        </video >
-                                    </TransformComponent>
-                                </>
-                            )}
+                                </video >
+                            </TransformComponent>
                         </TransformWrapper>
                     </div >
 
@@ -876,29 +924,16 @@ const Detail = ({ carss, SessionID }) => {
 
                     <div className='play-button grow relative w-full h-full overflow-auto bg-cover flex   justify-center'>
 
-                        <TransformWrapper
-                            initialScale={1}
-                            initialPositionX={200}
-                            initialPositionY={100}
-                        >
-                            {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
-                                <>
-                                    <div className="tools ">
-                                        <button className="fixed text-4xl z-50 top-5" onClick={() => zoomIn()}>+</button>
-                                        <button className="fixed text-4xl  z-50 top-10" onClick={() => zoomOut()}>-</button>
-                                        <button className="fixed text-4xl  z-50 top-20" onClick={() => resetTransform()}>x</button>
-                                    </div>
-                                    <TransformComponent>
-                                        <Image width={1920} height={1080}
-                                            alt='SliderImage'
-                                            objectFit="fill"
-                                            className='image-gallery-image '
-                                            crossOrigin="anonymous"
-                                            src={item.original}
-                                        />
-                                    </TransformComponent>
-                                </>
-                            )}
+                        <TransformWrapper   >
+                            <TransformComponent>
+                                <Image width={1920} height={1080}
+                                    alt='SliderImage'
+                                    objectFit="fill"
+                                    className='image-gallery-image '
+                                    crossOrigin="anonymous"
+                                    src={item.original}
+                                />
+                            </TransformComponent>
                         </TransformWrapper>
                     </div>
 
@@ -1004,7 +1039,10 @@ const Detail = ({ carss, SessionID }) => {
                 <div className="navbar mb-16  flex justify-between scrollbar-hide  max-w-8xl overflow-auto space-x-2  lg:w-[calc(100%-1rem)]  mt-2  bg-opacity-5    backdrop-blur-md bg-slate-300 rounded-2xl   ">
 
 
-                    <button className="btn btn-success" onClick={() => { setDetpage(3) }}>{l.update}</button>
+                    {/* <button className="btn btn-success" onClick={() => { setDetpage(3) }}>{l.update}</button> */}
+                    <label htmlFor="Update-modal" className="btn btn-success" >{l.update}</label>
+
+
                     <label htmlFor="my-modal-3" className="btn btn-error modal-button">{l.delete}</label>
                     <label htmlFor="give-modal-3" className="btn btn-info modal-button">{l.give}</label>
                     {(cars.carDetail.carCost.isSold == true) && <label htmlFor="sold-modal-3" className="btn btn-warning modal-button">{l.retrieve}</label>}
@@ -1021,6 +1059,28 @@ const Detail = ({ carss, SessionID }) => {
                 </div>
                 {/* //^ header */}
                 <div>
+
+
+
+                    <input type="checkbox" id="Update-modal" className="modal-toggle" />
+                    <div className="modal">
+                        <div className="modal-box relative">
+                            <label htmlFor="Update-modal" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+                            <h3 className="  text-center"><FontAwesomeIcon icon={faWrench} className="text-center text-5xl  text-green-500" /></h3>
+                            <p className="py-4">do you want update text or image</p>
+                            <div className="space-x-5 text-end">
+                                <div></div>
+                                {/* <button className="btn btn-success" onClick={() => { setDetpage(3) }}>{l.update}</button> */}
+                                <label htmlFor="Update-modal" className="btn btn-success" onClick={() => { setDetpage(3) }} >{l.text}</label>
+                                <label htmlFor="Update-modal" className="btn btn-info" onClick={() => { setImageUpdatePage(2) }} >{l.image}</label>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
 
 
                     <input type="checkbox" id="Public-modal-3" className="modal-toggle btn btn-error " />
@@ -1243,197 +1303,250 @@ const Detail = ({ carss, SessionID }) => {
                         <button className={`cursor-pointer h-[39px] w-[250px%] ltr:rounded-tl-lg rtl:rounded-tr-lg   border-[1px] border-[#1254ff] ${ImagePage == 1 ? "bg-[#1254ff] text-white" : "bg-white text-[#1254ff]"}  text-md  w-[50%] z-0`} onClick={() => { setImagePage(1) }}>{l.damageimg}</button>
                         <button className={`cursor-pointer h-[39px] w-[250px%] ltr:rounded-tr-lg rtl:rounded-tl-lg   border-[1px] border-[#1254ff] ${ImagePage == 2 ? "bg-[#1254ff] text-white" : "bg-white text-[#1254ff]"}  text-md  w-[50%] z-0`} onClick={() => { setImagePage(2) }}>{l.repairimg}</button>
                         <div className="" hidden={ImagePage == 1 ? false : true} >
+                            <div hidden={ImageUpdatePage == 1 ? false : true}>
+                                <ImageGallery
+                                    thumbnails-swipe-vertical
 
-                            <ImageGallery
-                                thumbnails-swipe-vertical
-
-                                onErrorImageURL="/Video.svg"
-                                slideInterval={100}
-                                autoPlay={false}
-                                showPlayButton={false}
-                                showBullets={true}
-                                // useTranslate3D={true}
-                                lazyLoad={true}
-                                showThumbnails={true}
-                                items={datadamage}
-                                additionalClass={`  `}
-                                className=""
-                                useBrowserFullscreen={true}
-                                // onScreenChange={(e) => {
-                                //     setFullScreen(e)
-                                // }}
-                                renderRightNav={(onClick,) => {
-                                    if (FullScreen) {
-                                        return (
-                                            <button
-                                                className="bg-slate-300 opacity-60 right-5 top-1/2 fixed z-30 items-center w-5 h-10 rounded-full"
-                                                onClick={onClick}
-                                            >
-                                                <FontAwesomeIcon icon={faChevronRight} />
-                                            </button>
-                                        );
-                                    }
-                                    else {
-
-                                        return (
-                                            <button
-                                                className="bg-slate-300 opacity-60 right-2 top-1/2 absolute z-30 items-center w-5 h-10 rounded-full"
-                                                onClick={onClick}
-                                            >
-                                                <FontAwesomeIcon icon={faChevronRight} />
-                                            </button>
-                                        );
-
-
-                                    }
-                                }}
-                                renderLeftNav={(onClick) => {
-                                    if (FullScreen) {
-                                        return (
-                                            <button
-                                                className="bg-slate-300 opacity-60 left-5 top-1/2 fixed z-30 items-center w-5 h-10 rounded-full"
-                                                onClick={onClick}
-                                            >
-                                                <FontAwesomeIcon icon={faChevronLeft} />
-                                            </button>
-                                        );
-                                    }
-                                    else {
-
-                                        return (
-                                            <button
-                                                className="bg-slate-300 opacity-60 left-2 top-1/2 absolute z-30 items-center w-5 h-10 rounded-full"
-                                                onClick={onClick}
-                                            >
-                                                <FontAwesomeIcon icon={faChevronLeft} />
-                                            </button>
-                                        );
-
-
-                                    }
-                                }}
-
-                                renderFullscreenButton={
-                                    (onClick, isFullscreen) => {
-
-                                        if (isFullscreen) {
+                                    onErrorImageURL="/Video.svg"
+                                    slideInterval={100}
+                                    autoPlay={false}
+                                    showPlayButton={false}
+                                    showBullets={true}
+                                    // useTranslate3D={true}
+                                    lazyLoad={true}
+                                    showThumbnails={true}
+                                    items={datadamage}
+                                    additionalClass={`  `}
+                                    className=""
+                                    useBrowserFullscreen={true}
+                                    // onScreenChange={(e) => {
+                                    //     setFullScreen(e)
+                                    // }}
+                                    renderRightNav={(onClick,) => {
+                                        if (FullScreen) {
                                             return (
                                                 <button
-                                                    className="btn btn-sm btn-circle right-2 top-2 fixed"
+                                                    className="bg-slate-300 opacity-60 right-5 top-1/2 fixed z-30 items-center w-5 h-10 rounded-full"
                                                     onClick={onClick}
                                                 >
-                                                    <FontAwesomeIcon icon={faCompress} />
-                                                </button>
-                                            );
-                                        } else {
-                                            return (
-                                                <button
-                                                    className="btn btn-sm btn-circle right-2 top-2 absolute"
-                                                    onClick={onClick}
-                                                >
-                                                    <FontAwesomeIcon icon={faExpand} />
+                                                    <FontAwesomeIcon icon={faChevronRight} />
                                                 </button>
                                             );
                                         }
+                                        else {
+
+                                            return (
+                                                <button
+                                                    className="bg-slate-300 opacity-60 right-2 top-1/2 absolute z-30 items-center w-5 h-10 rounded-full"
+                                                    onClick={onClick}
+                                                >
+                                                    <FontAwesomeIcon icon={faChevronRight} />
+                                                </button>
+                                            );
+
+
+                                        }
+                                    }}
+                                    renderLeftNav={(onClick) => {
+                                        if (FullScreen) {
+                                            return (
+                                                <button
+                                                    className="bg-slate-300 opacity-60 left-5 top-1/2 fixed z-30 items-center w-5 h-10 rounded-full"
+                                                    onClick={onClick}
+                                                >
+                                                    <FontAwesomeIcon icon={faChevronLeft} />
+                                                </button>
+                                            );
+                                        }
+                                        else {
+
+                                            return (
+                                                <button
+                                                    className="bg-slate-300 opacity-60 left-2 top-1/2 absolute z-30 items-center w-5 h-10 rounded-full"
+                                                    onClick={onClick}
+                                                >
+                                                    <FontAwesomeIcon icon={faChevronLeft} />
+                                                </button>
+                                            );
+
+
+                                        }
+                                    }}
+
+                                    renderFullscreenButton={
+                                        (onClick, isFullscreen) => {
+
+                                            if (isFullscreen) {
+                                                return (
+                                                    <button
+                                                        className="btn btn-sm btn-circle right-2 top-2 fixed"
+                                                        onClick={onClick}
+                                                    >
+                                                        <FontAwesomeIcon icon={faCompress} />
+                                                    </button>
+                                                );
+                                            } else {
+                                                return (
+                                                    <button
+                                                        className="btn btn-sm btn-circle right-2 top-2 absolute"
+                                                        onClick={onClick}
+                                                    >
+                                                        <FontAwesomeIcon icon={faExpand} />
+                                                    </button>
+                                                );
+                                            }
+                                        }
                                     }
-                                }
-                            />
+                                />
+                            </div>
+                            <div hidden={ImageUpdatePage == 2 ? false : true} >
+                                <div className="grid grid-cols-5   space-x-2  w-full">
+                                    {console.log(pictureandvideodamage)}
+                                    {cars.carDetail?.pictureandvideodamage?.map((img, idx) => {
+                                        return <>
+                                            {img.mimetype == 'video/mp4' ?
+                                                <div className="w-full h-20 overflow-hidden border-spacing-40 border-4 border-blue-400 flex justify-center" >
+                                                    <video controls={false}
+                                                        className="w-[144px]"
+                                                        onClick={() => {
+                                                            setpictureandvideodamage(old=>[...old, img.filename])
+
+                                                        }}
+                                                    >
+                                                        <source
+                                                            src={`${baseURL}${img.filename}`} type="video/mp4" />
+                                                    </video >
+                                                </div>
+                                                :
+                                                <div className="w-full h-20 overflow-hidden border-spacing-40 border-4 border-blue-400 flex justify-center items-center" >
+                                                    <Image width={100} height={100}
+                                                        alt='SliderImage'
+                                                        objectFit="fill"
+                                                        className='cursor-pointer text-center '
+                                                        src={`${baseURL}${img.filename}`}
+                                                        onClick={() => {
+                                                            setpictureandvideodamage(old=>[...old, img.filename])
+
+                                                        }}
+                                                    />
+                                                </div>
+
+                                            }
+                                        </>
+                                    })}
+
+                                </div>
+
+                            </div>
                         </div>
                         <div className="" hidden={ImagePage == 2 ? false : true}>
-                            <ImageGallery
-                                thumbnails-swipe-vertical
+                            <div hidden={ImageUpdatePage == 1 ? false : true}>
 
-                                onErrorImageURL="/Video.svg"
-                                slideInterval={10000}
-                                autoPlay={false}
-                                showPlayButton={false}
-                                showBullets={true}
-                                // useTranslate3D={true}
-                                lazyLoad={true}
-                                // showThumbnails={FullScreen ? false : true}
-                                items={datarepaire}
-                                additionalClass={` overflow-auto `}
-                                className=""
-                                useBrowserFullscreen={true}
-                                // onScreenChange={(e) => {
-                                //     setFullScreen(e)
-                                // }}
-                                renderRightNav={(onClick,) => {
-                                    if (FullScreen) {
-                                        return (
-                                            <button
-                                                className="bg-slate-300 opacity-60 right-5 top-1/2 fixed z-30 items-center w-5 h-10 rounded-full"
-                                                onClick={onClick}
-                                            >
-                                                <FontAwesomeIcon icon={faChevronRight} />
-                                            </button>
-                                        );
-                                    }
-                                    else {
+                                <ImageGallery
+                                    thumbnails-swipe-vertical
 
-                                        return (
-                                            <button
-                                                className="bg-slate-300 opacity-60 right-2 top-1/2 absolute z-30 items-center w-5 h-10 rounded-full"
-                                                onClick={onClick}
-                                            >
-                                                <FontAwesomeIcon icon={faChevronRight} />
-                                            </button>
-                                        );
-
-
-                                    }
-                                }}
-                                renderLeftNav={(onClick) => {
-                                    if (FullScreen) {
-                                        return (
-                                            <button
-                                                className="bg-slate-300 opacity-60 left-5 top-1/2 fixed z-30 items-center w-5 h-10 rounded-full"
-                                                onClick={onClick}
-                                            >
-                                                <FontAwesomeIcon icon={faChevronLeft} />
-                                            </button>
-                                        );
-                                    }
-                                    else {
-
-                                        return (
-                                            <button
-                                                className="bg-slate-300 opacity-60 left-2 top-1/2 absolute z-30 items-center w-5 h-10 rounded-full"
-                                                onClick={onClick}
-                                            >
-                                                <FontAwesomeIcon icon={faChevronLeft} />
-                                            </button>
-                                        );
-
-
-                                    }
-                                }}
-
-                                renderFullscreenButton={
-                                    (onClick, isFullscreen) => {
-
-                                        if (isFullscreen) {
+                                    onErrorImageURL="/Video.svg"
+                                    slideInterval={10000}
+                                    autoPlay={false}
+                                    showPlayButton={false}
+                                    showBullets={true}
+                                    // useTranslate3D={true}
+                                    lazyLoad={true}
+                                    // showThumbnails={FullScreen ? false : true}
+                                    items={datarepaire}
+                                    additionalClass={` overflow-auto `}
+                                    className=""
+                                    useBrowserFullscreen={true}
+                                    // onScreenChange={(e) => {
+                                    //     setFullScreen(e)
+                                    // }}
+                                    renderRightNav={(onClick,) => {
+                                        if (FullScreen) {
                                             return (
                                                 <button
-                                                    className="btn btn-sm btn-circle right-2 top-2 fixed"
+                                                    className="bg-slate-300 opacity-60 right-5 top-1/2 fixed z-30 items-center w-5 h-10 rounded-full"
                                                     onClick={onClick}
                                                 >
-                                                    <FontAwesomeIcon icon={faCompress} />
-                                                </button>
-                                            );
-                                        } else {
-                                            return (
-                                                <button
-                                                    className="btn btn-sm btn-circle right-2 top-2 absolute"
-                                                    onClick={onClick}
-                                                >
-                                                    <FontAwesomeIcon icon={faExpand} />
+                                                    <FontAwesomeIcon icon={faChevronRight} />
                                                 </button>
                                             );
                                         }
+                                        else {
+
+                                            return (
+                                                <button
+                                                    className="bg-slate-300 opacity-60 right-2 top-1/2 absolute z-30 items-center w-5 h-10 rounded-full"
+                                                    onClick={onClick}
+                                                >
+                                                    <FontAwesomeIcon icon={faChevronRight} />
+                                                </button>
+                                            );
+
+
+                                        }
+                                    }}
+                                    renderLeftNav={(onClick) => {
+                                        if (FullScreen) {
+                                            return (
+                                                <button
+                                                    className="bg-slate-300 opacity-60 left-5 top-1/2 fixed z-30 items-center w-5 h-10 rounded-full"
+                                                    onClick={onClick}
+                                                >
+                                                    <FontAwesomeIcon icon={faChevronLeft} />
+                                                </button>
+                                            );
+                                        }
+                                        else {
+
+                                            return (
+                                                <button
+                                                    className="bg-slate-300 opacity-60 left-2 top-1/2 absolute z-30 items-center w-5 h-10 rounded-full"
+                                                    onClick={onClick}
+                                                >
+                                                    <FontAwesomeIcon icon={faChevronLeft} />
+                                                </button>
+                                            );
+
+
+                                        }
+                                    }}
+
+                                    renderFullscreenButton={
+                                        (onClick, isFullscreen) => {
+
+                                            if (isFullscreen) {
+                                                return (
+                                                    <button
+                                                        className="btn btn-sm btn-circle right-2 top-2 fixed"
+                                                        onClick={onClick}
+                                                    >
+                                                        <FontAwesomeIcon icon={faCompress} />
+                                                    </button>
+                                                );
+                                            } else {
+                                                return (
+                                                    <button
+                                                        className="btn btn-sm btn-circle right-2 top-2 absolute"
+                                                        onClick={onClick}
+                                                    >
+                                                        <FontAwesomeIcon icon={faExpand} />
+                                                    </button>
+                                                );
+                                            }
+                                        }
                                     }
-                                }
-                            />
+                                />
+                            </div>
+
+                            <div hidden={ImageUpdatePage == 2 ? false : true} >
+                                <Image width={100} height={100}
+                                    alt='SliderImage'
+                                    // objectFit="fill"
+                                    className='  '
+                                    // crossOrigin="anonymous"
+                                    src={`/logo.png`}
+                                />
+                            </div>
                         </div>
                     </div>
 
