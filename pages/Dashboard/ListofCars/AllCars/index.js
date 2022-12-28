@@ -134,7 +134,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                     }
                 },)
                 const data = await res.data.carDetail
-                console.log(data)
+
                 const total = await res.data.total
                 setDataTable(data)
                 setTotalCars(total)
@@ -444,7 +444,8 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                         <label className="label cursor-pointer"
 
                                         >
-                                            {column.id}
+                                            {column.Header}
+
                                             <input type="checkbox"
                                                 className="toggle toggle-accent focus:outline-0 "
                                                 {...column.getToggleHiddenProps()}
@@ -515,7 +516,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                             <tr id="th-to-xls" className="text-xs text-center w-96 " key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
                                 <th className='hidden'></th>
                                 {headerGroups.headers.map((column, idx) => (
-                                    <th key={idx} className={`py-3 bg-[#3ea7e1]  text-white ${column.id == "Image" && "w-20  max-w-[100px] "}  `} {...column.getHeaderProps(column.getSortByToggleProps())} >
+                                    <th key={idx} className={`py-3 bg-[#3ea7e1]  text-white ${column.id == "image" && "w-20  max-w-[100px] "}  `} {...column.getHeaderProps(column.getSortByToggleProps())} >
                                         <span className='text-xs  font-normal normal-case'>{column.render('Header')}</span>
                                         <span  >
                                             {column.isSorted ? (column.isSortedDesc ? "⇅" : "⇵") : ""}
@@ -539,15 +540,14 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                     {row.cells.map((cell, idx) => {
                                         return (
 
-                                            <td key={idx} className={`text-center max-w-10 dark:bg-[#161818]  ${cell.column.id == "Image" && "w-20   p-0"}  ${idx != 0 && "py-2 "}`} {...cell.getCellProps()}>
+                                            <td key={idx} className={`text-center max-w-10 dark:bg-[#161818]  ${cell.column.id == "image" && "w-20   p-0"}  ${idx != 0 && "py-2 "}`} {...cell.getCellProps()}>
 
 
                                                 {(cell.column.id !== "VINNumber" && cell.column.id !== "price" && cell.column.id !== "tire") && cell.render('Cell')}
                                                 {cell.column.id === "image" && (
                                                     <>
-
-                                                        <Link href={`/Dashboard/ListofCars/AllCars/${row.original._id}`}><a><Image
-                                                            src={`${baseURL}/${row.original.FirstImage?.[0]?.filename || row.original.carDamage?.[0]?.filename}`} alt="Image" height={100} width={120} /></a></Link>
+                                                        <Link href={`/Dashboard/ListofCars/AllCars/${row.original._id}`}><a className=' '><Image
+                                                            src={`${baseURL}/${row.original.FirstImage?.[0]?.filename || row.original.carDamage?.[0]?.filename}`} objectFit='cover' alt="Image" height={100} width={120} /></a></Link>
 
                                                     </>)
 
@@ -570,27 +570,12 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                                 )}
                                                 {cell.column.id === 'VINNumber' && (
                                                     <>
-                                                        <p className=' '>..{cell.value.substring(cell.value.length - 6)} </p>
+                                                        <p className=' '>...{cell.value.substring(cell.value.length - 6)} </p>
                                                     </>
                                                 )}
 
 
-                                                {cell.column.id === 'arrivedToKurd' && (
 
-                                                    cell.value === true ?
-                                                        <span className="text-green-500">Yes</span>
-                                                        :
-                                                        <span className="text-red-500">No</span>
-
-                                                )}
-                                                {cell.column.id === 'arrivedToDoubai' && (
-
-                                                    cell.value === true ?
-                                                        <span className="text-green-500">Yes</span>
-                                                        :
-                                                        <span className="text-red-500">No</span>
-
-                                                )}
 
                                                 {cell.column.id === "Details" &&
                                                     <Link href={`/Dashboard/ListofCars/AllCars/${row.original._id}`}><a><label htmlFor="my-modal-3" className="m-0" >
@@ -690,18 +675,10 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                                 </>)}
 
 
-                                                {cell.column.id === "Feestokurdistan" && (<>
 
-                                                    {
-                                                        row.original.carCost.coCCost +
-                                                        row.original.carCost.dubaiToIraqGCostgumrgCost +
-                                                        row.original.carCost.dubaiToIraqGCostTranscost
-                                                    } $
-                                                </>)}
 
                                                 {/* 2 */}
                                                 {cell.column.id === "DubaiCosts" && (<>
-
 
                                                     {
                                                         row.original.carCost.feesAndRepaidCostDubaiothers +
@@ -727,31 +704,14 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                                     {row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostLocation}
                                                 </>)}
                                                 {/* 5 */}
-                                                {cell.column.id === "KurdistanNumber" && (<>
+                                                {cell.column.id === "Plate Number" && (<>
 
                                                     {row.original.carCost.raqamAndRepairCostinKurdistanRaqam}
                                                 </>)}
 
 
-                                                {/* 6 */}
-                                                {cell.column.id === "CostsKurdistan" && (<>
 
 
-                                                    {
-                                                        row.original.carCost.raqamAndRepairCostinKurdistanothers +
-                                                        row.original.carCost.raqamAndRepairCostinKurdistanrepairCost
-                                                    } $
-                                                </>)}
-
-
-                                                {/* 7 */}
-                                                {cell.column.id === "FeestoDubai" && (<>
-
-                                                    {
-                                                        row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost +
-                                                        row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost
-                                                    } $
-                                                </>)}
 
 
                                             </td>
@@ -877,7 +837,10 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
 const Expense = ({ AllProducts }) => {
 
+    const session = useSession()
+    const router = useRouter()
 
+    const l = useLanguage();
 
 
     const COLUMNS =
@@ -885,23 +848,15 @@ const Expense = ({ AllProducts }) => {
             [
 
                 {
-                    Header: () => {
-                        return (
+                    Header: "Image",
 
-                            "Image"
-                        )
-                    },
 
                     disableFilters: true,
                     accessor: 'image',
 
                 },
                 {
-                    Header: () => {
-                        return (
-                            "Name of car"
-                        )
-                    },
+                    Header: "Name",
 
                     disableFilters: true,
 
@@ -910,11 +865,7 @@ const Expense = ({ AllProducts }) => {
 
                 },
                 {
-                    Header: () => {
-                        return (
-                            "Model"
-                        )
-                    },
+                    Header: "Model Year",
 
                     disableFilters: true,
 
@@ -923,11 +874,7 @@ const Expense = ({ AllProducts }) => {
 
                 },
                 {
-                    Header: () => {
-                        return (
-                            "Color"
-                        )
-                    },
+                    Header: "Color",
 
                     disableFilters: true,
 
@@ -936,11 +883,7 @@ const Expense = ({ AllProducts }) => {
 
                 },
                 {
-                    Header: () => {
-                        return (
-                            "Vin Number"
-                        )
-                    },
+                    Header: "VIN",
 
                     // disableFilters: true,
 
@@ -949,11 +892,7 @@ const Expense = ({ AllProducts }) => {
 
                 },
                 {
-                    Header: () => {
-                        return (
-                            "Date"
-                        )
-                    },
+                    Header: "Date",
 
                     disableFilters: true,
 
@@ -964,11 +903,7 @@ const Expense = ({ AllProducts }) => {
 
                 // PricePaid ......................//^ ------------------------------
                 {
-                    Header: () => {
-                        return (
-                            "Price Paid"
-                        )
-                    },
+                    Header: "USA Cost ",
 
                     disableFilters: true,
 
@@ -1001,11 +936,7 @@ const Expense = ({ AllProducts }) => {
                 },
                 // OtherCarSpends  ......................//^ ------------------------------
                 {
-                    Header: () => {
-                        return (
-                            "Other Car Spends "
-                        )
-                    },
+                    Header: "Dubai Cost",
 
                     disableFilters: true,
 
@@ -1033,11 +964,7 @@ const Expense = ({ AllProducts }) => {
                 },
                 // ShipandFees   ......................//^ ------------------------------
                 {
-                    Header: () => {
-                        return (
-                            "Ship and Fees"
-                        )
-                    },
+                    Header: "Shipping",
 
                     disableFilters: true,
 
@@ -1066,11 +993,7 @@ const Expense = ({ AllProducts }) => {
                 },
                 // TotalCarPrice   ......................//^ ------------------------------
                 {
-                    Header: () => {
-                        return (
-                            "Total Car Price"
-                        )
-                    },
+                    Header: "Total Car Price",
 
                     disableFilters: true,
 
@@ -1110,11 +1033,7 @@ const Expense = ({ AllProducts }) => {
 
                 // sell price        .....................//^ ------------------------------
                 {
-                    Header: () => {
-                        return (
-                            "Sell Price"
-                        )
-                    },
+                    Header: "Sell Price",
                     disableFilters: true,
                     accessor: 'price',
                     Footer: info => {
@@ -1133,11 +1052,7 @@ const Expense = ({ AllProducts }) => {
                 },
                 // Profit           .....................//^ ------------------------------
                 {
-                    Header: () => {
-                        return (
-                            "Profit"
-                        )
-                    },
+                    Header: "Profit",
                     disableFilters: true,
                     accessor: 'Profit',
                     Footer: info => {
@@ -1169,11 +1084,7 @@ const Expense = ({ AllProducts }) => {
                     },
                 },
                 {
-                    Header: () => {
-                        return (
-                            "Is Sold"
-                        )
-                    },
+                    Header: "Sold",
                     disableFilters: true,
 
                     accessor: 'isSold',
@@ -1181,11 +1092,7 @@ const Expense = ({ AllProducts }) => {
 
                 },
                 {
-                    Header: () => {
-                        return (
-                            "Visibility"
-                        )
-                    },
+                    Header: "Visibility",
                     disableFilters: true,
 
                     accessor: 'tire',
@@ -1193,11 +1100,7 @@ const Expense = ({ AllProducts }) => {
 
                 },
                 {
-                    Header: () => {
-                        return (
-                            "Mileage"
-                        )
-                    },
+                    Header: "Mileage",
 
                     disableFilters: true,
 
@@ -1208,11 +1111,7 @@ const Expense = ({ AllProducts }) => {
 
 
                 {
-                    Header: () => {
-                        return (
-                            "Type of Car"
-                        )
-                    },
+                    Header: "Car Type",
 
                     disableFilters: true,
 
@@ -1221,40 +1120,10 @@ const Expense = ({ AllProducts }) => {
 
                 },
 
-                {
-                    Header: () => {
-                        return (
-                            "Arrived to Kurd"
-                        )
-                    },
 
-                    disableFilters: true,
-
-                    accessor: 'arrivedToKurd',
-
-
-                },
 
                 {
-                    Header: () => {
-                        return (
-                            "Arrived to Dubai"
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'arrivedToDoubai',
-
-
-                },
-
-                {
-                    Header: () => {
-                        return (
-                            "Type of Balance"
-                        )
-                    },
+                    Header: "Balance Type",
 
                     disableFilters: true,
 
@@ -1264,11 +1133,7 @@ const Expense = ({ AllProducts }) => {
                 },
 
                 {
-                    Header: () => {
-                        return (
-                            "Wheel Drive Type"
-                        )
-                    },
+                    Header: "Wheel Drive",
 
                     disableFilters: true,
 
@@ -1278,11 +1143,7 @@ const Expense = ({ AllProducts }) => {
                 },
                 // ^ -----1
                 {
-                    Header: () => {
-                        return (
-                            "May Costs"
-                        )
-                    },
+                    Header: "Total Rapair",
 
                     disableFilters: true,
 
@@ -1311,113 +1172,10 @@ const Expense = ({ AllProducts }) => {
 
 
                 },
-                {
-                    Header: () => {
-                        return (
-                            "Fees to kurdistan"
-                        )
-                    },
 
-                    disableFilters: true,
-
-                    accessor: 'Feestokurdistan',
-                    Footer: info => {
-                        // Only calculate total visits if rows change
-                        const total = useMemo(
-
-                            () => {
-                                let T = 0
-                                info.rows.map((row, idx) => {
-                                    T += (
-                                        row.original.carCost.coCCost +
-                                        row.original.carCost.dubaiToIraqGCostgumrgCost +
-                                        row.original.carCost.dubaiToIraqGCostTranscost
-                                    )
-                                })
-
-                                return T
-                            }, [info.rows]
-                        )
-
-                        return <>{total} $</>
-                    },
-
-                },
-
-                // ^ -----2
-                {
-                    Header: () => {
-                        return (
-                            "Dubai Costs "
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'DubaiCosts',
-                    Footer: info => {
-                        // Only calculate total visits if rows change
-                        const total = useMemo(
-
-                            () => {
-                                let T = 0
-                                info.rows.map((row, idx) => {
-                                    T += (
-                                        row.original.carCost.feesAndRepaidCostDubaiothers +
-                                        row.original.carCost.feesAndRepaidCostDubairepairCost
-                                    )
-                                })
-
-                                return T
-                            }, [info.rows]
-                        )
-
-                        return <>{total} $</>
-                    },
-
-
-                },
-                // ^ -----3
-                {
-                    Header: () => {
-                        return (
-                            "USA Costs "
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'USACosts',
-                    Footer: info => {
-                        // Only calculate total visits if rows change
-                        const total = useMemo(
-
-                            () => {
-                                let T = 0
-                                info.rows.map((row, idx) => {
-                                    T += (
-                                        row.original.carCost.feesinAmericaCopartorIAAfee +
-                                        row.original.carCost.feesinAmericaStoragefee +
-                                        row.original.carCost.pricePaidbid
-                                    )
-                                })
-
-                                return T
-                            }, [info.rows]
-                        )
-
-                        return <>{total} $</>
-                    },
-
-
-                },
                 // ^ -----4
                 {
-                    Header: () => {
-                        return (
-                            "USA Location"
-                        )
-                    },
+                    Header: "USA Location",
 
                     disableFilters: true,
 
@@ -1427,83 +1185,15 @@ const Expense = ({ AllProducts }) => {
                 },
                 // ^ -----5
                 {
-                    Header: () => {
-                        return (
-                            "Kurdistan Number"
-                        )
-                    },
+                    Header: "Plate Number",
 
                     disableFilters: true,
 
-                    accessor: 'KurdistanNumber',
+                    accessor: 'Plate Number',
 
                 },
-                // ^ -----6
-                {
-                    Header: () => {
-                        return (
-                            "Costs Kurdistan"
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'CostsKurdistan',
-                    Footer: info => {
-                        // Only calculate total visits if rows change
-                        const total = useMemo(
-
-                            () => {
-                                let T = 0
-                                info.rows.map((row, idx) => {
-                                    T += (
-                                        row.original.carCost.raqamAndRepairCostinKurdistanothers +
-                                        row.original.carCost.raqamAndRepairCostinKurdistanrepairCost
-                                    )
-                                })
-
-                                return T
-                            }, [info.rows]
-                        )
-
-                        return <>{total} $</>
-                    },
 
 
-                },
-                // ^ -----7
-                {
-                    Header: () => {
-                        return (
-                            "Fees to Dubai"
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'FeestoDubai',
-                    Footer: info => {
-                        // Only calculate total visits if rows change
-                        const total = useMemo(
-
-                            () => {
-                                let T = 0
-                                info.rows.map((row, idx) => {
-                                    T += (
-                                        row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost +
-                                        row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost
-                                    )
-                                })
-
-                                return T
-                            }, [info.rows]
-                        )
-
-                        return <>{total} $</>
-                    },
-
-
-                },
                 {
                     Header: "Details",
 
@@ -1518,30 +1208,52 @@ const Expense = ({ AllProducts }) => {
 
 
 
-    const l = useLanguage();
 
-    return (
-
-
-        <div className="" >
+    if (session.status === "loading") {
+        return (<>
             <Head>
                 <title >{l.allcars}</title>
             </Head>
+            <div className="text-center">
+                {l.loading}
+            </div>
+        </>)
+    }
 
-            {AllProducts ?
-                <Table COLUMNS={COLUMNS} AllProducts={AllProducts} />
-                :
-                <div className=" top-[50%] -translate-y-[50%] m-auto absolute -translate-x-[50%] left-[50%] lg:left-[60%]    ">
-                    <Image alt="NoCar" src="/No_Cars.svg" width={400} height={400} quality={'1'} />
-                </div>
+    if (session.status === "unauthenticated") {
+
+        return (router.push("/"))
+
+    }
+    if (session.status === "authenticated") {
+        return (
 
 
-            }
+            <div className="" >
+                <Head>
+                    <title >{l.allcars}</title>
+                </Head>
 
 
 
-        </div>
-    );
+
+
+
+                {AllProducts ?
+                    <Table COLUMNS={COLUMNS} AllProducts={AllProducts} />
+                    :
+                    <div className=" top-[50%] -translate-y-[50%] m-auto absolute -translate-x-[50%] left-[50%] lg:left-[60%]    ">
+                        <Image alt="NoCar" src="/No_Cars.svg" width={400} height={400} quality={'1'} />
+                    </div>
+
+
+                }
+
+
+
+            </div>
+        );
+    }
 }
 
 

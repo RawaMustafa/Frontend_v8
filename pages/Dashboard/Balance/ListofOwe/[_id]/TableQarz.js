@@ -660,7 +660,7 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
             try {
                 await Axios.patch(`/users/${session?.data.id}`, { "TotalBals": DataBalance + Math.floor(Data.amount) }, auth)
                 await Axios.patch(`/users/${ID}`, { "TotalBals": QarzBalance + Math.floor(Data.amount) }, auth)
-                console.log(Data?.amount, Data?.isPaid, ID)
+
 
                 await Axios.post("/bal/", {
                     amount: Data.amount,
@@ -739,16 +739,22 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
 
             const getQarzData = async () => {
                 // ${StartDate}/${EndDate}?search=${Search}&page=${Page}&limit=${Limit}&sdate=${StartDate}&edate=${EndDate}
-                const res = await Axios.get(`/qarz/amount/${ID}/?&page=${Page}&limit=${Limit}&sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2500-01-01"}`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${session?.data?.Token}`
-                    }
-                },)
+                try {
+                    const res = await Axios.get(`/qarz/amount/${ID}/?&page=${Page}&limit=${Limit}&sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2500-01-01"}`, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': `Bearer ${session?.data?.Token}`
+                        }
+                    },)
 
-                const data = await res.data.qarzList.map((e) => { return e.id }).length
-                setDataTable(res.data.qarzList)
+                    const data = await res.data?.qarzList.map((e) => { return e.id }).length
 
+                    setDataTable(res.data?.qarzList)
+                } catch (e) {
+                    e.response.status == 404 && setDataTable([])
+
+                    e.response.status == 404 || toast.error("Something Went Wrong *")
+                }
                 setPageS(1)
 
 
@@ -782,7 +788,7 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
         doc.autoTable({
 
 
-            head: [["", `Amount`, " pay for", "Date"]],
+            head: [["", `Amount`, " Is Paid", "Date"]],
             body: table_td
         });
 
@@ -821,16 +827,11 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
 
             {/* //?    Heade */}
             <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-2xl p-5">
-                <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
+                <div className="flex w-12 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
 
                     <label htmlFor="my-modal" className="p-2 px-3 flex justify-center items-center hover:cursor-pointer ">
                         <FontAwesomeIcon icon={faCalendarPlus} className="text-2xl active:scale-90 " />
                     </label>
-                    <input type="search" placeholder={`${l.search} ...`} className="input input-bordered    w-full    focus:outline-0   h-9 "
-                        onChange={e =>
-                            setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
-                        }
-                    />
                 </div>
                 <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8  rtl:mr-8 ">
                     <label tabIndex="0" className="active:scale-9 m-1  ">
@@ -919,8 +920,7 @@ const TableQarz = ({ COLUMNS, ID, AllQarz }) => {
                         <div className="modal-action">
                             <div></div>
                             <label htmlFor="my-modal" className="btn btn-error"  >{l.cancel}</label>
-                            <label htmlFor="my-modal" onSubmit={(e) => { e.click() }}   >
-                                <input type="submit" className="btn btn-success" disabled={IPValid && AValid ? false : true} onClick={addQarz} value={l.add} />
+                            <label htmlFor="my-modal" className="btn btn-success" onClick={addQarz} disabled={IPValid && AValid ? false : true}   >{l.add}
                             </label>
 
                         </div>

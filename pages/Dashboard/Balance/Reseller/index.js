@@ -12,7 +12,6 @@ import { useRouter } from 'next/router';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-
 export const getServerSideProps = async ({ req }) => {
     const session = await getSession({ req })
 

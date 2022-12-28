@@ -1,11 +1,13 @@
-import { useState, useEffect, useRef } from "react"
+import { FullScreen as Patata, useFullScreenHandle } from "react-full-screen"
+
+import { useState, useEffect, useRef, useCallback } from "react"
 import axios from "axios"
 import Axios, { baseURL } from '../../../api/Axios';
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import useLanguage from '../../../../Component/language';
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faTrashAlt, faPaperPlane, faHandHoldingUsd, faArrowsRotate, faExpand, faCompress, faChevronRight, faChevronLeft, faLock, faLockOpen, faWrench } from '@fortawesome/free-solid-svg-icons';
+import { faTrashAlt, faPaperPlane, faHandHoldingUsd, faArrowsRotate, faExpand, faCompress, faChevronRight, faChevronLeft, faLock, faLockOpen, faWrench, faMinimize, faMaximize } from '@fortawesome/free-solid-svg-icons';
 import AdminLayout from '../../../../Layouts/AdminLayout';
 import Image from "next/image";
 import { ToastContainer, toast, } from 'react-toastify';
@@ -14,7 +16,6 @@ import { getSession, useSession } from "next-auth/react";
 import jsPDF from "jspdf";
 
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-
 
 
 
@@ -56,6 +57,7 @@ export const getServerSideProps = async (context) => {
 
 
 const Detail = ({ carss, SessionID }) => {
+
 
 
     const session = useSession()
@@ -276,7 +278,7 @@ const Detail = ({ carss, SessionID }) => {
 
         if (cars.carDetail.carCost.isSold == true) {
 
-            console.log("hello")
+
             try {
                 const id = router.query._id
 
@@ -289,7 +291,7 @@ const Detail = ({ carss, SessionID }) => {
                         // note: Note
 
                     }, auth,)
-                console.log("hello", id)
+
 
                 await Axios.delete(`/cars/${id}`, auth,)
 
@@ -772,7 +774,7 @@ const Detail = ({ carss, SessionID }) => {
 
 
 
-  const  handleUpdateImage = async () => {
+    const handleUpdateImage = async () => {
         const auth = {
             headers: {
                 "Content-Type": "application/json",
@@ -898,7 +900,13 @@ const Detail = ({ carss, SessionID }) => {
 
         doc.save("Car_Damage.pdf");
     }
+    const screen1 = useFullScreenHandle();
+    const screen2 = useFullScreenHandle();
 
+    const reportChange = useCallback((state, handle) => {
+
+
+    }, []);
 
     const renderVideo = (item) => {
 
@@ -906,36 +914,66 @@ const Detail = ({ carss, SessionID }) => {
         return (
 
             <div className="play-button  ">
-                {item.taramash != "false" ?
-                    <div className=' flex justify-center'>
-                        <TransformWrapper  >
-                            <TransformComponent>
-                                <video controls
-                                    className="w-[1920px]">
-                                    <source
-                                        src={`${baseURL}${item.taramash}`} type="video/mp4" />
 
-                                </video >
-                            </TransformComponent>
-                        </TransformWrapper>
-                    </div >
+                {item.taramash != "false" ?
+                    <Patata handle={screen2} onChange={reportChange}>
+
+                        <div className=' flex justify-center'>
+                            <TransformWrapper  >
+                                <TransformComponent>
+                                    <video controls
+                                        className="w-[1920px]">
+                                        <source
+                                            src={`${baseURL}${item.taramash}`} type="video/mp4" />
+
+                                    </video >
+                                </TransformComponent>
+                            </TransformWrapper>
+
+                            {screen2.active ||
+                                <FontAwesomeIcon className="fixed text-green-400 top-3 left-3 text-2xl" icon={faMaximize} onClick={screen2.enter} />
+
+                            }
+                            {screen2.active &&
+                                <FontAwesomeIcon className="fixed text-red-400 top-10 left-10 text-2xl" icon={faMinimize} onClick={screen2.exit} />
+
+                            }
+                            {/* <FontAwesomeIcon className="fixed text-red-400 top-2 left-2 text-2xl" icon={faMinimize} onClick={screen2.exit} />
+                            <FontAwesomeIcon className="fixed text-green-400 top-2 left-2 text-2xl" icon={faMaximize} onClick={screen2.enter} /> */}
+
+                        </div >
+                    </Patata >
 
                     :
+                    <Patata handle={screen1} onChange={reportChange} >
 
-                    <div className='play-button grow relative w-full h-full overflow-auto bg-cover flex   justify-center'>
+                        <div className='play-button relative grow  w-full h-full overflow-auto bg-cover flex   justify-center'>
 
-                        <TransformWrapper   >
-                            <TransformComponent>
-                                <Image width={1920} height={1080}
-                                    alt='SliderImage'
-                                    objectFit="fill"
-                                    className='image-gallery-image '
-                                    crossOrigin="anonymous"
-                                    src={item.original}
-                                />
-                            </TransformComponent>
-                        </TransformWrapper>
-                    </div>
+                            <TransformWrapper   >
+                                <TransformComponent>
+
+
+                                    <Image width={1920} height={1080}
+                                        alt='SliderImage'
+                                        objectFit="fill"
+                                        className='image-gallery-image '
+                                        crossOrigin="anonymous"
+                                        src={item.original}
+                                    />
+                                </TransformComponent>
+                            </TransformWrapper>
+
+                            {screen1.active ||
+                                <FontAwesomeIcon className="fixed text-green-400 top-3 left-3 text-2xl" icon={faMaximize} onClick={screen1.enter} />
+
+                            }
+                            {screen1.active &&
+                                <FontAwesomeIcon className="fixed text-red-400 top-10 left-10 text-2xl" icon={faMinimize} onClick={screen1.exit} />
+
+                            }
+
+                        </div>
+                    </Patata >
 
                 }
 
@@ -944,7 +982,6 @@ const Detail = ({ carss, SessionID }) => {
         );
 
     }
-
 
     const renderThumbInner = (item) => {
 
@@ -975,7 +1012,6 @@ const Detail = ({ carss, SessionID }) => {
         );
 
     }
-
 
 
     const datarepaire = []
@@ -1318,7 +1354,7 @@ const Detail = ({ carss, SessionID }) => {
                                     items={datadamage}
                                     additionalClass={`  `}
                                     className=""
-                                    useBrowserFullscreen={true}
+                                    // useBrowserFullscreen={true}
                                     // onScreenChange={(e) => {
                                     //     setFullScreen(e)
                                     // }}
@@ -1401,7 +1437,7 @@ const Detail = ({ carss, SessionID }) => {
                             </div>
                             <div hidden={ImageUpdatePage == 2 ? false : true} >
                                 <div className="grid grid-cols-5   space-x-2  w-full">
-                                    {console.log(pictureandvideodamage)}
+
                                     {cars.carDetail?.pictureandvideodamage?.map((img, idx) => {
                                         return <>
                                             {img.mimetype == 'video/mp4' ?
@@ -1409,7 +1445,7 @@ const Detail = ({ carss, SessionID }) => {
                                                     <video controls={false}
                                                         className="w-[144px]"
                                                         onClick={() => {
-                                                            setpictureandvideodamage(old=>[...old, img.filename])
+                                                            setpictureandvideodamage(old => [...old, img.filename])
 
                                                         }}
                                                     >
@@ -1425,7 +1461,7 @@ const Detail = ({ carss, SessionID }) => {
                                                         className='cursor-pointer text-center '
                                                         src={`${baseURL}${img.filename}`}
                                                         onClick={() => {
-                                                            setpictureandvideodamage(old=>[...old, img.filename])
+                                                            setpictureandvideodamage(old => [...old, img.filename])
 
                                                         }}
                                                     />
@@ -2053,9 +2089,6 @@ const Detail = ({ carss, SessionID }) => {
 
 
                 </div>
-
-
-
 
 
 

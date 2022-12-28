@@ -602,6 +602,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
         if (Data.userRole == "Reseller") {
             const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, auth,)
             const DataBalance = UDetails.data.userDetail.TotalBals
+
             if (Data.TotalBals <= DataBalance) {
 
                 try {
@@ -643,7 +644,8 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
             const UDetails = await Axios.get(`/users/detail/${session?.data?.id}`, auth,)
             const DataBalance = UDetails.data.userDetail.TotalBals
 
-            if (Data.TotalBals >= DataBalance) {
+
+            if (Data.TotalBals <= DataBalance || true) {
                 try {
                     const one = `/users/signup/`
                     const two = `/users/${SessionID}`
@@ -924,7 +926,7 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                 <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
 
                     <label htmlFor="my-modal" className="flex justify-center items-center p-2 "><FontAwesomeIcon className='text-2xl hover:scale-90 mx-1 cursor-pointer' icon={faUserPlus} /> </label>
-                    <input    type="search" placeholder={`${l.search} ...`} className="input input-bordered w-full    focus:outline-0   h-9 "
+                    <input type="search" placeholder={`${l.search} ...`} className="input input-bordered w-full    focus:outline-0   h-9 "
                         onChange={e =>
                             setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
                         }

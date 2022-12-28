@@ -233,6 +233,7 @@ const Detail = ({ cars, ID }) => {
                         userId: UserId,
                         action: bool ? "Repayment" : "Loan",
                         carId: CarId,
+                        isPaid: false,
                         amount: bool ? -TotalCosts : TotalCosts,
                     }, auth)
 
@@ -266,6 +267,7 @@ const Detail = ({ cars, ID }) => {
                             userId: UserId,
                             action: bool ? "Repayment" : "Loan",
                             carId: CarId,
+                            isPaid: true,
                             amount: bool ? -TotalCosts : TotalCosts,
                         }, auth)
 

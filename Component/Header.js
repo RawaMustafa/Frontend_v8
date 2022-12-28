@@ -103,7 +103,7 @@ const Header = () => {
         //  transition-all duration-300
         <div className=" ">
             <div className="hidden  standalone:block bg-[#3ea7e1]   w-full h-10 fixed z-50"></div>
-            <div className="navbar z-[60] flex justify-between lg:justify-end lg:w-[calc(100%-17rem)] max-w-8xl lg:ml-64  rtl:lg:mr-64 mt-2 fixed standalone:mt-12 bg-opacity-100   bg-[#3ea7e1]  rounded-2xl  ">
+            <div className="navbar z-[60] flex justify-between lg:justify-end lg:w-[calc(100%-17rem)] max-w-8xl lg:ml-64  rtl:lg:mr-64 mt-2 lg:fixed absolute  standalone:mt-12 bg-opacity-100   bg-[#3ea7e1]  rounded-2xl  ">
 
 
                 <FontAwesomeIcon icon={faAlignLeft}

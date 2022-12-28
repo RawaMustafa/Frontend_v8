@@ -217,7 +217,6 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
                     setDataTable(res.data.History)
                     setPageS(Math.ceil(res.data.total[0].total / Limit))
-                    console.log(res.data)
 
 
                 }
@@ -239,9 +238,32 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
     }, [Search, Page, Limit, StartDate, EndDate, ReNewData, session.status])
 
 
+    const handleUpdateBal = async () => {
+        const auth = {
+            headers: {
+                "Content-Type": "application/json",
+
+                'Authorization': `Bearer ${session?.data?.Token}`
+
+            }
+        }
+        try {
 
 
+            await Axios.patch("/bal/" + Idofrow?.[0],
+                { "note": Data.note }
+                , auth)
 
+            setIdofrow(null)
+            toast.success("Balance Updated Successfully");
+            setReNewData(true)
+
+        } catch (err) {
+            toast.error("Something Went Wrong*");
+
+        }
+
+    }
     const addBalance = async () => {
 
         const auth = {
@@ -452,8 +474,8 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                         <div className="modal-action">
                             <div></div>
                             <label htmlFor="my-modal" className="btn btn-error"  >{l.cancel}</label>
-                            <label htmlFor="my-modal" onSubmit={(e) => { e.click() }}   >
-                                <input type="submit" className="btn btn-success" disabled={CValid ? false : true} onClick={addBalance} value={l.add} />
+                            <label htmlFor="my-modal" className="btn btn-success" disabled={CValid ? false : true} onClick={addBalance} onSubmit={(e) => { e.click() }}   >
+                                {/* <input type="submit"  value= /> */}{l.add}
                             </label>
 
                         </div>
@@ -496,12 +518,70 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                                             <td key={idx} className="py-3 text-center dark:bg-[#181a1b] " {...cell.getCellProps()}>
 
 
+                                                {
+                                                    cell.column.id !== "Edit" &&
+                                                        row.original._id == Idofrow?.[0] ?
+                                                        <>
+                                                            {cell.column.id == "note" &&
+                                                                <input
+                                                                    // ref={URef}
+                                                                    defaultValue={row.original.note}
+                                                                    name={cell.column.id}
+                                                                    type="text"
+                                                                    placeholder={cell.column.id}
+                                                                    className="input input-bordered focus:outline-0 input-warning w-full max-w-xs min-w-[100px] "
 
-                                                {cell.column.id === 'amount' && row.original._id !== Idofrow?.[0] && (
+                                                                    onChange={(event) => { handleSaveExpenseData(event) }}
+                                                                    onClick={(event) => { handleSaveExpenseData(event) }}
+                                                                    onFocus={() => { setDFocus(true) }}
+                                                                    onBlur={() => { setDFocus(false) }}
+
+
+                                                                />}
+                                                        </>
+
+                                                        :
+
+                                                        (cell.column.id != 'userId' && cell.column.id != 'amount' && cell.column.id != 'carId') && cell.render('Cell')
+                                                }
+
+                                                {row.original._id !== Idofrow?.[0] ?
+                                                    cell.column.id === "Edit" &&
+
+                                                    <label onClick={() => {
+                                                        setIdofrow([row.original._id, row.original.TotalBals, row.original.userName, row.original.userRole])
+                                                        setDataUpdate("")
+                                                            , setDValid(false)
+                                                    }} aria-label="upload picture" ><FontAwesomeIcon icon={faEdit} className="text-2xl text-blue-500 cursor-pointer" /></label>
+
+                                                    :
+                                                    <div className=" space-x-3">
+                                                        {cell.column.id === "Edit" && <button
+                                                            disabled={DValid ? false : true}
+                                                            type='submit'
+                                                            onClick={handleUpdateBal}
+                                                            className="btn btn-accent "> <FontAwesomeIcon icon={faSave} className="text-2xl" /></button>}
+                                                        {cell.column.id === "Edit" && <button onClick={() => {
+                                                            setIdofrow(null), setDValid(false)
+                                                        }} className="btn  btn-error"><FontAwesomeIcon icon={faBan} className="text-2xl" /></button>}
+
+                                                    </div>
+
+
+                                                }
+
+
+                                                {cell.column.id === 'amount' && row.original._id && (
                                                     cell.value >= 0 ? <div className="text-green-500">{cell.value}</div> : <div className="text-red-500">{cell.value}</div>
                                                 )}
+                                                {cell.column.id === 'Date' && (
+                                                    <div> {row.original.actionDate1}  </div>
+                                                )}
+                                                {cell.column.id === 'Action' && (
+                                                    <div> {row.original.action}  </div>
+                                                )}
 
-                                                {cell.column.id === 'userId' && row.original._id !== Idofrow?.[0] && (
+                                                {cell.column.id === 'userId' && row.original._id && (
                                                     <>
                                                         <div>{row.original.userName}</div>
                                                         {cell.value?.userRole == "Qarz" && <Link href={`/Dashboard/Balance/ListofOwe/${cell.value?._id}`}><a className="text-red-300">{cell.value?.userName}</a></Link>}
@@ -513,16 +593,13 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
 
 
-                                                {cell.column.id === 'carId' && row.original._id !== Idofrow?.[0] && (
+                                                {cell.column.id === 'carId' && row.original._id && (
                                                     <>
                                                         <div></div>
                                                         <Link href={`/Dashboard/ListofCars/AllCars/${row.original.carId}`}><a className="text-orange-600">{row.original.modeName}</a></Link>
                                                     </>
                                                 )}
 
-                                                {
-                                                    (cell.column.id != 'userId' && cell.column.id != 'amount' && cell.column.id != 'carId') && cell.render('Cell')
-                                                }
 
                                             </td>
                                         )
@@ -658,13 +735,7 @@ const Expense = ({ SessionID, AllUsers }) => {
 
 
                 {
-                    Header: () => {
-                        return (
-
-                            // l.amount
-                            "Amount"
-                        )
-                    },
+                    Header: "Amount",
 
                     disableFilters: true,
 
@@ -673,17 +744,10 @@ const Expense = ({ SessionID, AllUsers }) => {
 
                 },
 
-
-
-
                 {
-                    Header: () => {
+                    Header: "Action",
 
-                        // return l.action;
-                        return "Action"
-                    },
-
-                    accessor: 'action',
+                    accessor: 'Action',
                     disableFilters: false,
                     // Filter: DateRangeColumnFilter,
                     // filter: dateBetweenFilterFn,
@@ -691,13 +755,7 @@ const Expense = ({ SessionID, AllUsers }) => {
                 },
 
                 {
-                    Header: () => {
-                        return (
-
-                            "Car "
-                        )
-                    },
-
+                    Header: "Car",
                     accessor: 'carId',
                     disableFilters: true,
 
@@ -705,13 +763,7 @@ const Expense = ({ SessionID, AllUsers }) => {
                 },
 
                 {
-                    Header: () => {
-                        return (
-
-                            "User "
-                        )
-                    },
-
+                    Header: "User",
                     accessor: 'userId',
                     disableFilters: true,
 
@@ -719,12 +771,7 @@ const Expense = ({ SessionID, AllUsers }) => {
                 },
 
                 {
-                    Header: () => {
-
-                        // return l.date;
-                        return "Note";
-                    },
-
+                    Header: "Note",
                     accessor: 'note',
                     disableFilters: false,
                     // Filter: DateRangeColumnFilter,
@@ -733,13 +780,8 @@ const Expense = ({ SessionID, AllUsers }) => {
                 },
 
                 {
-                    Header: () => {
-
-                        // return l.date;
-                        return "Date";
-                    },
-
-                    accessor: 'actionDate1',
+                    Header: "Date",
+                    accessor: 'Date',
                     disableFilters: false,
                     // Filter: DateRangeColumnFilter,
                     // filter: dateBetweenFilterFn,
@@ -747,7 +789,12 @@ const Expense = ({ SessionID, AllUsers }) => {
                 },
 
 
+                {
+                    Header: "Edit",
+                    accessor: 'Edit',
 
+
+                },
 
             ], [SessionID]
         )
@@ -781,12 +828,7 @@ const Expense = ({ SessionID, AllUsers }) => {
 
 
 
-
-
                 <Table COLUMNS={COLUMNS} SessionID={SessionID} AllUsers={AllUsers} />
-
-
-
 
 
                 <ToastContainer

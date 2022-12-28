@@ -119,7 +119,7 @@ const Dashboard = (props) => {
                         axios.spread((...responses) => {
 
                             const dataFertch = responses?.[0]?.data?.TotalList[0];
-                            console.log(dataFertch)
+
                             const dataFertchqarz = responses?.[2]?.data?.QarzTotal[0];
                             const dataFertchownCost = responses?.[1]?.data?.QarzTotal[0];
                             const UserBalance = responses?.[3]?.data.userDetail
