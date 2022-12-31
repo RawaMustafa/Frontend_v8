@@ -589,42 +589,42 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
                                                 {cell.column.id === "PricePaid" && (<>
 
-                                                    {
+                                                    $ {
                                                         row.original.carCost.pricePaidbid +
                                                         row.original.carCost.feesinAmericaCopartorIAAfee +
                                                         row.original.carCost.feesinAmericaStoragefee +
                                                         row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost +
                                                         row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost
-                                                    } $
+                                                    }
                                                 </>)}
                                                 {cell.column.id === "price" && (<>
-                                                    {
+                                                    $ {
                                                         row.original.carCost.price
 
-                                                    } $
+                                                    }
                                                 </>)}
 
                                                 {cell.column.id === "OtherCarSpends" && (<>
 
 
-                                                    {
+                                                    $ {
                                                         row.original.carCost.feesAndRepaidCostDubaiothers +
                                                         row.original.carCost.feesAndRepaidCostDubairepairCost
 
-                                                    } $
+                                                    }
                                                 </>)}
                                                 {cell.column.id === "ShipandFees" && (<>
 
-                                                    {
+                                                    $ {
                                                         row.original.carCost.coCCost +
                                                         row.original.carCost.dubaiToIraqGCostgumrgCost +
                                                         row.original.carCost.dubaiToIraqGCostTranscost
 
-                                                    } $
+                                                    }
                                                 </>)}
                                                 {cell.column.id === "TotalCarPrice" && (<>
 
-                                                    {
+                                                    $ {
                                                         row.original.carCost.coCCost +
                                                         row.original.carCost.dubaiToIraqGCostgumrgCost +
                                                         row.original.carCost.dubaiToIraqGCostTranscost +
@@ -638,56 +638,56 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                                         row.original.carCost.feesinAmericaStoragefee +
                                                         row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost
 
-                                                    } $
+                                                    }
                                                 </>)}
                                                 {cell.column.id === "Profit" && (<>
 
-                                                    {
-                                                        (row.original.carCost.price) -
-                                                        (
-                                                            row.original.carCost.coCCost +
-                                                            row.original.carCost.dubaiToIraqGCostgumrgCost +
-                                                            row.original.carCost.dubaiToIraqGCostTranscost +
-                                                            row.original.carCost.raqamAndRepairCostinKurdistanrepairCost +
-                                                            row.original.carCost.raqamAndRepairCostinKurdistanothers +
-                                                            row.original.carCost.feesAndRepaidCostDubaiothers +
-                                                            row.original.carCost.feesAndRepaidCostDubairepairCost +
-                                                            row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost +
-                                                            row.original.carCost.pricePaidbid +
-                                                            row.original.carCost.feesinAmericaCopartorIAAfee +
-                                                            row.original.carCost.feesinAmericaStoragefee +
-                                                            row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost
-                                                        )
+                                                    $ {
+                                                        row.original.isSold ? (row.original.carCost.price) -
+                                                            (
+                                                                row.original.carCost.coCCost +
+                                                                row.original.carCost.dubaiToIraqGCostgumrgCost +
+                                                                row.original.carCost.dubaiToIraqGCostTranscost +
+                                                                row.original.carCost.raqamAndRepairCostinKurdistanrepairCost +
+                                                                row.original.carCost.raqamAndRepairCostinKurdistanothers +
+                                                                row.original.carCost.feesAndRepaidCostDubaiothers +
+                                                                row.original.carCost.feesAndRepaidCostDubairepairCost +
+                                                                row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost +
+                                                                row.original.carCost.pricePaidbid +
+                                                                row.original.carCost.feesinAmericaCopartorIAAfee +
+                                                                row.original.carCost.feesinAmericaStoragefee +
+                                                                row.original.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost
+                                                            ) : 0
 
 
-                                                    } $
+                                                    }
                                                 </>)}
 
                                                 {cell.column.id === "MayCosts" && (<>
 
 
-                                                    {
+                                                    $ {
                                                         row.original.carCost.raqamAndRepairCostinKurdistanrepairCost +
                                                         row.original.carCost.raqamAndRepairCostinKurdistanothers +
                                                         row.original.carCost.feesAndRepaidCostDubaiothers +
                                                         row.original.carCost.feesAndRepaidCostDubairepairCost
-                                                    } $
+                                                    }
                                                 </>)}
 
 
 
 
                                                 {/* 2 */}
-                                                {cell.column.id === "DubaiCosts" && (<>
+                                                {/* {cell.column.id === "DubaiCosts" && (<>
 
-                                                    {
+                                                    $ {
                                                         row.original.carCost.feesAndRepaidCostDubaiothers +
                                                         row.original.carCost.feesAndRepaidCostDubairepairCost
-                                                    } $
+                                                    }
                                                 </>)}
 
                                                 {/* 3 */}
-                                                {cell.column.id === "USACosts" && (<>
+                                                {/* {cell.column.id === "USACosts" && (<>
 
 
                                                     {
@@ -695,7 +695,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                                         row.original.carCost.feesinAmericaStoragefee +
                                                         row.original.carCost.pricePaidbid
                                                     } $
-                                                </>)}
+                                                </>)} */}
 
 
                                                 {/* 4 */}
@@ -891,19 +891,11 @@ const Expense = ({ AllProducts }) => {
 
 
                 },
-                {
-                    Header: "Date",
 
-                    disableFilters: true,
-
-                    accessor: 'date',
-
-
-                },
 
                 // PricePaid ......................//^ ------------------------------
                 {
-                    Header: "USA Cost ",
+                    Header: "Buy Cost",
 
                     disableFilters: true,
 
@@ -958,7 +950,7 @@ const Expense = ({ AllProducts }) => {
                             }, [info.rows]
                         )
 
-                        return <>{total} $</>
+                        return <>$ {total} </>
                     },
 
                 },
@@ -987,7 +979,7 @@ const Expense = ({ AllProducts }) => {
                             }, [info.rows]
                         )
 
-                        return <>{total} $</>
+                        return <>$ {total} </>
                     },
 
                 },
@@ -1025,7 +1017,7 @@ const Expense = ({ AllProducts }) => {
                             }, [info.rows]
                         )
 
-                        return <>{total} $</>
+                        return <>$ {total}</>
                     },
 
                 },
@@ -1047,7 +1039,7 @@ const Expense = ({ AllProducts }) => {
                             }, [info.rows]
                         )
 
-                        return <>{total} $</>
+                        return <>$ {total}</>
                     },
                 },
                 // Profit           .....................//^ ------------------------------
@@ -1062,7 +1054,7 @@ const Expense = ({ AllProducts }) => {
                             () => {
                                 let T = 0
                                 info.rows.map((row, idx) => {
-                                    T += (row.original.price - (row.original.carCost.coCCost +
+                                    T += row.original.isSold && (row.original.price - (row.original.carCost.coCCost +
                                         row.original.carCost.dubaiToIraqGCostgumrgCost +
                                         row.original.carCost.dubaiToIraqGCostTranscost +
                                         row.original.carCost.raqamAndRepairCostinKurdistanrepairCost +
@@ -1080,8 +1072,17 @@ const Expense = ({ AllProducts }) => {
                             }, [info.rows]
                         )
 
-                        return <>{total} $</>
+                        return <> $ {total}</>
                     },
+                },
+                {
+                    Header: "Date",
+
+                    disableFilters: true,
+
+                    accessor: 'date',
+
+
                 },
                 {
                     Header: "Sold",
@@ -1167,7 +1168,7 @@ const Expense = ({ AllProducts }) => {
                             }, [info.rows]
                         )
 
-                        return <>{total} $</>
+                        return <>$ {total}</>
                     },
 
 

@@ -98,7 +98,7 @@ const CarsTable = ({ COLUMNS, AllProducts, initQuery }) => {
 
                         axios.spread((...responses) => {
                             setDataTable(responses?.[0]?.data.qarzList || [])
-
+                            console.log(responses?.[0]?.data.qarzList)
                             setPageS(Math.ceil(responses?.[0]?.data.total / Limit))
 
                         })).catch((e) => {

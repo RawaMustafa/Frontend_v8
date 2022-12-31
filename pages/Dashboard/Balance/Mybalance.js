@@ -218,7 +218,6 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
                     setDataTable(res.data.History)
                     setPageS(Math.ceil(res.data.total[0].total / Limit))
 
-
                 }
                 catch {
                     setDataTable([])
@@ -570,12 +569,11 @@ const Table = ({ COLUMNS, AllUsers, SessionID }) => {
 
                                                 }
 
-
                                                 {cell.column.id === 'amount' && row.original._id && (
                                                     cell.value >= 0 ? <div className="text-green-500">{cell.value}</div> : <div className="text-red-500">{cell.value}</div>
                                                 )}
                                                 {cell.column.id === 'Date' && (
-                                                    <div> {row.original.actionDate1}  </div>
+                                                    <div> {row.original.actionDate1}</div>
                                                 )}
                                                 {cell.column.id === 'Action' && (
                                                     <div> {row.original.action}  </div>
