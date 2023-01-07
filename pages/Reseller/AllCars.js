@@ -3,7 +3,7 @@ import ResellerLayout from '../../Layouts/ResellerLayout';
 import { useEffect, useMemo, useRef, useState, forwardRef } from 'react';
 import Head from 'next/head'
 import Link from 'next/link';
-import Axios from '../api/Axios';
+import Axios, { baseURL } from '../api/Axios';
 import Image from 'next/image';
 import { useRouter } from "next/router";
 import { getSession, useSession } from "next-auth/react";
@@ -11,9 +11,9 @@ import { useTable, useSortBy, useGlobalFilter, usePagination, useFilters, useGro
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
-import { faFilePdf as PDF, faCalendarCheck as CALLENDER } from '@fortawesome/free-regular-svg-icons';
+import { faFilePdf as PDF, faCalendarCheck as CALLENDER, faCircleXmark, } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
-import { faEye, faFileDownload, faCalendarCheck, faAnglesLeft, faChevronRight, faAnglesRight, faChevronLeft, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faFileDownload, faCalendarCheck, faAnglesLeft, faChevronRight, faAnglesRight, faChevronLeft, faBars, faStar, } from '@fortawesome/free-solid-svg-icons';
 
 
 
@@ -59,11 +59,11 @@ const IndeterminateCheckbox = forwardRef(
             resolvedRef.current.indeterminate = indeterminate
         }, [resolvedRef, indeterminate])
 
-        return <div className="w-full    " >
+        return <div className="w-full " >
 
-            <label className="cursor-pointer label my-2 ">
+            <label className="my-2 cursor-pointer label ">
                 {l.all}
-                <input type="checkbox" className="toggle toggle-accent focus:outline-0  " ref={resolvedRef}  {...rest} />
+                <input type="checkbox" className="toggle toggle-accent focus:outline-0 " ref={resolvedRef}  {...rest} />
 
             </label>
             <hr />
@@ -111,7 +111,7 @@ const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
                 //$sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2100-01-01"}
                 ///cars/ ? search =& page=1 & limit=3sdate = 2000 - 02 - 01 & edate=2023 - 11 - 17 & arrKu=1 & arrDu=1 & isSold=0
                 try {
-                    const res = await Axios.get(`/cars?search=${Search}&page=${Page}&limit=${Limit}$sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2100-01-01"}&arrKu=&arrDu=&isSold=0&&visibility=Public`, {
+                    const res = await Axios.get(`/cars?search=${Search}&page=${Page}&limit=${Limit}$sdate=${StartDate || "2000-01-01"}&edate=${EndDate || "2100-01-01"}&&visibility=`, {
                         headers: {
                             "Content-Type": "application/json",
                             'Authorization': `Bearer ${session?.data?.Token}`
@@ -189,253 +189,300 @@ const ResellerTable = ({ COLUMNS, AllProducts, initQuery }) => {
 
     // const { globalFilter } = state;
     const { pageIndex, pageSize } = state
-
     return (
 
-
-        <div className="  container mx-auto  " >
-
-            {/* //?   Header  */}
-            <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-xl p-5">
-
-                <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
-
-                    <a href="#my-modal-2" className=" flex  mx-2" ><FontAwesomeIcon className='text-2xl hover:scale-90 mx-1' icon={faBars} /></a>
-                    <input type="search" placeholder={`${l.search} ...`} className="input input-bordered    w-full    focus:outline-0   h-9 "
-                        onChange={e =>
-                            setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
-                        }
-                    />
-                </div>
-                <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8  rtl:mr-8 ">
-                    <label tabIndex="0" className="active:scale-9 m-1  ">
-                        <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="active:scale-90 text-2xl hover:cursor-pointer text-blue-500  " />
-                    </label>
-
-                    <ul tabIndex="0" className="dropdown-content bg-base-100 rounded-box w-52 flex justify-center shadow">
-                        <li className=" py-2">
-
-                            <div className="space-y-1">
-                                <h1>{l.from}</h1><input className="input input-bordered input-info focus:outline-0 "
-                                    onChange={(e) => {
-                                        setStartDate(e.target.value)
-                                    }}
-                                    type="date"
-                                />
-                                <h1>{l.to}</h1>
-                                <input className="input input-bordered input-info focus:outline-0"
-                                    onChange={(e) => {
-                                        setEndDate(e.target.value)
-                                    }}
-                                    type="date"
-                                />
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+        <>
 
 
-                <div className="modal" id="my-modal-2">
-                    <div className="modal-box m-2">
-                        <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} />
-                        <div className="max-h-80 scrollbar-hide space-y-2 overflow-auto text-lg font-bold">
-                            {allColumns.map(column => (
-                                <div key={column.id}>
-                                    <div className=" w-full rounded-lg">
-                                        <label className="label cursor-pointer">
-                                            {column.id}
-                                            <input type="checkbox" className="toggle toggle-accent focus:outline-0 " {...column.getToggleHiddenProps()} />
-
-                                        </label>
-                                    </div>
 
 
+            <div className="" >
+
+                {/* //?   Header  */}
+                <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-xl p-5">
+
+                    <div className="flex items-center bg-white rounded-lg shadow w-72 dark:bg-gray-600 ">
+
+                        <a href="#my-modal-2" className="flex mx-2 " ><FontAwesomeIcon className='mx-1 text-2xl hover:scale-90' icon={faBars} /></a>
+                        <input type="search" placeholder={`${l.search} ...`} className="w-full input input-bordered focus:outline-0 h-9 "
+                            onChange={e =>
+                                setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
+                            }
+                        />
+                    </div>
+                    {/* <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8 rtl:mr-8 ">
+                        <label tabIndex="0" className="m-1 active:scale-9 ">
+                            <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="text-2xl text-blue-500 active:scale-90 hover:cursor-pointer " />
+                        </label>
+
+                        <ul tabIndex="0" className="flex justify-center shadow dropdown-content bg-base-100 rounded-box w-52">
+                            <li className="py-2 ">
+
+                                <div className="space-y-1">
+                                    <h1>{l.from}</h1><input className="input input-bordered input-info focus:outline-0 "
+                                        onChange={(e) => {
+                                            setStartDate(e.target.value)
+                                        }}
+                                        type="date"
+                                    />
+                                    <h1>{l.to}</h1>
+                                    <input className="input input-bordered input-info focus:outline-0"
+                                        onChange={(e) => {
+                                            setEndDate(e.target.value)
+                                        }}
+                                        type="date"
+                                    />
                                 </div>
-                            ))}
+                            </li>
+                        </ul>
+                    </div> */}
 
 
-                        </div>
+                    <div className="modal" id="my-modal-2">
+                        <div className="m-2 modal-box">
+                            <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} />
+                            <div className="space-y-2 overflow-auto text-lg font-bold max-h-80 scrollbar-hide">
+                                {allColumns.map(column => (
+                                    <div key={column.id}>
+                                        <div className="w-full rounded-lg ">
+                                            <label className="cursor-pointer label">
+                                                {column.id}
+                                                <input type="checkbox" className="toggle toggle-accent focus:outline-0 " {...column.getToggleHiddenProps()} />
 
-                        <div className="modal-action">
-                            <a href="#" className="btn">{l.don}</a>
+                                            </label>
+                                        </div>
+
+
+                                    </div>
+                                ))}
+
+
+                            </div>
+
+                            <div className="modal-action">
+                                <a href="#" className="btn">{l.don}</a>
+                            </div>
                         </div>
                     </div>
+
                 </div>
+                {/* //?   Header  */}
 
-            </div>
-            {/* //?   Header  */}
-
-            <div className=" overflow-auto  bg-white dark:bg-[#181A1B] rounded-b-xl shadow-xl ">
-                <table id="table-to-xls" className="table table-compact    my-10   " {...getTableProps()}>
-
-                    <thead className="  ">
-                        {headerGroups.map((headerGroups, idx) => (
-
-                            <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
-                                <th className='hidden'></th>
-                                {headerGroups.headers.map((column, idx) => (
-
-                                    < th key={idx} className={`py-3 text-center font-normal normal-case ${true && "min-w-[200px]"}`} {...column.getHeaderProps(column.getSortByToggleProps())} >
-                                        <span  >{column.render('Header')} </span>
-                                        <span  >
-                                            {column.isSorted ? (column.isSortedDesc ? "<" : ">") : ""}
-                                        </span>
-                                    </th>
-                                ))}
-                            </tr>
-                        )
-                        )
-                        }
-                    </thead >
-                    <tbody {...getTableBodyProps()}>
-
-                        {page.map((row, idx) => {
-
-                            prepareRow(row)
-                            return (
-                                <tr key={idx}   {...row.getRowProps()} >
-                                    <td className='hidden'></td>
-
-                                    {row.cells.map((cell, idx) => {
-                                        return (
+                <div className="Desktop:overflow-auto  bg-white dark:bg-[#181A1B] rounded-b-xl shadow-xl ">
 
 
-                                            <td key={idx} className="dark:bg-[#181A1B] text-center py-2" {...cell.getCellProps()}>
+                    {/* //?   Table  */}
 
+                    <table id="table-to-xls" className="table w-full my-10 text-center Mobile:hidden" {...getTableProps()}>
 
-                                                {cell.render('Cell')}
+                        <thead className="">
+                            {headerGroups.map((headerGroups, idx) => (
 
+                                <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
+                                    <th className='hidden'></th>
+                                    {headerGroups.headers.map((column, idx) => (
 
-
-                                                {cell.column.id === 'isSold' && (
-
-                                                    cell.value === true ?
-                                                        // <FontAwesomeIcon icon={faCheck} className="text-green-500" />
-                                                        <span className="text-green-500">Yes</span>
-                                                        :
-                                                        // <FontAwesomeIcon icon={faTimes} className="text-red-500" />
-                                                        <span className="text-red-500">No</span>
-
-                                                )}
-
-                                                {cell.column.id === "Details" &&
-                                                    <Link href={`/Reseller/details/${row.original._id}`}><a><label htmlFor="my-modal-3" className="m-0" >
-                                                        <FontAwesomeIcon icon={faEye} className="text-2xl cursor-pointer text-blue-700" />
-                                                    </label></a></Link>
-
-                                                }
-
-                                                {cell.column.id === "123" &&
-                                                    <div>{Math.floor(cell.row.id) + 1}</div>
-                                                }
-
-
-                                            </td>
-
-                                        )
-                                    })}
-
+                                        < th key={idx} className={`py-3 bg-[#3ea7e1] text-white  text-white ${column.id == "image" && "w-20  max-w-[100px] "}  `} {...column.getHeaderProps(column.getSortByToggleProps())} >
+                                            <span  >{column.render('Header')} </span>
+                                            <span  >
+                                                {column.isSorted ? (column.isSortedDesc ? "<" : ">") : ""}
+                                            </span>
+                                        </th>
+                                    ))}
                                 </tr>
                             )
-                        }
+                            )
+                            }
+                        </thead >
+                        <tbody {...getTableBodyProps()}>
 
-                        )}
+                            {page.map((row, idx) => {
 
-                    </tbody>
+                                prepareRow(row)
+                                return (
+                                    <tr key={idx}   {...row.getRowProps()} >
+                                        <td className='hidden'></td>
 
-
-                </table>
-
-                {/* //?    botom */}
-                <div className="container text-sm  scale-90  ">
-
-                    <div className=" flex justify-between container mx-auto items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
-
-
-                        <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
-
-                            <div></div>
-                            <FontAwesomeIcon icon={faAnglesLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
-                                onClick={() => Page > 1 && setPage(1)}
-                                disabled={Page == 1 ? true : false} />
-
-                            <FontAwesomeIcon icon={faChevronLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
-                                onClick={() => Page > 1 && setPage(Page - 1)}
-                                disabled={Page == 1 ? true : false} />
+                                        {row.cells.map((cell, idx) => {
+                                            return (
 
 
-
-                            <span className="px-20 py-2 rounded bg-slate-100 dark:bg-gray-700">
-                                {Page}/{PageS}
-                            </span>
+                                                <td key={idx} className={`dark:bg-[#181A1B] text-center py-2  ${cell.column.id == "image" && "w-20   p-0"} `} {...cell.getCellProps()}>
 
 
+                                                    {cell.render('Cell')}
 
-                            <FontAwesomeIcon icon={faChevronRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
-                                onClick={() => Page < PageS && (Page >= 1 && setPage(Page + 1))}
-                                disabled={Page >= PageS ? true : false} />
+                                                    {cell.column.id === "image" && (
+                                                        <>
+                                                            <Link href={`/Reseller/details/${row.original._id}`}><a className=''><Image
+                                                                src={`${baseURL}/${row.original.FirstImage?.[0]?.filename || row.original.carDamage?.[0]?.filename}`} objectFit='cover' alt="Image" height={100} width={120} /></a></Link>
 
-                            <FontAwesomeIcon icon={faAnglesRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
-                                onClick={() => Page < PageS && (Page >= 1 && setPage(PageS))}
-                                disabled={Page >= PageS ? true : false} />
+                                                        </>)
+
+                                                    }
+
+                                                    {cell.column.id === 'isSold' && (
+
+                                                        cell.value === true ?
+                                                            // <FontAwesomeIcon icon={faCheck} className="text-green-500" />
+                                                            <span className="text-green-500">Yes</span>
+                                                            :
+                                                            // <FontAwesomeIcon icon={faTimes} className="text-red-500" />
+                                                            <span className="text-red-500">No</span>
+
+                                                    )}
+
+                                                    {cell.column.id === "Details" &&
+                                                        <Link href={`/Reseller/details/${row.original._id}`}><a><label htmlFor="my-modal-3" className="m-0" >
+                                                            <FontAwesomeIcon icon={faEye} className="text-2xl text-blue-700 cursor-pointer" />
+                                                        </label></a></Link>
+
+                                                    }
+
+                                                    {cell.column.id === "123" &&
+                                                        <div>{Math.floor(cell.row.id) + 1}</div>
+                                                    }
 
 
-                            <div>
-                                <select className="select  select-sm w-20 focus:outline-0 input-sm dark:bg-gray-700   max-w-xs text-sm"
-                                    onChange={(e) => {
-                                        setLimit((e.target.value))
-                                        setPageSize(Number(e.target.value)
-                                        )
-                                        setPage(1)
-                                    }}
+                                                </td>
 
-                                    value={pageSize}>
-                                    {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
-                                        <option className='text-end' key={idx} value={pageSize}>
-                                            {(pageSize !== 100000) ? pageSize : l.all}
-                                        </option>))
-                                    }
+                                            )
+                                        })}
 
-                                </select>
-                            </div>
+                                    </tr>
+                                )
+                            }
 
-                            <FontAwesomeIcon icon={PDF} onClick={table_2_pdf} className="md:mx-5 px-10 text-blue-400 active:scale-9 m-auto mx-10 text-2xl transition ease-in-out hover:cursor-pointer" />
+                            )}
 
-                            <ReactHTMLTableToExcel
-                                id="test-table-xls-button "
-                                className="text-2xl active:scale-90"
-                                table="table-to-xls"
-                                filename="tablexls"
-                                sheet="tablexls"
-                                buttonText="📋"
-                                icon={PDF}
-                            />
+                        </tbody>
+
+
+                    </table>
+                    {/* //?   Table  */}
 
 
 
+
+                    {/* //?   Cards  */}
+
+                    <div className='mx-2 mb-20 Desktop:hidden'>
+                        <div className='grid justify-center grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 '>
+                            {DataTable?.map((car, idx) => {
+
+                                return (
+                                    <div className="w-full  overflow-hidden bg-white dark:bg-[#181a1b] rounded shadow-xl  border">
+                                        <div className='px-2 py-3 border-b-2 text-[#1254ff] text-xl'>{car.model} {car.modeName}</div>
+                                        <div className='flex bg-[#f5f9fd'>
+                                            <figure className='w-36'><Image src={`${baseURL}/${car.FirstImage ? car.FirstImage?.[0]?.filename : car.carDamage?.[0]?.filename}`} width={200} height={200} alt="Album" /></figure>
+                                            <div className="p-3 text-sm">
+                                                <h2 className="text-sm text-black dark:text-white">{l.mileage}</h2>
+                                                <p>{car.mileage} </p>
+                                                <h2 className="">{l.price}:</h2>
+                                                <p>{car.price} </p>
+                                                <h2 className="">{l.wheeldrivetype}:</h2>
+                                                <p>{car.wheelDriveType} </p>
+
+                                            </div>
+                                        </div>
+                                        <div className='flex '>
+                                            <Link href={`/Reseller/details/${car._id}`} className='w-full h-full p-0 m-0 bg-[#FFB838] py-2 text-black  active:scale-[101.5%]  '><a className='w-full h-full p-0 m-0 bg-[#FFB838] py-2 text-black  active:scale-[101.5%] text-center'> <span> {l.detail}</span>
+                                                {" "} <FontAwesomeIcon className=' rotate-[45deg] font-thin text-sm' icon={faCircleXmark} /></a>
+                                            </Link>
+                                            <Link href={`/Reseller/details/${car._id}`} className='w-full h-full p-0 m-0 bg-[#ffff] py-2 text-black shadow-slate-100  shadow-inner flex justify-center items-center hover:bg-slate-50  dark:bg-[#181a1b]   active:scale-[101.5%]'>
+                                                <a className='w-full h-full p-0 m-0 bg-[#ffff] py-2 text-black shadow-slate-100  shadow-inner flex justify-center items-center hover:bg-slate-50  dark:bg-[#181a1b]   active:scale-[101.5%]'><FontAwesomeIcon className='text-[#FFB838] ' icon={faStar} />
+                                                    <p className='text-[#1254ff] font-bold px-1 '>{l.watch}</p></a>
+                                            </Link>
+                                            <button className='w-full h-full p-0 m-0 bg-[#ffff] py-2 text-black shadow-slate-100  shadow-inner  dark:bg-[#181a1b] dark:text-white active:scale-[101.5%]'>soon ...</button>
+                                        </div>
+                                    </div>
+                                )
+
+                            })}
                         </div>
-
-
-
-                        <div className="scrollbar-hide inline-flex space-x-3 overflow-auto">
-                            <div></div>
-
-
-
-                        </div>
-
-
-
                     </div>
 
+                    {/* //?   Cards  */}
 
+
+
+                    {/* //?    botom */}
+                    <div className="text-sm mb-96 bg-white dark:bg-[#181A1B] ">
+
+                        <div className="flex items-center justify-between px-1 mb-5 text-sm rounded-xl">
+
+
+                            <div className="flex items-center space-x-2 ">
+                                <div ></div>
+                                <FontAwesomeIcon icon={faAnglesLeft} className="w-2 px-2 py-1.5 rounded text-white bg-[#3ea7e1]    active:scale-95 hover:cursor-pointer"
+                                    onClick={() => Page > 1 && setPage(1)}
+                                    disabled={Page == 1 ? true : false} />
+
+                                <FontAwesomeIcon icon={faChevronLeft} className="w-2 px-2 py-1.5 rounded text-white  bg-[#3ea7e1]  active:scale-95 hover:cursor-pointer"
+                                    onClick={() => Page > 1 && setPage(Page - 1)}
+                                    disabled={Page == 1 ? true : false} />
+
+
+
+                                <span className="px-10 py-1 rounded text-white bg-[#3ea7e1] ">
+                                    {Page}/{PageS}
+                                </span>
+
+                                <FontAwesomeIcon icon={faChevronRight} className=" bg-[#3ea7e1] text-white  px-2 w-2 py-1.5 rounded active:scale-95 hover:cursor-pointer"
+                                    onClick={() => Page < PageS && (Page >= 1 && setPage(Page + 1))}
+                                    disabled={Page >= PageS ? true : false} />
+
+                                <FontAwesomeIcon icon={faAnglesRight} className=" bg-[#3ea7e1] text-white  px-2 w-2 py-1.5 rounded active:scale-95 hover:cursor-pointer"
+                                    onClick={() => Page < PageS && (Page >= 1 && setPage(PageS))}
+                                    disabled={Page >= PageS ? true : false} />
+
+
+                                <div>
+                                    <select className="w-10  max-w-xs text-sm select select-xs focus:outline-0 input-sm text-white bg-[#3ea7e1] "
+                                        onChange={(e) => {
+                                            setLimit((e.target.value))
+                                            setPageSize(Number(e.target.value)
+                                            )
+                                            setPage(1)
+                                        }}
+
+                                        value={pageSize}>
+                                        {[1, 5, 10, 25, 50, 100, 100000].map((pageSize, idx) => (
+                                            <option className='text-end' key={idx} value={pageSize}>
+                                                {(pageSize !== 100000) ? pageSize : l.all}
+                                            </option>))
+                                        }
+
+                                    </select>
+                                </div>
+
+
+                                {/* <FontAwesomeIcon icon={PDF} onClick={table_2_pdf} className="px-10 m-auto mx-10 text-2xl text-blue-400 transition ease-in-out Mobile:hidden md:mx-5 active:scale-9 hover:cursor-pointer" />
+
+                                <ReactHTMLTableToExcel
+                                    id="test-table-xls-button "
+                                    className="text-2xl active:scale-90 Mobile:hidden"
+                                    table="table-to-xls"
+                                    filename="tablexls"
+                                    sheet="tablexls"
+                                    buttonText="📋"
+                                    icon={PDF}
+                                /> */}
+
+
+                            </div>
+
+                        </div>
+
+
+                    </div >
+
+                    <div></div>
+                    {/* //?    botom */}
 
                 </div >
-                {/* //?    botom */}
-
             </div >
-        </div >
-
+        </>
     );
 
 
@@ -455,90 +502,19 @@ const Reseller = ({ AllProducts, initQuery }) => {
             [
 
 
-                // {
-                //     Header: "123",
 
-                //     disableFilters: true,
-
-
-                // },
                 {
-                    Header: () => {
-                        return (
-
-                            l.price
-                        )
-                    },
+                    Header: "Image",
 
                     disableFilters: true,
 
-                    accessor: 'price',
+                    accessor: 'image',
 
 
                 },
+
                 {
-                    Header: () => {
-                        return (
-
-                            l.color
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'color',
-
-
-                },
-                {
-                    Header: () => {
-                        return (
-
-                            l.date
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'date',
-
-
-                },
-                {
-                    Header: () => {
-                        return (
-
-                            l.isSold
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'isSold',
-
-
-                },
-                {
-                    Header: () => {
-                        return (
-
-                            l.mileage
-                        )
-                    },
-
-                    disableFilters: true,
-
-                    accessor: 'mileage',
-
-
-                },
-                {
-                    Header: () => {
-                        return (
-
-                            l.namecar
-                        )
-                    },
+                    Header: "Name",
 
                     disableFilters: true,
 
@@ -546,13 +522,9 @@ const Reseller = ({ AllProducts, initQuery }) => {
 
 
                 },
-                {
-                    Header: () => {
-                        return (
 
-                            l.modelyear
-                        )
-                    },
+                {
+                    Header: "Model year",
 
                     disableFilters: true,
 
@@ -561,31 +533,60 @@ const Reseller = ({ AllProducts, initQuery }) => {
 
                 },
 
-
-
                 {
-                    Header: () => {
-                        return (
-
-                            l.tobalance
-                        )
-                    },
+                    Header: "Color",
 
                     disableFilters: true,
 
-                    accessor: 'tobalance',
+                    accessor: 'color',
+
+
+                },
+
+                {
+                    Header: "Mileage",
+
+                    disableFilters: true,
+
+                    accessor: 'mileage',
+
+
+                },
+
+                {
+                    Header: "Price",
+
+                    disableFilters: true,
+
+                    accessor: 'price',
+
+
+                },
+
+                {
+                    Header: "Date",
+
+                    disableFilters: true,
+
+                    accessor: 'date',
+
+
+                },
+                {
+                    Header: "Sold",
+
+                    disableFilters: true,
+
+                    accessor: 'isSold',
 
 
                 },
 
 
-                {
-                    Header: () => {
-                        return (
 
-                            l.tocar
-                        )
-                    },
+
+                {
+                    Header: "Car Type",
 
                     disableFilters: true,
 
@@ -595,12 +596,7 @@ const Reseller = ({ AllProducts, initQuery }) => {
                 },
 
                 {
-                    Header: () => {
-                        return (
-
-                            l.wheeldrivetype
-                        )
-                    },
+                    Header: "Whieel Drive",
 
                     disableFilters: true,
 
@@ -609,19 +605,9 @@ const Reseller = ({ AllProducts, initQuery }) => {
 
                 },
 
-
-
-
-
-
-
-
                 {
                     Header: "Details",
-
                     disableFilters: true,
-
-
                 },
 
 
@@ -634,7 +620,7 @@ const Reseller = ({ AllProducts, initQuery }) => {
 
 
     if (session.status === "loading") {
-        return <div className="flex justify-center items-center h-screen">
+        return <div className="flex items-center justify-center h-screen">
             <Head>
                 <title >{l.loading}</title>
             </Head>
@@ -646,7 +632,7 @@ const Reseller = ({ AllProducts, initQuery }) => {
 
     if (session.status === "unauthenticated") {
         return (
-            <div className="flex justify-center items-center h-screen">
+            <div className="flex items-center justify-center h-screen">
                 <Head>
                     <title >{l.unauthenticated}</title>
                 </Head>

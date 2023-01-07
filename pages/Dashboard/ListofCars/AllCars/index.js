@@ -71,9 +71,9 @@ const IndeterminateCheckbox = forwardRef(
             resolvedRef.current.indeterminate = indeterminate
         }, [resolvedRef, indeterminate])
 
-        return <div className=" w-full" >
+        return <div className="w-full " >
 
-            <label className="label my-2 cursor-pointer">
+            <label className="my-2 cursor-pointer label">
                 {l.all}
                 <input type="checkbox" className="toggle toggle-accent focus:outline-0 " ref={resolvedRef}  {...rest} />
 
@@ -224,22 +224,22 @@ const Table = ({ COLUMNS, AllProducts }) => {
             {/* //?   Header  */}
             <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-2xl p-5">
 
-                <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
-                    <label htmlFor="my-modal" className=" flex  mx-2 hover:cursor-pointer"><FontAwesomeIcon className='text-2xl hover:scale-90 mx-1' icon={faBars} /></label>
-                    <input type="search" placeholder={`${l.search} ...`} className="input input-bordered    w-full    focus:outline-0   h-9 "
+                <div className="flex items-center bg-white rounded-lg shadow w-72 dark:bg-gray-600 ">
+                    <label htmlFor="my-modal" className="flex mx-2 hover:cursor-pointer"><FontAwesomeIcon className='mx-1 text-2xl hover:scale-90' icon={faBars} /></label>
+                    <input type="search" placeholder={`${l.search} ...`} className="w-full input input-bordered focus:outline-0 h-9 "
                         onChange={e =>
                             setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
                         }
                     />
                 </div>
 
-                <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8  rtl:mr-8 ">
-                    <label tabIndex="0" className="active:scale-9 m-1  ">
-                        <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="active:scale-90 text-2xl hover:cursor-pointer text-blue-500  " />
+                <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8 rtl:mr-8 ">
+                    <label tabIndex="0" className="m-1 active:scale-9 ">
+                        <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="text-2xl text-blue-500 active:scale-90 hover:cursor-pointer " />
                     </label>
 
-                    <ul tabIndex="0" className="dropdown-content bg-base-100 rounded-box w-52 flex justify-center shadow">
-                        <li className=" py-2">
+                    <ul tabIndex="0" className="flex justify-center shadow dropdown-content bg-base-100 rounded-box w-52">
+                        <li className="py-2 ">
 
                             <div className="space-y-1">
                                 <h1>{l.from}</h1><input className="input input-bordered input-info focus:outline-0 "
@@ -263,9 +263,9 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
                 <input type="checkbox" id="my-modal" className="modal-toggle" />
                 <div className="modal" id="my-modal-2">
-                    <div className="modal-box m-2">
+                    <div className="m-2 modal-box">
 
-                        <label className="label my-2 cursor-pointer">
+                        <label className="my-2 cursor-pointer label">
                             {l.filter}
                             <input type="checkbox" className="toggle toggle-accent focus:outline-0 " onChange={(e) => {
                                 setFILTER(e.target.checked)
@@ -284,31 +284,31 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                     className="grid  min-w-[50px]   grid-cols-4 space-x-2 rounded-xl bg-gray-200 dark:bg-slate-800  dark:text-white  text-black "
 
                                 >
-                                    <div className='bg-accent/100  rounded px-1 flex items-center text-white'
+                                    <div className='flex items-center px-1 text-white rounded bg-accent/100'
                                     >{l.balance}</div>
                                     <div>
-                                        <input type="radio" name="option" id="1" className="peer hidden" value="Rent" />
+                                        <input type="radio" name="option" id="1" className="hidden peer" value="Rent" />
                                         <label
                                             htmlFor="1"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-error peer-checked:font-bold peer-checked:text-white"
+                                            className="block p-2 text-center cursor-pointer select-none rounded-xl peer-checked:bg-error peer-checked:font-bold peer-checked:text-white"
                                         >{l.loan}</label
                                         >
                                     </div>
 
                                     <div>
-                                        <input type="radio" name="option" id="2" className="peer hidden" value="All" defaultChecked />
+                                        <input type="radio" name="option" id="2" className="hidden peer" value="All" defaultChecked />
                                         <label
                                             htmlFor="2"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-slate-500 peer-checked:font-bold peer-checked:text-white"
+                                            className="block p-2 text-center cursor-pointer select-none rounded-xl peer-checked:bg-slate-500 peer-checked:font-bold peer-checked:text-white"
                                         >{l.all}</label
                                         >
                                     </div>
 
                                     <div>
-                                        <input type="radio" name="option" id="3" className="peer hidden" value="Cash" />
+                                        <input type="radio" name="option" id="3" className="hidden peer" value="Cash" />
                                         <label
                                             htmlFor="3"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-accent peer-checked:font-bold peer-checked:text-white "
+                                            className="block p-2 text-center cursor-pointer select-none rounded-xl peer-checked:bg-accent peer-checked:font-bold peer-checked:text-white "
                                         >{l.cash}</label
                                         >
                                     </div>
@@ -319,31 +319,31 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                     className="grid  min-w-[50px]   grid-cols-4 space-x-2 rounded-xl bg-gray-200 dark:bg-slate-800  dark:text-white  text-black"
 
                                 >
-                                    <h5 className='bg-accent/100  rounded px-1 flex items-center text-white    '
+                                    <h5 className='flex items-center px-1 text-white rounded bg-accent/100 '
                                     >{l.isSold}</h5>
                                     <div>
-                                        <input type="radio" name="option" id="11" className="peer hidden" value="0" />
+                                        <input type="radio" name="option" id="11" className="hidden peer" value="0" />
                                         <label
                                             htmlFor="11"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-error peer-checked:font-bold peer-checked:text-white"
+                                            className="block p-2 text-center cursor-pointer select-none rounded-xl peer-checked:bg-error peer-checked:font-bold peer-checked:text-white"
                                         >{l.no}</label
                                         >
                                     </div>
 
                                     <div>
-                                        <input type="radio" name="option" id="22" className="peer hidden" value="All" defaultChecked />
+                                        <input type="radio" name="option" id="22" className="hidden peer" value="All" defaultChecked />
                                         <label
                                             htmlFor="22"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-slate-500 peer-checked:font-bold peer-checked:text-white"
+                                            className="block p-2 text-center cursor-pointer select-none rounded-xl peer-checked:bg-slate-500 peer-checked:font-bold peer-checked:text-white"
                                         >{l.all}</label
                                         >
                                     </div>
 
                                     <div>
-                                        <input type="radio" name="option" id="33" className="peer hidden" value="1" />
+                                        <input type="radio" name="option" id="33" className="hidden peer" value="1" />
                                         <label
                                             htmlFor="33"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-accent peer-checked:font-bold peer-checked:text-white "
+                                            className="block p-2 text-center cursor-pointer select-none rounded-xl peer-checked:bg-accent peer-checked:font-bold peer-checked:text-white "
                                         >{l.yes}</label
                                         >
                                     </div>
@@ -354,31 +354,31 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                     className="grid  min-w-[50px]   grid-cols-4 space-x-2 rounded-xl bg-gray-200 dark:bg-slate-800  dark:text-white  text-black"
 
                                 >
-                                    <h5 className='bg-accent/100  rounded px-1 flex items-center text-white    '
+                                    <h5 className='flex items-center px-1 text-white rounded bg-accent/100 '
                                     >{l.visibility}</h5>
                                     <div>
-                                        <input type="radio" name="option" id="110" className="peer hidden" value="Private" />
+                                        <input type="radio" name="option" id="110" className="hidden peer" value="Private" />
                                         <label
                                             htmlFor="110"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-error peer-checked:font-bold peer-checked:text-white"
+                                            className="block p-2 text-center cursor-pointer select-none rounded-xl peer-checked:bg-error peer-checked:font-bold peer-checked:text-white"
                                         >{l.private}</label
                                         >
                                     </div>
 
                                     <div>
-                                        <input type="radio" name="option" id="220" className="peer hidden" value="All" defaultChecked />
+                                        <input type="radio" name="option" id="220" className="hidden peer" value="All" defaultChecked />
                                         <label
                                             htmlFor="220"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-slate-500 peer-checked:font-bold peer-checked:text-white"
+                                            className="block p-2 text-center cursor-pointer select-none rounded-xl peer-checked:bg-slate-500 peer-checked:font-bold peer-checked:text-white"
                                         >{l.all}</label
                                         >
                                     </div>
 
                                     <div>
-                                        <input type="radio" name="option" id="330" className="peer hidden" value="Public" />
+                                        <input type="radio" name="option" id="330" className="hidden peer" value="Public" />
                                         <label
                                             htmlFor="330"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-accent peer-checked:font-bold peer-checked:text-white "
+                                            className="block p-2 text-center cursor-pointer select-none rounded-xl peer-checked:bg-accent peer-checked:font-bold peer-checked:text-white "
                                         >{l.public}</label
                                         >
                                     </div>
@@ -389,41 +389,41 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                     className="grid  min-w-[50px]   grid-cols-5 space-x-2 rounded-xl bg-gray-200 dark:bg-slate-800  dark:text-white  text-black"
 
                                 >
-                                    <div className='bg-accent/100  rounded px-1 flex items-center text-white text-sm'
+                                    <div className='flex items-center px-1 text-sm text-white rounded bg-accent/100'
                                     >{l.Location}</div>
                                     <div>
-                                        <input type="radio" name="option" id="1110" className="peer hidden" value="USA" />
+                                        <input type="radio" name="option" id="1110" className="hidden peer" value="USA" />
                                         <label
                                             htmlFor="1110"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-error peer-checked:font-bold peer-checked:text-white"
+                                            className="block p-2 text-center cursor-pointer select-none rounded-xl peer-checked:bg-error peer-checked:font-bold peer-checked:text-white"
                                         >{l.USA}</label
                                         >
                                     </div>
 
 
                                     <div>
-                                        <input type="radio" name="option" id="222" className="peer hidden" value="All" defaultChecked />
+                                        <input type="radio" name="option" id="222" className="hidden peer" value="All" defaultChecked />
                                         <label
                                             htmlFor="222"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-slate-500 peer-checked:font-bold peer-checked:text-white"
+                                            className="block p-2 text-center cursor-pointer select-none rounded-xl peer-checked:bg-slate-500 peer-checked:font-bold peer-checked:text-white"
                                         >{l.all}</label
                                         >
                                     </div>
 
                                     <div>
-                                        <input type="radio" name="option" id="11101" className="peer hidden" value="Dubai" />
+                                        <input type="radio" name="option" id="11101" className="hidden peer" value="Dubai" />
                                         <label
                                             htmlFor="11101"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-error peer-checked:font-bold peer-checked:text-white"
+                                            className="block p-2 text-center cursor-pointer select-none rounded-xl peer-checked:bg-error peer-checked:font-bold peer-checked:text-white"
                                         >{l.Dubai}</label
                                         >
                                     </div>
 
                                     <div>
-                                        <input type="radio" name="option" id="3331" className="peer hidden" value="Kurdistan" />
+                                        <input type="radio" name="option" id="3331" className="hidden peer" value="Kurdistan" />
                                         <label
                                             htmlFor="3331"
-                                            className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-accent peer-checked:font-bold peer-checked:text-white   max-xs:bg-red-200  w-6 overflow-hidden "
+                                            className="block p-2 overflow-hidden text-center cursor-pointer select-none rounded-xl peer-checked:bg-accent peer-checked:font-bold peer-checked:text-white "
                                         >{l.Kurdistan}</label
                                         >
                                     </div>
@@ -440,8 +440,8 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
                             {allColumns.map(column => (
                                 <div key={column.id}  >
-                                    <div className=" w-full rounded-lg">
-                                        <label className="label cursor-pointer"
+                                    <div className="w-full rounded-lg ">
+                                        <label className="cursor-pointer label"
 
                                         >
                                             {column.Header}
@@ -461,7 +461,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
                         </div>
 
-                        <div className="modal-action flex justify-between">
+                        <div className="flex justify-between modal-action">
                             <label className="btn btn-error"
                                 onClick={() => { localStorage.setItem("AllCars", "") }}
                             >{l.reset}</label>
@@ -478,16 +478,16 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
                 <input type="checkbox" id="PDF-modal" className="modal-toggle" />
                 <div className="modal">
-                    <div className="modal-box relative">
-                        <label htmlFor="PDF-modal" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-                        <div className='text-center my-5'>
-                            <FontAwesomeIcon icon={PDF} className=" text-6xl text-blue-400  " />
+                    <div className="relative modal-box">
+                        <label htmlFor="PDF-modal" className="absolute btn btn-sm btn-circle right-2 top-2">✕</label>
+                        <div className='my-5 text-center'>
+                            <FontAwesomeIcon icon={PDF} className="text-6xl text-blue-400 " />
 
                         </div>
-                        <h3 className="font-bold text-lg">{l.papermsg}</h3>
+                        <h3 className="text-lg font-bold">{l.papermsg}</h3>
 
-                        <div className='text-center my-5'>
-                            <select onChange={(e) => { setPaperPDF(e.target.value) }} defaultValue={"A1"} className="select select-info w-full max-w-xs">
+                        <div className='my-5 text-center'>
+                            <select onChange={(e) => { setPaperPDF(e.target.value) }} defaultValue={"A1"} className="w-full max-w-xs select select-info">
                                 <option value={"A1"} >A1</option>
                                 <option value={"A2"}>A2</option>
                                 <option value={"A3"}>A3</option>
@@ -509,15 +509,15 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
             <div className="overflow-x-auto  bg-white dark:bg-[#181A1B] rounded-b-xl   w-full    "  >
 
-                <table id="table-to-xls" className="table w-full my-10  text-xs  " {...getTableProps()}>
+                <table id="table-to-xls" className="table w-full my-10 text-xs " {...getTableProps()}>
 
-                    <thead className=" ">
+                    <thead className="">
                         {headerGroups.map((headerGroups, idx) => (
                             <tr id="th-to-xls" className="text-xs text-center w-96 " key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
                                 <th className='hidden'></th>
                                 {headerGroups.headers.map((column, idx) => (
                                     <th key={idx} className={`py-3 bg-[#3ea7e1]  text-white ${column.id == "image" && "w-20  max-w-[100px] "}  `} {...column.getHeaderProps(column.getSortByToggleProps())} >
-                                        <span className='text-xs  font-normal normal-case'>{column.render('Header')}</span>
+                                        <span className='text-xs font-normal normal-case'>{column.render('Header')}</span>
                                         <span  >
                                             {column.isSorted ? (column.isSortedDesc ? "⇅" : "⇵") : ""}
                                         </span>
@@ -546,7 +546,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                                 {(cell.column.id !== "VINNumber" && cell.column.id !== "price" && cell.column.id !== "tire") && cell.render('Cell')}
                                                 {cell.column.id === "image" && (
                                                     <>
-                                                        <Link href={`/Dashboard/ListofCars/AllCars/${row.original._id}`}><a className=' '><Image
+                                                        <Link href={`/Dashboard/ListofCars/AllCars/${row.original._id}`}><a className=''><Image
                                                             src={`${baseURL}/${row.original.FirstImage?.[0]?.filename || row.original.carDamage?.[0]?.filename}`} objectFit='cover' alt="Image" height={100} width={120} /></a></Link>
 
                                                     </>)
@@ -570,7 +570,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                                 )}
                                                 {cell.column.id === 'VINNumber' && (
                                                     <>
-                                                        <p className=' '>...{cell.value.substring(cell.value.length - 6)} </p>
+                                                        <p className=''>...{cell.value.substring(cell.value.length - 6)} </p>
                                                     </>
                                                 )}
 
@@ -739,12 +739,12 @@ const Table = ({ COLUMNS, AllProducts }) => {
                 </table>
 
                 {/* //?    botom */}
-                <div className="container text-sm  scale-90  ">
+                <div className="container text-sm scale-90 ">
 
                     <div className=" flex justify-between container mx-auto items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
 
 
-                        <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
+                        <div className="flex items-center justify-around mx-5 space-x-2 bg-center ">
 
                             <div></div>
                             <FontAwesomeIcon icon={faAnglesLeft} className=" bg-[#3ea7e1]  text-white px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
@@ -790,7 +790,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
                                 </select>
                             </div>
 
-                            <label htmlFor="PDF-modal" className=""><FontAwesomeIcon icon={PDF} className="md:mx-5 px-10 text-blue-400 active:scale-9 m-auto mx-10 text-2xl transition ease-in-out hover:cursor-pointer" /></label>
+                            <label htmlFor="PDF-modal" className=""><FontAwesomeIcon icon={PDF} className="px-10 m-auto mx-10 text-2xl text-blue-400 transition ease-in-out md:mx-5 active:scale-9 hover:cursor-pointer" /></label>
 
                             <ReactHTMLTableToExcel
                                 id="test-table-xls-button "
@@ -808,7 +808,7 @@ const Table = ({ COLUMNS, AllProducts }) => {
 
 
 
-                        <div className="scrollbar-hide inline-flex space-x-3 overflow-auto">
+                        <div className="inline-flex space-x-3 overflow-auto scrollbar-hide">
                             <div></div>
 
 

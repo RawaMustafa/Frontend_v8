@@ -12,6 +12,8 @@ import AdminLayout from '../../Layouts/AdminLayout';
 import { ToastContainer, toast, } from 'react-toastify';
 
 
+
+
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome'
 import { faCar, faMoneyCheckDollar, faSackDollar, faHandHoldingDollar, faDollar } from '@fortawesome/free-solid-svg-icons';
 
@@ -28,8 +30,6 @@ import { useSession, getSession } from "next-auth/react";
 export const getServerSideProps = async ({ req }) => {
 
     const session = await getSession({ req })
-
-
 
 
 
@@ -210,10 +210,13 @@ const Dashboard = (props) => {
                     <title >{l.dashboard}</title>
                     <meta name="Dashboard" content="initial-scale=1.0, width=device-width all data " />
                 </Head>
-                <div className="text-center">
+
+                <div className=" text-center">
                     {l.loading}
                 </div>
             </>
+
+
 
         )
     }
@@ -222,11 +225,19 @@ const Dashboard = (props) => {
         return router.push('/');
     }
 
+
+
+
     if (status == "authenticated") {
+
+
+
+
+
 
         return (
 
-            <div className="mb-52  first-line: container mx-auto">
+            <div className="mb-52 first-line: container mx-auto">
 
                 <Head>
                     <title >{l.dashboard}</title>
@@ -245,17 +256,17 @@ const Dashboard = (props) => {
 
 
                     <Link href="/Dashboard/ListofCars/AllCars"><a><div className="p-5 relative border  bg-[#afeeee]  rounded-2xl shadow-xl drop-shadow-lg  overflow-hidden  active:scale-[98%] hover:scale-[99%] ">
-                        <div className="flex items-center  justify-around    ">
+                        <div className=" flex items-center justify-around">
 
                             <div>
                                 <div className="">{l.allcars}</div>
-                                <div className="text-3xl font-bold  ">{Data?.carNumber || " 0"}</div>
+                                <div className=" text-3xl font-bold">{Data?.carNumber || " 0"}</div>
                             </div>
                             <div>
-                                <div className="flex items-center justify-center w-12 h-12 rounded-full    ">
+                                <div className=" flex items-center justify-center w-12 h-12 rounded-full">
 
-                                    <FontAwesomeIcon icon={faCar} className="text-4xl " />
-                                    <FontAwesomeIcon icon={faCar} className="text-6xl absolute rtl:left-1 rtl:right-auto   right-1   opacity-5 " />
+                                    <FontAwesomeIcon icon={faCar} className=" text-4xl" />
+                                    <FontAwesomeIcon icon={faCar} className="rtl:left-1 rtl:right-auto right-1 opacity-5  absolute text-6xl" />
 
 
                                 </div>
@@ -265,17 +276,17 @@ const Dashboard = (props) => {
                         </div>
                     </div></a></Link>
                     <Link href="/Dashboard/Balance/Mybalance"><a><div className="p-5 relative border overflow-hidden bg-[#d2df97]  rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
-                        <div className="flex items-center  justify-around  ">
+                        <div className=" flex items-center justify-around">
 
                             <div>
                                 <div className="">{l.balance}</div>
-                                <div className="text-3xl font-bold  ">${UserInfo?.TotalBals || " 0"}</div>
+                                <div className=" text-3xl font-bold">${UserInfo?.TotalBals || " 0"}</div>
                             </div>
                             <div>
-                                <div className="flex items-center justify-center w-12 h-12 rounded-full ">
+                                <div className=" flex items-center justify-center w-12 h-12 rounded-full">
 
-                                    <FontAwesomeIcon icon={faDollar} className="text-4xl " />
-                                    <FontAwesomeIcon icon={faDollar} className="text-6xl absolute rtl:left-1 rtl:right-auto  right-1 opacity-5 " />
+                                    <FontAwesomeIcon icon={faDollar} className=" text-4xl" />
+                                    <FontAwesomeIcon icon={faDollar} className="rtl:left-1 rtl:right-auto right-1 opacity-5  absolute text-6xl" />
 
 
                                 </div>
@@ -285,17 +296,17 @@ const Dashboard = (props) => {
                     </div></a></Link>
 
                     <Link href="/Dashboard/Balance/Mybalance"><a><div className="p-5 relative border bg-[#ddc7a8] overflow-hidden rounded-2xl shadow-xl drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
-                        <div className="flex items-center  justify-around  ">
+                        <div className=" flex items-center justify-around">
 
                             <div>
                                 <div className="">{l.sold}</div>
-                                <div className="text-3xl font-bold ">${Data?.totalpriceSold || " 0"}</div>
+                                <div className=" text-3xl font-bold">${Data?.totalpriceSold || " 0"}</div>
                             </div>
                             <div>
-                                <div className="flex items-center justify-center w-12 h-12 rounded-full  ">
+                                <div className=" flex items-center justify-center w-12 h-12 rounded-full">
 
                                     <FontAwesomeIcon icon={faMoneyCheckDollar} className="text-4xl" />
-                                    <FontAwesomeIcon icon={faMoneyCheckDollar} className="text-6xl absolute rtl:left-1 rtl:right-auto  right-1 opacity-5 " />
+                                    <FontAwesomeIcon icon={faMoneyCheckDollar} className="rtl:left-1 rtl:right-auto right-1 opacity-5  absolute text-6xl" />
 
 
                                 </div>
@@ -307,17 +318,17 @@ const Dashboard = (props) => {
 
 
                     <Link href="/Dashboard/"><a><div className="p-5 relative border bg-[#e4e6ef] overflow-hidden rounded-2xl shadow-xl  drop-shadow-lg   active:scale-[98%] hover:scale-[99%]">
-                        <div className="flex items-center  justify-around  ">
+                        <div className=" flex items-center justify-around">
 
                             <div>
                                 <div className="">{l.profit} </div>
-                                <div className="text-3xl font-bold ">${Data?.totalbenefit || " 0"}</div>
+                                <div className=" text-3xl font-bold">${Data?.totalbenefit || " 0"}</div>
                             </div>
                             <div>
-                                <div className="flex items-center justify-center w-12 h-12 rounded-full ">
+                                <div className=" flex items-center justify-center w-12 h-12 rounded-full">
 
                                     <FontAwesomeIcon icon={faSackDollar} className="text-4xl" />
-                                    <FontAwesomeIcon icon={faSackDollar} className="text-6xl absolute  rtl:left-1 rtl:right-auto  right-1 opacity-5 " />
+                                    <FontAwesomeIcon icon={faSackDollar} className="rtl:left-1 rtl:right-auto right-1 opacity-5  absolute text-6xl" />
 
 
                                 </div>
@@ -331,7 +342,7 @@ const Dashboard = (props) => {
                 </div>
 
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 px-4 pt-10 ">
+                <div className="lg:grid-cols-2  grid grid-cols-1 px-4 pt-10">
 
 
                     <div className="   max-w-[700px] -top-96  ">
@@ -341,8 +352,8 @@ const Dashboard = (props) => {
                     </div>
 
                     <div className="overflow-hidden shadow-xl  bg-white dark:bg-[#1E2021]  sm:rounded-lg">
-                        <div className="px-4 py-5 sm:px-6">
-                            <h3 className="text-lg font-medium leading-6 ">{l.allcosts}</h3>
+                        <div className="sm:px-6 px-4 py-5">
+                            <h3 className=" text-lg font-medium leading-6">{l.allcosts}</h3>
                         </div>
                         <div className="border-t border-gray-200 dark:bg-[#1E2021]">
                             <div >
@@ -350,13 +361,13 @@ const Dashboard = (props) => {
 
 
                                 <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
-                                    <div className="text-sm font-medium ">{l.expense}</div>
-                                    <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${DataownCost?.owenCost || " 0"}</div>
+                                    <div className=" text-sm font-medium">{l.expense}</div>
+                                    <div className="sm:col-span-2 sm:mt-0 justify-self-center mt-1 text-sm">${DataownCost?.owenCost || " 0"}</div>
                                 </div>
 
                                 <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
-                                    <div className="text-sm font-medium ">{l.totalpricePaidbid}</div>
-                                    <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${Data?.totalpricePaidbid || " 0"}</div>
+                                    <div className=" text-sm font-medium">{l.totalpricePaidbid}</div>
+                                    <div className="sm:col-span-2 sm:mt-0 justify-self-center mt-1 text-sm">${Data?.totalpricePaidbid || " 0"}</div>
                                 </div>
 
 
@@ -364,13 +375,13 @@ const Dashboard = (props) => {
                                 <div className="collapse collapse-arrow ">
 
 
-                                    <input id="totalloan" type="checkbox" className=" w-full  " />
+                                    <input id="totalloan" type="checkbox" className=" w-full" />
 
                                     <div className="collapse-title text-xl font-medium">
 
                                         <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
-                                            <div className="text-sm font-medium ">{l.totalloan}</div>
-                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${DataQarz?.qarzTotal || " 0"}</div>
+                                            <div className=" text-sm font-medium">{l.totalloan}</div>
+                                            <div className="sm:col-span-2 sm:mt-0 justify-self-center mt-1 text-sm">${DataQarz?.qarzTotal || " 0"}</div>
                                         </div>
 
                                     </div>
@@ -379,12 +390,12 @@ const Dashboard = (props) => {
 
 
                                         <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
-                                            <div className="text-sm font-medium ">{l.qarzAmountTotal}</div>
-                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${DataQarz?.qarzAmountTotal || " 0"}</div>
+                                            <div className=" text-sm font-medium">{l.qarzAmountTotal}</div>
+                                            <div className="sm:col-span-2 sm:mt-0 justify-self-center mt-1 text-sm">${DataQarz?.qarzAmountTotal || " 0"}</div>
                                         </div>
                                         <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
-                                            <div className="text-sm font-medium ">{l.qarzCarTotalByAmount}</div>
-                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${DataQarz?.qarzCarTotalByAmount || " 0"}</div>
+                                            <div className=" text-sm font-medium">{l.qarzCarTotalByAmount}</div>
+                                            <div className="sm:col-span-2 sm:mt-0 justify-self-center mt-1 text-sm">${DataQarz?.qarzCarTotalByAmount || " 0"}</div>
                                         </div>
 
 
@@ -395,14 +406,13 @@ const Dashboard = (props) => {
 
                                 <div className="collapse collapse-open ">
                                     {/*                                 
-                                <input type="checkbox" className=" w-full 
-                                "onChange={(e) => { e.target.value = '1' }} value={1} /> */}
+                                <input type="checkbox" className=" w-full"onChange={(e) => { e.target.value = '1' }} value={1} /> */}
 
                                     <div className="collapse-title text-xl font-medium">
 
                                         <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
-                                            <div className="text-sm font-medium ">{l.cost}</div>
-                                            {/* <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">{DataQarz?.qarzCarTotalByAmount}</div> */}
+                                            <div className=" text-sm font-medium">{l.cost}</div>
+                                            {/* <div className="sm:col-span-2 sm:mt-0 justify-self-center mt-1 text-sm">{DataQarz?.qarzCarTotalByAmount}</div> */}
                                         </div>
 
                                     </div>
@@ -411,27 +421,27 @@ const Dashboard = (props) => {
 
 
                                         <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
-                                            <div className="text-sm font-medium ">{l.totalCoCCost}</div>
-                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${Data?.totalCoCCost || " 0"}</div>
+                                            <div className=" text-sm font-medium">{l.totalCoCCost}</div>
+                                            <div className="sm:col-span-2 sm:mt-0 justify-self-center mt-1 text-sm">${Data?.totalCoCCost || " 0"}</div>
                                         </div>
                                         <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
-                                            <div className="text-sm font-medium ">{l.totalFeesAndRepaidCostDubai}</div>
-                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${Data?.totalFeesAndRepaidCostDubai || " 0"}</div>
+                                            <div className=" text-sm font-medium">{l.totalFeesAndRepaidCostDubai}</div>
+                                            <div className="sm:col-span-2 sm:mt-0 justify-self-center mt-1 text-sm">${Data?.totalFeesAndRepaidCostDubai || " 0"}</div>
                                         </div>
 
                                         <div className=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#1E2021]">
-                                            <div className="text-sm font-medium ">{l.totalFeesRaqamAndRepairCostinKurdistan}</div>
-                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${Data?.totalFeesRaqamAndRepairCostinKurdistan || " 0"}</div>
+                                            <div className=" text-sm font-medium">{l.totalFeesRaqamAndRepairCostinKurdistan}</div>
+                                            <div className="sm:col-span-2 sm:mt-0 justify-self-center mt-1 text-sm">${Data?.totalFeesRaqamAndRepairCostinKurdistan || " 0"}</div>
                                         </div>
 
                                         <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[#44444466]">
-                                            <div className="text-sm font-medium ">{l.totalFeesinAmerica}</div>
-                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${Data?.totalFeesinAmerica || " 0"}</div>
+                                            <div className=" text-sm font-medium">{l.totalFeesinAmerica}</div>
+                                            <div className="sm:col-span-2 sm:mt-0 justify-self-center mt-1 text-sm">${Data?.totalFeesinAmerica || " 0"}</div>
                                         </div>
 
                                         <div className=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 dark:bg-[1E2021]">
-                                            <div className="text-sm font-medium ">{l.totalTransportationCost}</div>
-                                            <div className="mt-1 text-sm  sm:col-span-2 sm:mt-0 justify-self-center">${Data?.totalTransportationCost || " 0"}</div>
+                                            <div className=" text-sm font-medium">{l.totalTransportationCost}</div>
+                                            <div className="sm:col-span-2 sm:mt-0 justify-self-center mt-1 text-sm">${Data?.totalTransportationCost || " 0"}</div>
                                         </div>
 
 

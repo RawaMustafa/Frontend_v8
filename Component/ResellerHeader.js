@@ -100,16 +100,15 @@ const Header = () => {
     return (
 
         //  transition-all duration-300
-        <div className="container  ">
-            <div className="hidden  standalone:block   bg-base-content  dark:bg-[#181a1b] backdrop:bg-white  w-full h-10 fixed z-50"></div>
-
-            <div className="navbar z-[60] flex justify-between lg:justify-end lg:w-[calc(100%-17rem)] max-w-8xl lg:ml-64  rtl:lg:mr-64 mt-2 fixed  bg-opacity-5 standalone:mt-10  backdrop-blur-lg bg-slate-300 rounded-2xl  bg-base-1 ">
+        <div className="container ">
+            <div className="hidden  standalone:block bg-[#3ea7e1]  h-10 fixed z-50  w-full "></div>
+            <div className="navbar  z-[60] flex justify-between lg:justify-end lg:w-[calc(100%-17rem)] max-w-8xl lg:ml-64  rtl:lg:mr-64 mt-2 lg:fixed absolute  standalone:mt-12 bg-opacity-100   bg-[#3ea7e1]  rounded-2xl  ">
 
 
 
 
                 <FontAwesomeIcon icon={faAlignLeft}
-                    id="menu" className="lg:hidden cursor-pointer active:scale-90 hover:scale-95  w-10 h-10   p-1 rounded-full   "
+                    id="menu" className="w-10 h-10 p-1 rounded-full cursor-pointer lg:hidden active:scale-90 hover:scale-95 "
 
                     onClick={() => {
                         document.getElementById("sidebar").classList.remove("ltr:nactive")
@@ -123,15 +122,15 @@ const Header = () => {
                     }}
                 />
 
-                <div className="navbar-end flex ltr:mr-10 rtl:ml-5 ltr:space-x-10   ">
+                <div className="flex navbar-end ltr:mr-10 rtl:ml-5 ltr:space-x-10 ">
 
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left w-8  ">
-                        <label tabIndex="0" className="text-3xl  w-20 cursor-pointer active:text-2xl  active:outline-0 ">
+                    <div className="w-8 dropdown rtl:dropdown-right ltr:dropdown-left ">
+                        <label tabIndex="0" className="w-20 text-3xl cursor-pointer active:text-2xl active:outline-0 ">
                             <FontAwesomeIcon icon={faGlobe} className="active:scale-[.85] text-4xl p-2 hover:bg-slate-300 hover:dark:bg-slate-700 rounded-full hover:duration-300 transition ease-in-out    hover:rotate-90   " />
 
                         </label>
 
-                        <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-44 text-center border">
+                        <ul tabIndex="0" className="p-2 text-center border shadow dropdown-content menu bg-base-100 rounded-box w-44">
                             <li> <a className="" value="ku" onClick={() => {
                                 setLang("ku")
                                 // router.reload()
@@ -151,15 +150,15 @@ const Header = () => {
 
 
 
-                    <div className="dropdown rtl:dropdown-right ltr:dropdown-left rtl:mr-10  w-5  mx-6 ">
-                        <label tabIndex="0" className="text-3xl   w-20 cursor-pointer     active:outline-0  ">
+                    <div className="w-5 mx-6 dropdown rtl:dropdown-right ltr:dropdown-left rtl:mr-10 ">
+                        <label tabIndex="0" className="w-20 text-3xl cursor-pointer active:outline-0 ">
                             <FontAwesomeIcon icon={faYinYang} className="active:scale-[.85] text-4xl p-2 hover:bg-slate-300 hover:dark:bg-slate-700 rounded-full hover:duration-300 transition ease-in-out hover:rotate-90  " />
 
                         </label>
 
-                        <ul tabIndex="0" className="dropdown-content   p-2 shadow bg-base-100 rounded-box w-44 text-center m-0">
-                            <div className="  flex items-center justify-around text-2xl cursor-pointer m-1 transition ease-in-out hover:scale-110   duration-300 " viewBox="0 0 24 24" onClick={() => { setTheme('light'); setThemee("light") }} > <FontAwesomeIcon icon={faSun} className=" transition ease-in-out      hover:scale-110   duration-300  text-3xl hover:rotate-45   " />  Light </div>
-                            <div className="  flex items-center justify-around text-2xl cursor-pointer transition ease-in-out  hover:scale-110   duration-300   " viewBox="0 0 24 24" onClick={() => { { setTheme('dark'); setThemee("dark") } }}  ><FontAwesomeIcon icon={faMoon} id="moon" className="transition ease-in-out    hover:scale-110   duration-300  text-3xl hover:rotate-45" />  Dark </div>
+                        <ul tabIndex="0" className="p-2 m-0 text-center shadow dropdown-content bg-base-100 rounded-box w-44">
+                            <div className="flex items-center justify-around m-1 text-2xl transition duration-300 ease-in-out cursor-pointer  hover:scale-110" viewBox="0 0 24 24" onClick={() => { setTheme('light'); setThemee("light") }} > <FontAwesomeIcon icon={faSun} className="text-3xl transition duration-300 ease-in-out  hover:scale-110 hover:rotate-45" />  Light </div>
+                            <div className="flex items-center justify-around text-2xl transition duration-300 ease-in-out cursor-pointer  hover:scale-110" viewBox="0 0 24 24" onClick={() => { { setTheme('dark'); setThemee("dark") } }}  ><FontAwesomeIcon icon={faMoon} id="moon" className="text-3xl transition duration-300 ease-in-out hover:scale-110 hover:rotate-45" />  Dark </div>
 
                         </ul>
 

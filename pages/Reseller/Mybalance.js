@@ -126,7 +126,7 @@ const Table = ({ COLUMNS, AllBal }) => {
         doc.autoTable({
 
 
-            head: [[`Amount`, " User Id", "Action", "Note", "Date"]],
+            head: [["",`Amount`,  "Action"," Car ", "Note", "Date"]],
             body: table_td
         });
 
@@ -161,25 +161,26 @@ const Table = ({ COLUMNS, AllBal }) => {
 
 
     return (
-        <div className="container mx-auto">
+        <div className="">
             {/* //?   Header  */}
             <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-2xl p-5">
-                <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
+                {/* <div className="flex items-center bg-white rounded-lg shadow w-72 dark:bg-gray-600 ">
 
-                    <a href="#my-modal-2" className=" flex  mx-2" ><FontAwesomeIcon className='text-2xl hover:scale-90 mx-1' icon={faBars} /></a>
-                    <input type="search" placeholder={`${l.search} ...`} className="input input-bordered    w-full    focus:outline-0   h-9 "
+                    <a href="#my-modal-2" className="flex mx-2 " ><FontAwesomeIcon className='mx-1 text-2xl hover:scale-90' icon={faBars} /></a>
+                    <input type="search" placeholder={`${l.search} ...`} className="w-full input input-bordered focus:outline-0 h-9 "
                         onChange={e =>
-                            setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
-                        }
+                            {/* setSearch(e.target.value.match(/^[a-zA-Z0-9]*)?.[0]) */}
+                        {/* }
                     />
-                </div>
-                <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8  rtl:mr-8 ">
-                    <label tabIndex="0" className="active:scale-9 m-1  ">
-                        <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="active:scale-90 text-2xl hover:cursor-pointer text-blue-500  " />
+                </div>  */}
+                <div></div>
+                <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8 rtl:mr-8 ">
+                    <label tabIndex="0" className="m-1 active:scale-9 ">
+                        <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="text-2xl text-blue-500 active:scale-90 hover:cursor-pointer " />
                     </label>
 
-                    <ul tabIndex="0" className="dropdown-content bg-base-100 rounded-box w-52 flex justify-center shadow">
-                        <li className=" py-2">
+                    <ul tabIndex="0" className="flex justify-center shadow dropdown-content bg-base-100 rounded-box w-52">
+                        <li className="py-2 ">
 
                             <div className="space-y-1">
                                 <h1>{l.from}</h1><input className="input input-bordered input-info focus:outline-0 "
@@ -205,14 +206,14 @@ const Table = ({ COLUMNS, AllBal }) => {
 
             <div className="overflow-x-auto  bg-white dark:bg-[#181A1B] rounded-b-xl   w-full  ">
 
-                <table id="table-to-xls" className="table table-compactmy-10  text-center text-sm    min-w-[1000px] " {...getTableProps()}>
-                    <thead className="  ">
+                <table id="table-to-xls" className="table w-full my-5 text-sm text-center min-w-[700px]" {...getTableProps()}>
+                    <thead className="">
                         {headerGroups.map((headerGroups, idx) => (
                             <tr className="" key={headerGroups.id} {...headerGroups.getHeaderGroupProps()}>
                                 <th className='hidden'></th>
 
                                 {headerGroups.headers.map((column, idx) => (
-                                    <th key={idx} className="p-4 m-44 w-[400px] py-3 font-normal normal-case  " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
+                                    <th key={idx} className="p-4 m-44 w-[400px] py-3 font-normal normal-case bg-[#3ea7e1] text-white  " {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
                                         <span>
                                             {column.isSorted ? (column.isSortedDesc ? " ↑ " : " 🡓 ") : ""}
                                         </span>
@@ -285,41 +286,41 @@ const Table = ({ COLUMNS, AllBal }) => {
                 </table>
 
                 {/* //?    botom */}
-                <div className="container text-sm  scale-90  ">
+                <div className="container text-sm scale-90 ">
 
                     <div className=" flex justify-between container mx-auto items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
 
 
-                        <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
+                        <div className="flex items-center justify-around mx-5 space-x-2 bg-center ">
 
                             <div></div>
-                            <FontAwesomeIcon icon={faAnglesLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
+                            <FontAwesomeIcon icon={faAnglesLeft} className=" bg-[#3ea7e1] text-white  px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
                                 onClick={() => Page > 1 && setPage(1)}
                                 disabled={Page == 1 ? true : false} />
 
-                            <FontAwesomeIcon icon={faChevronLeft} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                            <FontAwesomeIcon icon={faChevronLeft} className=" bg-[#3ea7e1] text-white  px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
                                 onClick={() => Page > 1 && setPage(Page - 1)}
                                 disabled={Page == 1 ? true : false} />
 
 
 
-                            <span className="px-20 py-2 rounded bg-slate-100 dark:bg-gray-700">
+                            <span className="px-20 py-2 rounded bg-[#3ea7e1] text-white ">
                                 {Page}/{PageS}
                             </span>
 
 
 
-                            <FontAwesomeIcon icon={faChevronRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                            <FontAwesomeIcon icon={faChevronRight} className=" bg-[#3ea7e1] text-white  px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
                                 onClick={() => Page < PageS && (Page >= 1 && setPage(Page + 1))}
                                 disabled={Page >= PageS ? true : false} />
 
-                            <FontAwesomeIcon icon={faAnglesRight} className=" bg-slate-100 dark:bg-gray-700 px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
+                            <FontAwesomeIcon icon={faAnglesRight} className=" bg-[#3ea7e1] text-white  px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer"
                                 onClick={() => Page < PageS && (Page >= 1 && setPage(PageS))}
                                 disabled={Page >= PageS ? true : false} />
 
 
                             <div>
-                                <select className="select  select-sm w-20 focus:outline-0 input-sm dark:bg-gray-700   max-w-xs text-sm"
+                                <select className="w-20 max-w-xs text-sm select select-sm focus:outline-0 input-sm bg-[#3ea7e1] text-white "
                                     onChange={(e) => {
                                         setLimit((e.target.value))
                                         setPageSize(Number(e.target.value)
@@ -337,7 +338,7 @@ const Table = ({ COLUMNS, AllBal }) => {
                                 </select>
                             </div>
 
-                            <FontAwesomeIcon icon={PDF} onClick={table_2_pdf} className="md:mx-5 px-10 text-blue-400 active:scale-9 m-auto mx-10 text-2xl transition ease-in-out hover:cursor-pointer" />
+                            <FontAwesomeIcon icon={PDF} onClick={table_2_pdf} className="px-10 m-auto mx-10 text-2xl text-blue-400 transition ease-in-out md:mx-5 active:scale-9 hover:cursor-pointer" />
 
                             <ReactHTMLTableToExcel
                                 id="test-table-xls-button "
@@ -355,7 +356,7 @@ const Table = ({ COLUMNS, AllBal }) => {
 
 
 
-                        <div className="scrollbar-hide inline-flex space-x-3 overflow-auto">
+                        <div className="inline-flex space-x-3 overflow-auto scrollbar-hide">
                             <div></div>
 
 
@@ -441,19 +442,19 @@ const Expense = ({ SessionID, AllBal }) => {
 
                 },
 
-                {
-                    Header: () => {
-                        return (
+                // {
+                //     Header: () => {
+                //         return (
 
-                            "Is Soled "
-                        )
-                    },
+                //             "Is Soled "
+                //         )
+                //     },
 
-                    accessor: 'isSoled',
-                    disableFilters: true,
+                //     accessor: 'isSoled',
+                //     disableFilters: true,
 
 
-                },
+                // },
                 {
                     Header: () => {
 

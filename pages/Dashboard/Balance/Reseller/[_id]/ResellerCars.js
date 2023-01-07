@@ -39,11 +39,11 @@ const IndeterminateCheckbox = forwardRef(
             resolvedRef.current.indeterminate = indeterminate
         }, [resolvedRef, indeterminate])
 
-        return <div className="w-full    " >
+        return <div className="w-full " >
 
-            <label className="cursor-pointer label my-2 ">
+            <label className="my-2 cursor-pointer label ">
                 {l.all}
-                <input type="checkbox" className="toggle toggle-accent focus:outline-0  " ref={resolvedRef}  {...rest} />
+                <input type="checkbox" className="toggle toggle-accent focus:outline-0 " ref={resolvedRef}  {...rest} />
 
             </label>
             <hr />
@@ -183,25 +183,25 @@ const ResellerCars = ({ COLUMNS, AllProducts, initQuery }) => {
     return (
 
 
-        <div className="  ">
+        <div className="">
             {/* //?   Header  */}
             <div className=" flex justify-between items-center bg-white dark:bg-[#181A1B] rounded-t-xl shadow-xl p-5">
-                <div className="flex w-72 rounded-lg   items-center bg-white dark:bg-gray-600 shadow ">
+                <div className="flex items-center bg-white rounded-lg shadow w-72 dark:bg-gray-600 ">
 
-                    <a href="#my-modal-2" className=" flex  mx-2" ><FontAwesomeIcon className='text-2xl hover:scale-90 mx-1' icon={faBars} /></a>
-                    <input type="search" placeholder={`${l.search} ...`} className="input input-bordered    w-full    focus:outline-0   h-9 "
+                    <a href="#my-modal-2" className="flex mx-2 " ><FontAwesomeIcon className='mx-1 text-2xl hover:scale-90' icon={faBars} /></a>
+                    <input type="search" placeholder={`${l.search} ...`} className="w-full input input-bordered focus:outline-0 h-9 "
                         onChange={e =>
                             setSearch(e.target.value.match(/^[a-zA-Z0-9]*/)?.[0])
                         }
                     />
                 </div>
-                {/* <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8  rtl:mr-8 ">
-                    <label tabIndex="0" className="active:scale-9 m-1  ">
-                        <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="active:scale-90 text-2xl hover:cursor-pointer text-blue-500  " />
+                {/* <div className="dropdown rtl:dropdown-right ltr:dropdown-left ltr:ml-8 rtl:mr-8 ">
+                    <label tabIndex="0" className="m-1 active:scale-9 ">
+                        <FontAwesomeIcon icon={CALLENDER} tabIndex="0" className="text-2xl text-blue-500 active:scale-90 hover:cursor-pointer " />
                     </label>
 
-                    <ul tabIndex="0" className="dropdown-content bg-base-100 rounded-box w-52 flex justify-center shadow">
-                        <li className=" py-2">
+                    <ul tabIndex="0" className="flex justify-center shadow dropdown-content bg-base-100 rounded-box w-52">
+                        <li className="py-2 ">
 
                             <div className="space-y-1">
                                 <h1>{l.from}</h1><input className="input input-bordered input-info focus:outline-0 "
@@ -224,14 +224,14 @@ const ResellerCars = ({ COLUMNS, AllProducts, initQuery }) => {
 
 
                 <div className="modal" id="my-modal-2">
-                    <div className="modal-box m-2">
+                    <div className="m-2 modal-box">
                         <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} />
-                        <div className="max-h-80 scrollbar-hide space-y-2 overflow-auto text-lg font-bold">
+                        <div className="space-y-2 overflow-auto text-lg font-bold max-h-80 scrollbar-hide">
                             {allColumns.map(column => (
                                 <div key={column.id}>
-                                    <div className=" w-full rounded-lg">
-                                        <label className="label cursor-pointer">
-                                            {column.id}
+                                    <div className="w-full rounded-lg ">
+                                        <label className="cursor-pointer label">
+                                            {column.Header}
                                             <input type="checkbox" className="toggle toggle-accent focus:outline-0 " {...column.getToggleHiddenProps()} />
 
                                         </label>
@@ -244,7 +244,10 @@ const ResellerCars = ({ COLUMNS, AllProducts, initQuery }) => {
 
                         </div>
 
-                        <div className="modal-action">
+                        <div className="flex justify-between modal-action">
+                            <label className="btn btn-error"
+                                onClick={() => { localStorage.setItem("ResellerCars", "") }}
+                            >{l.reset}</label>
                             <a href="#" className="btn">{l.don}</a>
                         </div>
                     </div>
@@ -254,9 +257,9 @@ const ResellerCars = ({ COLUMNS, AllProducts, initQuery }) => {
             {/* //?   Header  */}
             <div className="  overflow-auto scrollbar-hide bg-white dark:bg-[#181A1B] rounded-b-xl shadow-xl ">
 
-                <table id="table-to-xls" className="table w-full my-10 text-sm font-normal normal-case text-center   " {...getTableProps()}>
+                <table id="table-to-xls" className="table w-full my-10 text-sm font-normal text-center normal-case " {...getTableProps()}>
 
-                    <thead className="  ">
+                    <thead className="">
 
                         {headerGroups.map((headerGroups, idx) => (
 
@@ -295,7 +298,7 @@ const ResellerCars = ({ COLUMNS, AllProducts, initQuery }) => {
                                                 {cell.render('Cell')}
                                                 {cell.column.id === "Image" && (
                                                     <>
-                                                        <Link href={`/Dashboard/Balance/Reseller/${router.query._id}/details/${row.original._id}`}><a className=' '><Image
+                                                        <Link href={`/Dashboard/Balance/Reseller/${router.query._id}/details/${row.original._id}`}><a className=''><Image
                                                             src={`${baseURL}/${row.original.FirstImage?.[0]?.filename || row.original.carDamage?.[0]?.filename}`} objectFit='cover' alt="Image" height={100} width={120} /></a></Link>
 
                                                     </>)
@@ -313,7 +316,7 @@ const ResellerCars = ({ COLUMNS, AllProducts, initQuery }) => {
 
                                                 {cell.column.id === "Details" &&
                                                     <Link href={`/Dashboard/Balance/Reseller/${router.query._id}/details/${row.original._id}`}><a><label htmlFor="my-modal-3" className="m-0" >
-                                                        <FontAwesomeIcon icon={faEye} className="text-2xl cursor-pointer text-blue-700" />
+                                                        <FontAwesomeIcon icon={faEye} className="text-2xl text-blue-700 cursor-pointer" />
                                                     </label></a></Link>
 
                                                 }
@@ -340,12 +343,12 @@ const ResellerCars = ({ COLUMNS, AllProducts, initQuery }) => {
                 </table>
 
                 {/* //?    botom */}
-                <div className="container text-sm  scale-90  ">
+                <div className="container text-sm scale-90 ">
 
                     <div className=" flex justify-between  items-center rounded-xl mb-5  px-1  min-w-[700px] text-sm  ">
 
 
-                        <div className=" flex items-center justify-around mx-5 bg-center space-x-2">
+                        <div className="flex items-center justify-around mx-5 space-x-2 bg-center ">
 
                             <div></div>
                             <FontAwesomeIcon icon={faAnglesLeft} className=" bg-[#3ea7e1] text-white  px-2 w-7 py-2.5 rounded active:scale-95 hover:cursor-pointer "
@@ -392,7 +395,7 @@ const ResellerCars = ({ COLUMNS, AllProducts, initQuery }) => {
                                 </select>
                             </div>
 
-                            <FontAwesomeIcon icon={PDF} onClick={table_2_pdf} className="md:mx-5 px-10 text-blue-400 active:scale-9 m-auto mx-10 text-2xl transition ease-in-out hover:cursor-pointer" />
+                            <FontAwesomeIcon icon={PDF} onClick={table_2_pdf} className="px-10 m-auto mx-10 text-2xl text-blue-400 transition ease-in-out md:mx-5 active:scale-9 hover:cursor-pointer" />
 
                             <ReactHTMLTableToExcel
                                 id="test-table-xls-button "
@@ -410,7 +413,7 @@ const ResellerCars = ({ COLUMNS, AllProducts, initQuery }) => {
 
 
 
-                        <div className="scrollbar-hide inline-flex space-x-3 overflow-auto">
+                        <div className="inline-flex space-x-3 overflow-auto scrollbar-hide">
                             <div></div>
 
 

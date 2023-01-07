@@ -222,7 +222,8 @@ export const en = {
     Location: "Location",
     text: "Text",
     image: "Image",
-    updatemsg:"what y"
+    updatemsg: "what y",
+    watch:"Watch"
 
 
 

@@ -73,15 +73,17 @@ const Reseller = ({ AllProducts, initQuery }) => {
                     accessor: 'modeName',
                 },
 
+
                 {
-                    Header: "Sell Price",
+                    Header: "Model Year",
 
                     disableFilters: true,
 
-                    accessor: 'price',
+                    accessor: 'model',
 
 
                 },
+
                 {
                     Header: "Color",
 
@@ -91,6 +93,31 @@ const Reseller = ({ AllProducts, initQuery }) => {
 
 
                 },
+
+
+
+                {
+                    Header: "VIN",
+
+                    disableFilters: true,
+
+                    accessor: 'VINNumber',
+
+
+                },
+
+
+
+                {
+                    Header: "Sell Price",
+
+                    disableFilters: true,
+
+                    accessor: 'price',
+
+
+                },
+
 
                 {
                     Header: "Sold",
@@ -111,15 +138,6 @@ const Reseller = ({ AllProducts, initQuery }) => {
 
                 },
 
-                {
-                    Header: "Model Year",
-
-                    disableFilters: true,
-
-                    accessor: 'model',
-
-
-                },
 
 
                 {
@@ -224,7 +242,7 @@ const Reseller = ({ AllProducts, initQuery }) => {
 
     if (session.status === "loading") {
         return (
-            <div className=" text-center">
+            <div className="text-center ">
                 <Head>
                     <title>{l.reseler}</title>
                 </Head>
@@ -247,13 +265,13 @@ const Reseller = ({ AllProducts, initQuery }) => {
                 </Head>
 
 
-                <div className=" flex justify-end ">
+                <div className="flex justify-end ">
 
                     <select
                         onChange={(e) => {
                             setPage(e.target.value)
                         }}
-                        className="select select-info lg:w-80    focus:outline-0  ">
+                        className="select select-info lg:w-80 focus:outline-0 ">
                         <option value="1">{l.car}</option>
                         <option value="2">{l.mybalance}</option>
                     </select>

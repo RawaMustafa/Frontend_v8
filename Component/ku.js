@@ -248,6 +248,7 @@ export const ku = {
     Location: "شوێن",
     text: "نوسین",
     image: "وێنە",
+    watch:"سەیرکردن"
 
 
 }

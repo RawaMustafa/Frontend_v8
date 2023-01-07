@@ -168,7 +168,7 @@ const NewCars = ({ SessionID }) => {
         "Tobalance": Data.Tobalance || "Cash",
         "Tire": Data.Tire || "Public",
         "Location": Data.Location || "USA",
-        "Date": Data.Date?.[0] || "2022-01-01",
+        "date": Data.Date?.[0] || new Date(Date.now()).toLocaleDateString(),
         // "ArrivedToKurd": Data.ArrivedToKurd || false,
         // "ArrivedToDoubai": Data.ArrivedToDoubai || false,
         "FeesinAmericaStoragefee": Data.FeesinAmericaStoragefee || 0,
@@ -259,6 +259,7 @@ const NewCars = ({ SessionID }) => {
             }
 
             for (let i = 0; i < pictureandvideorepair.length; i++) {
+                console.log(pictureandvideorepair[i])
 
                 FormDataCar.append("Pictureandvideorepair", pictureandvideorepair[i], `image${i}.jpeg`);
 
@@ -266,7 +267,6 @@ const NewCars = ({ SessionID }) => {
 
 
             for (let i = 0; i < pictureandvideodamage.length; i++) {
-
                 FormDataCar.append("Pictureandvideodamage", pictureandvideodamage[i], "image.jpeg");
 
             }
@@ -410,7 +410,6 @@ const NewCars = ({ SessionID }) => {
     }
 
 
-
     useEffect(() => {
 
         if (session.status == "authenticated") {
@@ -471,14 +470,14 @@ const NewCars = ({ SessionID }) => {
                         draggablePercent={40}
                         limit={2}
                         autoClose={2000}
-                        className="w-64 text-sm m-auto mt-20  ltr:mr-0 md:w-64 "
+                        className="w-64 m-auto mt-20 text-sm ltr:mr-0 md:w-64 "
                         position={toast.POSITION.TOP_RIGHT} />
 
 
                     <div className={`${page != 1 ? "hidden" : ""} `} >
-                        <div className=" px-6 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl  ">
+                        <div className="px-6 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl">
 
-                            <div className=" space-y-20 text-center py-32">
+                            <div className="py-32 space-y-20 text-center ">
 
 
                                 {/* <div>
@@ -502,7 +501,7 @@ const NewCars = ({ SessionID }) => {
 
                                 <div>
                                     <h1 className="py-2">{l.seletkcar}</h1>
-                                    <select name='Tocar' required onChange={(e) => { HandleAddCars(e) }} className="select select-info w-full max-w-xs">
+                                    <select name='Tocar' required onChange={(e) => { HandleAddCars(e) }} className="w-full max-w-xs select select-info">
                                         <option>Sedan</option>
                                         <option>SUV</option>
                                         <option>PickUp</option>
@@ -511,14 +510,14 @@ const NewCars = ({ SessionID }) => {
 
                                 <div>
                                     <h1 className="py-2">{l.visibility}</h1>
-                                    <select name='Tire' defaultValue={"Public"} required onChange={(e) => { HandleAddCars(e) }} className="select select-info w-full max-w-xs">
+                                    <select name='Tire' defaultValue={"Public"} required onChange={(e) => { HandleAddCars(e) }} className="w-full max-w-xs select select-info">
                                         <option value={"Public"}>{l.public}</option>
                                         <option value={"Private"}>{l.private}</option>
                                     </select>
                                 </div>
                                 <div>
                                     <h1 className="py-2">{l.visibility}</h1>
-                                    <select name='Location' defaultValue={"USA"} required onChange={(e) => { HandleAddCars(e) }} className="select select-info w-full max-w-xs">
+                                    <select name='Location' defaultValue={"USA"} required onChange={(e) => { HandleAddCars(e) }} className="w-full max-w-xs select select-info">
                                         <option value={"USA"}>{l.USA}</option>
                                         <option value={"Dubai"}>{l.Dubai}</option>
                                         <option value={"Kurdistan"}>{l.Kurdistan}</option>
@@ -526,7 +525,7 @@ const NewCars = ({ SessionID }) => {
                                 </div>
 
                                 <div><h1 className="py-2">{l.seletkbalance}</h1>
-                                    <select name='Tobalance' defaultValue={"select"} required onChange={(e) => { HandleAddCars(e), setQarzUserId("") }} className="select select-info w-full max-w-xs">
+                                    <select name='Tobalance' defaultValue={"select"} required onChange={(e) => { HandleAddCars(e), setQarzUserId("") }} className="w-full max-w-xs select select-info">
                                         <option disabled value={"select"} >{l.select} </option>
                                         <option value="Cash"> {l.cash} </option>
                                         <option value="Rent" > {l.rent} </option>
@@ -538,7 +537,7 @@ const NewCars = ({ SessionID }) => {
                                         <select name='UserQarz' defaultValue={"Select"} onChange={(eve) => {
                                             setQarzUserId(eve.target.value)
                                         }}
-                                            className="select select-info w-full max-w-xs">
+                                            className="w-full max-w-xs select select-info">
                                             <option disabled value={"Select"} >{l.none}</option>
                                             {UserQarz.userDetail?.map((item, idx) => {
 
@@ -546,7 +545,7 @@ const NewCars = ({ SessionID }) => {
                                             })}
                                         </select>
                                     </div>
-                                    <input type="text" onChange={(e) => { setNote(e.target.value) }} placeholder={l.note} className="input input-bordered input-info w-full max-w-xs" />
+                                    <input type="text" onChange={(e) => { setNote(e.target.value) }} placeholder={l.note} className="w-full max-w-xs input input-bordered input-info" />
 
                                 </>
                                 }
@@ -558,7 +557,7 @@ const NewCars = ({ SessionID }) => {
 
 
 
-                        <div className="flex  justify-around px-6 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl py-5 my-5  space-x-5 overflow-auto">
+                        <div className="flex justify-around px-6 py-5 my-5 space-x-5 overflow-auto border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl">
                             <button type='button' className="btn btn-wide " onClick={() => { setPage(2) }}>{l.next}</button>
                         </div >
                     </div>
@@ -566,65 +565,65 @@ const NewCars = ({ SessionID }) => {
                     <div className={`${page != 2 ? "hidden" : ""} `} >
 
 
-                        <div className=" px-6 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl   ">
+                        <div className="px-6 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl">
 
 
                             <h1 className="mt-5 text-center">{l.price}</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input name='Price' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.price} className="input input-bordered    input-info w-[200%] mt-5   max-w-xl mb-8" />
                             </div>
                             <h1 className="mt-5 text-center">{l.namecar}</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input name='ModeName' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.namecar} className="input input-bordered input-info w-[200%] mt-5   max-w-xl mb-8" />
                             </div>
 
 
                             <h1 className="mt-5 text-center">{l.modelyear}</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input name='Model' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.modelyear} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                             </div>
 
 
                             <h1 className="mt-5 text-center">{l.color}</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input name='Color' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.color} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                             </div>
 
 
                             {/* <h1 className="mt-5 text-center">{l.tire}</h1>
-                        <div className="flex  justify-center">
+                        <div className="flex justify-center">
                             <input name='Tire' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.tire} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                         </div> */}
 
 
 
                             <h1 className="mt-5 text-center">{l.mileage}</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input name='Mileage' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.mileage} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                             </div>
 
 
                             <h1 className="mt-5 text-center">{l.vinnumber}</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input name='VINNumber' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.vinnumber} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                             </div>
 
 
                             <h1 className="mt-5 text-center">{l.wheeldrivetype}</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input name='WheelDriveType' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.wheeldrivetype} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                             </div>
 
 
                             <h1 className="mt-5 text-center">{l.show}</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input name='Pictureandvideodamage' onChange={(e) => {
                                     setFirstImage(e.target.files[0])
                                 }} type="file" placeholder={l.pictureandvideoofcardamage} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                             </div>
 
                             <h1 className="mt-5 text-center">{l.pictureandvideoofcardamage}</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input multiple name='Pictureandvideodamage' onChange={(e) => { setPictureandvideodamage(e.target.files) }} type="file" placeholder={l.pictureandvideoofcardamage} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                             </div>
 
@@ -634,7 +633,7 @@ const NewCars = ({ SessionID }) => {
 
 
                             <h1 className="mt-5 text-center">{l.pictureandvideoofcarafterrepair}</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input multiple name='Pictureandvideorepair' onChange={(e) => { setPictureandvideorepair(e.target.files) }} type="file" placeholder={l.pictureandvideoofcarafterrepair} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                             </div>
 
@@ -642,165 +641,180 @@ const NewCars = ({ SessionID }) => {
 
 
                             <h1 className="mt-5 text-center">{l.pricepaidorcaratbid}</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input name='PricePaidbid' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.pricepaidorcaratbid} className={`input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8 ${Data.Tobalance == "Rent" ? "border-red-600 focus:outline-red-600" : ""} `} />
                             </div>
 
 
                             <h1 className="mt-5 text-center">{l.coccost}</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input name='CoCCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.coccost} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                             </div>
 
 
                             <h1 className="mt-5 text-center">{l.date}</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input name='Date' onChange={(e) => { HandleAddCars(e) }} type="date" className="input  input-info w-[200%] mt-5 max-w-xl mb-8" />
                             </div>
 
 
 
+                        </div>
+                        <div className={`${Data.Location != "USA" ? "hidden" : ""}`}>
+
+                            <hr className='mx-8 mt-10' />
+
+                            <h1 className="my-8 text-4xl text-center">{l.feesinamerica}</h1>
+
+                            <hr className='mx-8 mt-10' />
+
+
+                            <div className={`px-6 mt-20 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl  `} >
+
+
+                                <h1 className="mt-5 text-center">{l.storagefee}</h1>
+                                <div className="flex justify-center">
+                                    <input name='FeesinAmericaStoragefee' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.storagefee} className={`input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8 ${Data.Tobalance == "Rent" ? "border-red-600 focus:outline-red-600" : ""} `} />
+                                </div>
+
+                                <h1 className="mt-5 text-center">{l.copartoriaafee}</h1>
+                                <div className="flex justify-center">
+                                    <input name='FeesinAmericaCopartorIAAfee' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.copartoriaafee} className={`input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8 ${Data.Tobalance == "Rent" ? "border-red-600 focus:outline-red-600" : ""} `} />
+                                </div>
+
+                                <h1 className="mt-5 text-center">{l.fromamericatodubaicost}</h1>
+                                <div className="flex justify-center">
+                                    <input name='TransportationCostFromAmericaLocationtoDubaiGCostTranscost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromamericatodubaicost} className={`input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8 ${Data.Tobalance == "Rent" ? "border-red-600 focus:outline-red-600" : ""} `} />
+                                </div>
+
+                                <h1 className="mt-5 text-center">{l.fromamericatodubaigumrg} </h1>
+                                <div className="flex justify-center">
+                                    <input name='TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromamericatodubaigumrg} className={`input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8 ${Data.Tobalance == "Rent" ? "border-red-600 focus:outline-red-600" : ""} `} />
+                                </div>
+
+
+                                <h1 className="mt-5 text-center">{l.uslocation}</h1>
+                                <div className="flex justify-center">
+                                    <input name='TransportationCostFromAmericaLocationtoDubaiGCostLocation' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.uslocation} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        <div className={`${(Data.Location != "USA" && Data.Location != "Dubai") ? "hidden" : ""}`}>
+                            <hr className='mx-8 mt-10' />
+
+                            <h1 className="my-8 text-4xl text-center">{l.feesinadubai}</h1>
+
+                            <hr className='mx-8 mt-10' />
+
+
+                            <div className="px-6 mt-20 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl ">
+
+
+                                <h1 className="mt-5 text-center">{l.repaircost}</h1>
+                                <div className="flex justify-center">
+                                    <input name='FeesAndRepaidCostDubairepairCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.repaircost} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                                </div>
+
+
+
+                                <h1 className="mt-5 text-center">{l.feesother}</h1>
+                                <div className="flex justify-center">
+                                    <input name='FeesAndRepaidCostDubaiothers' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fees} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                                </div>
+
+
+
+                                <h1 className="mt-5 text-center">{l.fromdubaitokurdistancosts}</h1>
+                                <div className="flex justify-center">
+                                    <input name='DubaiToIraqGCostTranscost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromdubaitokurdistancosts} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                                </div>
+
+
+
+                                <h1 className="mt-5 text-center">{l.fromdubaitokurdistangumrg} </h1>
+                                <div className="flex justify-center">
+                                    <input name='DubaiToIraqGCostgumrgCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromdubaitokurdistangumrg} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                                </div>
+
+
+
+                                <h1 className="mt-5 text-center">{l.note}</h1>
+                                <div className="flex justify-center">
+                                    <textarea name='FeesAndRepaidCostDubainote' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.note} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
+                                </div>
+
+
+                            </div>
 
                         </div>
 
 
-                        <hr className='mx-8 mt-10' />
 
-                        <h1 className="my-8 text-center text-4xl">{l.feesinamerica}</h1>
+                        {/* <hr className='mx-8 mt-10' />
 
-                        <hr className='mx-8 mt-10' />
-
-
-                        <div className="mt-20 px-6 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl   ">
-
-
-                            <h1 className="mt-5 text-center">{l.storagefee}</h1>
-                            <div className="flex  justify-center">
-                                <input name='FeesinAmericaStoragefee' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.storagefee} className={`input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8 ${Data.Tobalance == "Rent" ? "border-red-600 focus:outline-red-600" : ""} `} />
-                            </div>
-
-                            <h1 className="mt-5 text-center">{l.copartoriaafee}</h1>
-                            <div className="flex  justify-center">
-                                <input name='FeesinAmericaCopartorIAAfee' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.copartoriaafee} className={`input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8 ${Data.Tobalance == "Rent" ? "border-red-600 focus:outline-red-600" : ""} `} />
-                            </div>
-
-
-
-                        </div>
-
-
-                        <hr className='mx-8 mt-10' />
-
-                        <h1 className="my-8 text-center text-4xl">{l.feesinadubai}</h1>
+                        <h1 className="my-8 text-4xl text-center">{l.transportationcost}</h1>
 
                         <hr className='mx-8 mt-10' />
 
 
-                        <div className="mt-20 px-6 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl   ">
-
-
-                            <h1 className="mt-5 text-center">{l.repaircost}</h1>
-                            <div className="flex  justify-center">
-                                <input name='FeesAndRepaidCostDubairepairCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.repaircost} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
-                            </div>
-
-
-                            {/* <h1 className="mt-5 text-center">{l.fees}</h1>
-                        <div className="flex  justify-center">
-                            <input  name='FeesAndRepaidCostDubaiFees' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fees} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
-                        </div> */}
-
-                            <h1 className="mt-5 text-center">{l.feesother}</h1>
-                            <div className="flex  justify-center">
-                                <input name='FeesAndRepaidCostDubaiothers' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fees} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
-                            </div>
-
-
-                            <h1 className="mt-5 text-center">{l.note}</h1>
-                            <div className="flex  justify-center">
-                                <textarea name='FeesAndRepaidCostDubainote' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.note} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
-                            </div>
-
-
-                        </div>
-
-
-                        <hr className='mx-8 mt-10' />
-
-                        <h1 className="my-8 text-center text-4xl">{l.transportationcost}</h1>
-
-                        <hr className='mx-8 mt-10' />
-
-
-                        <div className="mt-20 px-6 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl   ">
+                        <div className="px-6 mt-20 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl ">
 
 
 
-                            <h1 className="mt-5 text-center">{l.fromamericatodubaicost}</h1>
-                            <div className="flex  justify-center">
-                                <input name='TransportationCostFromAmericaLocationtoDubaiGCostTranscost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromamericatodubaicost} className={`input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8 ${Data.Tobalance == "Rent" ? "border-red-600 focus:outline-red-600" : ""} `} />
-                            </div>
-
-                            <h1 className="mt-5 text-center">{l.uslocation}</h1>
-                            <div className="flex  justify-center">
-                                <input name='TransportationCostFromAmericaLocationtoDubaiGCostLocation' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.uslocation} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
-                            </div>
-
-                            <h1 className="mt-5 text-center">{l.fromamericatodubaigumrg} </h1>
-                            <div className="flex  justify-center">
-                                <input name='TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromamericatodubaigumrg} className={`input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8 ${Data.Tobalance == "Rent" ? "border-red-600 focus:outline-red-600" : ""} `} />
-                            </div>
 
 
                             <h1 className="mt-5 text-center">{l.fromdubaitokurdistancosts}</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input name='DubaiToIraqGCostTranscost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromdubaitokurdistancosts} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                             </div>
 
 
 
                             <h1 className="mt-5 text-center">{l.fromdubaitokurdistangumrg} </h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input name='DubaiToIraqGCostgumrgCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.fromdubaitokurdistangumrg} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                             </div>
 
 
 
 
-                        </div>
+                        </div> */}
 
 
                         <hr className='mx-8 mt-10' />
 
-                        <h1 className="my-8 text-center text-4xl">{l.numberandrepaircostinkurdistan}</h1>
+                        <h1 className="my-8 text-4xl text-center">{l.numberandrepaircostinkurdistan}</h1>
 
                         <hr className='mx-8 mt-10' />
 
 
-                        <div className="mt-20 px-6 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl   ">
+                        <div className="px-6 mt-20 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl ">
 
 
 
                             <h1 className="mt-5 text-center">{l.repaircostinkurdistan}</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input name='RaqamAndRepairCostinKurdistanrepairCost' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.repaircostinkurdistan} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                             </div>
 
 
                             <h1 className="mt-5 text-center">{l.numberinkurdistan}</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input name='RaqamAndRepairCostinKurdistanRaqam' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.numberinkurdistan} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                             </div>
 
 
                             <h1 className="mt-5 text-center">{l.raqamAndRepairCostinKurdistanothers} other</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <input name='RaqamAndRepairCostinKurdistanothers' onChange={(e) => { HandleAddCars(e) }} type="number" placeholder={l.raqamAndRepairCostinKurdistanothers} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                             </div>
 
 
                             <h1 className="mt-5 text-center">{l.note}</h1>
-                            <div className="flex  justify-center">
+                            <div className="flex justify-center">
                                 <textarea name='RaqamAndRepairCostinKurdistannote' onChange={(e) => { HandleAddCars(e) }} type="text" placeholder={l.note} className="input input-bordered input-info w-[200%] mt-5 max-w-xl mb-8" />
                             </div>
 
@@ -809,12 +823,10 @@ const NewCars = ({ SessionID }) => {
 
 
 
-                        <div className="flex  justify-around px-6 border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl py-5 my-5  space-x-5 overflow-auto">
-
+                        <div className="flex justify-around px-6 py-5 my-5 space-x-5 overflow-auto border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl">
 
                             <button type='button' className="btn lg:btn-wide " onClick={() => { setPage(1) }}>{l.back}</button>
                             <button type='submit' className="btn lg:btn-wide " title={l.next} onClick={() => { setPage(3) }} >{l.next}</button>
-                            {/*  */}
                         </div >
 
                     </div>
@@ -823,16 +835,14 @@ const NewCars = ({ SessionID }) => {
 
                         <Paint Tocar={Data.Tocar} setDataImage={setCarDamage} GlobalState={GlobalState} page={page} />
 
-                        <div className="flex  justify-around  border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl py-5 my-5  space-x-5 overflow-auto">
+                        <div className="flex justify-around py-5 my-5 space-x-5 overflow-auto border dark:border-slate-700 ltr:mx-2 rtl:mx-2 rounded-xl">
 
 
                             <button type='button' className="btn lg:btn-wide " onClick={() => { setPage(2) }}>{l.back}</button>
                             <button type="submit" disabled={IsCanvasChanged == 0 ? false : true} className="btn lg:btn-wide " onClick={() => {
                                 postCarsId()
                                 setPage(1)
-
-                            }
-                            } title={l.next}>{l.don}</button>
+                            }} title={l.next}>{l.don}</button>
 
                         </div >
 

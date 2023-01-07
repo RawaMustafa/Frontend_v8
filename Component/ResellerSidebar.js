@@ -53,14 +53,14 @@ const Sidebar = () => {
 
             <div>
 
-                <div className="footer-center py-5 cursor-pointer  ">
-                    <Link href="/Reseller"><a><Image className="active:scale-95  rounded-full" alt="Logo" src="/logo.png" height={55} width={55} /></a></Link>
+                <div className="py-5 cursor-pointer footer-center ">
+                    <Link href="/Reseller"><a><Image className="rounded-full active:scale-95" alt="Logo" src="/logo.png" height={55} width={55} /></a></Link>
                 </div>
 
                 <div onClick={async () => {
                     await logOut()
                     signOut({ callbackUrl: "/", redirect: true })
-                }} className="cursor-pointer   my-custom-style"><span className="px-2"><FontAwesomeIcon icon={faArrowRightFromBracket} className="text-xl" /> </span><span> {l.logout}</span></div>
+                }} className="cursor-pointer my-custom-style"><span className="px-2"><FontAwesomeIcon icon={faArrowRightFromBracket} className="text-xl" /> </span><span> {l.logout}</span></div>
 
 
             </div>
@@ -68,7 +68,7 @@ const Sidebar = () => {
 
             <hr className="  bg-black dark:bg-slate-100 text-xl h-0.5" />
 
-            <div className="  space-y-6  mt-5  ">
+            <div className="mt-5 space-y-6 ">
                 <ul id="list_li" className="">
                     <li><Link href="/Reseller"><a className=" my-custom-style"><span className="px-2"><FontAwesomeIcon icon={faChartLine} className="text-xl active:text-lg" />  </span>{l.dashboard}<span> </span></a></Link></li>
                     <li className="mt-5 mb-3"><h1>{l.balance}</h1> </li>

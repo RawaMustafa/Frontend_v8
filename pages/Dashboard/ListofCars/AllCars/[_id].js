@@ -71,15 +71,15 @@ const Detail = ({ carss, SessionID }) => {
     const [UserID, setUserID] = useState(null);
     const [Note, setNote] = useState('');
     const [detpage, setDetpage] = useState(1);
-    const [ImageUpdatePage, setImageUpdatePage] = useState(1);
+    const [ImageUpdatePage, setImageUpdatePage] = useState(2);
     const [ImagePage, setImagePage] = useState(1);
     const [FullScreen, setFullScreen] = useState(false);
     const [ShowPage, setShowPage] = useState(1);
     const [RenewPage, setRenewPage] = useState(false);
 
 
-    const [pictureandvideorepair, setPictureandvideorepair] = useState([])
-    const [pictureandvideodamage, setPictureandvideodamage] = useState([])
+    const [Pictureandvideorepair, setPictureandvideorepair] = useState([])
+    const [Pictureandvideodamage, setPictureandvideodamage] = useState([])
     const [CarDamage, setCarDamage] = useState([])
 
 
@@ -150,7 +150,7 @@ const Detail = ({ carss, SessionID }) => {
 
         const auth = {
             headers: {
-                "Content-Type": "application/json",
+                // "Content-Type": "application/json",
                 'Authorization': `Bearer ${session?.data?.Token}`
             }
         }
@@ -171,7 +171,7 @@ const Detail = ({ carss, SessionID }) => {
 
             await Axios.patch("/cars/" + id, {
                 Tire: Visiblity
-            }, auth,)
+            }, auth)
 
             toast.success("Car Visiblity Changed to " + Visiblity)
             setRenewPage(true)
@@ -773,6 +773,7 @@ const Detail = ({ carss, SessionID }) => {
     }
 
 
+    let gg
 
     const handleUpdateImage = async () => {
         const auth = {
@@ -785,42 +786,62 @@ const Detail = ({ carss, SessionID }) => {
 
 
         // save image from canvas
-        if (typeof document != "undefined") {
-            var canvas = document.getElementById("canvas");
-            let imageBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-            setCarDamage(imageBlob)
-        }
+        // if (typeof document != "undefined") {
+        //     var canvas = document.getElementById("canvas");
+        //     let imageBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        //     setCarDamage(imageBlob)
+        // }
 
         //! change  data and Image to FormData ----------------------------------
 
         let FormDataCar = new FormData();
 
-        for (let key in DataUpload) {
-            FormDataCar.append(key, DataUpload[key]);
-        }
+        // for (let key in DataUpload) {
+        //     FormDataCar.append(key, DataUpload[key]);
+        // }
 
-        for (let i = 0; i < pictureandvideorepair.length; i++) {
+        // for (let i = 0; i < pictureandvideorepair.length; i++) {
 
-            FormDataCar.append("Pictureandvideorepair", pictureandvideorepair[i], `image${i}.jpeg`);
+        //     FormDataCar.append("Pictureandvideorepair", pictureandvideorepair[i], `image${i}.jpeg`);
 
-        }
-
-
-        for (let i = 0; i < pictureandvideodamage.length; i++) {
-
-            FormDataCar.append("Pictureandvideodamage", pictureandvideodamage[i], "image.jpeg");
-
-        }
-
-        CarDamage != '' && FormDataCar.append("CarDamage", CarDamage, "image.png");
+        // }
 
 
+        // for (let i = 0; i < pictureandvideodamage.length; i++) {
 
-        Axios.patch(`/cars`, {
+        //     FormDataCar.append("Pictureandvideodamage", pictureandvideodamage[i], "image.jpeg");
+
+        // }
+
+        // CarDamage != '' && FormDataCar.append("CarDamage", CarDamage, "image.png");
+        // Pictureandvideodamage != '' && FormDataCar.append("Pictureandvideodamage", Pictureandvideodamage, "image.jpeg");
+
+
+        // const renameKey = (object, key, newKey) => {
+
+        //     const clonedObj = clone(object);
+
+        //     const targetKey = clonedObj[key];
 
 
 
-        }, auth)
+        //     delete clonedObj[key];
+
+        //     clonedObj[newKey] = targetKey;
+
+        //     return clonedObj;
+
+        // };
+        // const clone = (obj) => Object.assign({}, obj);
+
+        // const obj = Object.assign({}, Pictureandvideodamage);
+        // Object.keys(obj).forEach(key => { gg = renameKey(obj, key, key + 5) })
+        // console.log(gg)
+
+
+        Axios.patch(`/cars/image/${router.query._id}`, 
+            {Pictureandvideodamage}
+        , auth)
 
     }
 
@@ -844,8 +865,7 @@ const Detail = ({ carss, SessionID }) => {
                     },)
 
                     setCars(res.data)
-
-
+                    console.log(res.data)
 
 
                 } catch (err) {
@@ -900,80 +920,53 @@ const Detail = ({ carss, SessionID }) => {
 
         doc.save("Car_Damage.pdf");
     }
-    const screen1 = useFullScreenHandle();
-    const screen2 = useFullScreenHandle();
 
-    const reportChange = useCallback((state, handle) => {
-
-
-    }, []);
 
     const renderVideo = (item) => {
 
 
         return (
 
-            <div className="play-button  ">
+            <div className="play-button ">
 
                 {item.taramash != "false" ?
-                    <Patata handle={screen2} onChange={reportChange}>
 
-                        <div className=' flex justify-center'>
-                            <TransformWrapper  >
-                                <TransformComponent>
-                                    <video controls
-                                        className="w-[1920px]">
-                                        <source
-                                            src={`${baseURL}${item.taramash}`} type="video/mp4" />
+                    <div className='flex justify-center '>
+                        <TransformWrapper  >
+                            <TransformComponent>
+                                <video controls
+                                    className="w-[1920px]">
+                                    <source
+                                        src={`${baseURL}${item.taramash}`} type="video/mp4" />
 
-                                    </video >
-                                </TransformComponent>
-                            </TransformWrapper>
+                                </video >
+                            </TransformComponent>
+                        </TransformWrapper>
 
-                            {screen2.active ||
-                                <FontAwesomeIcon className="fixed text-green-400 top-3 left-3 text-2xl" icon={faMaximize} onClick={screen2.enter} />
 
-                            }
-                            {screen2.active &&
-                                <FontAwesomeIcon className="fixed text-red-400 top-10 left-10 text-2xl" icon={faMinimize} onClick={screen2.exit} />
-
-                            }
-                            {/* <FontAwesomeIcon className="fixed text-red-400 top-2 left-2 text-2xl" icon={faMinimize} onClick={screen2.exit} />
-                            <FontAwesomeIcon className="fixed text-green-400 top-2 left-2 text-2xl" icon={faMaximize} onClick={screen2.enter} /> */}
-
-                        </div >
-                    </Patata >
+                    </div >
 
                     :
-                    <Patata handle={screen1} onChange={reportChange} >
 
-                        <div className='play-button relative grow  w-full h-full overflow-auto bg-cover flex   justify-center'>
+                    <div className='relative flex justify-center w-full h-full overflow-auto bg-cover play-button grow'>
 
-                            <TransformWrapper   >
-                                <TransformComponent>
+                        <TransformWrapper   >
+                            <TransformComponent>
 
 
-                                    <Image width={1920} height={1080}
-                                        alt='SliderImage'
-                                        objectFit="fill"
-                                        className='image-gallery-image '
-                                        crossOrigin="anonymous"
-                                        src={item.original}
-                                    />
-                                </TransformComponent>
-                            </TransformWrapper>
+                                <Image width={1920} height={1080}
+                                    alt='SliderImage'
+                                    objectFit="fill"
+                                    className='image-gallery-image '
+                                    crossOrigin="anonymous"
+                                    src={item.original}
+                                />
+                            </TransformComponent>
+                        </TransformWrapper>
 
-                            {screen1.active ||
-                                <FontAwesomeIcon className="fixed text-green-400 top-3 left-3 text-2xl" icon={faMaximize} onClick={screen1.enter} />
 
-                            }
-                            {screen1.active &&
-                                <FontAwesomeIcon className="fixed text-red-400 top-10 left-10 text-2xl" icon={faMinimize} onClick={screen1.exit} />
 
-                            }
-
-                        </div>
-                    </Patata >
+                    </div>
 
                 }
 
@@ -996,7 +989,7 @@ const Detail = ({ carss, SessionID }) => {
                         </video >
                     </div >
                     :
-                    <div className=' w-full'>
+                    <div className='w-full '>
                         <Image width={1920} height={1080}
                             alt='SliderImage'
                             // sizes="100%"
@@ -1021,7 +1014,7 @@ const Detail = ({ carss, SessionID }) => {
         datarepaire.push({
             "original": `${baseURL}${img.filename}`,
             "thumbnail": `${baseURL}${img.filename}`,
-            "taramash": `${img.mimetype == "video/mp4" && img.filename}`,
+            "taramash": `${(img.mimetype == "video/mp4" || img.mimetype == "video/x-matroska") && img.filename}`,
             "renderItem": renderVideo,
             "renderThumbInner": renderThumbInner,
 
@@ -1033,7 +1026,7 @@ const Detail = ({ carss, SessionID }) => {
         datadamage.push({
             "original": `${baseURL}${img.filename}`,
             "thumbnail": `${baseURL}${img.filename}`,
-            "taramash": `${img.mimetype == "video/mp4" && img.filename}`,
+            "taramash": `${(img.mimetype == "video/mp4" || img.mimetype == "video/x-matroska") && img.filename}`,
             "renderItem": renderVideo,
             "renderThumbInner": renderThumbInner,
 
@@ -1045,7 +1038,7 @@ const Detail = ({ carss, SessionID }) => {
         datadamage.push({
             "original": `${baseURL}${img.filename}`,
             "thumbnail": `${baseURL}${img.filename}`,
-            "taramash": `${img.mimetype == "video/mp4" && img.filename}`,
+            "taramash": `${(img.mimetype == "video/mp4" || img.mimetype == "video/x-matroska") && img.filename}`,
             "renderItem": renderVideo,
             "renderThumbInner": renderThumbInner,
 
@@ -1056,12 +1049,40 @@ const Detail = ({ carss, SessionID }) => {
 
 
 
+    const EditingImage = (img) => {
+
+        let x = []
+        let y
+
+
+        x = Pictureandvideodamage?.find(e => {
+            if (e.filename === img.filename) {
+                return true;
+            }
+            else {
+                return false
+            }
+        })
+        y = Pictureandvideodamage.findIndex((e) => {
+
+            return e.filename === img.filename
+        })
+        console.log(x, y)
+
+        x ?
+            setPictureandvideodamage([...Pictureandvideodamage.slice(0, y), ...Pictureandvideodamage.slice(y + 1)])
+            : setPictureandvideodamage([...Pictureandvideodamage, { "filename": img.filename, "mimetype": img.mimetype }])
+
+    }
 
 
 
+    console.log(Pictureandvideodamage)
+    let x = []
+    let y
 
     return (
-        <div className=" container mx-auto">
+        <div className="container mx-auto ">
             <Head>
                 <title>{l.detail}</title>
             </Head>
@@ -1071,8 +1092,9 @@ const Detail = ({ carss, SessionID }) => {
 
                     draggablePercent={60}
                 />
+                {/* //^ header */}
 
-                <div className="navbar mb-16  flex justify-between scrollbar-hide  max-w-8xl overflow-auto space-x-2  lg:w-[calc(100%-1rem)]  mt-2  bg-opacity-5    backdrop-blur-md bg-slate-300 rounded-2xl   ">
+                <div className="navbar mb-16  flex justify-between scrollbar-hide  max-w-8xl overflow-auto space-x-2  lg:w-[calc(100%-1rem)]  mt-2  bg-opacity-10    backdrop-blur-md bg-[#3ea7e1] rounded-2xl   ">
 
 
                     {/* <button className="btn btn-success" onClick={() => { setDetpage(3) }}>{l.update}</button> */}
@@ -1093,16 +1115,15 @@ const Detail = ({ carss, SessionID }) => {
 
 
                 </div>
-                {/* //^ header */}
                 <div>
 
 
 
                     <input type="checkbox" id="Update-modal" className="modal-toggle" />
                     <div className="modal">
-                        <div className="modal-box relative">
-                            <label htmlFor="Update-modal" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-                            <h3 className="  text-center"><FontAwesomeIcon icon={faWrench} className="text-center text-5xl  text-green-500" /></h3>
+                        <div className="relative modal-box">
+                            <label htmlFor="Update-modal" className="absolute btn btn-sm btn-circle right-2 top-2">✕</label>
+                            <h3 className="text-center "><FontAwesomeIcon icon={faWrench} className="text-5xl text-center text-green-500" /></h3>
                             <p className="py-4">do you want update text or image</p>
                             <div className="space-x-5 text-end">
                                 <div></div>
@@ -1121,14 +1142,14 @@ const Detail = ({ carss, SessionID }) => {
 
                     <input type="checkbox" id="Public-modal-3" className="modal-toggle btn btn-error " />
                     <div className="modal ">
-                        <div className="modal-box relative">
-                            <label htmlFor="Public-modal-3" className="btn btn-sm btn-circle right-2 top-2 absolute">✕</label>
-                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faLock} className=" text-5xl text-red-700" />  </h3>
+                        <div className="relative modal-box">
+                            <label htmlFor="Public-modal-3" className="absolute btn btn-sm btn-circle right-2 top-2">✕</label>
+                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faLock} className="text-5xl text-red-700 " />  </h3>
 
-                            <p className=" py-4">{l.publicmsg}</p>
+                            <p className="py-4 ">{l.publicmsg}</p>
 
-                            <div className=" space-x-10">
-                                <label htmlFor="Public-modal-3" className="btn   btn-accent" onClick={() => {
+                            <div className="space-x-10 ">
+                                <label htmlFor="Public-modal-3" className="btn btn-accent" onClick={() => {
                                     handleVisiblity("Private")
                                 }}
                                 >{l.yes}</label>
@@ -1141,14 +1162,14 @@ const Detail = ({ carss, SessionID }) => {
 
                     <input type="checkbox" id="Private-modal-3" className="modal-toggle btn btn-error " />
                     <div className="modal ">
-                        <div className="modal-box relative">
-                            <label htmlFor="Private-modal-3" className="btn btn-sm btn-circle right-2 top-2 absolute">✕</label>
-                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faLockOpen} className=" text-5xl text-green-700" />  </h3>
+                        <div className="relative modal-box">
+                            <label htmlFor="Private-modal-3" className="absolute btn btn-sm btn-circle right-2 top-2">✕</label>
+                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faLockOpen} className="text-5xl text-green-700 " />  </h3>
 
-                            <p className=" py-4">{l.Privatemsg}</p>
+                            <p className="py-4 ">{l.Privatemsg}</p>
 
-                            <div className=" space-x-10">
-                                <label htmlFor="Private-modal-3" className="btn   btn-accent" onClick={() => {
+                            <div className="space-x-10 ">
+                                <label htmlFor="Private-modal-3" className="btn btn-accent" onClick={() => {
                                     handleVisiblity("Public")
                                 }}
                                 >{l.yes}</label>
@@ -1166,12 +1187,12 @@ const Detail = ({ carss, SessionID }) => {
 
                     <input type="checkbox" id="my-modal-3" className="modal-toggle btn btn-error " />
                     <div className="modal ">
-                        <div className="modal-box relative">
-                            <label htmlFor="my-modal-3" className="btn btn-sm btn-circle right-2 top-2 absolute">✕</label>
-                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faTrashAlt} className=" text-5xl text-red-700" />  </h3>
+                        <div className="relative modal-box">
+                            <label htmlFor="my-modal-3" className="absolute btn btn-sm btn-circle right-2 top-2">✕</label>
+                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faTrashAlt} className="text-5xl text-red-700 " />  </h3>
 
-                            {(cars.carDetail.userGiven?.userName != null || cars?.isPaid == false) && <div className=" flex justify-center w-full text-center my-5" >
-                                <div className="alert alert-warning shadow-lg">
+                            {(cars.carDetail.userGiven?.userName != null || cars?.isPaid == false) && <div className="flex justify-center w-full my-5 text-center " >
+                                <div className="shadow-lg alert alert-warning">
                                     <div>
                                         <svg xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 w-6 h-6 stroke-current" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                                         <span>this car gived to reseller or it is not paid</span>
@@ -1179,9 +1200,9 @@ const Detail = ({ carss, SessionID }) => {
                                 </div>
                             </div>}
 
-                            <p className=" py-4">{l.deletemsg}</p>
+                            <p className="py-4 ">{l.deletemsg}</p>
 
-                            <div className=" space-x-10">
+                            <div className="space-x-10 ">
                                 <label className="btn btn-error " disabled={(cars.carDetail.userGiven?.userName == null && cars?.isPaid != false) ? false : true} onClick={() => {
                                     (cars.carDetail.userGiven?.userName == null && cars?.isPaid != false) &&
                                         handleDeleteCars()
@@ -1196,14 +1217,14 @@ const Detail = ({ carss, SessionID }) => {
 
                     <input type="checkbox" id="give-modal-3" className="modal-toggle btn btn-error" />
                     <div className="modal">
-                        <div className="modal-box relative">
-                            <label htmlFor="give-modal-3" className="btn btn-sm btn-circle right-2 top-2 absolute">✕</label>
-                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faPaperPlane} className=" text-5xl" />  </h3>
+                        <div className="relative modal-box">
+                            <label htmlFor="give-modal-3" className="absolute btn btn-sm btn-circle right-2 top-2">✕</label>
+                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faPaperPlane} className="text-5xl " />  </h3>
                             <p className="py-4">{l.givemsg}</p>
 
-                            {(cars.carDetail.userGiven?.userName != null || cars.carDetail.carCost.isSold == true) && <div className=" flex justify-center w-full text-center" >
+                            {(cars.carDetail.userGiven?.userName != null || cars.carDetail.carCost.isSold == true) && <div className="flex justify-center w-full text-center " >
 
-                                <div className="alert alert-warning shadow-lg">
+                                <div className="shadow-lg alert alert-warning">
                                     <div>
                                         <svg xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 w-6 h-6 stroke-current" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                                         <span>car already gived to reseller or is Sold</span>
@@ -1212,19 +1233,19 @@ const Detail = ({ carss, SessionID }) => {
 
                             </div>}
                             <div className="space-x-10">
-                                <div className=" m-5 space-y-5 text-center">
+                                <div className="m-5 space-y-5 text-center ">
                                     <select disabled={(cars.carDetail.userGiven?.userName != null || cars.carDetail.carCost.isSold == true) ? true : false}
                                         onChange={(e) => {
                                             setUserID(null)
                                             setChooseUser(e.target.value)
-                                        }} type='select' defaultValue={"Select"} className="select select-info w-full max-w-xs">
+                                        }} type='select' defaultValue={"Select"} className="w-full max-w-xs select select-info">
                                         <option disabled value="Select" >{l.select}</option>
                                         <option value="Reseller_2" >{l.reseler}</option>
 
                                     </select>
 
                                     {(ChooseUser == "Reseller_2" && ChooseUser !== "" && cars.carDetail.userGiven?.userName == null && cars.carDetail.carCost.isSold == false) && <>
-                                        <select defaultValue={"Select"} onChange={(event) => { setUserID(event.target.value) }} className="select select-info w-full max-w-xs">
+                                        <select defaultValue={"Select"} onChange={(event) => { setUserID(event.target.value) }} className="w-full max-w-xs select select-info">
                                             <option disabled value="Select">{l.select}</option>
                                             {User?.map((item, index) => {
 
@@ -1238,7 +1259,7 @@ const Detail = ({ carss, SessionID }) => {
                                             })}
                                         </select>
 
-                                        <input type="text" onChange={(e) => { setNote(e.target.value) }} placeholder={l.note} className="input input-bordered input-info w-full max-w-xs" />
+                                        <input type="text" onChange={(e) => { setNote(e.target.value) }} placeholder={l.note} className="w-full max-w-xs input input-bordered input-info" />
                                     </>
                                     }
 
@@ -1262,12 +1283,12 @@ const Detail = ({ carss, SessionID }) => {
 
                     <input type="checkbox" id="sold-modal-3" className="modal-toggle btn btn-error" />
                     <div className="modal">
-                        <div className="modal-box relative">
-                            <label htmlFor="sold-modal-3" className="btn btn-sm btn-circle right-2 top-2 absolute">✕</label>
-                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faArrowsRotate} className=" text-5xl" /></h3>
-                            {cars.carDetail.userGiven?.userName != null && <div className=" flex justify-center w-full text-center my-5" >
+                        <div className="relative modal-box">
+                            <label htmlFor="sold-modal-3" className="absolute btn btn-sm btn-circle right-2 top-2">✕</label>
+                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faArrowsRotate} className="text-5xl " /></h3>
+                            {cars.carDetail.userGiven?.userName != null && <div className="flex justify-center w-full my-5 text-center " >
 
-                                <div className="alert alert-warning shadow-lg">
+                                <div className="shadow-lg alert alert-warning">
                                     <div>
                                         <svg xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 w-6 h-6 stroke-current" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                                         <span>this car gived to reseller you cant retrieve it</span>
@@ -1277,8 +1298,8 @@ const Detail = ({ carss, SessionID }) => {
                             </div>}
 
                             <p className="py-4">{l.soldmsg}</p>
-                            {cars.carDetail.userGiven?.userName == null && <div className="text-center my-5">
-                                <input type="text" onChange={(e) => { setNote(e.target.value) }} placeholder={l.note} className="input input-bordered   input-info w-full max-w-xs" />
+                            {cars.carDetail.userGiven?.userName == null && <div className="my-5 text-center">
+                                <input type="text" onChange={(e) => { setNote(e.target.value) }} placeholder={l.note} className="w-full max-w-xs input input-bordered input-info" />
                             </div>}
                             <div className="space-x-10">
                                 <label htmlFor="sold-modal-3" className="btn btn-warning" disabled={cars.carDetail.userGiven?.userName == null ? false : true} onClick={() => {
@@ -1294,12 +1315,12 @@ const Detail = ({ carss, SessionID }) => {
 
                     <input type="checkbox" id="sell-modal-3" className="modal-toggle btn btn-error" />
                     <div className="modal">
-                        <div className="modal-box relative">
-                            <label htmlFor="sell-modal-3" className="btn btn-sm btn-circle right-2 top-2 absolute">✕</label>
-                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faHandHoldingUsd} className=" text-5xl" /></h3>
-                            {cars.carDetail.userGiven?.userName != null && <div className=" flex justify-center w-full text-center my-5" >
+                        <div className="relative modal-box">
+                            <label htmlFor="sell-modal-3" className="absolute btn btn-sm btn-circle right-2 top-2">✕</label>
+                            <h3 className="text-lg font-bold text-center"><FontAwesomeIcon icon={faHandHoldingUsd} className="text-5xl " /></h3>
+                            {cars.carDetail.userGiven?.userName != null && <div className="flex justify-center w-full my-5 text-center " >
 
-                                <div className="alert alert-warning shadow-lg">
+                                <div className="shadow-lg alert alert-warning">
                                     <div>
                                         <svg xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 w-6 h-6 stroke-current" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                                         <span>this car gived to reseller you cant sell it</span>
@@ -1308,8 +1329,8 @@ const Detail = ({ carss, SessionID }) => {
 
                             </div>}
                             <p className="py-4">{l.sellmsg}</p>
-                            {cars.carDetail.userGiven?.userName == null && <div className="text-center my-5">
-                                <input type="text" onChange={(e) => { setNote(e.target.value) }} placeholder={l.note} className="input input-bordered   input-info w-full max-w-xs" />
+                            {cars.carDetail.userGiven?.userName == null && <div className="my-5 text-center">
+                                <input type="text" onChange={(e) => { setNote(e.target.value) }} placeholder={l.note} className="w-full max-w-xs input input-bordered input-info" />
                             </div>}
                             <div className="space-x-10">
 
@@ -1325,6 +1346,7 @@ const Detail = ({ carss, SessionID }) => {
                     </div>
 
                 </div>
+                {/* //^ header */}
 
 
 
@@ -1333,7 +1355,7 @@ const Detail = ({ carss, SessionID }) => {
                 {/* //^ Main */}
 
 
-                <div className=" 4xl:grid-cols-2 xl:grid-cols-2 z-50 grid grid-cols-1 gap-2 m-auto mb-40 ">
+                <div className="z-50 grid grid-cols-1 gap-2 m-auto mb-40 4xl:grid-cols-2 xl:grid-cols-2">
 
                     <div className="pt-2.5">
                         <button className={`cursor-pointer h-[39px] w-[250px%] ltr:rounded-tl-lg rtl:rounded-tr-lg   border-[1px] border-[#1254ff] ${ImagePage == 1 ? "bg-[#1254ff] text-white" : "bg-white text-[#1254ff]"}  text-md  w-[50%] z-0`} onClick={() => { setImagePage(1) }}>{l.damageimg}</button>
@@ -1341,28 +1363,26 @@ const Detail = ({ carss, SessionID }) => {
                         <div className="" hidden={ImagePage == 1 ? false : true} >
                             <div hidden={ImageUpdatePage == 1 ? false : true}>
                                 <ImageGallery
-                                    thumbnails-swipe-vertical
-
                                     onErrorImageURL="/Video.svg"
                                     slideInterval={100}
                                     autoPlay={false}
                                     showPlayButton={false}
-                                    showBullets={true}
-                                    // useTranslate3D={true}
+                                    useTranslate3D={true}
                                     lazyLoad={true}
                                     showThumbnails={true}
                                     items={datadamage}
                                     additionalClass={`  `}
                                     className=""
-                                    // useBrowserFullscreen={true}
-                                    // onScreenChange={(e) => {
-                                    //     setFullScreen(e)
-                                    // }}
-                                    renderRightNav={(onClick,) => {
+                                    useBrowserFullscreen={true}
+                                    onScreenChange={(e) => {
+                                        setFullScreen(e)
+
+                                    }}
+                                    renderRightNav={(onClick) => {
                                         if (FullScreen) {
                                             return (
                                                 <button
-                                                    className="bg-slate-300 opacity-60 right-5 top-1/2 fixed z-30 items-center w-5 h-10 rounded-full"
+                                                    className="fixed z-30 items-center w-5 h-10 rounded-full bg-slate-300 opacity-60 right-5 top-1/2"
                                                     onClick={onClick}
                                                 >
                                                     <FontAwesomeIcon icon={faChevronRight} />
@@ -1373,7 +1393,7 @@ const Detail = ({ carss, SessionID }) => {
 
                                             return (
                                                 <button
-                                                    className="bg-slate-300 opacity-60 right-2 top-1/2 absolute z-30 items-center w-5 h-10 rounded-full"
+                                                    className="absolute z-30 items-center w-5 h-10 text-black rounded-full bg-slate-300 opacity-40 right-2 top-1/2"
                                                     onClick={onClick}
                                                 >
                                                     <FontAwesomeIcon icon={faChevronRight} />
@@ -1387,10 +1407,10 @@ const Detail = ({ carss, SessionID }) => {
                                         if (FullScreen) {
                                             return (
                                                 <button
-                                                    className="bg-slate-300 opacity-60 left-5 top-1/2 fixed z-30 items-center w-5 h-10 rounded-full"
+                                                    className="fixed z-30 items-center w-5 h-10 text-black rounded-full opacity-50 bg-slate-300 left-5 top-1/2"
                                                     onClick={onClick}
                                                 >
-                                                    <FontAwesomeIcon icon={faChevronLeft} />
+                                                    <FontAwesomeIcon className="text-black " icon={faChevronLeft} />
                                                 </button>
                                             );
                                         }
@@ -1398,10 +1418,10 @@ const Detail = ({ carss, SessionID }) => {
 
                                             return (
                                                 <button
-                                                    className="bg-slate-300 opacity-60 left-2 top-1/2 absolute z-30 items-center w-5 h-10 rounded-full"
+                                                    className="absolute z-30 items-center w-5 h-10 text-black rounded-full bg-slate-300 opacity-40 left-2 top-1/2"
                                                     onClick={onClick}
                                                 >
-                                                    <FontAwesomeIcon icon={faChevronLeft} />
+                                                    <FontAwesomeIcon className="" icon={faChevronLeft} />
                                                 </button>
                                             );
 
@@ -1415,7 +1435,7 @@ const Detail = ({ carss, SessionID }) => {
                                             if (isFullscreen) {
                                                 return (
                                                     <button
-                                                        className="btn btn-sm btn-circle right-2 top-2 fixed"
+                                                        className="fixed btn btn-sm btn-circle right-2 top-2 opacity-40"
                                                         onClick={onClick}
                                                     >
                                                         <FontAwesomeIcon icon={faCompress} />
@@ -1424,45 +1444,58 @@ const Detail = ({ carss, SessionID }) => {
                                             } else {
                                                 return (
                                                     <button
-                                                        className="btn btn-sm btn-circle right-2 top-2 absolute"
+                                                        className="absolute btn btn-sm btn-circle right-2 opacity-40 top-2"
                                                         onClick={onClick}
                                                     >
-                                                        <FontAwesomeIcon icon={faExpand} />
+                                                        <FontAwesomeIcon className="" icon={faExpand} />
                                                     </button>
                                                 );
                                             }
                                         }
                                     }
                                 />
+
+
+
+
+
                             </div>
-                            <div hidden={ImageUpdatePage == 2 ? false : true} >
-                                <div className="grid grid-cols-5   space-x-2  w-full">
+
+                            {/*  //                                                                                                                */}
+
+                            <div className="p-5 bg-white dark:bg-[#181a1b] rounded-lg shadow" hidden={ImageUpdatePage == 2 ? false : true} >
+                                <div className="grid w-full grid-cols-2 gap-5 my-5 sm:grid-cols-4">
 
                                     {cars.carDetail?.pictureandvideodamage?.map((img, idx) => {
                                         return <>
-                                            {img.mimetype == 'video/mp4' ?
-                                                <div className="w-full h-20 overflow-hidden border-spacing-40 border-4 border-blue-400 flex justify-center" >
+                                            {(img.mimetype == 'video/mp4' || img.mimetype == 'video/x-matroska') ?
+                                                <div className={`flex items-center justify-center w-full h-20 overflow-hidden border-4 border-blue-400 border-spacing-40   ${Pictureandvideodamage?.find(e => {
+                                                    if (e.filename === img.filename) { return true }
+                                                    return false
+                                                }) && "border-green-400"}  `} >
+
                                                     <video controls={false}
                                                         className="w-[144px]"
                                                         onClick={() => {
-                                                            setpictureandvideodamage(old => [...old, img.filename])
-
-                                                        }}
-                                                    >
-                                                        <source
-                                                            src={`${baseURL}${img.filename}`} type="video/mp4" />
-                                                    </video >
+                                                            EditingImage(img)
+                                                        }}  >
+                                                        <source src={`${baseURL}${img.filename}`} type={'video/mp4'} />
+                                                    </video>
                                                 </div>
                                                 :
-                                                <div className="w-full h-20 overflow-hidden border-spacing-40 border-4 border-blue-400 flex justify-center items-center" >
-                                                    <Image width={100} height={100}
+                                                <div className={`flex items-center justify-center w-full h-20 overflow-hidden border-4 border-blue-400 border-spacing-40   ${Pictureandvideodamage?.find(e => {
+                                                    if (e.filename === img.filename) { return true }
+                                                    return false
+                                                }) && "border-green-400"}  `} >
+
+                                                    <Image width={400} height={300}
                                                         alt='SliderImage'
                                                         objectFit="fill"
-                                                        className='cursor-pointer text-center '
+                                                        className={`text-center cursor-pointer   `}
                                                         src={`${baseURL}${img.filename}`}
                                                         onClick={() => {
-                                                            setpictureandvideodamage(old => [...old, img.filename])
 
+                                                            EditingImage(img)
                                                         }}
                                                     />
                                                 </div>
@@ -1471,9 +1504,19 @@ const Detail = ({ carss, SessionID }) => {
                                         </>
                                     })}
 
+
+
+
+                                </div>
+
+                                <div className="flex justify-end gap-5 mt-20">
+                                    <button className=" btn btn-error" onClick={() => { setImageUpdatePage(1) }} >{l.cancel}</button>
+                                    <button className=" btn btn-accent" onClick={() => { handleUpdateImage() }} >{l.update}</button>
                                 </div>
 
                             </div>
+                            {/*  //                                                                                                                */}
+
                         </div>
                         <div className="" hidden={ImagePage == 2 ? false : true}>
                             <div hidden={ImageUpdatePage == 1 ? false : true}>
@@ -1500,7 +1543,7 @@ const Detail = ({ carss, SessionID }) => {
                                         if (FullScreen) {
                                             return (
                                                 <button
-                                                    className="bg-slate-300 opacity-60 right-5 top-1/2 fixed z-30 items-center w-5 h-10 rounded-full"
+                                                    className="fixed z-30 items-center w-5 h-10 rounded-full bg-slate-300 opacity-60 right-5 top-1/2"
                                                     onClick={onClick}
                                                 >
                                                     <FontAwesomeIcon icon={faChevronRight} />
@@ -1511,7 +1554,7 @@ const Detail = ({ carss, SessionID }) => {
 
                                             return (
                                                 <button
-                                                    className="bg-slate-300 opacity-60 right-2 top-1/2 absolute z-30 items-center w-5 h-10 rounded-full"
+                                                    className="absolute z-30 items-center w-5 h-10 rounded-full bg-slate-300 opacity-60 right-2 top-1/2"
                                                     onClick={onClick}
                                                 >
                                                     <FontAwesomeIcon icon={faChevronRight} />
@@ -1525,7 +1568,7 @@ const Detail = ({ carss, SessionID }) => {
                                         if (FullScreen) {
                                             return (
                                                 <button
-                                                    className="bg-slate-300 opacity-60 left-5 top-1/2 fixed z-30 items-center w-5 h-10 rounded-full"
+                                                    className="fixed z-30 items-center w-5 h-10 rounded-full bg-slate-300 opacity-60 left-5 top-1/2"
                                                     onClick={onClick}
                                                 >
                                                     <FontAwesomeIcon icon={faChevronLeft} />
@@ -1536,7 +1579,7 @@ const Detail = ({ carss, SessionID }) => {
 
                                             return (
                                                 <button
-                                                    className="bg-slate-300 opacity-60 left-2 top-1/2 absolute z-30 items-center w-5 h-10 rounded-full"
+                                                    className="absolute z-30 items-center w-5 h-10 rounded-full bg-slate-300 opacity-60 left-2 top-1/2"
                                                     onClick={onClick}
                                                 >
                                                     <FontAwesomeIcon icon={faChevronLeft} />
@@ -1553,7 +1596,7 @@ const Detail = ({ carss, SessionID }) => {
                                             if (isFullscreen) {
                                                 return (
                                                     <button
-                                                        className="btn btn-sm btn-circle right-2 top-2 fixed"
+                                                        className="fixed btn btn-sm btn-circle right-2 top-2"
                                                         onClick={onClick}
                                                     >
                                                         <FontAwesomeIcon icon={faCompress} />
@@ -1562,7 +1605,7 @@ const Detail = ({ carss, SessionID }) => {
                                             } else {
                                                 return (
                                                     <button
-                                                        className="btn btn-sm btn-circle right-2 top-2 absolute"
+                                                        className="absolute btn btn-sm btn-circle right-2 top-2"
                                                         onClick={onClick}
                                                     >
                                                         <FontAwesomeIcon icon={faExpand} />
@@ -1578,7 +1621,7 @@ const Detail = ({ carss, SessionID }) => {
                                 <Image width={100} height={100}
                                     alt='SliderImage'
                                     // objectFit="fill"
-                                    className='  '
+                                    className=''
                                     // crossOrigin="anonymous"
                                     src={`/logo.png`}
                                 />
@@ -1586,7 +1629,7 @@ const Detail = ({ carss, SessionID }) => {
                         </div>
                     </div>
 
-                    <div className=" p-2">
+                    <div className="p-2 " hidden={ImageUpdatePage == 2 ? true : false}  >
                         <div className="">
                             <button className={`cursor-pointer h-[39px] w-[250px%] ltr:rounded-tl-lg rtl:rounded-tr-lg   border-[1px] border-[#1254ff] ${detpage == 1 ? "bg-[#1254ff] text-white" : "bg-white text-[#1254ff]"}  text-md  w-[50%] z-0`} onClick={() => { setDetpage(1) }}>{l.info}</button>
                             <button className={`cursor-pointer h-[39px] w-[250px%] ltr:rounded-tr-lg rtl:rounded-tl-lg   border-[1px] border-[#1254ff] ${detpage == 2 ? "bg-[#1254ff] text-white" : "bg-white text-[#1254ff]"}  text-md  w-[50%] z-0`} onClick={() => { setDetpage(2) }}>{l.note}</button>
@@ -1620,10 +1663,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td className=" text-start bg-white dark:bg-[#181A1B]">{l.tobalance} :</td>
                                         <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.tobalance}</td>
                                     </tr>
-                                    {/* <tr className="">
-                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.tire} :</td>
-                                        <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.tire}</td>
-                                    </tr> */}
+
                                     <tr className="">
                                         <td className=" text-start bg-white dark:bg-[#181A1B]">{l.date} :</td>
                                         <td className=" text-end bg-white dark:bg-[#181A1B]">{cars.carDetail.date}</td>
@@ -1655,17 +1695,10 @@ const Detail = ({ carss, SessionID }) => {
 
 
                                     <tr className="">
-                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.arivedtoku}:</td>
-                                        {cars.carDetail.arrivedToKurd ? <td className=" text-end bg-white dark:bg-[#181A1B]"  >Yes</td> :
-                                            <td className=" text-end bg-white dark:bg-[#181A1B]" >No</td>
-                                        }
+                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.Location}:</td>
+                                        <td className=" text-end bg-white dark:bg-[#181A1B]"> {cars.carDetail.Location}</td>
                                     </tr>
-                                    <tr className="">
-                                        <td className=" text-start bg-white dark:bg-[#181A1B]">{l.arivedtodu}:</td>
-                                        {cars.carDetail.arrivedToDoubai ? <td className=" text-end bg-white dark:bg-[#181A1B]"  >Yes</td> :
-                                            <td className=" text-end bg-white dark:bg-[#181A1B]" >No</td>
-                                        }
-                                    </tr>
+
 
                                     <tr className="">
                                         <td className=" text-start bg-white dark:bg-[#181A1B]">{l.pricepaidorcaratbid}:</td>
@@ -1751,13 +1784,13 @@ const Detail = ({ carss, SessionID }) => {
                                         <td className="dark:bg-[#181a1b]">{l.price} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="Price" type="number" placeholder={l.price} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.carCost.price} />
+                                            <input name="Price" type="number" placeholder={l.price} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.carCost.price} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td className="dark:bg-[#181a1b]">{l.isSold} :</td>
                                         <td className="dark:bg-[#181a1b]">
-                                            <select disabled name="IsSold" defaultValue={cars.carDetail.carCost.isSold} className="select select-info select-sm w-full max-w-xs">
+                                            <select disabled name="IsSold" defaultValue={cars.carDetail.carCost.isSold} className="w-full max-w-xs select select-info select-sm">
                                                 <option value={cars.carDetail.carCost.isSold} >{cars.carDetail.carCost.isSold ? l.yes : l.no}</option>
                                             </select>
                                         </td>
@@ -1766,7 +1799,7 @@ const Detail = ({ carss, SessionID }) => {
                                     <tr className="">
                                         <td className="dark:bg-[#181a1b]">{l.tocar} :</td>
                                         <td className="dark:bg-[#181a1b]">
-                                            <select disabled name="Tocar" defaultValue={cars.carDetail.tocar} className="select select-info select-sm w-full max-w-xs">
+                                            <select disabled name="Tocar" defaultValue={cars.carDetail.tocar} className="w-full max-w-xs select select-info select-sm">
                                                 <option value="Sedan">Sedan</option>
                                                 <option value="SUV">SUV</option>
                                                 <option value="PickUp">PickUp</option>
@@ -1780,7 +1813,7 @@ const Detail = ({ carss, SessionID }) => {
                                     <tr className="">
                                         <td className="dark:bg-[#181a1b]">{l.tobalance} :</td>
                                         <td className="dark:bg-[#181a1b]">
-                                            <select disabled name="Tobalance" defaultValue={cars.carDetail.tobalance} className="select select-info select-sm w-full max-w-xs">
+                                            <select disabled name="Tobalance" defaultValue={cars.carDetail.tobalance} className="w-full max-w-xs select select-info select-sm">
                                                 <option value="Cash"> {l.cash} </option>
                                                 <option value="Loan" > {l.loan} </option>
                                                 <option value="Rent" > {l.rent} </option>
@@ -1789,88 +1822,74 @@ const Detail = ({ carss, SessionID }) => {
 
                                         </td>
                                     </tr>
-                                    {/* <tr className="">
-                                        <td className="dark:bg-[#181a1b]">{l.tire} :</td>
-                                        <td className="dark:bg-[#181a1b]">
 
-                                            <input name="Tire" type="text" placeholder={l.tire} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.tire} />
-
-                                        </td>
-                                    </tr> */}
                                     <tr className="">
                                         <td className="dark:bg-[#181a1b]">{l.date} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="Date" type="Date" placeholder="Type here" className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.date} />
+                                            <input name="Date" type="Date" placeholder="Type here" className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.date} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td className="dark:bg-[#181a1b]"> {l.namecar} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="ModeName" type="text" placeholder={l.namecar} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.modeName} />
+                                            <input name="ModeName" type="text" placeholder={l.namecar} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.modeName} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td className="dark:bg-[#181a1b]">{l.modelyear} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="Model" type="number" placeholder={l.modelyear} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.model} />
+                                            <input name="Model" type="number" placeholder={l.modelyear} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.model} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td className="dark:bg-[#181a1b]">{l.vinnumber} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="VINNumber" type="text" placeholder={l.vinnumber} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.VINNumber} />
+                                            <input name="VINNumber" type="text" placeholder={l.vinnumber} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.VINNumber} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td className="dark:bg-[#181a1b]">{l.mileage} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="Mileage" type="text" placeholder={l.mileage} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.mileage} />
+                                            <input name="Mileage" type="text" placeholder={l.mileage} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.mileage} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td className="dark:bg-[#181a1b]">{l.color} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="Color" type="text" placeholder={l.color} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.color} />
+                                            <input name="Color" type="text" placeholder={l.color} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.color} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td className="dark:bg-[#181a1b]">{l.wheeldrivetype} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="WheelDriveType" type="text" placeholder={l.wheeldrivetype} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.wheelDriveType} />
+                                            <input name="WheelDriveType" type="text" placeholder={l.wheeldrivetype} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.wheelDriveType} />
                                         </td>
                                     </tr>
 
+
                                     <tr className="">
-                                        <td className="dark:bg-[#181a1b]">{l.arivedtoku}:</td>
+                                        <td className="dark:bg-[#181a1b]">{l.Location} :</td>
                                         <td className="dark:bg-[#181a1b]">
-                                            <select name="arrivedToKurd" defaultValue={cars.carDetail.arrivedToKurd} className="select select-info select-sm w-full max-w-xs">
-                                                <option value={true} >Yes</option>
-                                                <option value={false}>No</option>
-                                            </select>
+
+                                            <input name="Location" type="text" placeholder={l.Location} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.Location} />
                                         </td>
                                     </tr>
-                                    <tr className="">
-                                        <td className="dark:bg-[#181a1b]">{l.arivedtodu}:</td>
-                                        <td className="dark:bg-[#181a1b]">
-                                            <select name="arrivedToDoubai" defaultValue={cars.carDetail.arrivedToDoubai} className="select select-info select-sm w-full max-w-xs">
-                                                <option value={true} >Yes</option>
-                                                <option value={false}>No</option>
-                                            </select>
-                                        </td>
-                                    </tr>
+
+
+
 
                                     <tr className="">
                                         <td className="dark:bg-[#181a1b]">{l.pricepaidorcaratbid}:</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="PricePaidbid" type="number" placeholder={l.pricepaidorcaratbid} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.carCost.pricePaidbid}
+                                            <input name="PricePaidbid" type="number" placeholder={l.pricepaidorcaratbid} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.carCost.pricePaidbid}
 
                                             />
                                         </td>
@@ -1879,7 +1898,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td className="dark:bg-[#181a1b]">{l.storagefee} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="FeesinAmericaStoragefee" type="number" placeholder={l.storagefee} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesinAmericaStoragefee}
+                                            <input name="FeesinAmericaStoragefee" type="number" placeholder={l.storagefee} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.carCost.feesinAmericaStoragefee}
                                             />
                                         </td>
                                     </tr>
@@ -1887,7 +1906,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td className="dark:bg-[#181a1b]">{l.copartoriaafee} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="FeesinAmericaCopartorIAAfee" type="number" placeholder={l.copartoriaafee} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesinAmericaCopartorIAAfee}
+                                            <input name="FeesinAmericaCopartorIAAfee" type="number" placeholder={l.copartoriaafee} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.carCost.feesinAmericaCopartorIAAfee}
                                             />
                                         </td>
                                     </tr>
@@ -1896,20 +1915,20 @@ const Detail = ({ carss, SessionID }) => {
                                         <td className="dark:bg-[#181a1b]"> {l.uslocation} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostLocation" type="text" placeholder={l.uslocation} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostLocation} />
+                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostLocation" type="text" placeholder={l.uslocation} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostLocation} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td className="dark:bg-[#181a1b]">{l.fromamericatodubaicost} :</td>
                                         <td className="dark:bg-[#181a1b]">
-                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostTranscost" type="number" placeholder={l.fromamericatodubaicost} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost}
+                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostTranscost" type="number" placeholder={l.fromamericatodubaicost} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostTranscost}
                                             />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td className="dark:bg-[#181a1b]">{l.fromamericatodubaigumrg} :</td>
                                         <td className="dark:bg-[#181a1b]">
-                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost" type="number" placeholder={l.fromamericatodubaigumrg} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost}
+                                            <input name="TransportationCostFromAmericaLocationtoDubaiGCostgumrgCost" type="number" placeholder={l.fromamericatodubaigumrg} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.carCost.transportationCostFromAmericaLocationtoDubaiGCostgumrgCost}
                                             />
                                         </td>
                                     </tr>
@@ -1918,23 +1937,16 @@ const Detail = ({ carss, SessionID }) => {
                                         <td className="dark:bg-[#181a1b]"> {l.dubairepaircost} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="FeesAndRepaidCostDubairepairCost" type="number" placeholder={l.dubairepaircost} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubairepairCost}
+                                            <input name="FeesAndRepaidCostDubairepairCost" type="number" placeholder={l.dubairepaircost} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubairepairCost}
                                             />
                                         </td>
                                     </tr>
-                                    {/* <tr className="">
-                                        <td className="dark:bg-[#181a1b]"> {l.feesinadubai} :</td>
-                                        <td className="dark:bg-[#181a1b]">
 
-                                            <input name="FeesAndRepaidCostDubaiFees" type="number" placeholder={l.feesinadubai} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubaiFees}
-                                            />
-                                        </td>
-                                    </tr> */}
                                     <tr className="">
                                         <td className="dark:bg-[#181a1b]"> {l.feesAndRepaidCostDubaiothers} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="FeesAndRepaidCostDubaiothers" type="number" placeholder={l.feesAndRepaidCostDubaiothers} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubaiothers}
+                                            <input name="FeesAndRepaidCostDubaiothers" type="number" placeholder={l.feesAndRepaidCostDubaiothers} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.carCost.feesAndRepaidCostDubaiothers}
                                             />
                                         </td>
                                     </tr>
@@ -1944,7 +1956,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td className="dark:bg-[#181a1b]">{l.coccost} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="CoCCost" type="number" placeholder={l.coccost} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.carCost.coCCost}
+                                            <input name="CoCCost" type="number" placeholder={l.coccost} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.carCost.coCCost}
                                             />
                                         </td>
                                     </tr>
@@ -1952,7 +1964,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td className="dark:bg-[#181a1b]">{l.fromdubaitokurdistancosts} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="DubaiToIraqGCostTranscost" type="number" placeholder={l.fromdubaitokurdistancosts} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.carCost.dubaiToIraqGCostTranscost}
+                                            <input name="DubaiToIraqGCostTranscost" type="number" placeholder={l.fromdubaitokurdistancosts} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.carCost.dubaiToIraqGCostTranscost}
                                             />
                                         </td>
                                     </tr>
@@ -1960,7 +1972,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td className="dark:bg-[#181a1b]">{l.fromdubaitokurdistangumrg} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="DubaiToIraqGCostgumrgCost" type="number" placeholder={l.fromdubaitokurdistangumrg} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.carCost.dubaiToIraqGCostgumrgCost}
+                                            <input name="DubaiToIraqGCostgumrgCost" type="number" placeholder={l.fromdubaitokurdistangumrg} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.carCost.dubaiToIraqGCostgumrgCost}
                                             />
                                         </td>
                                     </tr>
@@ -1968,14 +1980,14 @@ const Detail = ({ carss, SessionID }) => {
                                         <td className="dark:bg-[#181a1b]">{l.numberinkurdistan} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="RaqamAndRepairCostinKurdistanRaqam" type="number" placeholder={l.numberinkurdistan} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanRaqam} />
+                                            <input name="RaqamAndRepairCostinKurdistanRaqam" type="number" placeholder={l.numberinkurdistan} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanRaqam} />
                                         </td>
                                     </tr>
                                     <tr className="">
                                         <td className="dark:bg-[#181a1b]">{l.repaircostinkurdistan} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="RaqamAndRepairCostinKurdistanrepairCost" type="number" placeholder={l.repaircostinkurdistan} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanrepairCost}
+                                            <input name="RaqamAndRepairCostinKurdistanrepairCost" type="number" placeholder={l.repaircostinkurdistan} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanrepairCost}
                                             />
                                         </td>
                                     </tr>
@@ -1984,7 +1996,7 @@ const Detail = ({ carss, SessionID }) => {
                                         <td className="dark:bg-[#181a1b]">{l.fromdubaitokurdistanothers} :</td>
                                         <td className="dark:bg-[#181a1b]">
 
-                                            <input name="RaqamAndRepairCostinKurdistanothers" type="number" placeholder={l.fromdubaitokurdistanothers} className="input input-info input-sm w-full max-w-xs" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanothers}
+                                            <input name="RaqamAndRepairCostinKurdistanothers" type="number" placeholder={l.fromdubaitokurdistanothers} className="w-full max-w-xs input input-info input-sm" defaultValue={cars.carDetail.carCost.raqamAndRepairCostinKurdistanothers}
                                             />
                                         </td>
                                     </tr>
@@ -2007,9 +2019,9 @@ const Detail = ({ carss, SessionID }) => {
                             </table>
 
                             <div className={`${detpage !== 2 ? "hidden" : ""} overflow-hidden p-3 space-y-8  pb-20 [line-break: auto] bg-white dark:bg-[#181A1B]  `}>
-                                <div className="link-accent mt-3 text-xl"> {l.DubaiNote} : </div>
+                                <div className="mt-3 text-xl link-accent"> {l.DubaiNote} : </div>
                                 <div>{cars.carDetail.carCost.feesAndRepaidCostDubainote}</div>
-                                <div className="link-accent mt-3 text-xl"> {l.KurdistanNot}: </div>
+                                <div className="mt-3 text-xl link-accent"> {l.KurdistanNot}: </div>
                                 <div>{cars.carDetail.carCost.raqamAndRepairCostinKurdistannote}</div>
 
 
@@ -2023,36 +2035,36 @@ const Detail = ({ carss, SessionID }) => {
                         </div>
                     </div>
 
-                    <div className=" grid grid-cols-1 gap-12">
+                    <div className="grid grid-cols-1 gap-12 " hidden={ImageUpdatePage == 2 ? true : false}>
                         <div className=" h-[300px] min-w-[50px] max-w-[420px] shadow mx-2 mt-1 ">
 
                             <div className=" bg-[#1254ff] rounded-t-lg h-[40px] text-white ">
-                                <div className=" flex items-center h-full px-6">{l.price}</div>
+                                <div className="flex items-center h-full px-6 ">{l.price}</div>
 
                             </div>
                             <div className="w-full h-full  border border-t-0 border-gray-300 dark:border-gray-800  rounded-b-lg  bg-white dark:bg-[#181A1B] px-5 ">
-                                <div className=" divide-y">
+                                <div className="divide-y ">
 
-                                    <div className="text-start flex justify-between">
-                                        <dir className="text-start flex items-center p-0">{l.price}</dir>
-                                        <dir className=" p-0 text-xl">{cars.carDetail.price}$</dir>
-
-                                    </div>
-                                    <div className="text-start flex justify-between">
-                                        <dir className="text-start flex items-center p-0">{l.allcosts}</dir>
-                                        <dir className=" p-0 text-xl">{TotalCurrentCosts}$</dir>
+                                    <div className="flex justify-between text-start">
+                                        <dir className="flex items-center p-0 text-start">{l.price}</dir>
+                                        <dir className="p-0 text-xl ">{cars.carDetail.price}$</dir>
 
                                     </div>
-
-                                    <div className="text-start flex justify-between">
-                                        <dir className="text-start flex items-center p-0">{l.loan}</dir>
-                                        <dir className=" p-0 text-xl">{cars.carDetail.tobalance == "Rent" ? TotalLoan : 0}$</dir>
+                                    <div className="flex justify-between text-start">
+                                        <dir className="flex items-center p-0 text-start">{l.allcosts}</dir>
+                                        <dir className="p-0 text-xl ">{TotalCurrentCosts}$</dir>
 
                                     </div>
 
-                                    <div className="text-start flex justify-between">
-                                        <dir className="text-start flex items-center p-0">{l.profit}</dir>
-                                        <dir className=" p-0 text-xl">{cars.carDetail.price - TotalCurrentCosts}$</dir>
+                                    <div className="flex justify-between text-start">
+                                        <dir className="flex items-center p-0 text-start">{l.loan}</dir>
+                                        <dir className="p-0 text-xl ">{cars.carDetail.tobalance == "Rent" ? TotalLoan : 0}$</dir>
+
+                                    </div>
+
+                                    <div className="flex justify-between text-start">
+                                        <dir className="flex items-center p-0 text-start">{l.profit}</dir>
+                                        <dir className="p-0 text-xl ">{cars.carDetail.price - TotalCurrentCosts}$</dir>
 
                                     </div>
 
@@ -2067,15 +2079,15 @@ const Detail = ({ carss, SessionID }) => {
                         {/* <div className=" h-[100px] min-w-[200px max-w-[420px] shadow mx-2 mt-1">
 
                             <div className=" bg-[#1254ff] rounded-t-lg h-[40px] text-white ">
-                                <div className=" flex items-center h-full px-6">{l.price}</div>
+                                <div className="flex items-center h-full px-6 ">{l.price}</div>
 
                             </div>
                             <div className="w-full h-full  border border-t-0 border-gray-300 dark:border-gray-800  rounded-b-lg  bg-white dark:bg-[#181A1B] px-5 ">
-                                <div className=" divide-y">
+                                <div className="divide-y ">
 
-                                    <div className="text-start flex justify-between">
-                                        <dir className="text-start flex items-center p-0">{l.price}</dir>
-                                        <dir className=" p-0 text-2xl">{cars.carDetail.price}$</dir>
+                                    <div className="flex justify-between text-start">
+                                        <dir className="flex items-center p-0 text-start">{l.price}</dir>
+                                        <dir className="p-0 text-2xl ">{cars.carDetail.price}$</dir>
 
                                     </div>
 
@@ -2095,7 +2107,7 @@ const Detail = ({ carss, SessionID }) => {
 
             </>
 
-        </div >
+        </div>
     );
 
 }
